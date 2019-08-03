@@ -23,11 +23,12 @@ City.prototype.addNeighbor = function(neighbor) {
 };
 
 City.prototype.infect = function(game, color, visited) {
-    visited.add(this);
     if (this.cubes[color] < 3) {
         this.cubes[color] += 1
     } else {
+        visited.add(this);
         game.outbreak();
+        console.log({'outbreak': this.name});
         this.neighbors.forEach((neighbor) => {
             if (!visited.has(neighbor)) {
                 neighbor.infect(game, color, visited);
@@ -35,7 +36,6 @@ City.prototype.infect = function(game, color, visited) {
             
         })
     }
-    visited.delete(this)
 };
 
 City.load = function(cities) {

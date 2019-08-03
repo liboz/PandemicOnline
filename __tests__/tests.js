@@ -95,6 +95,29 @@ describe('City', function () {
   });
 
   describe('#ChainReaction', function () {
+    it('Outbreak Counter Multiple Chains No Infinite', function () {
+      let g = new game.Game(cities);
+      let chennai = g.game_graph['Chennai'];
+      for (let i = 0; i < 3; i++) {
+        chennai.infect(g, city.Colors.BLACK, new Set());
+      }
+
+      let kolkata = g.game_graph['Kolkata']
+      for (let i = 0; i < 3; i++) {
+        kolkata.infect(g, city.Colors.BLACK, new Set());
+      }
+      expect(g.outbreak_counter).toBe(0);
+      chennai.infect(g, city.Colors.BLACK, new Set());
+      expect(g.outbreak_counter).toBe(2);
+      let delhi = g.game_graph['Delhi'];
+      delhi.infect(g, city.Colors.BLACK, new Set());
+      kolkata.infect(g, city.Colors.BLACK, new Set());
+      expect(g.outbreak_counter).toBe(6);
+    });
+  });
+
+
+  describe('#ChainReaction', function () {
     it('Outbreak Counter One Chain', function () {
       let g = new game.Game(cities);
       let tokyo = g.game_graph['Taipei'];
@@ -112,6 +135,14 @@ describe('City', function () {
 
       osaka.infect(g, city.Colors.RED, new Set());
       expect(g.outbreak_counter).toBe(4);
+    });
+  });
+});
+
+describe('Data Integrity', function () {
+  describe('#CityNumber', function () {
+    it('Is 48', function () {
+      expect(cities.length).toBe(48);
     });
   });
 });
