@@ -1,3 +1,4 @@
+const random = require('./random');
 const Denque = require("denque");
 
 function InfectionDeck(cities, rng) {
@@ -9,19 +10,7 @@ function InfectionDeck(cities, rng) {
 };
 
 InfectionDeck.prototype.shuffle = function(array) {
-    let m = array.length, t, i;
-    
-    // While there remain elements to shuffle…
-    while (m) {
-    
-        // Pick a remaining element…
-        i = Math.floor(this.rng() * m--);
-    
-        // And swap it with the current element.
-        t = array[m];
-        array[m] = array[i];
-        array[i] = t;
-    }
+    random.shuffle(array, this.rng);
 };
 
 InfectionDeck.prototype.flip_card = function() {
@@ -37,10 +26,10 @@ InfectionDeck.prototype.infect_epidemic = function()  {
 }
 
 InfectionDeck.prototype.intensify = function() {
-    let toArr = this.facedown_deck.toArray()
-    this.shuffle(toArr);
     this.shuffle(this.faceup_deck);
-    this.facedown_deck = new Denque([...toArr, ...this.faceup_deck])
+    this.faceup_deck.forEach(card => {
+        this.facedown_deck.push(card)
+    })
     this.faceup_deck = []
 };
 

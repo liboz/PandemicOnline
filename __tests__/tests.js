@@ -2,6 +2,8 @@ const game = require('../game');
 const cities = require('../data/cities');
 const city = require('../city');
 const infection = require('../infection_deck');
+const player_deck = require('../player_deck');
+
 const seedrandom = require('seedrandom');
 
 
@@ -230,7 +232,7 @@ describe('Infection Deck', function () {
     it('Check Top Cards are correct', function () {
       let seeded = seedrandom()
       let i = new infection.InfectionDeck(cities, seeded);
-      
+
       for (let j = 0; j < 9; j++) {
         let c = i.facedown_deck.peekBack();
         expect(i.flip_card()).toBe(c)
@@ -292,6 +294,102 @@ describe('Infection Deck', function () {
       i = new infection.InfectionDeck(cities, seeded);
       let peek = i.facedown_deck.peekFront();
       expect(i.infect_epidemic()).toBe(peek)
+    });
+  });
+
+  describe('#Big Deck', function () {
+    it('Shuffles', function () {
+      let seeded = seedrandom('test!')
+      let i = new infection.InfectionDeck(cities, seeded);
+      for (let j = 0; j < 16; j++) {
+        i.flip_card();
+      }
+      expect(i.facedown_deck.length).toBe(32);
+      expect(i.faceup_deck).toEqual(
+        [
+          'Beijing',
+          'Essen', 'Milan', 'San Francisco',
+          'Jakarta', 'Montreal', 'Hong Kong',
+          'Madrid', 'New York', 'Delhi',
+          'Ho Chi Minh City', 'Manila', 'Taipei',
+          'Karachi', 'London', 'Tokyo'
+        ].reverse());
+        expect(i.infect_epidemic()).toBe('Sao Paulo')
+        expect(i.facedown_deck.length).toBe(31);
+        i.intensify()
+        expect(i.facedown_deck.splice(0, 31)).toEqual([
+          'Buenos Aires', 'Sydney',
+          'Tehran', 'Khartoum', 'Los Angeles',
+          'Atlanta', 'Seoul', 'Johannesburg',
+          'Washington', 'Chicago', 'Lagos',
+          'Miami', 'Kinshasa', 'Chennai',
+          'Paris', 'Algiers', 'Mumbai',
+          'Osaka', 'Santiago', 'Lima',
+          'Kolkata', 'Istanbul', 'Cairo',
+          'Bogota', 'Baghdad', 'St Petersburg',
+          'Moscow', 'Riyadh', 'Shanghai',
+          'Bangkok', 'Mexico City'
+        ])
+        expect(i.facedown_deck.toArray().sort()).toEqual([
+          'Beijing',
+          'Essen', 'Milan', 'San Francisco',
+          'Jakarta', 'Montreal', 'Hong Kong',
+          'Madrid', 'New York', 'Delhi',
+          'Ho Chi Minh City', 'Manila', 'Taipei',
+          'Karachi', 'London', 'Tokyo', 'Sao Paulo'
+        ].sort())
+    });
+  });
+});
+
+describe('Player Deck', function () {
+  describe('#Partition', function () {
+    it('Partitions Deck Correctly', function () {
+      let seeded = seedrandom()
+      let partitions = new player_deck.PlayerDeck(cities, [], 6, seeded).partitions;
+      expect(partitions.length).toBe(6);
+      partitions.forEach(p => {
+        expect(p.length).toBe(9);
+        expect(p.filter(c => c === "Epidemic").length).toBe(1)
+      })
+
+      partitions = new player_deck.PlayerDeck(cities, [], 5, seeded).partitions
+      expect(partitions.length).toBe(5);
+      let d = {}
+      partitions.forEach(p => {
+        if (p.length in d) {
+          d[p.length] += 1
+        } else {
+          d[p.length] = 1
+        }
+        expect(p.filter(c => c === "Epidemic").length).toBe(1)
+      })
+      expect(d).toEqual({ 10: 4, 13: 1 });
+    });
+  });
+});
+
+
+describe('Game', function () {
+  describe('#Epidemic', function () {
+    it('Intensifies', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, seeded);
+      expect(g.infection_rate_index).toBe(0)
+      expect(g.game_graph['Sao Paulo'].cubes[city.Colors.YELLOW]).toBe(0)
+      expect(g.game_graph['Buenos Aires'].cubes[city.Colors.YELLOW]).toBe(0)
+      expect(g.infection_deck.facedown_deck.peekFront()).toBe('Sao Paulo')
+      g.epidemic();
+      expect(g.infection_rate_index).toBe(1)
+      expect(g.game_graph['Sao Paulo'].cubes[city.Colors.YELLOW]).toBe(3)
+      expect(g.game_graph['Buenos Aires'].cubes[city.Colors.YELLOW]).toBe(0)
+      expect(g.infection_deck.facedown_deck.peekBack()).toBe('Sao Paulo')
+      g.epidemic();
+      expect(g.infection_rate_index).toBe(2)
+      expect(g.game_graph['Sao Paulo'].cubes[city.Colors.YELLOW]).toBe(3)
+      expect(g.game_graph['Buenos Aires'].cubes[city.Colors.YELLOW]).toBe(3)
+      expect(g.infection_deck.facedown_deck.peekAt(-2)).toBe('Sao Paulo')
+      expect(g.infection_deck.facedown_deck.peekBack()).toBe('Buenos Aires')
     });
   });
 });
