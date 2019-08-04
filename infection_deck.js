@@ -1,7 +1,10 @@
+const Denque = require("denque");
+
 function InfectionDeck(cities, rng) {
     this.rng = rng;
     this.facedown_deck = cities.map(city => city.name);
     this.shuffle(this.facedown_deck);
+    this.facedown_deck = new Denque(this.facedown_deck);
     this.faceup_deck = [];
 };
 
@@ -27,10 +30,17 @@ InfectionDeck.prototype.flip_card = function() {
     return card;
 };
 
+InfectionDeck.prototype.infect_epidemic = function()  {
+    let card = this.facedown_deck.shift()
+    this.faceup_deck.push(card);
+    return card;
+}
+
 InfectionDeck.prototype.intensify = function() {
-    this.shuffle(this.facedown_deck);
+    let toArr = this.facedown_deck.toArray()
+    this.shuffle(toArr);
     this.shuffle(this.faceup_deck);
-    this.facedown_deck = [...this.facedown_deck, ...this.faceup_deck]
+    this.facedown_deck = new Denque([...toArr, ...this.faceup_deck])
     this.faceup_deck = []
 };
 
