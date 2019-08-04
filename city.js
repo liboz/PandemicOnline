@@ -38,6 +38,10 @@ City.prototype.infect = function(game, color, visited) {
     }
 };
 
+City.prototype.infect_epidemic = function() {
+    this.cubes[this.color] = 3;
+};
+
 City.load = function(cities) {
     const game_graph = {}
 
@@ -53,7 +57,6 @@ City.load = function(cities) {
 
     return game_graph
 }
-
 
 // export the class
 module.exports = {

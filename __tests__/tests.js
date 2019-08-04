@@ -1,6 +1,9 @@
 const game = require('../game');
 const cities = require('../data/cities');
 const city = require('../city');
+const infection = require('../infection_deck');
+const seedrandom = require('seedrandom');
+
 
 describe('City', function () {
   describe('#Infect', function () {
@@ -12,6 +15,21 @@ describe('City', function () {
         expect(chennai.cubes[city.Colors.BLUE]).toBe(0);
         expect(chennai.cubes[city.Colors.RED]).toBe(0);
         expect(chennai.cubes[city.Colors.BLACK]).toBe(i + 1);
+        expect(chennai.cubes[city.Colors.YELLOW]).toBe(0);
+      }
+    });
+  });
+
+  describe('#Infect', function () {
+    it('Epidemic', function () {
+      let g = new game.Game(cities);
+      let chennai = g.game_graph['Chennai'];
+
+      for (let i = 0; i < 3; i++) {
+        chennai.infect_epidemic();
+        expect(chennai.cubes[city.Colors.BLUE]).toBe(0);
+        expect(chennai.cubes[city.Colors.RED]).toBe(0);
+        expect(chennai.cubes[city.Colors.BLACK]).toBe(3);
         expect(chennai.cubes[city.Colors.YELLOW]).toBe(0);
       }
     });
@@ -143,6 +161,94 @@ describe('Data Integrity', function () {
   describe('#CityNumber', function () {
     it('Is 48', function () {
       expect(cities.length).toBe(48);
+    });
+  });
+});
+
+describe('Infection Deck', function () {
+  describe('#Random', function () {
+    it('Shuffles', function () {
+      let seeded = seedrandom('test!')
+      let i = new infection.InfectionDeck(cities, seeded);
+      expect(i.facedown_deck).toEqual(
+        [
+          'Sao Paulo', 'Buenos Aires', 'Sydney',
+          'Tehran', 'Khartoum', 'Los Angeles',
+          'Atlanta', 'Seoul', 'Johannesburg',
+          'Washington', 'Chicago', 'Lagos',
+          'Miami', 'Kinshasa', 'Chennai',
+          'Paris', 'Algiers', 'Mumbai',
+          'Osaka', 'Santiago', 'Lima',
+          'Kolkata', 'Istanbul', 'Cairo',
+          'Bogota', 'Baghdad', 'St Petersburg',
+          'Moscow', 'Riyadh', 'Shanghai',
+          'Bangkok', 'Mexico City', 'Beijing',
+          'Essen', 'Milan', 'San Francisco',
+          'Jakarta', 'Montreal', 'Hong Kong',
+          'Madrid', 'New York', 'Delhi',
+          'Ho Chi Minh City', 'Manila', 'Taipei',
+          'Karachi', 'London', 'Tokyo'
+        ]);
+    });
+  });
+
+  describe('#Flip Card', function () {
+    it('Gets Top', function () {
+      let seeded = seedrandom('test!')
+      let i = new infection.InfectionDeck(cities, seeded);
+      expect(i.flip_card()).toBe("Tokyo")
+      expect(i.facedown_deck).toEqual(
+        [
+          'Sao Paulo', 'Buenos Aires', 'Sydney',
+          'Tehran', 'Khartoum', 'Los Angeles',
+          'Atlanta', 'Seoul', 'Johannesburg',
+          'Washington', 'Chicago', 'Lagos',
+          'Miami', 'Kinshasa', 'Chennai',
+          'Paris', 'Algiers', 'Mumbai',
+          'Osaka', 'Santiago', 'Lima',
+          'Kolkata', 'Istanbul', 'Cairo',
+          'Bogota', 'Baghdad', 'St Petersburg',
+          'Moscow', 'Riyadh', 'Shanghai',
+          'Bangkok', 'Mexico City', 'Beijing',
+          'Essen', 'Milan', 'San Francisco',
+          'Jakarta', 'Montreal', 'Hong Kong',
+          'Madrid', 'New York', 'Delhi',
+          'Ho Chi Minh City', 'Manila', 'Taipei',
+          'Karachi', 'London'
+        ]);
+      expect(i.faceup_deck).toEqual(['Tokyo'])
+    });
+  });
+
+  describe('#Intensify', function () {
+    it('Check Top Cards are correct', function () {
+      let seeded = seedrandom()
+      let i = new infection.InfectionDeck(cities, seeded);
+      
+      for (let j = 0; j < 9; j++) {
+        let c = i.facedown_deck[i.facedown_deck.length - 1];
+        expect(i.flip_card()).toBe(c)
+      }
+      let prev_facedown = [...i.facedown_deck];
+      let prev_faceup = [...i.faceup_deck];
+      prev_facedown.sort();
+      prev_faceup.sort();
+      i.intensify();
+      let after_intensify_down = i.facedown_deck.slice(0, 39)
+      let after_intensify_up = i.facedown_deck.slice(39)
+      after_intensify_down.sort()
+      after_intensify_up.sort()
+      expect(after_intensify_down).toEqual(prev_facedown)
+      expect(after_intensify_up).toEqual(prev_faceup)
+
+      for (let j = 0; j < 9; j++) {
+        i.flip_card()
+      }
+
+      let reflipped_down = [...i.facedown_deck]
+      let reflipped_up = [...i.faceup_deck]
+      expect(reflipped_down.sort()).toEqual(prev_facedown)
+      expect(reflipped_up.sort()).toEqual(prev_faceup)
     });
   });
 });

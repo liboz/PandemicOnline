@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "nodemon": "^1.19.1",
+    "seedrandom": "^3.0.1",
     "socket.io": "^2.2.0"
   },
   "devDependencies": {

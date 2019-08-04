@@ -1,7 +1,7 @@
 
 const express = require('express')
 const app = express()
-
+const seedrandom = require('seedrandom');
 
 //middlewares
 app.use(express.static('public'))
@@ -20,5 +20,6 @@ const cities = require('./data/cities')
 const game = require('./game')
 
 const games = []
-games.push(new game.Game(cities))
-console.log(games[0])
+let myrng = seedrandom();
+games.push(new game.Game(cities, myrng))
+//console.log(games[0])
