@@ -3,15 +3,14 @@ const infection = require('./infection_deck')
 const seedrandom = require('seedrandom');
 const player_deck = require('./player_deck')
 
-
-function Game(cities, rng = seedrandom() ) {
+function Game(cities, rng = seedrandom()) {
     this.game_graph = city.City.load(cities)
     this.outbreak_counter = 0
     this.infection_rate_index = 0
     this.infection_rate = [2,2,2,3,3,4,4]
     this.rng = rng;
-    this.infection_deck = new infection.InfectionDeck(cities, rng)
-    this.player_deck = new player_deck.PlayerDeck(cities, [], 5, rng)
+    this.infection_deck = new infection.InfectionDeck(cities, this.rng)
+    this.player_deck = new player_deck.PlayerDeck(cities, [], 5, this.rng)
 };
 
 Game.prototype.outbreak = function() {
@@ -28,6 +27,27 @@ Game.prototype.epidemic = function() {
     this.game_graph[card].infect_epidemic()
     this.infection_deck.intensify()
 };
+
+Game.prototype.infect_stage = function() {
+    for (let i = 0; i < this.infection_rate[this.infection_rate_index]; i++) {
+        let card = this.infection_deck.flip_card()
+        this.game_graph[card].infect()
+    }
+};
+
+Game.prototype.initialize_board = function() {
+    for (let i = 2; i >= 0; i--) { // do all 3 cube infections, then 2 cube etc
+        for (let j = 0; j < 3; j++) {
+            let card = this.infection_deck.flip_card()
+            for (let k = 0; k <= i; k++) { //# of cubes to infect based on index i
+                this.game_graph[card].infect(this)
+            }
+        }
+    }
+};
+
+
+
 // export the class
 module.exports = {
     Game: Game

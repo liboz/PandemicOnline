@@ -22,7 +22,7 @@ City.prototype.addNeighbor = function(neighbor) {
     this.neighbors.push(neighbor)
 };
 
-City.prototype.infect = function(game, color, visited) {
+City.prototype.infect = function(game, color = this.color, visited = new Set()) {
     if (this.cubes[color] < 3) {
         this.cubes[color] += 1
     } else {

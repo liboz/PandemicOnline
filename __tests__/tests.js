@@ -13,7 +13,7 @@ describe('City', function () {
       let g = new game.Game(cities);
       let chennai = g.game_graph['Chennai'];
       for (let i = 0; i < 3; i++) {
-        chennai.infect(g, city.Colors.BLACK, new Set());
+        chennai.infect(g);
         expect(chennai.cubes[city.Colors.BLUE]).toBe(0);
         expect(chennai.cubes[city.Colors.RED]).toBe(0);
         expect(chennai.cubes[city.Colors.BLACK]).toBe(i + 1);
@@ -42,7 +42,7 @@ describe('City', function () {
       let g = new game.Game(cities);
       let chennai = g.game_graph['Chennai'];
       for (let i = 0; i < 4; i++) {
-        chennai.infect(g, city.Colors.BLACK, new Set());
+        chennai.infect(g);
       }
       expect(chennai.cubes['black']).toBe(3);
       chennai.neighbors.forEach(neighbor => {
@@ -54,7 +54,7 @@ describe('City', function () {
 
       let bangkok = g.game_graph['Bangkok']
       for (let i = 0; i < 4; i++) {
-        bangkok.infect(g, city.Colors.RED, new Set());
+        bangkok.infect(g);
       }
       bangkok.neighbors.forEach(neighbor => {
         expect(neighbor.cubes[city.Colors.RED]).toBe(1);
@@ -64,7 +64,7 @@ describe('City', function () {
       expect(kolkata.cubes[city.Colors.RED]).toBe(1);
       expect(kolkata.cubes['black']).toBe(1);
       for (let i = 0; i < 3; i++) {
-        kolkata.infect(g, city.Colors.BLACK, new Set());
+        kolkata.infect(g);
       }
 
       expect(kolkata.cubes[city.Colors.RED]).toBe(1);
@@ -98,18 +98,18 @@ describe('City', function () {
       let g = new game.Game(cities);
       let chennai = g.game_graph['Chennai'];
       for (let i = 0; i < 3; i++) {
-        chennai.infect(g, city.Colors.BLACK, new Set());
+        chennai.infect(g);
       }
 
       let kolkata = g.game_graph['Kolkata']
       for (let i = 0; i < 3; i++) {
-        kolkata.infect(g, city.Colors.BLACK, new Set());
+        kolkata.infect(g);
       }
       expect(g.outbreak_counter).toBe(0);
-      chennai.infect(g, city.Colors.BLACK, new Set());
+      chennai.infect(g);
       expect(g.outbreak_counter).toBe(2);
 
-      kolkata.infect(g, city.Colors.BLACK, new Set());
+      kolkata.infect(g);
       expect(g.outbreak_counter).toBe(6);
     });
   });
@@ -119,19 +119,19 @@ describe('City', function () {
       let g = new game.Game(cities);
       let chennai = g.game_graph['Chennai'];
       for (let i = 0; i < 3; i++) {
-        chennai.infect(g, city.Colors.BLACK, new Set());
+        chennai.infect(g);
       }
 
       let kolkata = g.game_graph['Kolkata']
       for (let i = 0; i < 3; i++) {
-        kolkata.infect(g, city.Colors.BLACK, new Set());
+        kolkata.infect(g);
       }
       expect(g.outbreak_counter).toBe(0);
-      chennai.infect(g, city.Colors.BLACK, new Set());
+      chennai.infect(g);
       expect(g.outbreak_counter).toBe(2);
       let delhi = g.game_graph['Delhi'];
-      delhi.infect(g, city.Colors.BLACK, new Set());
-      kolkata.infect(g, city.Colors.BLACK, new Set());
+      delhi.infect(g);
+      kolkata.infect(g);
       expect(g.outbreak_counter).toBe(6);
     });
   });
@@ -142,18 +142,18 @@ describe('City', function () {
       let g = new game.Game(cities);
       let tokyo = g.game_graph['Taipei'];
       for (let i = 0; i < 3; i++) {
-        tokyo.infect(g, city.Colors.RED, new Set());
+        tokyo.infect(g);
       }
 
       let osaka = g.game_graph['Osaka']
       for (let i = 0; i < 3; i++) {
-        osaka.infect(g, city.Colors.RED, new Set());
+        osaka.infect(g);
       }
       expect(g.outbreak_counter).toBe(0);
-      tokyo.infect(g, city.Colors.RED, new Set());
+      tokyo.infect(g);
       expect(g.outbreak_counter).toBe(2);
 
-      osaka.infect(g, city.Colors.RED, new Set());
+      osaka.infect(g);
       expect(g.outbreak_counter).toBe(4);
     });
   });
@@ -314,30 +314,30 @@ describe('Infection Deck', function () {
           'Ho Chi Minh City', 'Manila', 'Taipei',
           'Karachi', 'London', 'Tokyo'
         ].reverse());
-        expect(i.infect_epidemic()).toBe('Sao Paulo')
-        expect(i.facedown_deck.length).toBe(31);
-        i.intensify()
-        expect(i.facedown_deck.splice(0, 31)).toEqual([
-          'Buenos Aires', 'Sydney',
-          'Tehran', 'Khartoum', 'Los Angeles',
-          'Atlanta', 'Seoul', 'Johannesburg',
-          'Washington', 'Chicago', 'Lagos',
-          'Miami', 'Kinshasa', 'Chennai',
-          'Paris', 'Algiers', 'Mumbai',
-          'Osaka', 'Santiago', 'Lima',
-          'Kolkata', 'Istanbul', 'Cairo',
-          'Bogota', 'Baghdad', 'St Petersburg',
-          'Moscow', 'Riyadh', 'Shanghai',
-          'Bangkok', 'Mexico City'
-        ])
-        expect(i.facedown_deck.toArray().sort()).toEqual([
-          'Beijing',
-          'Essen', 'Milan', 'San Francisco',
-          'Jakarta', 'Montreal', 'Hong Kong',
-          'Madrid', 'New York', 'Delhi',
-          'Ho Chi Minh City', 'Manila', 'Taipei',
-          'Karachi', 'London', 'Tokyo', 'Sao Paulo'
-        ].sort())
+      expect(i.infect_epidemic()).toBe('Sao Paulo')
+      expect(i.facedown_deck.length).toBe(31);
+      i.intensify()
+      expect(i.facedown_deck.splice(0, 31)).toEqual([
+        'Buenos Aires', 'Sydney',
+        'Tehran', 'Khartoum', 'Los Angeles',
+        'Atlanta', 'Seoul', 'Johannesburg',
+        'Washington', 'Chicago', 'Lagos',
+        'Miami', 'Kinshasa', 'Chennai',
+        'Paris', 'Algiers', 'Mumbai',
+        'Osaka', 'Santiago', 'Lima',
+        'Kolkata', 'Istanbul', 'Cairo',
+        'Bogota', 'Baghdad', 'St Petersburg',
+        'Moscow', 'Riyadh', 'Shanghai',
+        'Bangkok', 'Mexico City'
+      ])
+      expect(i.facedown_deck.toArray().sort()).toEqual([
+        'Beijing',
+        'Essen', 'Milan', 'San Francisco',
+        'Jakarta', 'Montreal', 'Hong Kong',
+        'Madrid', 'New York', 'Delhi',
+        'Ho Chi Minh City', 'Manila', 'Taipei',
+        'Karachi', 'London', 'Tokyo', 'Sao Paulo'
+      ].sort())
     });
   });
 });
@@ -392,4 +392,27 @@ describe('Game', function () {
       expect(g.infection_deck.facedown_deck.peekBack()).toBe('Buenos Aires')
     });
   });
+
+
+  describe('#Initialize Board', function () {
+    it('Right Number of Cubes ', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, seeded);
+      g.initialize_board();
+      expect(g.outbreak_counter).toBe(0);
+      let infected = [
+        'Madrid', 'New York', 'Delhi',
+        'Ho Chi Minh City', 'Manila', 'Taipei',
+        'Karachi', 'London', 'Tokyo', 
+      ].reverse()
+      expect(g.infection_deck.faceup_deck).toEqual(infected);
+      for (let i = 0; i < infected.length; i++) {
+        let cube_count = 3 - Math.trunc(i/3) 
+        let c = g.game_graph[infected[i]]
+        expect(c.cubes[c.color]).toBe(cube_count)
+      }
+    });
+  });
 });
+
+
