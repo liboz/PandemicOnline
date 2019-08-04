@@ -413,6 +413,18 @@ describe('Game', function () {
       }
     });
   });
+
+  describe('#Infect Stage', function () {
+    it('Check Right number of cards ', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, seeded);
+      for (let i = 0; i < 6; i++) {
+        g.infect_stage();
+        expect(g.infection_deck.faceup_deck.length).toBe(g.infection_rate[i]);
+        g.epidemic()
+      }
+    });
+  });
 });
 
 

@@ -31,7 +31,7 @@ Game.prototype.epidemic = function() {
 Game.prototype.infect_stage = function() {
     for (let i = 0; i < this.infection_rate[this.infection_rate_index]; i++) {
         let card = this.infection_deck.flip_card()
-        this.game_graph[card].infect()
+        this.game_graph[card].infect(this)
     }
 };
 
