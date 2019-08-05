@@ -71,7 +71,7 @@ describe('City', function () {
       expect(kolkata.cubes[city.Colors.BLACK]).toBe(3);
 
       chennai.neighbors.forEach(neighbor => {
-        if (neighbor === kolkata || kolkata.neighbors.includes(neighbor)) {
+        if (neighbor === kolkata || kolkata.neighbors.has(neighbor)) {
           expect(neighbor.cubes[city.Colors.BLACK]).toBe(3);
         } else {
           expect(neighbor.cubes[city.Colors.BLACK]).toBe(2)
@@ -79,7 +79,7 @@ describe('City', function () {
       });
 
       kolkata.neighbors.forEach(neighbor => {
-        if (neighbor === chennai || chennai.neighbors.includes(neighbor)) {
+        if (neighbor === chennai || chennai.neighbors.has(neighbor)) {
           expect(neighbor.cubes[city.Colors.BLACK]).toBe(3);
         } else {
           expect(neighbor.cubes[city.Colors.BLACK]).toBe(1)
@@ -423,6 +423,62 @@ describe('Game', function () {
         expect(g.infection_deck.faceup_deck.length).toBe(g.infection_rate[i]);
         g.epidemic()
       }
+    });
+  });
+});
+
+
+describe('Player', function () {
+  describe('#Movement', function () {
+    it('Drive/Ferry', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, seeded);
+      expect(g.players[0].move(g.game_graph, 'Chicago')).toBe(true)
+      expect(g.players[0].location).toBe('Chicago')
+      expect(g.players[0].move(g.game_graph, 'New York')).toBe(false)
+      expect(g.players[0].location).toBe('Chicago')
+      expect(g.players[0].move(g.game_graph, 'San Francisco')).toBe(true)
+      expect(g.players[0].location).toBe('San Francisco')
+      expect(g.players[0].move(g.game_graph, 'Tokyo')).toBe(true)
+      expect(g.players[0].location).toBe('Tokyo')
+      expect(g.players[0].move(g.game_graph, 'Atlanta')).toBe(false)
+      expect(g.players[0].location).toBe('Tokyo')
+    });
+  });
+  describe('#Movement', function () {
+    it('Charter/Direct', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, seeded);
+      expect(g.players[0].move(g.game_graph, 'Lima')).toBe(false)
+      expect(g.players[0].location).toBe('Atlanta')
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      //Direct
+      expect(g.players[0].hand.has('Lima')).toBe(true)
+      expect(g.players[0].move(g.game_graph, 'Lima')).toBe(true)
+      expect(g.players[0].location).toBe('Lima')
+      expect(g.players[0].hand.has('Lima')).toBe(false)
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      //Direct
+      expect(g.players[0].hand.has('Manila')).toBe(true)
+      expect(g.players[0].move(g.game_graph, 'Manila')).toBe(true)
+      expect(g.players[0].location).toBe('Manila')
+      expect(g.players[0].hand.has('Manila')).toBe(false)
+      
+      //Drive/Ferry
+      expect(g.players[0].hand.has('Ho Chi Minh City')).toBe(true)
+      expect(g.players[0].move(g.game_graph, 'Ho Chi Minh City')).toBe(true)
+      expect(g.players[0].location).toBe('Ho Chi Minh City')
+
+      //Charter
+      expect(g.players[0].hand.has('Ho Chi Minh City')).toBe(true)
+      expect(g.players[0].hand.has('Tokyo')).toBe(false)
+      expect(g.players[0].move(g.game_graph, 'Tokyo')).toBe(true)
+      expect(g.players[0].location).toBe('Tokyo')
+      expect(g.players[0].hand.has('Ho Chi Minh City')).toBe(false)
     });
   });
 });

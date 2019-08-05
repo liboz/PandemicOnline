@@ -15,11 +15,12 @@ function City(name, location, color) {
         'black': 0,
         'yellow': 0
     }
-    this.neighbors = []
+    this.neighbors = new Set()
+    this.hasResearchStation = true ? location == 'Atlanta' : false
 };
 
 City.prototype.addNeighbor = function(neighbor) {
-    this.neighbors.push(neighbor)
+    this.neighbors.add(neighbor)
 };
 
 City.prototype.infect = function(game, color = this.color, visited = new Set()) {

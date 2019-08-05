@@ -2,6 +2,7 @@ const city = require('./city');
 const infection = require('./infection_deck')
 const seedrandom = require('seedrandom');
 const player_deck = require('./player_deck')
+const player = require('./player')
 
 function Game(cities, rng = seedrandom()) {
     this.game_graph = city.City.load(cities)
@@ -11,6 +12,7 @@ function Game(cities, rng = seedrandom()) {
     this.rng = rng;
     this.infection_deck = new infection.InfectionDeck(cities, this.rng)
     this.player_deck = new player_deck.PlayerDeck(cities, [], 5, this.rng)
+    this.players = [new player.Player()]
 };
 
 Game.prototype.outbreak = function() {
