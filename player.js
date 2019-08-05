@@ -27,6 +27,15 @@ Player.prototype.draw = function(game) {
     this.hand.add(card)
 }
 
+Player.prototype.canBuildResearchStation = function(game_graph) {
+    return !game_graph[this.location].hasResearchStation && this.hand.has(this.location)
+}
+
+Player.prototype.buildResearchStation = function(game, game_graph) {
+    this.hand.delete(this.location)
+    game_graph[this.location].hasResearchStation = true
+    game.research_stations.add(this.location)
+}
 
 // export the class
 module.exports = {

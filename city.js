@@ -29,7 +29,7 @@ City.prototype.infect = function(game, color = this.color, visited = new Set()) 
     } else {
         visited.add(this);
         game.outbreak();
-        console.log({'outbreak': this.name});
+        //console.log({'outbreak': this.name});
         this.neighbors.forEach((neighbor) => {
             if (!visited.has(neighbor)) {
                 neighbor.infect(game, color, visited);

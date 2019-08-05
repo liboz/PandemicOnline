@@ -13,6 +13,7 @@ function Game(cities, rng = seedrandom()) {
     this.infection_deck = new infection.InfectionDeck(cities, this.rng)
     this.player_deck = new player_deck.PlayerDeck(cities, [], 5, this.rng)
     this.players = [new player.Player()]
+    this.research_stations = new Set(['Atlanta'])
 };
 
 Game.prototype.outbreak = function() {

@@ -445,6 +445,7 @@ describe('Player', function () {
       expect(g.players[0].location).toBe('Tokyo')
     });
   });
+
   describe('#Movement', function () {
     it('Charter/Direct', function () {
       let seeded = seedrandom('test!')
@@ -479,6 +480,27 @@ describe('Player', function () {
       expect(g.players[0].move(g.game_graph, 'Tokyo')).toBe(true)
       expect(g.players[0].location).toBe('Tokyo')
       expect(g.players[0].hand.has('Ho Chi Minh City')).toBe(false)
+    });
+  });
+
+  describe('#Build Research Station', function () {
+    it('Can Build', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, seeded);
+      expect(g.research_stations).toEqual(new Set(['Atlanta']))
+      expect(g.players[0].canBuildResearchStation(g.game_graph)).toBe(false);
+      g.players[0].draw(g)
+      expect(g.players[0].hand).toEqual(new Set(['Lima']))
+      g.players[0].move(g.game_graph, 'Miami')
+      g.players[0].move(g.game_graph, 'Bogota')
+      g.players[0].move(g.game_graph, 'Lima')
+      expect(g.players[0].hand).toEqual(new Set(['Lima']))
+      expect(g.players[0].canBuildResearchStation(g.game_graph)).toBe(true);
+      expect(g.game_graph['Lima'].hasResearchStation).toEqual(false)
+      g.players[0].buildResearchStation(g, g.game_graph)
+      expect(g.players[0].hand).toEqual(new Set())
+      expect(g.research_stations).toEqual(new Set(['Atlanta', 'Lima']))
+      expect(g.game_graph['Lima'].hasResearchStation).toEqual(true)
     });
   });
 });
