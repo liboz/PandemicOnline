@@ -49,9 +49,6 @@ Game.prototype.initialize_board = function() {
     }
 };
 
-
-
-// export the class
 module.exports = {
     Game: Game
 };

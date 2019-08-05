@@ -33,7 +33,6 @@ PlayerDeck.prototype.flip_card = function () {
     return card;
 };
 
-// export the class
 module.exports = {
     PlayerDeck: PlayerDeck,
 };

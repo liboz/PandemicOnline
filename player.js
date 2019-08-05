@@ -38,7 +38,6 @@ Player.prototype.buildResearchStation = function(game, game_graph) {
     game.research_stations.add(this.location)
 }
 
-// export the class
 module.exports = {
     Player: Player,
 };

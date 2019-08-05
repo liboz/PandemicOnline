@@ -59,7 +59,6 @@ City.load = function(cities) {
     return game_graph
 }
 
-// export the class
 module.exports = {
     City: City,
     Colors: colors

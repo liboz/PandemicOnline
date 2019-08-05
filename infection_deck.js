@@ -33,7 +33,6 @@ InfectionDeck.prototype.intensify = function() {
     this.faceup_deck = []
 };
 
-// export the class
 module.exports = {
     InfectionDeck: InfectionDeck,
 };
