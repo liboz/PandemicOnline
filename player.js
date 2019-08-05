@@ -5,6 +5,7 @@ function Player(role, location = "Atlanta") {
 };
 
 Player.prototype.move = function (game_graph, final_destination) {
+    console.log(game_graph[this.location], game_graph[final_destination])
     if (game_graph[this.location].neighbors.has(game_graph[final_destination]) || // drive/ferry
     game_graph[this.location].hasResearchStation && game_graph[final_destination].hasResearchStation) { //shuttle
         this.location = final_destination;

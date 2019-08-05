@@ -501,6 +501,8 @@ describe('Player', function () {
       expect(g.players[0].hand).toEqual(new Set())
       expect(g.research_stations).toEqual(new Set(['Atlanta', 'Lima']))
       expect(g.game_graph['Lima'].hasResearchStation).toEqual(true)
+      expect(g.players[0].move(g.game_graph, 'Atlanta')).toBe(true)
+      expect(g.players[0].move(g.game_graph, 'Lima')).toBe(true)
     });
   });
 });
