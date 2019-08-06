@@ -19,31 +19,35 @@ function City(name, location, color) {
     this.hasResearchStation = true ? name === 'Atlanta' : false
 };
 
-City.prototype.addNeighbor = function(neighbor) {
+City.prototype.addNeighbor = function (neighbor) {
     this.neighbors.add(neighbor)
 };
 
-City.prototype.infect = function(game, color = this.color, visited = new Set()) {
-    if (this.cubes[color] < 3) {
-        this.cubes[color] += 1
-    } else {
-        visited.add(this);
-        game.outbreak();
-        //console.log({'outbreak': this.name});
-        this.neighbors.forEach((neighbor) => {
-            if (!visited.has(neighbor)) {
-                neighbor.infect(game, color, visited);
-            }
-            
-        })
+City.prototype.infect = function (game, color = this.color, visited = new Set()) {
+    if (game.cured[color] != 2) {
+        if (this.cubes[color] < 3) {
+            this.cubes[color] += 1
+        } else {
+            visited.add(this);
+            game.outbreak();
+            //console.log({'outbreak': this.name});
+            this.neighbors.forEach((neighbor) => {
+                if (!visited.has(neighbor)) {
+                    neighbor.infect(game, color, visited);
+                }
+
+            })
+        }
     }
 };
 
-City.prototype.infect_epidemic = function() {
-    this.cubes[this.color] = 3;
+City.prototype.infect_epidemic = function (game) {
+    if (game.cured[this.color] != 2) {
+        this.cubes[this.color] = 3;
+    }
 };
 
-City.load = function(cities) {
+City.load = function (cities) {
     const game_graph = {}
 
     cities.forEach((data) => {

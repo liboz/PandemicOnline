@@ -14,6 +14,12 @@ function Game(cities, rng = seedrandom()) {
     this.player_deck = new player_deck.PlayerDeck(cities, [], 5, this.rng)
     this.players = [new player.Player()]
     this.research_stations = new Set(['Atlanta'])
+    this.cured = { // 0 = uncured, 1 = cured, 2 = eradicated
+        'blue': 0,
+        'red': 0,
+        'black': 0,
+        'yellow': 0
+    }
 };
 
 Game.prototype.outbreak = function() {
@@ -27,7 +33,7 @@ Game.prototype.outbreak = function() {
 Game.prototype.epidemic = function() {
     this.infection_rate_index += 1;
     let card = this.infection_deck.infect_epidemic();
-    this.game_graph[card].infect_epidemic()
+    this.game_graph[card].infect_epidemic(this)
     this.infection_deck.intensify()
 };
 

@@ -23,12 +23,27 @@ describe('City', function () {
   });
 
   describe('#Infect', function () {
+    it('No Infect when Eradicated', function () {
+      let g = new game.Game(cities);
+      let chennai = g.game_graph['Chennai'];
+      g.cured[city.Colors.BLACK] = 2
+      for (let i = 0; i < 3; i++) {
+        chennai.infect(g);
+        expect(chennai.cubes[city.Colors.BLUE]).toBe(0);
+        expect(chennai.cubes[city.Colors.RED]).toBe(0);
+        expect(chennai.cubes[city.Colors.BLACK]).toBe(0);
+        expect(chennai.cubes[city.Colors.YELLOW]).toBe(0);
+      }
+    });
+  });
+
+  describe('#Infect', function () {
     it('Epidemic', function () {
       let g = new game.Game(cities);
       let chennai = g.game_graph['Chennai'];
 
       for (let i = 0; i < 3; i++) {
-        chennai.infect_epidemic();
+        chennai.infect_epidemic(g);
         expect(chennai.cubes[city.Colors.BLUE]).toBe(0);
         expect(chennai.cubes[city.Colors.RED]).toBe(0);
         expect(chennai.cubes[city.Colors.BLACK]).toBe(3);
@@ -390,6 +405,17 @@ describe('Game', function () {
       expect(g.game_graph['Buenos Aires'].cubes[city.Colors.YELLOW]).toBe(3)
       expect(g.infection_deck.facedown_deck.peekAt(-2)).toBe('Sao Paulo')
       expect(g.infection_deck.facedown_deck.peekBack()).toBe('Buenos Aires')
+    });
+  });
+
+  describe('#Epidemic', function () {
+    it('No Epidemic Cubes when Disease Eradicated', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, seeded);
+      g.cured[city.Colors.YELLOW] = 2
+      g.epidemic();
+      expect(g.infection_rate_index).toBe(1)
+      expect(g.game_graph['Sao Paulo'].cubes[city.Colors.YELLOW]).toBe(0)
     });
   });
 
