@@ -635,17 +635,25 @@ describe('Player', function () {
       g.players[0].cure(g, [...g.players[0].hand])
       expect(g.cured[city.Colors.RED]).toBe(1)
 
-      g.players[0].hand.add('Algiers') 
+      g.players[0].hand.add('Algiers')
       g.players[0].hand.add('Cairo')
       g.players[0].hand.add('Istanbul')
       g.players[0].hand.add('Moscow')
       g.players[0].hand.add('Baghdad')
       expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(true)
       g.players[0].move(g.game_graph, 'Miami') // only cure in research station
-      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(false) 
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(false)
     });
   });
 
+  describe('#Cure', function () {
+    it('Need the cards in hand', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, seeded);
+      g.infect_stage() // infect tokyo
+      expect(g.players[0].canCure(g, ['Tokyo', 'Osaka', 'Beijing', 'Seoul', 'Hong Kong'])).toBe(false)
+    });
+  });
 
 });
 
