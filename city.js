@@ -19,24 +19,30 @@ function City(name, location, color) {
     this.hasResearchStation = true ? name === 'Atlanta' : false
 };
 
-City.prototype.addNeighbor = function (neighbor) {
+City.prototype.add_neighbor = function (neighbor) {
     this.neighbors.add(neighbor)
 };
 
 City.prototype.infect = function (game, color = this.color, visited = new Set()) {
     if (game.cured[color] != 2) {
         if (this.cubes[color] < 3) {
+            game.cubes[color] -= 1
             this.cubes[color] += 1
+            if (game.cubes[color] < 0) {
+                return false
+            }
+            return true
         } else {
             visited.add(this);
-            game.outbreak();
+            let end = game.outbreak();
             //console.log({'outbreak': this.name});
             this.neighbors.forEach((neighbor) => {
                 if (!visited.has(neighbor)) {
-                    neighbor.infect(game, color, visited);
+                    end = neighbor.infect(game, color, visited) && end; //want to always infect first
                 }
 
             })
+            return end;
         }
     }
 };
@@ -56,7 +62,7 @@ City.load = function (cities) {
 
     cities.forEach((data) => {
         data.adjacent.forEach((neighbor) => {
-            game_graph[data.name].addNeighbor(game_graph[neighbor]);
+            game_graph[data.name].add_neighbor(game_graph[neighbor]);
         })
     })
 

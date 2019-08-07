@@ -104,7 +104,6 @@ describe('City', function () {
       bangkok.neighbors.forEach(neighbor => {
         expect(neighbor.cubes[city.Colors.RED]).toBe(1);
       });
-
     });
   });
 
@@ -444,11 +443,32 @@ describe('Game', function () {
     it('Check Right number of cards ', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, seeded);
+      g.cured[city.Colors.RED] = 2 //eradicate all the diseases so we dont have to deal with outbreak counter
+      g.cured[city.Colors.BLACK] = 2
+      g.cured[city.Colors.BLUE] = 2
+      g.cured[city.Colors.YELLOW] = 2
       for (let i = 0; i < 6; i++) {
         g.infect_stage();
         expect(g.infection_deck.faceup_deck.length).toBe(g.infection_rate[i]);
         g.epidemic()
       }
+    });
+  });
+
+  describe('#Outbreak', function () {
+    it('over 8 ends game ', function () {
+      let seeded = seedrandom('test33!') // want exactly 8!
+      let g = new game.Game(cities, seeded);
+      for (let i = 0; i < 3; i++) {
+        g.infect_stage();
+        g.epidemic()
+      }
+      expect(g.lost).toBe(false)
+      g.epidemic()
+      g.epidemic()
+      g.infect_stage();
+      g.infect_stage();
+      expect(g.lost).toBe(true)
     });
   });
 });
@@ -514,16 +534,16 @@ describe('Player', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, seeded);
       expect(g.research_stations).toEqual(new Set(['Atlanta']))
-      expect(g.players[0].canBuildResearchStation(g.game_graph)).toBe(false);
+      expect(g.players[0].canBuildResearchStation(g)).toBe(false);
       g.players[0].draw(g)
       expect(g.players[0].hand).toEqual(new Set(['Lima']))
       g.players[0].move(g.game_graph, 'Miami')
       g.players[0].move(g.game_graph, 'Bogota')
       g.players[0].move(g.game_graph, 'Lima')
       expect(g.players[0].hand).toEqual(new Set(['Lima']))
-      expect(g.players[0].canBuildResearchStation(g.game_graph)).toBe(true);
+      expect(g.players[0].canBuildResearchStation(g)).toBe(true);
       expect(g.game_graph['Lima'].hasResearchStation).toEqual(false)
-      g.players[0].buildResearchStation(g, g.game_graph)
+      g.players[0].buildResearchStation(g)
       expect(g.players[0].hand).toEqual(new Set())
       expect(g.research_stations).toEqual(new Set(['Atlanta', 'Lima']))
       expect(g.game_graph['Lima'].hasResearchStation).toEqual(true)
@@ -531,6 +551,21 @@ describe('Player', function () {
       expect(g.players[0].move(g.game_graph, 'Lima')).toBe(true)
     });
   });
+
+  describe('#Draw out the Deck', function () {
+    it('Lose Game', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, seeded);
+      for (let i = 0; i < 53; i ++ ) { // 48 cities + 5 epidemic
+        g.players[0].draw(g)
+        expect(g.lost).toBe(false)
+      }
+      g.players[0].draw(g)
+        expect(g.lost).toBe(true)
+    });
+  });
+
+
 });
 
 

@@ -20,6 +20,13 @@ function Game(cities, rng = seedrandom()) {
         'black': 0,
         'yellow': 0
     }
+    this.cubes = {
+        'blue': 24,
+        'red': 24,
+        'black': 24,
+        'yellow': 24
+    }
+    this.lost = false
 };
 
 Game.prototype.outbreak = function() {
@@ -33,6 +40,7 @@ Game.prototype.outbreak = function() {
 Game.prototype.epidemic = function() {
     this.infection_rate_index += 1;
     let card = this.infection_deck.infect_epidemic();
+    console.log(card)
     this.game_graph[card].infect_epidemic(this)
     this.infection_deck.intensify()
 };
@@ -40,7 +48,9 @@ Game.prototype.epidemic = function() {
 Game.prototype.infect_stage = function() {
     for (let i = 0; i < this.infection_rate[this.infection_rate_index]; i++) {
         let card = this.infection_deck.flip_card()
-        this.game_graph[card].infect(this)
+        if (!this.game_graph[card].infect(this)) {
+            this.lose_game()
+        }
     }
 };
 
@@ -54,6 +64,10 @@ Game.prototype.initialize_board = function() {
         }
     }
 };
+
+Game.prototype.lose_game = function()  {
+    this.lost = true
+}
 
 module.exports = {
     Game: Game

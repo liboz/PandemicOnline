@@ -6,7 +6,7 @@ function Player(role, location = "Atlanta") {
 
 Player.prototype.move = function (game_graph, final_destination) {
     if (game_graph[this.location].neighbors.has(game_graph[final_destination]) || // drive/ferry
-    game_graph[this.location].hasResearchStation && game_graph[final_destination].hasResearchStation) { //shuttle
+        game_graph[this.location].hasResearchStation && game_graph[final_destination].hasResearchStation) { //shuttle
         this.location = final_destination;
         return true
     } else if (this.hand.has(final_destination)) { // direct
@@ -22,19 +22,48 @@ Player.prototype.move = function (game_graph, final_destination) {
     }
 };
 
-Player.prototype.draw = function(game) {
+Player.prototype.draw = function (game) {
     let card = game.player_deck.flip_card()
+    if (card === undefined) {
+        game.lose_game();
+    }
     this.hand.add(card)
+    
 }
 
-Player.prototype.canBuildResearchStation = function(game_graph) {
-    return !game_graph[this.location].hasResearchStation && this.hand.has(this.location)
+Player.prototype.canBuildResearchStation = function (game) {
+    return !game.game_graph[this.location].hasResearchStation && this.hand.has(this.location)
 }
 
-Player.prototype.buildResearchStation = function(game, game_graph) {
+Player.prototype.buildResearchStation = function (game) {
     this.hand.delete(this.location)
-    game_graph[this.location].hasResearchStation = true
+    game.game_graph[this.location].hasResearchStation = true
     game.research_stations.add(this.location)
+}
+
+Player.prototype.canCure = function (game, cards) {
+    if (!game.game_graph[this.location].hasResearchStation || game.cured[game.game_graph[this.location].color] > 0) {
+        return false
+    } else {
+        if (cards.length === 5) {
+            let color = game.game_graph[this.location].color
+            let count = 0
+            cards.forEach(card => {
+                if (this.hand.has(card) && game.game_graph[card].color === color) {
+                    count += 1
+                }
+            })
+            return count === 5;
+        }
+        return false;
+    }
+}
+
+Player.prototype.cure = function (game, cards) {
+    cards.forEach(card => {
+        this.hand.delete(card);
+    })
+    game.cured[game.game_graph[this.location].color] = 1 ? game.cubes[game.game_graph[this.location].color] !== 24 : 2
 }
 
 module.exports = {
