@@ -655,6 +655,47 @@ describe('Player', function () {
     });
   });
 
+  describe('#Cure', function () {
+    it('Cure all means game won', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, seeded);
+      g.players[0].hand.add('Chennai')
+      g.players[0].hand.add('Tehran')
+      g.players[0].hand.add('Karachi')
+      g.players[0].hand.add('Delhi')
+      g.players[0].hand.add('Mumbai')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(true)
+      g.players[0].cure(g, [...g.players[0].hand])
+
+      g.infect_stage() // infect tokyo
+      g.players[0].hand.add('Tokyo')
+      g.players[0].hand.add('Osaka')
+      g.players[0].hand.add('Beijing')
+      g.players[0].hand.add('Seoul')
+      g.players[0].hand.add('Hong Kong')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(true)
+      g.players[0].cure(g, [...g.players[0].hand])
+
+      g.players[0].hand.add('San Francisco')
+      g.players[0].hand.add('Chicago')
+      g.players[0].hand.add('Atlanta')
+      g.players[0].hand.add('Montreal')
+      g.players[0].hand.add('Washington')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(true)
+      g.players[0].cure(g, [...g.players[0].hand])
+
+      g.players[0].hand.add('Los Angeles')
+      g.players[0].hand.add('Mexico City')
+      g.players[0].hand.add('Miami')
+      g.players[0].hand.add('Lagos')
+      g.players[0].hand.add('Santiago')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(true)
+      g.players[0].cure(g, [...g.players[0].hand])
+
+      expect(g.won).toBe(true)
+    });
+  });
+
 });
 
 

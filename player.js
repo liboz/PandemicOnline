@@ -69,6 +69,13 @@ Player.prototype.cure = function (game, cards) {
         this.hand.delete(card);
     })
     game.cured[color] = game.cubes[color] !== 24 ? 1 : 2
+    if (Object.values(game.cured).every(c => c > 0)) {
+        game.win_game()
+    }
+}
+
+Player.prototype.canTreat = function (game) {
+
 }
 
 module.exports = {

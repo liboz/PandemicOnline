@@ -27,6 +27,7 @@ function Game(cities, rng = seedrandom()) {
         'yellow': 24
     }
     this.lost = false
+    this.won = false
 };
 
 Game.prototype.outbreak = function() {
@@ -67,6 +68,11 @@ Game.prototype.initialize_board = function() {
 Game.prototype.lose_game = function()  {
     this.lost = true
 }
+
+Game.prototype.win_game = function()  {
+    this.won = true
+}
+
 
 module.exports = {
     Game: Game
