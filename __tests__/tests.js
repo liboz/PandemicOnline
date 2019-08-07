@@ -489,10 +489,8 @@ describe('Game', function () {
       let delhi = g.game_graph['Delhi'];
       delhi.infect(g);
       kolkata.infect(g);
-      console.log(g.cubes)
       expect(g.lost).toBe(false)
       g.infect_stage() // next card is Tehran
-      console.log(g.cubes)
       expect(g.lost).toBe(true)
     });
   });
@@ -554,7 +552,7 @@ describe('Player', function () {
     });
   });
 
-  describe('#Build Research Station', function () {
+  describe('#Research Station', function () {
     it('Can Build', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, seeded);
@@ -587,6 +585,45 @@ describe('Player', function () {
       }
       g.players[0].draw(g)
         expect(g.lost).toBe(true)
+    });
+  });
+
+  describe('#Cure', function () {
+    it('Can Cure', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, seeded);
+      g.players[0].hand.add('Chennai')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(false)
+      g.players[0].hand.add('Tehran')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(false)
+      g.players[0].hand.add('Karachi')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(false)
+      g.players[0].hand.add('Delhi')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(false)
+      g.players[0].hand.add('Mumbai')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(true)
+      g.players[0].hand.add('Miami')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(false) // submitted too many cards
+      g.players[0].move(g.game_graph, 'Miami')
+      expect(g.players[0].canBuildResearchStation(g)).toBe(true)
+      g.players[0].buildResearchStation(g)
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(true)
+      g.players[0].cure(g,  [...g.players[0].hand])
+      expect(g.cured[city.Colors.BLACK]).toBe(2)
+
+      g.infect_stage() // infect tokyo
+      g.players[0].hand.add('Tokyo')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(false)
+      g.players[0].hand.add('Osaka')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(false)
+      g.players[0].hand.add('Beijing')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(false)
+      g.players[0].hand.add('Seoul')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(false)
+      g.players[0].hand.add('Hong Kong')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(true)
+      g.players[0].cure(g,  [...g.players[0].hand])
+      expect(g.cured[city.Colors.RED]).toBe(1)
     });
   });
 

@@ -28,7 +28,7 @@ Player.prototype.draw = function (game) {
         game.lose_game();
     }
     this.hand.add(card)
-    
+
 }
 
 Player.prototype.canBuildResearchStation = function (game) {
@@ -42,28 +42,33 @@ Player.prototype.buildResearchStation = function (game) {
 }
 
 Player.prototype.canCure = function (game, cards) {
-    if (!game.game_graph[this.location].hasResearchStation || game.cured[game.game_graph[this.location].color] > 0) {
+    if (!game.game_graph[this.location].hasResearchStation) {
         return false
     } else {
         if (cards.length === 5) {
-            let color = game.game_graph[this.location].color
-            let count = 0
-            cards.forEach(card => {
-                if (this.hand.has(card) && game.game_graph[card].color === color) {
-                    count += 1
-                }
-            })
-            return count === 5;
+            let color = game.game_graph[cards[0]].color
+            if (game.cured[color] > 0) {
+                return false
+            } else {
+                let count = 0
+                cards.forEach(card => {
+                    if (this.hand.has(card) && game.game_graph[card].color === color) {
+                        count += 1
+                    }
+                })
+                return count === 5;
+            }
         }
         return false;
     }
 }
 
 Player.prototype.cure = function (game, cards) {
+    let color = game.game_graph[cards[0]].color
     cards.forEach(card => {
         this.hand.delete(card);
     })
-    game.cured[game.game_graph[this.location].color] = 1 ? game.cubes[game.game_graph[this.location].color] !== 24 : 2
+    game.cured[color] = game.cubes[color] !== 24 ? 1 : 2
 }
 
 module.exports = {
