@@ -16,7 +16,7 @@ function City(name, location, color) {
         'yellow': 0
     }
     this.neighbors = new Set()
-    this.hasResearchStation = true ? name === 'Atlanta' : false
+    this.hasResearchStation = name === 'Atlanta' ? true : false
 };
 
 City.prototype.add_neighbor = function (neighbor) {
