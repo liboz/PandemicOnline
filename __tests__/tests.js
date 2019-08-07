@@ -471,6 +471,31 @@ describe('Game', function () {
       expect(g.lost).toBe(true)
     });
   });
+
+  describe('#Run out of Cubes', function () {
+    it('Lose game', function () {
+      let seeded = seedrandom('test33!')
+      let g = new game.Game(cities, seeded);
+      let chennai = g.game_graph['Chennai'];
+      for (let i = 0; i < 3; i++) {
+        chennai.infect(g);
+      }
+
+      let kolkata = g.game_graph['Kolkata']
+      for (let i = 0; i < 3; i++) {
+        kolkata.infect(g);
+      }
+      chennai.infect(g);
+      let delhi = g.game_graph['Delhi'];
+      delhi.infect(g);
+      kolkata.infect(g);
+      console.log(g.cubes)
+      expect(g.lost).toBe(false)
+      g.infect_stage() // next card is Tehran
+      console.log(g.cubes)
+      expect(g.lost).toBe(true)
+    });
+  });
 });
 
 

@@ -40,7 +40,6 @@ Game.prototype.outbreak = function() {
 Game.prototype.epidemic = function() {
     this.infection_rate_index += 1;
     let card = this.infection_deck.infect_epidemic();
-    console.log(card)
     this.game_graph[card].infect_epidemic(this)
     this.infection_deck.intensify()
 };
