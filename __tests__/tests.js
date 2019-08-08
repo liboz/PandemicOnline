@@ -733,6 +733,28 @@ describe('Player', function () {
       expect(g.cubes[city.Colors.RED]).toBe(24)
     });
   });
+
+  describe('#Discard Cards', function () {
+    it('Check Validity', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, seeded);
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      console.log(g.players[0].hand)
+      expect(g.players[0].hand.size).toBe(9)
+      expect(g.players[0].discard(['Tokyo', 'Lima'])).toBe(false)
+      expect(g.players[0].hand.size).toBe(9)
+      expect(g.players[0].discard(['Manila', 'Lima'])).toBe(true)
+      expect(g.players[0].hand.size).toBe(7)
+    });
+  });
 });
 
 

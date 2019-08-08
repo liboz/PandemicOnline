@@ -86,6 +86,14 @@ Player.prototype.treat = function (game, color) {
     }
 }
 
+Player.prototype.discard = function(cards) {
+    if (cards.every(c => this.hand.has(c))) {
+        cards.forEach(c => this.hand.delete(c))
+        return true;
+    }
+    return false;
+}
+
 module.exports = {
     Player: Player,
 };
