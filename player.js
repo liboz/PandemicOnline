@@ -31,17 +31,17 @@ Player.prototype.draw = function (game) {
 
 }
 
-Player.prototype.canBuildResearchStation = function (game) {
+Player.prototype.can_build_research_station = function (game) {
     return !game.game_graph[this.location].hasResearchStation && this.hand.has(this.location)
 }
 
-Player.prototype.buildResearchStation = function (game) {
+Player.prototype.build_research_station = function (game) {
     this.hand.delete(this.location)
     game.game_graph[this.location].hasResearchStation = true
     game.research_stations.add(this.location)
 }
 
-Player.prototype.canCure = function (game, cards) {
+Player.prototype.can_cure = function (game, cards) {
     if (!game.game_graph[this.location].hasResearchStation) {
         return false
     } else {
@@ -74,7 +74,7 @@ Player.prototype.cure = function (game, cards) {
     }
 }
 
-Player.prototype.canTreat = function (game) {
+Player.prototype.can_treat = function (game) {
     return Object.values(game.game_graph[this.location].cubes).reduce((a, b) => a + b, 0) > 0
 }
 
@@ -92,6 +92,14 @@ Player.prototype.discard = function(cards) {
         return true;
     }
     return false;
+}
+
+Player.prototype.can_trade = function(game) {
+
+}
+
+Player.prototype.trade = function(game) {
+    
 }
 
 module.exports = {
