@@ -696,6 +696,43 @@ describe('Player', function () {
     });
   });
 
+
+  describe('#Treat Disease', function () {
+    it('Eradicate after treating last cube', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, seeded);
+      expect(g.cubes[city.Colors.RED]).toBe(24)
+      g.infect_stage() // infect tokyo
+      g.infect_stage() // infect taipei
+      expect(g.cubes[city.Colors.RED]).toBe(22)
+
+      g.players[0].hand.add('Tokyo')
+      g.players[0].hand.add('Osaka')
+      g.players[0].hand.add('Beijing')
+      g.players[0].hand.add('Seoul')
+      g.players[0].hand.add('Hong Kong')
+      expect(g.players[0].canCure(g, [...g.players[0].hand])).toBe(true)
+      g.players[0].cure(g, [...g.players[0].hand])
+      expect(g.cured[city.Colors.RED]).toBe(1)
+
+      g.players[0].move(g.game_graph, 'Chicago') 
+      g.players[0].move(g.game_graph, 'San Francisco') 
+      g.players[0].move(g.game_graph, 'Tokyo') 
+      
+      expect(g.players[0].canTreat(g)).toBe(true)
+      g.players[0].treat(g, city.Colors.RED)
+      expect(g.cured[city.Colors.RED]).toBe(1)
+      expect(g.cubes[city.Colors.RED]).toBe(23)
+
+      g.players[0].move(g.game_graph, 'Osaka') 
+      g.players[0].move(g.game_graph, 'Taipei') 
+
+      expect(g.players[0].canTreat(g)).toBe(true)
+      g.players[0].treat(g, city.Colors.RED)
+      expect(g.cured[city.Colors.RED]).toBe(2)
+      expect(g.cubes[city.Colors.RED]).toBe(24)
+    });
+  });
 });
 
 

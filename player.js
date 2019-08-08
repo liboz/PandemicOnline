@@ -75,7 +75,15 @@ Player.prototype.cure = function (game, cards) {
 }
 
 Player.prototype.canTreat = function (game) {
+    return Object.values(game.game_graph[this.location].cubes).reduce((a, b) => a + b, 0) > 0
+}
 
+Player.prototype.treat = function (game, color) {
+    game.game_graph[this.location].cubes[color] -= 1
+    game.cubes[color] += 1
+    if (game.cured[color] === 1 && game.cubes[color] === 24) {
+        game.cured[color] = 2
+    }
 }
 
 module.exports = {
