@@ -504,14 +504,23 @@ describe('Player', function () {
       let g = new game.Game(cities, seeded);
       expect(g.players[0].move(g.game_graph, 'Chicago')).toBe(true)
       expect(g.players[0].location).toBe('Chicago')
+      expect(g.game_graph['Chicago'].players.has(g.players[0])).toBe(true)
+
       expect(g.players[0].move(g.game_graph, 'New York')).toBe(false)
       expect(g.players[0].location).toBe('Chicago')
+      expect(g.game_graph['Chicago'].players.has(g.players[0])).toBe(true)
+
       expect(g.players[0].move(g.game_graph, 'San Francisco')).toBe(true)
       expect(g.players[0].location).toBe('San Francisco')
+      expect(g.game_graph['San Francisco'].players.has(g.players[0])).toBe(true)
+
       expect(g.players[0].move(g.game_graph, 'Tokyo')).toBe(true)
       expect(g.players[0].location).toBe('Tokyo')
+      expect(g.game_graph['Tokyo'].players.has(g.players[0])).toBe(true)
+
       expect(g.players[0].move(g.game_graph, 'Atlanta')).toBe(false)
       expect(g.players[0].location).toBe('Tokyo')
+      expect(g.game_graph['Tokyo'].players.has(g.players[0])).toBe(true)
     });
   });
 
@@ -527,6 +536,7 @@ describe('Player', function () {
       expect(g.players[0].hand.has('Lima')).toBe(true)
       expect(g.players[0].move(g.game_graph, 'Lima')).toBe(true)
       expect(g.players[0].location).toBe('Lima')
+      expect(g.game_graph['Lima'].players.has(g.players[0])).toBe(true)
       expect(g.players[0].hand.has('Lima')).toBe(false)
       g.players[0].draw(g)
       g.players[0].draw(g)
@@ -536,18 +546,21 @@ describe('Player', function () {
       expect(g.players[0].hand.has('Manila')).toBe(true)
       expect(g.players[0].move(g.game_graph, 'Manila')).toBe(true)
       expect(g.players[0].location).toBe('Manila')
+      expect(g.game_graph['Manila'].players.has(g.players[0])).toBe(true)
       expect(g.players[0].hand.has('Manila')).toBe(false)
 
       //Drive/Ferry
       expect(g.players[0].hand.has('Ho Chi Minh City')).toBe(true)
       expect(g.players[0].move(g.game_graph, 'Ho Chi Minh City')).toBe(true)
       expect(g.players[0].location).toBe('Ho Chi Minh City')
+      expect(g.game_graph['Ho Chi Minh City'].players.has(g.players[0])).toBe(true)
 
       //Charter
       expect(g.players[0].hand.has('Ho Chi Minh City')).toBe(true)
       expect(g.players[0].hand.has('Tokyo')).toBe(false)
       expect(g.players[0].move(g.game_graph, 'Tokyo')).toBe(true)
       expect(g.players[0].location).toBe('Tokyo')
+      expect(g.game_graph['Tokyo'].players.has(g.players[0])).toBe(true)
       expect(g.players[0].hand.has('Ho Chi Minh City')).toBe(false)
     });
   });
@@ -752,6 +765,38 @@ describe('Player', function () {
       expect(g.players[0].hand.size).toBe(9)
       expect(g.players[0].discard(['Manila', 'Lima'])).toBe(true)
       expect(g.players[0].hand.size).toBe(7)
+    });
+  });
+
+  describe('#Trade Cards', function () {
+    it('Check Validity', function () {
+      let seeded = seedrandom('test167!')
+      let g = new game.Game(cities, seeded);
+      expect(g.players[0].can_trade(g)).toBe(false)
+      expect(g.players[1].can_trade(g)).toBe(false)
+      g.players[0].hand.add('Atlanta')
+      expect(g.players[0].can_trade(g)).toBe(true)
+      expect(g.players[1].can_trade(g)).toBe(true)
+      g.players[0].move(g.game_graph, 'Miami')
+      expect(g.players[0].can_trade(g)).toBe(false)
+      expect(g.players[1].can_trade(g)).toBe(false)
+      g.players[0].move(g.game_graph, 'Atlanta')
+      g.players[0].trade(g.players[1])
+      expect(g.players[0].hand.has('Atlanta')).toBe(false)
+      expect(g.players[1].hand.has('Atlanta')).toBe(true)
+
+      g.players[0].move(g.game_graph, 'Miami')
+      g.players[1].move(g.game_graph, 'Miami')
+      expect(g.players[0].can_trade(g)).toBe(false)
+      expect(g.players[1].can_trade(g)).toBe(false)
+      g.players[1].hand.add('Miami')
+      expect(g.players[0].can_trade(g)).toBe(true)
+      expect(g.players[1].can_trade(g)).toBe(true)
+      g.players[0].trade(g.players[1])
+      expect(g.players[0].hand.has('Atlanta')).toBe(false)
+      expect(g.players[1].hand.has('Atlanta')).toBe(true)
+      expect(g.players[0].hand.has('Miami')).toBe(true)
+      expect(g.players[1].hand.has('Miami')).toBe(false)
     });
   });
 });

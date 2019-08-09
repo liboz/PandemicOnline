@@ -12,7 +12,10 @@ function Game(cities, rng = seedrandom()) {
     this.rng = rng;
     this.infection_deck = new infection.InfectionDeck(cities, this.rng)
     this.player_deck = new player_deck.PlayerDeck(cities, [], 5, this.rng)
-    this.players = [new player.Player()]
+    this.players = [new player.Player(), new player.Player()]
+    this.players.forEach(player => {
+        this.game_graph[player.location].players.add(player)
+    });
     this.research_stations = new Set(['Atlanta'])
     this.cured = { // 0 = uncured, 1 = cured, 2 = eradicated
         'blue': 0,
