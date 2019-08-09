@@ -528,28 +528,36 @@ describe('Player', function () {
     it('Charter/Direct', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, seeded);
-      expect(g.players[0].move(g.game_graph, 'Lima')).toBe(false)
+      g.players[0].discard([...g.players[0].hand])
+      expect(g.players[0].move(g.game_graph, 'Beijing')).toBe(false)
       expect(g.players[0].location).toBe('Atlanta')
       g.players[0].draw(g)
       g.players[0].draw(g)
-      //Direct
-      expect(g.players[0].hand.has('Lima')).toBe(true)
-      expect(g.players[0].move(g.game_graph, 'Lima')).toBe(true)
-      expect(g.players[0].location).toBe('Lima')
-      expect(g.game_graph['Lima'].players.has(g.players[0])).toBe(true)
-      expect(g.players[0].hand.has('Lima')).toBe(false)
-      g.players[0].draw(g)
-      g.players[0].draw(g)
-      g.players[0].draw(g)
-      g.players[0].draw(g)
-      //Direct
-      expect(g.players[0].hand.has('Manila')).toBe(true)
-      expect(g.players[0].move(g.game_graph, 'Manila')).toBe(true)
-      expect(g.players[0].location).toBe('Manila')
-      expect(g.game_graph['Manila'].players.has(g.players[0])).toBe(true)
-      expect(g.players[0].hand.has('Manila')).toBe(false)
 
-      //Drive/Ferry
+      //Direct
+      expect(g.players[0].hand.has('Beijing')).toBe(true)
+      expect(g.players[0].move(g.game_graph, 'Beijing')).toBe(true)
+      expect(g.players[0].location).toBe('Beijing')
+      expect(g.game_graph['Beijing'].players.has(g.players[0])).toBe(true)
+      expect(g.players[0].hand.has('Beijing')).toBe(false)
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+      g.players[0].draw(g)
+
+      //Drive/Ferry      
+      expect(g.players[0].hand.has('Shanghai')).toBe(false)
+      expect(g.players[0].move(g.game_graph, 'Shanghai')).toBe(true)
+      expect(g.players[0].location).toBe('Shanghai')
+      expect(g.game_graph['Shanghai'].players.has(g.players[0])).toBe(true)
+      expect(g.players[0].hand.has('Shanghai')).toBe(false)
+
+      expect(g.players[0].hand.has('Hong Kong')).toBe(false)
+      expect(g.players[0].move(g.game_graph, 'Hong Kong')).toBe(true)
+      expect(g.players[0].location).toBe('Hong Kong')
+      expect(g.game_graph['Hong Kong'].players.has(g.players[0])).toBe(true)
+      expect(g.players[0].hand.has('Hong Kong')).toBe(false)
+
       expect(g.players[0].hand.has('Ho Chi Minh City')).toBe(true)
       expect(g.players[0].move(g.game_graph, 'Ho Chi Minh City')).toBe(true)
       expect(g.players[0].location).toBe('Ho Chi Minh City')
@@ -571,20 +579,24 @@ describe('Player', function () {
       let g = new game.Game(cities, seeded);
       expect(g.research_stations).toEqual(new Set(['Atlanta']))
       expect(g.players[0].can_build_research_station(g)).toBe(false);
+      g.players[0].discard([...g.players[0].hand])
+
       g.players[0].draw(g)
-      expect(g.players[0].hand).toEqual(new Set(['Lima']))
-      g.players[0].move(g.game_graph, 'Miami')
-      g.players[0].move(g.game_graph, 'Bogota')
-      g.players[0].move(g.game_graph, 'Lima')
-      expect(g.players[0].hand).toEqual(new Set(['Lima']))
+      expect(g.players[0].hand).toEqual(new Set(['Beijing']))
+      g.players[0].move(g.game_graph, 'Chicago')
+      g.players[0].move(g.game_graph, 'San Francisco')
+      g.players[0].move(g.game_graph, 'Tokyo')
+      g.players[0].move(g.game_graph, 'Seoul')
+      g.players[0].move(g.game_graph, 'Beijing')
+      expect(g.players[0].hand).toEqual(new Set(['Beijing']))
       expect(g.players[0].can_build_research_station(g)).toBe(true);
-      expect(g.game_graph['Lima'].hasResearchStation).toEqual(false)
+      expect(g.game_graph['Beijing'].hasResearchStation).toEqual(false)
       g.players[0].build_research_station(g)
       expect(g.players[0].hand).toEqual(new Set())
-      expect(g.research_stations).toEqual(new Set(['Atlanta', 'Lima']))
-      expect(g.game_graph['Lima'].hasResearchStation).toEqual(true)
+      expect(g.research_stations).toEqual(new Set(['Atlanta', 'Beijing']))
+      expect(g.game_graph['Beijing'].hasResearchStation).toEqual(true)
       expect(g.players[0].move(g.game_graph, 'Atlanta')).toBe(true)
-      expect(g.players[0].move(g.game_graph, 'Lima')).toBe(true)
+      expect(g.players[0].move(g.game_graph, 'Beijing')).toBe(true)
     });
   });
 
@@ -592,7 +604,7 @@ describe('Player', function () {
     it('Lose Game', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, seeded);
-      for (let i = 0; i < 53; i++) { // 48 cities + 5 epidemic
+      for (let i = 0; i < 45; i++) { // 48 cities + 5 epidemic, but start with 8 cards removed with 2 people
         g.players[0].draw(g)
         expect(g.lost).toBe(false)
       }
@@ -605,6 +617,8 @@ describe('Player', function () {
     it('Eradicate', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, seeded);
+      g.players[0].discard([...g.players[0].hand])
+
       g.players[0].hand.add('Chennai')
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(false)
       g.players[0].hand.add('Tehran')
@@ -638,6 +652,8 @@ describe('Player', function () {
     it('Can Cure', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, seeded);
+      g.players[0].discard([...g.players[0].hand])
+
       g.infect_stage() // infect tokyo
       g.players[0].hand.add('Tokyo')
       g.players[0].hand.add('Osaka')
@@ -672,6 +688,8 @@ describe('Player', function () {
     it('Cure all means game won', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, seeded);
+      g.players[0].discard([...g.players[0].hand])
+
       g.players[0].hand.add('Chennai')
       g.players[0].hand.add('Tehran')
       g.players[0].hand.add('Karachi')
@@ -715,6 +733,7 @@ describe('Player', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, seeded);
       expect(g.cubes[city.Colors.RED]).toBe(24)
+      g.players[0].discard([...g.players[0].hand])
       g.infect_stage() // infect tokyo
       g.infect_stage() // infect taipei
       expect(g.cubes[city.Colors.RED]).toBe(22)
@@ -724,6 +743,7 @@ describe('Player', function () {
       g.players[0].hand.add('Beijing')
       g.players[0].hand.add('Seoul')
       g.players[0].hand.add('Hong Kong')
+      
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true)
       g.players[0].cure(g, [...g.players[0].hand])
       expect(g.cured[city.Colors.RED]).toBe(1)
@@ -756,14 +776,10 @@ describe('Player', function () {
       g.players[0].draw(g)
       g.players[0].draw(g)
       g.players[0].draw(g)
-      g.players[0].draw(g)
-      g.players[0].draw(g)
-      g.players[0].draw(g)
-      g.players[0].draw(g)
       expect(g.players[0].hand.size).toBe(9)
-      expect(g.players[0].discard(['Tokyo', 'Lima'])).toBe(false)
+      expect(g.players[0].discard(['Tokyo', 'Beijing'])).toBe(false)
       expect(g.players[0].hand.size).toBe(9)
-      expect(g.players[0].discard(['Manila', 'Lima'])).toBe(true)
+      expect(g.players[0].discard(['Jakarta', 'Beijing'])).toBe(true)
       expect(g.players[0].hand.size).toBe(7)
     });
   });

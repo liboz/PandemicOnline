@@ -23,3 +23,10 @@ const games = []
 let myrng = seedrandom();
 games.push(new game.Game(cities, myrng))
 //console.log(games[0])
+
+function play(game) {
+	game.initialize_board()
+	while (true) {
+
+	}
+};

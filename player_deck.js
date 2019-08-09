@@ -1,10 +1,22 @@
 const random = require('./random');
 
-function PlayerDeck(cities, events, num_epidemics, rng) {
+function PlayerDeck(cities, events, num_epidemics, rng, game = null) {
     this.rng = rng;
     this.num_epidemics = num_epidemics;
     this.base_deck = [...cities.map(city => city.name), ...events];
     this.shuffle(this.base_deck);
+    if (game !== null) {
+        let num_cards = 0
+        if (game.players.length == 3) {
+            num_cards = 9
+        } else {
+            num_cards = 8
+        }
+        for (let i = 0; i < num_cards; i++) {
+            game.initial_cards_for_players.push(this.base_deck.pop())
+        }
+    }
+
     this.partitions = this.partition_deck()
     this.shuffle(this.partitions)
     this.partitions.forEach(p => {

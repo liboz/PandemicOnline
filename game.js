@@ -11,11 +11,16 @@ function Game(cities, rng = seedrandom()) {
     this.infection_rate = [2,2,2,3,3,4,4]
     this.rng = rng;
     this.infection_deck = new infection.InfectionDeck(cities, this.rng)
-    this.player_deck = new player_deck.PlayerDeck(cities, [], 5, this.rng)
     this.players = [new player.Player(), new player.Player()]
     this.players.forEach(player => {
         this.game_graph[player.location].players.add(player)
     });
+    this.initial_cards_for_players = []
+    this.player_deck = new player_deck.PlayerDeck(cities, [], 5, this.rng, this)
+    for (let i = 0; i < this.initial_cards_for_players.length; i++) {
+        this.players[i % 2].hand.add(this.initial_cards_for_players[i])
+    }
+
     this.research_stations = new Set(['Atlanta'])
     this.cured = { // 0 = uncured, 1 = cured, 2 = eradicated
         'blue': 0,
