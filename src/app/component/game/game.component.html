@@ -1,0 +1,25 @@
+<div>
+    {{ game.game_graph }}
+</div>
+<div>
+    Outbreak Counter: {{ game.outbreak_counter }}
+</div>
+<div>
+    Infection Rate: {{ game.infection_rate[game.infection_rate_index] }}
+</div>
+<div>
+    Cubes:
+    <ul>
+        <li *ngFor="let color of objectKeys(game.cubes)">
+            {{color + ' : ' + game.cubes[color]}}
+        </li>
+    </ul>
+</div>
+<div>
+    Cured:
+    <ul>
+        <li *ngFor="let color of objectKeys(game.cured)">
+            {{color + ' : ' + game.cured[color]}}
+        </li>
+    </ul>
+</div>
