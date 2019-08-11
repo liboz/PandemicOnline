@@ -81,7 +81,6 @@ Game.prototype.win_game = function()  {
     this.won = true
 }
 
-
 module.exports = {
     Game: Game
 };
