@@ -46,8 +46,9 @@ export class GameComponent implements OnInit {
       .attr("height", $("#map-holder").height())
     //Bind data and create one path per GeoJSON feature
     this.countriesGroup = this.svg.append("g").attr("id", "map")
+
     // add zoom functionality
-    this.zoomed = function() {
+    this.zoomed = function () {
       let t = d3.event.transform;
       d3.select("g").attr("transform", "translate(" + [t.x, t.y] + ")scale(" + t.k + ")");
     }
@@ -117,18 +118,14 @@ export class GameComponent implements OnInit {
 
   private createChart(): void {
     // variables for catching min and max zoom factors
-
-
     var projection = d3
       .geoEquirectangular()
       .center([0, 15]) // set centre to further North as we are cropping more off bottom of map
       .scale(this.w / (2 * Math.PI)) // scale to fit group width
-      .translate([this.w / 2, this.h / 2]) // ensure centred in group
-      ;
+      .translate([this.w / 2, this.h / 2]); // ensure centred in group
     var path = d3
       .geoPath()
-      .projection(projection)
-      ;
+      .projection(projection);
     // add a background rectangle
     this.countriesGroup
       .append("rect")
@@ -144,29 +141,77 @@ export class GameComponent implements OnInit {
       .enter()
       .append("path")
       .attr("d", path)
-      .attr("id", function (d: any, i) {
-        return "country" + d.properties.iso_a3;
-      })
-      .attr("class", "country")
-      //      .attr("stroke-width", 10)
-      //      .attr("stroke", "#ff0000")
-      // add a mouseover action to show name label for feature/country
-      .on("mouseover", function (d: any, i) {
-        d3.select("#countryLabel" + d.properties.iso_a3).style("display", "block");
-      })
-      .on("mouseout", function (d: any, i) {
-        d3.select("#countryLabel" + d.properties.iso_a3).style("display", "none");
-      })
-      // add an onclick action to zoom into clicked country
-      /*
-      .on("click", function (d: any, i) {
-        d3.selectAll(".country").classed("country-on", false);
-        d3.select(this).classed("country-on", true);
-        //outer.boxZoom(path.bounds(d), path.centroid(d), 20);
-      });*/
+      .attr("class", "landmass")
+    //      .attr("stroke-width", 10)
+    //      .attr("stroke", "#ff0000")
+    // add a mouseover action to show name label for feature/country
+    /*
+    .on("mouseover", function (d: any, i) {
+      d3.select("#countryLabel" + d.properties.iso_a3).style("display", "block");
+    })
+    .on("mouseout", function (d: any, i) {
+      d3.select("#countryLabel" + d.properties.iso_a3).style("display", "none");
+    })
+    // add an onclick action to zoom into clicked country
+    
+    .on("click", function (d: any, i) {
+      d3.selectAll(".country").classed("country-on", false);
+      d3.select(this).classed("country-on", true);
+      //outer.boxZoom(path.bounds(d), path.centroid(d), 20);
+    });*/
     // Add a label group to each feature/country. This will contain the country name and a background rectangle
     // Use CSS to have class "countryLabel" initially hidden
 
+    console.log(Object.values(this.game.game_graph))
+    let places = this.countriesGroup
+      .selectAll("circle")
+      .data(Object.values(this.game.game_graph))
+      .enter()
+      .append("circle")
+      .attr('cx', function (d) { return projection(d.location)[0] })
+      .attr('cy', function (d) { return projection(d.location)[1] })
+      .attr('r', 20)
+      .attr("class", "places")
+      .attr("style", function (d) { return 'fill: ' + d.color })
+
+    let placeLabels = this.countriesGroup
+      .selectAll("g")
+      .data(Object.values(this.game.game_graph))
+      .enter()
+      .append("g")
+      .attr("class", "countryLabel")
+      .attr("id", function (d: any) {
+        return "countryLabel" + d.name;
+      })
+      .attr("transform", function (d: any) {
+        return (
+          "translate(" + projection(d.location)[0] + "," + projection(d.location)[1] + ")"
+        );
+      })
+
+      placeLabels
+      .append("text")
+      .attr("class", "countryName")
+      .style("text-anchor", "middle")
+      .attr("dx", 0)
+      .attr("dy", 0)
+      .text(function (d: any) {
+        return d.name;
+      })
+      .call(this.getTextBox);
+    // add a background rectangle the same size as the text
+    placeLabels
+      .insert("rect", "text")
+      .attr("class", "countryLabelBg")
+      .attr("transform", function (d: any) {
+        return "translate(" + (d.bbox.x - 2) + "," + d.bbox.y + ")";
+      })
+      .attr("width", function (d: any) {
+        return d.bbox.width + 50;
+      })
+      .attr("height", function (d: any) {
+        return d.bbox.height + 20;
+      });
     /*
     let outer = this
     let countryLabels = this.countriesGroup
