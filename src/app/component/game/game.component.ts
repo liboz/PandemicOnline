@@ -13,6 +13,7 @@ export class GameComponent implements OnInit {
   objectKeys = Object.keys;
   @Input() game: any;
 
+  features = geo.features
   w = 3000;
   h = 1250;
 
@@ -27,6 +28,10 @@ export class GameComponent implements OnInit {
   minZoom: number;
   maxZoom: number;
 
+  nodes: any;
+  links: any;
+  force: any;
+
   getTextBox(selection) {
     selection
       .each(function (d) {
@@ -35,17 +40,26 @@ export class GameComponent implements OnInit {
       ;
   }
 
+  projection = d3
+    .geoEquirectangular()
+    .center([0, 15]) // set centre to further North as we are cropping more off bottom of map
+    .scale(this.w / (2 * Math.PI)) // scale to fit group width
+    .translate([this.w / 2, this.h / 2]); // ensure centred in group
+
+  path = d3
+    .geoPath()
+    .projection(this.projection);
+
   constructor() { }
 
   ngOnInit() {
 
-    this.svg = d3.select("#map-holder")
-      .append("svg")
+    this.svg = d3.select("#map-holder > svg")
       // set to the same size as the "map-holder" div
       .attr("width", $("#map-holder").width())
       .attr("height", $("#map-holder").height())
     //Bind data and create one path per GeoJSON feature
-    this.countriesGroup = this.svg.append("g").attr("id", "map")
+    this.countriesGroup = d3.select("#map-holder > svg > g").attr("id", "map")
 
     // add zoom functionality
     this.zoomed = function () {
@@ -117,31 +131,29 @@ export class GameComponent implements OnInit {
   }
 
   private createChart(): void {
-    // variables for catching min and max zoom factors
-    var projection = d3
-      .geoEquirectangular()
-      .center([0, 15]) // set centre to further North as we are cropping more off bottom of map
-      .scale(this.w / (2 * Math.PI)) // scale to fit group width
-      .translate([this.w / 2, this.h / 2]); // ensure centred in group
-    var path = d3
-      .geoPath()
-      .projection(projection);
-    // add a background rectangle
-    this.countriesGroup
-      .append("rect")
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("width", this.w)
-      .attr("height", this.h);
+    this.nodes = Object.values(this.game.game_graph).map((d: any) => {
+      return { id: d.index, fx: this.projection(d.location)[0], fy: this.projection(d.location)[1], color: d.color }
+    })
 
-    // draw a path for each feature/country
-    let countries = this.countriesGroup
-      .selectAll("path")
-      .data(geo.features)
-      .enter()
-      .append("path")
-      .attr("d", path)
-      .attr("class", "landmass")
+    let all_links = Object.values(this.game.game_graph).map((d: any) => {
+      return d.neighbors_index.map(n => {
+        return { source: d.index, target: n }
+      })
+    })
+
+    this.links = [].concat.apply([], all_links);
+
+    this.force = d3.forceSimulation(this.nodes)//.on("tick", this.tick);
+    
+    
+    this.force.force('links',
+      d3.forceLink(this.links)
+    );
+
+
+    // variables for catching min and max zoom factors
+
+
     //      .attr("stroke-width", 10)
     //      .attr("stroke", "#ff0000")
     // add a mouseover action to show name label for feature/country
@@ -162,7 +174,7 @@ export class GameComponent implements OnInit {
     // Add a label group to each feature/country. This will contain the country name and a background rectangle
     // Use CSS to have class "countryLabel" initially hidden
 
-    console.log(Object.values(this.game.game_graph))
+    /*
     let places = this.countriesGroup
       .selectAll("circle")
       .data(Object.values(this.game.game_graph))
@@ -212,6 +224,7 @@ export class GameComponent implements OnInit {
       .attr("height", function (d: any) {
         return d.bbox.height + 20;
       });
+      */
     /*
     let outer = this
     let countryLabels = this.countriesGroup
@@ -268,5 +281,4 @@ export class GameComponent implements OnInit {
       */
     this.initiateZoom();
   }
-
 }

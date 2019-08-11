@@ -1,5 +1,15 @@
 <div>
-    <app-game-graph></app-game-graph>
+    <div id="map-holder">
+        <svg>
+            <g>
+                <rect [attr.width]="w" [attr.height]="h" x="0" y="0"></rect>
+                <path [attr.d]="path(feature)"  *ngFor="let feature of features" [ngClass]="'landmass'"></path>
+                <g [app-link]="link" *ngFor="let link of links"></g>
+                <g [app-node]="node" *ngFor="let node of nodes"></g>
+            </g>
+        </svg>
+    </div>
+
 </div>
 <div>
     Outbreak Counter: {{ game.outbreak_counter }}

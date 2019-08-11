@@ -1,0 +1,7 @@
+<svg:g>
+    <svg:circle [ngClass]="'places'" [attr.cx]="node.x" [attr.cy]="node.y" r="20" [ngStyle]="{'fill': node.color}">
+    </svg:circle>
+    <svg:text>
+        {{node.id}}
+    </svg:text>
+</svg:g>
