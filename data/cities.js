@@ -29,7 +29,7 @@ module.exports = [
     ]
   }, {
     name: 'Beijing',
-    location: [109.407396, 39.9042], //[116.407396, 39.9042]
+    location: [109.407396, 42.9042], //[116.407396, 39.9042]
     color: 'red',
     adjacent: [
       'Seoul', 'Shanghai'
@@ -197,7 +197,7 @@ module.exports = [
     ]
   }, {
     name: 'Miami',
-    location: [-80.19179, 25.76168],
+    location: [-75.19179, 20.76168], //[-80.19179, 25.76168]
     color: 'yellow',
     adjacent: [
       'Atlanta', 'Washington', 'Bogota', 'Mexico City'
@@ -281,7 +281,7 @@ module.exports = [
     ]
   }, {
     name: 'Seoul',
-    location: [125.977969, 43.566535], //[126.977969, 37.566535]
+    location: [125.977969, 45.566535], //[126.977969, 37.566535]
     color: 'red',
     adjacent: [
       'Beijing', 'Tokyo', 'Shanghai'
@@ -309,21 +309,21 @@ module.exports = [
     ]
   }, {
     name: 'Taipei',
-    location: [125.565418, 25.032969], //[121.565418, 25.032969]
+    location: [130.565418, 23.032969], //[121.565418, 25.032969]
     color: 'red',
     adjacent: [
       'Shanghai', 'Osaka', 'Manila', 'Hong Kong'
     ]
   }, {
     name: 'Tehran',
-    location: [51.388974, 35.689198],
+    location: [56.388974, 40.689198], //[51.388974, 35.689198]
     color: 'black',
     adjacent: [
       'Moscow', 'Delhi', 'Karachi', 'Baghdad'
     ]
   }, {
     name: 'Tokyo',
-    location: [139.691706, 38.689488], //[139.691706, 35.689488]
+    location: [139.691706, 41.689488], //[139.691706, 35.689488]
     color: 'red',
     adjacent: [
       'Seoul', 'Osaka', 'San Francisco', 'Shanghai'
