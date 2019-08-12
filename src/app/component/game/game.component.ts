@@ -131,25 +131,35 @@ export class GameComponent implements OnInit {
   }
 
   private createChart(): void {
-    this.nodes = Object.values(this.game.game_graph).map((d: any) => {
-      return { id: d.index, fx: this.projection(d.location)[0], fy: this.projection(d.location)[1], color: d.color }
+    let values: any[] = Object.values(this.game.game_graph)
+    this.nodes = values.map((d: any) => {
+      return { id: d.index, x: this.projection(d.location)[0], y: this.projection(d.location)[1], color: d.color, name: d.name}
     })
 
-    let all_links = Object.values(this.game.game_graph).map((d: any) => {
-      return d.neighbors_index.map(n => {
-        return { source: d.index, target: n }
+    this.links = []
+    values.forEach((d: any) => {
+      d.neighbors_index.forEach(n => {
+        if (d.location[0] * values[n].location[0] < -10000) { 
+          // these are cross pacific differences
+          let left_diff = Math.min(this.nodes[d.index].x, this.nodes[n].x)
+          let right_diff = this.w - Math.max(this.nodes[d.index].x, this.nodes[n].x)
+          let slope = (this.nodes[d.index].y - this.nodes[n].y)/(left_diff + right_diff)
+          if (d.location[0] < 0) {
+            this.links.push({
+              source: this.nodes[d.index],
+              target: { x: 0, y: this.nodes[d.index].y - slope*left_diff }
+            }) // western hemisphere 
+          } else {
+            this.links.push({
+              source: this.nodes[d.index],
+              target: { x: 3000, y: this.nodes[d.index].y - slope*right_diff }
+            }) // eastern hemisphere 
+          }
+        } else {
+          this.links.push({ source: this.nodes[d.index], target: this.nodes[n] })
+        }
       })
     })
-
-    this.links = [].concat.apply([], all_links);
-
-    this.force = d3.forceSimulation(this.nodes)//.on("tick", this.tick);
-    
-    
-    this.force.force('links',
-      d3.forceLink(this.links)
-    );
-
 
     // variables for catching min and max zoom factors
 
