@@ -64,7 +64,7 @@ module.exports = [
     ]
   }, {
     name: 'Chicago',
-    location: [-87.629798, 41.878114],
+    location: [-90.629798, 44.878114], // [-87.629798, 41.878114]
     color: 'blue',
     adjacent: [
       'Montreal', 'Atlanta', 'Mexico City', 'Los Angeles', 'San Francisco'
@@ -85,7 +85,7 @@ module.exports = [
     ]
   }, {
     name: 'Ho Chi Minh City',
-    location: [111.629664, 5.823099], //[106.629664, 10.823099]
+    location: [115.629664, 3.823099], //[106.629664, 10.823099]
     color: 'red',
     adjacent: [
       'Hong Kong', 'Manila', 'Jakarta', 'Bangkok'
@@ -176,7 +176,7 @@ module.exports = [
     ]
   }, {
     name: 'Madrid',
-    location: [-3.70379, 40.416775],
+    location: [-5.70379, 40.416775], //[-3.70379, 40.416775]
     color: 'blue',
     adjacent: [
       'London', 'Paris', 'Algiers', 'Sao Paulo', 'New York'
@@ -204,14 +204,14 @@ module.exports = [
     ]
   }, {
     name: 'Milan',
-    location: [9.189982, 45.464204],
+    location: [14.189982, 42.464204], //[9.189982, 45.464204]
     color: 'blue',
     adjacent: [
       'Essen', 'Istanbul', 'Paris'
     ]
   }, {
     name: 'Montreal',
-    location: [-73.567256, 45.501689],
+    location: [-75.567256, 48.501689], // [-73.567256, 45.501689]
     color: 'blue',
     adjacent: [
       'New York', 'Washington', 'Chicago'
@@ -232,7 +232,7 @@ module.exports = [
     ]
   }, {
     name: 'New York',
-    location: [-64.005941, 42.712784], //[-74.005941, 40.712784]
+    location: [-62.005941, 45.712784], //[-74.005941, 40.712784]
     color: 'blue',
     adjacent: [
       'Montreal', 'London', 'Madrid', 'Washington'
