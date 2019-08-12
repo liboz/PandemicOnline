@@ -36,6 +36,7 @@ function Game(cities, rng = seedrandom()) {
     }
     this.lost = false
     this.won = false
+    //this.geoJSON = city.City.toGeoJSON(this.game_graph)
 };
 
 Game.prototype.outbreak = function() {

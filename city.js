@@ -5,7 +5,7 @@ const colors = {
     YELLOW: 'yellow'
 }
 
-function City(name, location, color) {
+function City(name, location, color, index) {
     this.name = name;
     this.color = color;
     this.location = location;
@@ -18,10 +18,13 @@ function City(name, location, color) {
     this.neighbors = new Set()
     this.hasResearchStation = name === 'Atlanta' ? true : false
     this.players = new Set()
+    this.index = index
+    this.neighbors_index = []
 };
 
 City.prototype.add_neighbor = function (neighbor) {
     this.neighbors.add(neighbor)
+    this.neighbors_index.push(neighbor.index)
 };
 
 City.prototype.infect = function (game, color = this.color, visited = new Set()) {
@@ -57,8 +60,8 @@ City.prototype.infect_epidemic = function (game) {
 City.load = function (cities) {
     const game_graph = {}
 
-    cities.forEach((data) => {
-        game_graph[data.name] = new City(data.name, data.location, data.color);
+    cities.forEach((data, index) => {
+        game_graph[data.name] = new City(data.name, data.location, data.color, index);
     })
 
     cities.forEach((data) => {
@@ -69,6 +72,28 @@ City.load = function (cities) {
 
     return game_graph
 }
+
+/*
+City.toGeoJSON = function (game_graph) {
+    let g = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+    Object.values(game_graph).forEach(c => {
+        let f = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": c.location
+            },
+            "properties": {
+                "name": c.name
+            }
+        }
+        g['features'].push(f)
+    })
+    return g
+}*/
 
 module.exports = {
     City: City,
