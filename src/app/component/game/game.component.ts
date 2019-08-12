@@ -14,7 +14,7 @@ export class GameComponent implements OnInit {
   @Input() game: any;
 
   features = geo.features
-  w = 3000;
+  w = 2500;
   h = 1250;
 
   zoomed: any;
@@ -126,6 +126,7 @@ export class GameComponent implements OnInit {
     // define X and Y offset for centre of map to be shown in centre of holder
     let midX = ($("#map-holder").width() - this.minZoom * this.w) / 2;
     let midY = ($("#map-holder").height() - this.minZoom * this.h) / 2;
+    console.log($("#map-holder").width(), this.minZoom * this.w)
     // change zoom transform to min zoom and centre offsets
     this.svg.call(this.zoom.transform, d3.zoomIdentity.translate(midX, midY).scale(this.minZoom));
   }
