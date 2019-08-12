@@ -1,7 +1,7 @@
-<svg:g>
-    <svg:circle [ngClass]="'places'" [attr.cx]="node.x" [attr.cy]="node.y" r="20" [ngStyle]="{'fill': node.color}">
+<svg:g [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
+    <svg:circle [ngClass]="'places'" cx="0" cy="0" r="20" [ngStyle]="{'fill': node.color}">
     </svg:circle>
-    <svg:text>
+    <svg:text [ngClass]="'countryName'" y="-30" x="-30">
         {{node.name}}
     </svg:text>
 </svg:g>
