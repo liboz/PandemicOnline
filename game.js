@@ -125,6 +125,7 @@ function GameJSON(game) {
     this.cubes = game.cubes
     this.lost = game.lost
     this.won = game.won
+    this.started = game.started
     this.player_index = game.player_index
     this.turns_left = game.turns_left
 };
