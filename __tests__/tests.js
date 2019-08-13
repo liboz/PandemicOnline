@@ -423,7 +423,9 @@ describe('Game', function () {
     it('Right Number of Cubes ', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, seeded);
+      expect(g.started).toBe(false)
       g.initialize_board();
+      expect(g.started).toBe(true)
       expect(g.outbreak_counter).toBe(0);
       let infected = [
         'Madrid', 'New York', 'Delhi',
@@ -498,10 +500,10 @@ describe('Game', function () {
   describe('#Next Player', function () {
     it('loops', function () {
       let g = new game.Game(cities);
-      expect(g.player_index).toBe(0)
-      g.next_player()
-      expect(g.player_index).toBe(1)
-      g.next_player()
+      g.players.forEach((p, index) => {
+        expect(g.player_index).toBe(index)
+        g.next_player()
+      })
       expect(g.player_index).toBe(0)
     });
   });

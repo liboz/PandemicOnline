@@ -36,6 +36,7 @@ function Game(cities, rng = seedrandom()) {
     }
     this.lost = false
     this.won = false
+    this.started = false
     this.player_index = 0
     this.turns_left = 4
     //this.geoJSON = city.City.toGeoJSON(this.game_graph)
@@ -74,6 +75,7 @@ Game.prototype.initialize_board = function() {
             }
         }
     }
+    this.started = true
 };
 
 Game.prototype.lose_game = function()  {
