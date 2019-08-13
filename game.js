@@ -110,6 +110,13 @@ Game.prototype.decrement_turn = function () {
     }
 }
 
+Game.prototype.use_turn = function () {
+    if (!this.decrement_turn()) {
+        this.next_player()
+        this.turns_left = 4;
+    }
+}
+
 Game.prototype.toJSON = function () {
     return new GameJSON(this)
 }
