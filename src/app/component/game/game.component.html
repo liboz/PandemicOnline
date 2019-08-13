@@ -5,7 +5,7 @@
                 <rect [attr.width]="w" [attr.height]="h" x="0" y="0"></rect>
                 <path [attr.d]="path(feature)"  *ngFor="let feature of features" [ngClass]="'landmass'"></path>
                 <g [app-link]="link" *ngFor="let link of links"></g>
-                <g [app-node]="node" *ngFor="let node of nodes"></g>
+                <g [app-node]="node" *ngFor="let node of nodes" (selected)="onSelectedNode($event)"></g>
             </g>
         </svg>
     </div>

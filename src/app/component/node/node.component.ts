@@ -1,4 +1,4 @@
-import { Component, OnInit, Input  } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: '[app-node]',
@@ -7,9 +7,13 @@ import { Component, OnInit, Input  } from '@angular/core';
 })
 export class NodeComponent implements OnInit {
   @Input('app-node') node: any;
+  @Output() selected = new EventEmitter<any>();
   constructor() { }
 
   ngOnInit() {
   }
 
+  public select(event) {
+    this.selected.emit(this.node);
+  }
 }

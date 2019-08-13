@@ -1,6 +1,9 @@
 <svg:g [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
-    <svg:circle [ngClass]="'places'" cx="0" cy="0" r="20" [ngStyle]="{'fill': node.color}">
-    </svg:circle>
+    <svg:g>
+        <svg:circle [ngClass]="'places'" cx="0" cy="0" r="20" [ngStyle]="{'fill': node.color}" (click)="select($event)">
+        </svg:circle>
+        <svg:g [app-disease-cube]="node.cubes"></svg:g>
+    </svg:g>
     <svg:text [ngClass]="'countryName'" y="-30" x="-50">
         {{node.name}}
     </svg:text>
