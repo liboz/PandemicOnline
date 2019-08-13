@@ -28,6 +28,14 @@ export class AppComponent implements OnInit {
 
       });
 
+      this.socket.on("move successful", data => {
+        this.game = data
+      });
+
+      this.socket.on("error", data => {
+        window.alert(data)
+      });
+
       this.socket.on("game initialized", data => {
         this.game = data
       });

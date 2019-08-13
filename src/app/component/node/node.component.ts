@@ -7,6 +7,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class NodeComponent implements OnInit {
   @Input('app-node') node: any;
+  @Input() isMoving: boolean;
   @Output() selected = new EventEmitter<any>();
   constructor() { }
 

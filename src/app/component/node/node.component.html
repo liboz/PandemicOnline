@@ -1,6 +1,7 @@
-<svg:g [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
+<svg:g [attr.transform]="'translate(' + node.x + ',' + node.y + ')'" (click)="select($event)">
     <svg:g>
-        <svg:circle [ngClass]="'places'" cx="0" cy="0" r="20" [ngStyle]="{'fill': node.color}" (click)="select($event)">
+        <svg:circle [ngClass]="['places', isMoving && !node.isValidDestination ? 'invalid--destination' : '']" cx="0"
+            cy="0" r="20" [ngStyle]="{'fill': node.color}">
         </svg:circle>
         <polygon *ngIf="node.hasResearchStation" points="10,5 0,20 0,30 20,30 20,20 " class="research-station" />
         <svg:g [app-disease-cube]="node.cubes"></svg:g>

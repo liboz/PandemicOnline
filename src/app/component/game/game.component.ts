@@ -33,7 +33,7 @@ export class GameComponent implements OnInit {
   nodes: any;
   links: any;
   force: any;
-  selectedNode: any;
+  isMoving: any;
 
   getTextBox(selection) {
     selection
@@ -78,6 +78,7 @@ export class GameComponent implements OnInit {
     }
     this.zoom = d3.zoom().on("zoom", this.zoomed);
     this.svg.call(this.zoom)
+    this.isMoving = false
     this.initialized = true
     this.createChart()
   }
@@ -149,6 +150,12 @@ export class GameComponent implements OnInit {
         players: d.players }
     })
 
+    if (this.game.valid_final_destinations) {
+      this.game.valid_final_destinations.forEach(c => {
+        this.nodes[c].isValidDestination = true;
+      })
+    }
+
     this.links = []
     values.forEach((d: any) => {
       d.neighbors.forEach(n => {
@@ -177,10 +184,19 @@ export class GameComponent implements OnInit {
   }
 
   onSelectedNode(selectedNode: any) {
-    this.selectedNode = selectedNode;
+    if (this.isMoving && selectedNode.isValidDestination) {
+      console.log(selectedNode)
+      this.socket.emit('move', selectedNode.name, () => {
+        this.isMoving = false;
+      })
+    }
   }
 
   onStart() {
     this.socket.emit('start game')
+  }
+
+  onMove() {
+    this.isMoving = !this.isMoving;
   }
 }

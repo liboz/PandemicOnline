@@ -3,14 +3,31 @@
         <svg>
             <g>
                 <rect [ngClass]="'background'" [attr.width]="w" [attr.height]="h" x="0" y="0"></rect>
-                <path [attr.d]="path(feature)"  *ngFor="let feature of features" [ngClass]="'landmass'"></path>
+                <path [attr.d]="path(feature)" *ngFor="let feature of features" [ngClass]="'landmass'"></path>
                 <g [app-link]="link" *ngFor="let link of links"></g>
-                <g [app-node]="node" *ngFor="let node of nodes" (selected)="onSelectedNode($event)"></g>
+                <g [app-node]="node" *ngFor="let node of nodes" (selected)="onSelectedNode($event)" [isMoving]="isMoving"></g>
             </g>
         </svg>
     </div>
 </div>
 <button (click)="onStart()">Start Game</button>
+<div *ngIf="game.started">
+    Player: {{game.player_index}}
+    <br>
+    Turns Left: {{game.turns_left}}
+    <br>
+    <button (click)="onMove()">{{ isMoving ? 'Cancel' : 'Move' }}</button>
+    <button [disabled]="!game.can_build_research_station" (click)="onBuild()">Build A Research Station</button>
+    <button [disabled]="!game.can_treat" (click)="onTreat()">Treat Disease</button>
+    <button [disabled]="!game.can_trade" (click)="onShare()">Share Knowledge</button>
+    <button [disabled]="!game.can_cure" (click)="onDiscover()">Discover Cure</button>
+    <ul>
+        <li *ngFor="let player of game.players">
+            {{player.hand.join(',')}}
+        </li>
+    </ul>
+</div>
+<br>
 <div>
     Outbreak Counter: {{ game.outbreak_counter }}
 </div>
