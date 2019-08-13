@@ -53,9 +53,16 @@ export class GameComponent implements OnInit {
     .geoPath()
     .projection(this.projection);
 
+  initialized = false;
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (this.initialized) {
+      this.createChart()
+    }
+  }
+
+  ngOnInit() {
     // changes.prop contains the old and the new value...
     this.svg = d3.select("#map-holder > svg")
       // set to the same size as the "map-holder" div
@@ -70,12 +77,9 @@ export class GameComponent implements OnInit {
       d3.select("g").attr("transform", "translate(" + [t.x, t.y] + ")scale(" + t.k + ")");
     }
     this.zoom = d3.zoom().on("zoom", this.zoomed);
-    //this.svg.call(this.zoom)
+    this.svg.call(this.zoom)
+    this.initialized = true
     this.createChart()
-  }
-
-  ngOnInit() {
-    
   }
 
   // zoom to show a bounding box, with optional additional padding as percentage of box size
@@ -140,7 +144,8 @@ export class GameComponent implements OnInit {
   private createChart(): void {
     let values: any[] = Object.values(this.game.game_graph)
     this.nodes = values.map((d: any) => {
-      return { id: d.index, x: this.projection(d.location)[0], y: this.projection(d.location)[1], color: d.color, name: d.name, cubes:d.cubes }
+      return { id: d.index, x: this.projection(d.location)[0], y: this.projection(d.location)[1], 
+        color: d.color, name: d.name, cubes:d.cubes, hasResearchStation: d.hasResearchStation }
     })
 
     this.links = []
