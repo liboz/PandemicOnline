@@ -1,7 +1,8 @@
-function Player(role, location = "Atlanta") {
+function Player(id, role, location = "Atlanta") {
     this.role = role;
     this.hand = new Set()
     this.location = location
+    this.id = id
 };
 
 Player.prototype.move = function (game_graph, final_destination) {
@@ -121,6 +122,14 @@ Player.prototype.trade = function(player) {
     }
 }
 
+function PlayerJSON(player) {
+    this.role = player.role;
+    this.hand = [...player.hand]
+    this.location = player.location
+    this.id = player.id
+};
+
 module.exports = {
     Player: Player,
+    PlayerJSON: PlayerJSON
 };

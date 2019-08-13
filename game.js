@@ -11,7 +11,7 @@ function Game(cities, rng = seedrandom()) {
     this.infection_rate = [2,2,2,3,3,4,4]
     this.rng = rng;
     this.infection_deck = new infection.InfectionDeck(cities, this.rng)
-    this.players = [new player.Player(), new player.Player()]
+    this.players = [new player.Player(0), new player.Player(1), new player.Player(2), new player.Player(3)]
     this.players.forEach(player => {
         this.game_graph[player.location].players.add(player)
     });
@@ -103,6 +103,31 @@ Game.prototype.decrement_turn = function() {
     }
 }
 
+Game.prototype.toJSON = function() {
+    return new GameJSON(this)
+}
+
+function GameJSON(game) {
+    if (game === null) {
+        return null;
+    }
+    this.game_graph = Object.values(game.game_graph).map(c => new city.CityJSON(c))
+    this.outbreak_counter = 0
+    this.infection_rate_index = 0
+    this.infection_rate = [2,2,2,3,3,4,4]
+    this.faceup_deck = game.infection_deck.faceup_deck
+    this.players = game.players.map(p => new player.PlayerJSON(p))
+
+    this.research_stations = [...game.research_stations]
+    this.cured = game.cured
+    this.cubes = game.cubes
+    this.lost = game.lost
+    this.won = game.won
+    this.player_index = game.player_index
+    this.turns_left = game.turns_left
+};
+
 module.exports = {
-    Game: Game
+    Game: Game,
+    GameJSON: GameJSON
 };

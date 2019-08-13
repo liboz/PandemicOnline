@@ -20,7 +20,7 @@ app.use(cors())
 
 //routes
 app.get('/', (req, res) => {
-	res.send(curr_game)
+	res.send(curr_game === null ? null : curr_game.toJSON())
 })
 
 //Listen on port 3000
@@ -33,11 +33,11 @@ io.set('transports', ['websocket']);
 io.on('connection', function (socket) {
 	console.log('a user connected');
 	curr_game = new game.Game(cities)
-	socket.emit("new game", curr_game);
+	socket.emit("new game", curr_game.toJSON());
 	socket.on('start game', function () {
 		console.log('start game');
 		curr_game.initialize_board()
-		socket.emit("game initialized", curr_game);
+		socket.emit("game initialized", curr_game.toJSON());
 	});
 	socket.on('disconnect', function () {
 		console.log('user disconnected');

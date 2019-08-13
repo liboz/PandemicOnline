@@ -19,12 +19,10 @@ function City(name, location, color, index) {
     this.hasResearchStation = name === 'Atlanta' ? true : false
     this.players = new Set()
     this.index = index
-    this.neighbors_index = []
 };
 
 City.prototype.add_neighbor = function (neighbor) {
     this.neighbors.add(neighbor)
-    this.neighbors_index.push(neighbor.index)
 };
 
 City.prototype.infect = function (game, color = this.color, visited = new Set()) {
@@ -95,7 +93,19 @@ City.toGeoJSON = function (game_graph) {
     return g
 }*/
 
+function CityJSON(city) {
+    this.name = city.name;
+    this.color = city.color;
+    this.location = city.location;
+    this.cubes = city.cubes
+    this.hasResearchStation = city.hasResearchStation
+    this.players = [...city.players].map(p => p.id)
+    this.index = city.index
+    this.neighbors = [...city.neighbors].map(i => i.index)
+};
+
 module.exports = {
     City: City,
-    Colors: colors
+    Colors: colors,
+    CityJSON: CityJSON
 };
