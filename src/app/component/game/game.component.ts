@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, SimpleChanges } from '@angular/core';
 import * as d3 from 'd3';
 import * as $ from 'jquery'
 import geo from '../../../../data/geo.json';
@@ -12,6 +12,7 @@ import geo from '../../../../data/geo.json';
 export class GameComponent implements OnInit {
   objectKeys = Object.keys;
   @Input() game: any;
+  @Input() socket: any;
 
   features = geo.features
   w = 2500;
@@ -27,6 +28,7 @@ export class GameComponent implements OnInit {
 
   minZoom: number;
   maxZoom: number;
+  
 
   nodes: any;
   links: any;
@@ -53,8 +55,8 @@ export class GameComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-
+  ngOnChanges(changes: SimpleChanges) {
+    // changes.prop contains the old and the new value...
     this.svg = d3.select("#map-holder > svg")
       // set to the same size as the "map-holder" div
       .attr("width", $("#map-holder").width())
@@ -70,6 +72,10 @@ export class GameComponent implements OnInit {
     this.zoom = d3.zoom().on("zoom", this.zoomed);
     //this.svg.call(this.zoom)
     this.createChart()
+  }
+
+  ngOnInit() {
+    
   }
 
   // zoom to show a bounding box, with optional additional padding as percentage of box size
@@ -166,5 +172,9 @@ export class GameComponent implements OnInit {
 
   onSelectedNode(selectedNode: any) {
     this.selectedNode = selectedNode;
+  }
+
+  onStart() {
+    this.socket.emit('start game')
   }
 }

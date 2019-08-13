@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from './service/api.service';
 
 import io from "socket.io-client";
@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   private socket: any;
   private game: any;
 
-  constructor(private api: ApiService) { }
+  constructor(private api: ApiService, private changeDetectorRef: ChangeDetectorRef) { }
 
   public ngOnInit() {
     this.api.getGames().subscribe(result => {
@@ -25,13 +25,17 @@ export class AppComponent implements OnInit {
 
       this.socket.on("new game", data => {
         this.game = data
-        console.log(data)
-    });
+
+      });
+
+      this.socket.on("game initialized", data => {
+        this.game = data
+      });
     })
 
   }
 
   public ngAfterViewInit() {
-    
-}
+
+  }
 }
