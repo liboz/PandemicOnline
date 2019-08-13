@@ -494,6 +494,34 @@ describe('Game', function () {
       expect(g.lost).toBe(true)
     });
   });
+
+  describe('#Next Player', function () {
+    it('loops', function () {
+      let g = new game.Game(cities);
+      expect(g.player_index).toBe(0)
+      g.next_player()
+      expect(g.player_index).toBe(1)
+      g.next_player()
+      expect(g.player_index).toBe(0)
+    });
+  });
+
+  describe('#Turns', function () {
+    it('stops when at 0', function () {
+      let g = new game.Game(cities);
+      expect(g.turns_left).toBe(4)
+      expect(g.decrement_turn()).toBe(true)
+      expect(g.turns_left).toBe(3)
+      expect(g.decrement_turn()).toBe(true)
+      expect(g.turns_left).toBe(2)
+      expect(g.decrement_turn()).toBe(true)
+      expect(g.turns_left).toBe(1)
+      expect(g.decrement_turn()).toBe(false)
+      expect(g.turns_left).toBe(0)
+      expect(g.decrement_turn()).toBe(false)
+      expect(g.turns_left).toBe(0)
+    });
+  });
 });
 
 
@@ -815,6 +843,8 @@ describe('Player', function () {
       expect(g.players[1].hand.has('Miami')).toBe(false)
     });
   });
+
+
 });
 
 

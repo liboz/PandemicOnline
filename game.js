@@ -36,6 +36,8 @@ function Game(cities, rng = seedrandom()) {
     }
     this.lost = false
     this.won = false
+    this.player_index = 0
+    this.turns_left = 4
     //this.geoJSON = city.City.toGeoJSON(this.game_graph)
 };
 
@@ -80,6 +82,25 @@ Game.prototype.lose_game = function()  {
 
 Game.prototype.win_game = function()  {
     this.won = true
+}
+
+Game.prototype.next_player = function() {
+    this.player_index += 1
+    if (this.player_index == this.players.length) {
+        this.player_index = 0;
+    }
+}
+
+Game.prototype.decrement_turn = function() {
+    if (this.turns_left === 0) {
+        return false
+    }
+    this.turns_left -= 1
+    if (this.turns_left === 0) {
+        return false
+    } else {
+        return true
+    }
 }
 
 module.exports = {
