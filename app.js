@@ -34,6 +34,11 @@ io.on('connection', function (socket) {
 	console.log('a user connected');
 	curr_game = new game.Game(cities)
 	socket.emit("new game", curr_game);
+	socket.on('start game', function () {
+		console.log('start game');
+		curr_game.initialize_board()
+		socket.emit("game initialized", curr_game);
+	});
 	socket.on('disconnect', function () {
 		console.log('user disconnected');
 		curr_game = null
