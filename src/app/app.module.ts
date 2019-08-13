@@ -8,7 +8,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { GameComponent } from './component/game/game.component';
 import { NodeComponent } from './component/node/node.component';
 import { LinkComponent } from './component/link/link.component';
-import { DiseaseCubeComponent } from './component/disease-cube/disease-cube.component'; 
+import { DiseaseCubeComponent } from './component/disease-cube/disease-cube.component';
+import { PlayerComponent } from './component/player/player.component'; 
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { DiseaseCubeComponent } from './component/disease-cube/disease-cube.comp
     GameComponent,
     NodeComponent,
     LinkComponent,
-    DiseaseCubeComponent
+    DiseaseCubeComponent,
+    PlayerComponent
   ],
   imports: [
     BrowserModule,

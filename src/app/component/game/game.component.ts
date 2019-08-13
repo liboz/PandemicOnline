@@ -145,12 +145,13 @@ export class GameComponent implements OnInit {
     let values: any[] = Object.values(this.game.game_graph)
     this.nodes = values.map((d: any) => {
       return { id: d.index, x: this.projection(d.location)[0], y: this.projection(d.location)[1], 
-        color: d.color, name: d.name, cubes:d.cubes, hasResearchStation: d.hasResearchStation }
+        color: d.color, name: d.name, cubes:d.cubes, hasResearchStation: d.hasResearchStation,
+        players: d.players }
     })
 
     this.links = []
     values.forEach((d: any) => {
-      d.neighbors_index.forEach(n => {
+      d.neighbors.forEach(n => {
         if (d.location[0] * values[n].location[0] < -10000) { 
           // these are cross pacific differences
           let left_diff = Math.min(this.nodes[d.index].x, this.nodes[n].x)
