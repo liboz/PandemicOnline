@@ -32,7 +32,7 @@ io.set('transports', ['websocket']);
 
 io.on('connection', function (socket) {
 	console.log('a user connected');
-	curr_game = new game.Game(cities)
+	curr_game = new game.Game(cities, 2)
 	socket.emit("new game", curr_game.toJSON());
 	socket.on('start game', function () {
 		console.log('start game');

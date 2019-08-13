@@ -29,6 +29,27 @@ Player.prototype.move = function (game_graph, final_destination) {
     }
 };
 
+Player.prototype.get_valid_final_destinations = function (game) {
+    if (this.hand.has(this.location)) {
+        //go everywhere!!!
+        return Object.values(game.game_graph).map(i => i.index);
+    } else {
+        let s = new Set([...game.game_graph[this.location].neighbors].map(i => i.index))
+        this.hand.forEach(c => {
+            s.add(game.game_graph[c].index)
+        })
+        if (game.game_graph[this.location].hasResearchStation) {
+            game.research_stations.forEach(c => {
+                s.add(game.game_graph[c].index)
+            })
+        }
+        s.delete(game.game_graph[this.location].index )
+        return [...s]
+    }
+
+
+}
+
 Player.prototype.draw = function (game) {
     let card = game.player_deck.flip_card()
     if (card === undefined) {
@@ -52,7 +73,7 @@ Player.prototype.can_cure = function (game, cards) {
     if (!game.game_graph[this.location].hasResearchStation) {
         return false
     } else {
-        if (cards.length === 5) {
+        if (cards.length === 5 && (new Set(cards).size === 5)) {
             let color = game.game_graph[cards[0]].color
             if (game.cured[color] > 0) {
                 return false
@@ -67,6 +88,30 @@ Player.prototype.can_cure = function (game, cards) {
             }
         }
         return false;
+    }
+}
+
+Player.prototype.can_hand_cure = function (game) {
+    if (!game.game_graph[this.location].hasResearchStation) {
+        return false
+    } else {
+        let cards = {
+            'blue': 0,
+            'red': 0,
+            'black': 0,
+            'yellow': 0
+        }
+        this.hand.forEach(card => {
+            cards[game.game_graph[card].color] += 1
+        })
+
+        let keys = Object.keys(cards)
+        for (let i = 0; i < 4; i++) {
+            if (game.cured[keys[i]] === 0 && cards[keys[i]] >= 5) {
+                return true
+            }
+        }
+        return false
     }
 }
 
@@ -93,7 +138,7 @@ Player.prototype.treat = function (game, color) {
     }
 }
 
-Player.prototype.discard = function(cards) {
+Player.prototype.discard = function (cards) {
     if (cards.every(c => this.hand.has(c))) {
         cards.forEach(c => this.hand.delete(c))
         return true;
@@ -101,7 +146,7 @@ Player.prototype.discard = function(cards) {
     return false;
 }
 
-Player.prototype.can_trade = function(game) {
+Player.prototype.can_trade = function (game) {
     if (game.game_graph[this.location].players.size <= 1) {
         return false
     } else {
@@ -109,10 +154,10 @@ Player.prototype.can_trade = function(game) {
             return player.hand.has(this.location)
         })
     }
-    
+
 }
 
-Player.prototype.trade = function(player) {
+Player.prototype.trade = function (player) {
     if (this.hand.has(this.location)) {
         player.hand.add(this.location)
         this.hand.delete(this.location)
