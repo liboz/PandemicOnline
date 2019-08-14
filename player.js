@@ -3,6 +3,7 @@ function Player(id, role, location = "Atlanta") {
     this.hand = new Set()
     this.location = location
     this.id = id
+    this.hand_size_limit = 7
 };
 
 Player.prototype.move = function (game_graph, final_destination) {
@@ -43,11 +44,9 @@ Player.prototype.get_valid_final_destinations = function (game) {
                 s.add(game.game_graph[c].index)
             })
         }
-        s.delete(game.game_graph[this.location].index )
+        s.delete(game.game_graph[this.location].index)
         return [...s]
     }
-
-
 }
 
 Player.prototype.draw = function (game) {
@@ -56,7 +55,7 @@ Player.prototype.draw = function (game) {
         game.lose_game();
     }
     this.hand.add(card)
-
+    return card;
 }
 
 Player.prototype.can_build_research_station = function (game) {
@@ -136,6 +135,14 @@ Player.prototype.treat = function (game, color) {
     if (game.cured[color] === 1 && game.cubes[color] === 24) {
         game.cured[color] = 2
     }
+}
+
+Player.prototype.can_discard = function (cards) {
+    if (Array.isArray(cards)) {
+        return (this.hand.size - cards.length == this.hand_size_limit) &&
+            (new Set(cards)).size === cards.length && cards.every(c => this.hand.has(c));
+    }
+    return false;
 }
 
 Player.prototype.discard = function (cards) {

@@ -35,20 +35,27 @@ io.on('connection', function (socket) {
 	curr_game = new game.Game(cities, 2, seeded)
 	socket.emit("new game", curr_game.toJSON());
 	socket.on('start game', function () {
-		console.log('start game');
-		curr_game.initialize_board()
-		socket.emit("game initialized", curr_game.toJSON());
+		if (curr_game.game_state === game.GameState.NotStarted) {
+			console.log('start game');
+			curr_game.initialize_board()
+			socket.emit("game initialized", curr_game.toJSON());
+		} else {
+			console.log(`start game with ${curr_game.game_state}`);
+		}
 	});
 	socket.on('move', function (data, callback) {
 		console.log(`move to ${data}`);
-		callback()
-		if (curr_game.players[curr_game.player_index].move(curr_game.game_graph, data)) {
-			curr_game.use_turn()
-			socket.emit(`move successful`, curr_game.toJSON());
+		if (curr_game.game_state === game.GameState.Ready && curr_game.turns_left !== 0) {
+			if (curr_game.players[curr_game.player_index].move(curr_game.game_graph, data)) {
+				callback()
+				socket.emit(`move successful`, curr_game.toJSON());
+				curr_game.use_turn(socket)
+			} else {
+				socket.emit('error', `${data} is an invalid location to move to`);
+			}
 		} else {
-			socket.emit('error', `${data} is an invalid location to move to`);
+			socket.emit('error', `Move to ${data} is an invalid action`);
 		}
-
 	});
 
 	socket.on('disconnect', function () {

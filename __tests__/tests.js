@@ -423,10 +423,10 @@ describe('Game', function () {
     it('Right Number of Cubes ', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, 2, seeded);
-      expect(g.started).toBe(false)
+      expect(g.game_state).toBe(game.GameState.NotStarted)
       for (let i = 0; i < 2; i++) { // running initialize_board twice does nothing
         g.initialize_board();
-        expect(g.started).toBe(true)
+        expect(g.game_state).toBe(game.GameState.Ready)
         expect(g.outbreak_counter).toBe(0);
         let infected = [
           'Madrid', 'New York', 'Delhi',
@@ -467,12 +467,12 @@ describe('Game', function () {
         g.infect_stage();
         g.epidemic()
       }
-      expect(g.lost).toBe(false)
+      expect(g.game_state).toBe(game.GameState.NotStarted)
       g.epidemic()
       g.epidemic()
       g.infect_stage();
       g.infect_stage();
-      expect(g.lost).toBe(true)
+      expect(g.game_state).toBe(game.GameState.Lost)
     });
   });
 
@@ -493,9 +493,9 @@ describe('Game', function () {
       let delhi = g.game_graph['Delhi'];
       delhi.infect(g);
       kolkata.infect(g);
-      expect(g.lost).toBe(false)
+      expect(g.game_state).toBe(game.GameState.NotStarted)
       g.infect_stage() // next card is Tehran
-      expect(g.lost).toBe(true)
+      expect(g.game_state).toBe(game.GameState.Lost)
     });
   });
 
@@ -669,10 +669,10 @@ describe('Player', function () {
       let g = new game.Game(cities, 2, seeded);
       for (let i = 0; i < 45; i++) { // 48 cities + 5 epidemic, but start with 8 cards removed with 2 people
         g.players[0].draw(g)
-        expect(g.lost).toBe(false)
+        expect(g.game_state).toBe(game.GameState.NotStarted)
       }
       g.players[0].draw(g)
-      expect(g.lost).toBe(true)
+      expect(g.game_state).toBe(game.GameState.Lost)
     });
   });
 
@@ -839,7 +839,7 @@ describe('Player', function () {
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true)
       g.players[0].cure(g, [...g.players[0].hand])
 
-      expect(g.won).toBe(true)
+      expect(g.game_state).toBe(game.GameState.Won)
     });
   });
 
@@ -893,8 +893,13 @@ describe('Player', function () {
       g.players[0].draw(g)
       g.players[0].draw(g)
       expect(g.players[0].hand.size).toBe(9)
+      expect(g.players[0].can_discard(['Tokyo', 'Beijing'])).toBe(false) // can't discard cards that don't exist in hand
       expect(g.players[0].discard(['Tokyo', 'Beijing'])).toBe(false)
       expect(g.players[0].hand.size).toBe(9)
+      expect(g.players[0].can_discard(['Beijing'])).toBe(false) // can't discard too few
+      expect(g.players[0].can_discard(['Beijing', 'Beijing'])).toBe(false) // can't discard dupliccates
+      expect(g.players[0].can_discard(['Milan', 'Jakarta', 'Beijing'])).toBe(false) // can't discard too many
+      expect(g.players[0].can_discard(['Jakarta', 'Beijing'])).toBe(true)
       expect(g.players[0].discard(['Jakarta', 'Beijing'])).toBe(true)
       expect(g.players[0].hand.size).toBe(7)
     });

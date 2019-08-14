@@ -4,6 +4,14 @@ const seedrandom = require('seedrandom');
 const player_deck = require('./player_deck')
 const player = require('./player')
 
+const GameState = {
+    NotStarted: 0,
+    Ready: 1,
+    DiscardingCard: 2,
+    Won: 3,
+    Lost: 4
+}
+
 function Game(cities, num_players, rng = seedrandom()) {
     this.game_graph = city.City.load(cities)
     this.outbreak_counter = 0
@@ -37,11 +45,10 @@ function Game(cities, num_players, rng = seedrandom()) {
         'black': 24,
         'yellow': 24
     }
-    this.lost = false
-    this.won = false
-    this.started = false
     this.player_index = 0
     this.turns_left = 4
+    this.game_state = GameState.NotStarted
+
     //this.geoJSON = city.City.toGeoJSON(this.game_graph)
 };
 
@@ -53,9 +60,12 @@ Game.prototype.outbreak = function () {
     return true
 };
 
-Game.prototype.epidemic = function () {
+Game.prototype.epidemic = function (socket = null) {
     this.infection_rate_index += 1;
     let card = this.infection_deck.infect_epidemic();
+    if (socket) {
+        socket.emit('epidemic', card)
+    }
     this.game_graph[card].infect_epidemic(this)
     this.infection_deck.intensify()
 };
@@ -70,7 +80,7 @@ Game.prototype.infect_stage = function () {
 };
 
 Game.prototype.initialize_board = function () {
-    if (!this.started) {
+    if (this.game_state === GameState.NotStarted) {
         for (let i = 2; i >= 0; i--) { // do all 3 cube infections, then 2 cube etc
             for (let j = 0; j < 3; j++) {
                 let card = this.infection_deck.flip_card()
@@ -79,16 +89,16 @@ Game.prototype.initialize_board = function () {
                 }
             }
         }
-        this.started = true
+        this.game_state = GameState.Ready;
     }
 };
 
 Game.prototype.lose_game = function () {
-    this.lost = true
+    this.game_state = GameState.Lost
 }
 
 Game.prototype.win_game = function () {
-    this.won = true
+    this.game_state = GameState.Won
 }
 
 Game.prototype.next_player = function () {
@@ -110,10 +120,39 @@ Game.prototype.decrement_turn = function () {
     }
 }
 
-Game.prototype.use_turn = function () {
+Game.prototype.use_turn = function (socket) {
     if (!this.decrement_turn()) {
-        this.next_player()
-        this.turns_left = 4;
+        for (let i = 0; i < 2; i++) {
+            let card = this.players[this.player_index].draw(this)
+            if (card === 'Epidemic') {
+                this.players[this.player_index].hand.delete(card)
+                this.epidemic(socket)
+            }
+        }
+
+        socket.emit('update game state', this.toJSON())
+        if (this.players[this.player_index].hand.size > this.players[this.player_index].hand_size_limit) {
+            this.game_state = GameState.DiscardingCard
+            socket.emit('discard cards')
+            socket.on('discard', (cards) => {
+                if (this.players[this.player_index].can_discard(cards)) {
+                    this.players[this.player_index].discard(cards)
+                    socket.removeAllListeners('discard')
+                    this.infect_stage()
+                    this.next_player()
+                    this.turns_left = 4;
+                    this.game_state = GameState.Ready
+                    socket.emit('update game state', this.toJSON())
+                }
+            });
+        } else {
+            this.infect_stage()
+            this.next_player()
+            this.turns_left = 4;
+            socket.emit('update game state', this.toJSON())
+        }
+    } else  {
+        socket.emit('update game state', this.toJSON())
     }
 }
 
@@ -135,12 +174,10 @@ function GameJSON(game) {
     this.research_stations = [...game.research_stations]
     this.cured = game.cured
     this.cubes = game.cubes
-    this.lost = game.lost
-    this.won = game.won
-    this.started = game.started
+    this.game_state = game.game_state
     this.player_index = game.player_index
     this.turns_left = game.turns_left
-    if (this.started) {
+    if (game.game_state !== GameState.NotStarted) {
         this.valid_final_destinations = game.players[game.player_index].get_valid_final_destinations(game)
         this.can_build_research_station = game.players[game.player_index].can_build_research_station(game)
         this.can_cure = game.players[game.player_index].can_hand_cure(game)
@@ -151,5 +188,6 @@ function GameJSON(game) {
 
 module.exports = {
     Game: Game,
-    GameJSON: GameJSON
+    GameJSON: GameJSON,
+    GameState: GameState
 };
