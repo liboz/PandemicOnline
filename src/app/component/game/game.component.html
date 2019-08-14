@@ -11,7 +11,7 @@
     </div>
 </div>
 <button (click)="onStart()">Start Game</button>
-<div *ngIf="game.started">
+<div *ngIf="hasStarted()">
     Player: {{game.player_index}}
     <br>
     Turns Left: {{game.turns_left}}

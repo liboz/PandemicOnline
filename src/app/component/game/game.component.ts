@@ -28,7 +28,7 @@ export class GameComponent implements OnInit {
 
   minZoom: number;
   maxZoom: number;
-  
+
 
   nodes: any;
   links: any;
@@ -145,9 +145,11 @@ export class GameComponent implements OnInit {
   private createChart(): void {
     let values: any[] = Object.values(this.game.game_graph)
     this.nodes = values.map((d: any) => {
-      return { id: d.index, x: this.projection(d.location)[0], y: this.projection(d.location)[1], 
-        color: d.color, name: d.name, cubes:d.cubes, hasResearchStation: d.hasResearchStation,
-        players: d.players }
+      return {
+        id: d.index, x: this.projection(d.location)[0], y: this.projection(d.location)[1],
+        color: d.color, name: d.name, cubes: d.cubes, hasResearchStation: d.hasResearchStation,
+        players: d.players
+      }
     })
 
     if (this.game.valid_final_destinations) {
@@ -159,20 +161,20 @@ export class GameComponent implements OnInit {
     this.links = []
     values.forEach((d: any) => {
       d.neighbors.forEach(n => {
-        if (d.location[0] * values[n].location[0] < -10000) { 
+        if (d.location[0] * values[n].location[0] < -10000) {
           // these are cross pacific differences
           let left_diff = Math.min(this.nodes[d.index].x, this.nodes[n].x)
           let right_diff = this.w - Math.max(this.nodes[d.index].x, this.nodes[n].x)
-          let slope = (this.nodes[d.index].y - this.nodes[n].y)/(left_diff + right_diff)
+          let slope = (this.nodes[d.index].y - this.nodes[n].y) / (left_diff + right_diff)
           if (d.location[0] < 0) {
             this.links.push({
               source: this.nodes[d.index],
-              target: { x: 0, y: this.nodes[d.index].y - slope*left_diff }
+              target: { x: 0, y: this.nodes[d.index].y - slope * left_diff }
             }) // western hemisphere 
           } else {
             this.links.push({
               source: this.nodes[d.index],
-              target: { x: 3000, y: this.nodes[d.index].y - slope*right_diff }
+              target: { x: 3000, y: this.nodes[d.index].y - slope * right_diff }
             }) // eastern hemisphere 
           }
         } else {
@@ -185,10 +187,10 @@ export class GameComponent implements OnInit {
 
   onSelectedNode(selectedNode: any) {
     if (this.isMoving && selectedNode.isValidDestination) {
-      console.log(selectedNode)
       this.socket.emit('move', selectedNode.name, () => {
-        this.isMoving = false;
+        console.log('callbacked')
       })
+      this.isMoving = false;
     }
   }
 
@@ -199,4 +201,17 @@ export class GameComponent implements OnInit {
   onMove() {
     this.isMoving = !this.isMoving;
   }
+
+  hasStarted() {
+    return this.game.game_state !== GameState.NotStarted;
+  }
+}
+
+
+export const GameState = {
+  NotStarted: 0,
+  Ready: 1,
+  DiscardingCard: 2,
+  Won: 3,
+  Lost: 4
 }

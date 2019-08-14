@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from './service/api.service';
 
 import io from "socket.io-client";
+import { GameState } from "./component/game/game.component"
 
 @Component({
   selector: 'app-root',
@@ -30,6 +31,19 @@ export class AppComponent implements OnInit {
 
       this.socket.on("move successful", data => {
         this.game = data
+      });
+
+      this.socket.on("update game state", data => {
+        this.game = data
+      })
+
+      this.socket.on('discard cards', data =>  {
+        this.game.game_state = GameState.DiscardingCard;
+        console.log('hello!');
+      })
+
+      this.socket.on("epidemic", data => {
+        window.alert(`${data} infected by Epidemic`)
       });
 
       this.socket.on("error", data => {

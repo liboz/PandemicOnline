@@ -18,7 +18,7 @@ import { PlayerComponent } from './component/player/player.component';
     NodeComponent,
     LinkComponent,
     DiseaseCubeComponent,
-    PlayerComponent
+    PlayerComponent, 
   ],
   imports: [
     BrowserModule,
