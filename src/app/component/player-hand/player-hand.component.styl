@@ -4,8 +4,9 @@
     border-radius 5px
     font-size 10pt
     text-align center
-    min-width 100px
-    width 9%
+    width 50px 
+    display: flex;
+    flex-direction: column;
 .unselected
     margin-top: 30px
 .selected
@@ -21,3 +22,10 @@
 #hand
     display flex
     width 20%
+    max-width 100em;
+.card-rapper 
+  overflow hidden
+
+.card-wrapper:last-child, .card-wrapper:hover
+    overflow visible
+

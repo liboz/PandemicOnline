@@ -16,12 +16,6 @@ export class PlayerHandComponent implements OnInit {
   }
   selected: boolean[] = []
   parentEl: HTMLElement
-  offset() {
-    let cw = this.parentEl.clientWidth
-    let sw = this.parentEl.scrollWidth
-    let diff = sw - cw
-    return diff / (this.hand.length - 1);
-  }
 
   constructor() { }
 

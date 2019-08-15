@@ -1,7 +1,9 @@
 <div id="hand">
-    <div [ngClass]="['card', item.selected ? 'selected': 'unselected', i !== 0 ? 'transform: translateX(-' + offset()*i + 'px' : '']"
-        *ngFor="let item of result(); let i = index" (click)="handleClick(i)"
-        [ngStyle]="{'background-color': game.game_graph[game.game_graph_index[item.card]].color}">
-        <div class="card-text">{{ item.card }}</div>
+    <div [ngClass]="['card', item.selected ? 'selected': 'unselected']" *ngFor="let item of result(); let i = index"
+        (click)="handleClick(i)"
+        [ngStyle]="{'background-color': game.game_graph[game.game_graph_index[item.card]].color} ">
+        <div class="card-wrapper">
+            <div class="card-text">{{ item.card }}</div>
+        </div>
     </div>
 </div>
