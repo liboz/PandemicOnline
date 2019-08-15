@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges, Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-player-hand',
@@ -15,18 +15,30 @@ export class PlayerHandComponent implements OnInit {
     });
   }
   selected: boolean[] = []
+  parentEl: HTMLElement
+  offset() {
+    let cw = this.parentEl.clientWidth
+    let sw = this.parentEl.scrollWidth
+    let diff = sw - cw
+    return diff / (this.hand.length - 1);
+  }
+
   constructor() { }
 
   ngOnChange(changes: SimpleChanges) {
     if (this.hand) {
       this.selected = this.hand.map(i => false);
     }
+    console.log(this)
+
   }
 
   ngOnInit() {
     this.selected = this.hand.map(i => false)
-  }
+    this.parentEl = document.getElementById("hand")
 
+  }
+  
   handleClick(i: number) {
     let count = 0
     this.selected.forEach(i => {
@@ -37,6 +49,6 @@ export class PlayerHandComponent implements OnInit {
     if (this.hand.length - count > 7 || this.selected[i]) {
       this.selected[i] = !this.selected[i];
       this.onSelect.emit(i)
-    }    
+    }
   }
 }
