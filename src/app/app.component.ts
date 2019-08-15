@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
 
       this.socket.on("new game", data => {
         this.game = data
-
+        console.log(data)
       });
 
       this.socket.on("move successful", data => {

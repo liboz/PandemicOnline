@@ -54,6 +54,7 @@ export class GameComponent implements OnInit {
     .projection(this.projection);
 
   initialized = false;
+  selectedCards: Set<number>
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -80,6 +81,7 @@ export class GameComponent implements OnInit {
     this.svg.call(this.zoom)
     this.isMoving = false
     this.initialized = true
+    this.selectedCards = new Set()
     this.createChart()
   }
 
@@ -194,6 +196,12 @@ export class GameComponent implements OnInit {
     }
   }
 
+  onSelectedCard(cardIndex: any) {
+    if (!this.selectedCards.delete(cardIndex)) {
+      this.selectedCards.add(cardIndex)
+    }
+  }
+
   onStart() {
     this.socket.emit('start game')
   }
@@ -204,6 +212,21 @@ export class GameComponent implements OnInit {
 
   hasStarted() {
     return this.game.game_state !== GameState.NotStarted;
+  }
+
+  mustDiscard() {
+    return this.game.game_state === GameState.DiscardingCard;
+  }
+
+  discardEnough() {
+    return this.game.players[this.game.player_index].hand.length - this.selectedCards.size === 7
+  }
+
+  discardSelectedCards() {
+    this.socket.emit('discard', [...this.selectedCards].map(i => this.game.players[this.game.player_index].hand[i]), () => {
+      this.selectedCards = new Set()
+    })
+    
   }
 }
 

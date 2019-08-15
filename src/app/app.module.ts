@@ -9,7 +9,8 @@ import { GameComponent } from './component/game/game.component';
 import { NodeComponent } from './component/node/node.component';
 import { LinkComponent } from './component/link/link.component';
 import { DiseaseCubeComponent } from './component/disease-cube/disease-cube.component';
-import { PlayerComponent } from './component/player/player.component'; 
+import { PlayerComponent } from './component/player/player.component';
+import { PlayerHandComponent } from './component/player-hand/player-hand.component'; 
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { PlayerComponent } from './component/player/player.component';
     NodeComponent,
     LinkComponent,
     DiseaseCubeComponent,
-    PlayerComponent, 
+    PlayerComponent,
+    PlayerHandComponent
   ],
   imports: [
     BrowserModule,
