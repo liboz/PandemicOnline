@@ -36,7 +36,6 @@ export class PlayerHandComponent implements OnInit {
     })
     if (this.hand.length - count > 7 || this.selected[i]) {
       this.selected[i] = !this.selected[i];
-      console.log(i)
       this.onSelect.emit(i)
     }    
   }
