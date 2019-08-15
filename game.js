@@ -134,8 +134,10 @@ Game.prototype.use_turn = function (socket) {
         if (this.players[this.player_index].hand.size > this.players[this.player_index].hand_size_limit) {
             this.game_state = GameState.DiscardingCard
             socket.emit('discard cards')
-            socket.on('discard', (cards) => {
+            socket.on('discard', (cards, callback) => {
+                console.log(cards)
                 if (this.players[this.player_index].can_discard(cards)) {
+                    callback()
                     this.players[this.player_index].discard(cards)
                     socket.removeAllListeners('discard')
                     this.infect_stage()
@@ -144,7 +146,7 @@ Game.prototype.use_turn = function (socket) {
                     this.game_state = GameState.Ready
                     socket.emit('update game state', this.toJSON())
                 }
-            });
+            }, );
         } else {
             this.infect_stage()
             this.next_player()
@@ -165,6 +167,10 @@ function GameJSON(game) {
         return null;
     }
     this.game_graph = Object.values(game.game_graph).map(c => new city.CityJSON(c))
+    this.game_graph_index = this.game_graph.reduce(function(map, city, index) {
+        map[city.name] = index;
+        return map;
+    }, {})
     this.outbreak_counter = 0
     this.infection_rate_index = 0
     this.infection_rate = [2, 2, 2, 3, 3, 4, 4]
