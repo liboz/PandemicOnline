@@ -526,6 +526,44 @@ describe('Game', function () {
       expect(g.turns_left).toBe(0)
     });
   });
+
+  describe('#Turns', function () {
+    it('pass Turns', function () {
+      let g = new game.Game(cities, 2);
+      g.pass_turn()
+      expect(g.turns_left).toBe(0)
+
+      g = new game.Game(cities, 2);
+      g.decrement_turn()
+      expect(g.turns_left).toBe(3)
+      g.pass_turn()
+      expect(g.turns_left).toBe(0)
+
+      g = new game.Game(cities, 2);
+      g.decrement_turn()
+      g.decrement_turn()
+      expect(g.turns_left).toBe(2)
+      g.pass_turn()
+      expect(g.turns_left).toBe(0)
+
+      g = new game.Game(cities, 2);
+      g.decrement_turn()
+      g.decrement_turn()
+      g.decrement_turn()
+      expect(g.turns_left).toBe(1)
+      g.pass_turn()
+      expect(g.turns_left).toBe(0)
+
+      g = new game.Game(cities, 2);
+      g.decrement_turn()
+      g.decrement_turn()
+      g.decrement_turn()
+      g.decrement_turn()
+      expect(g.turns_left).toBe(0)
+      g.pass_turn()
+      expect(g.turns_left).toBe(0)
+    });
+  });
 });
 
 

@@ -44,7 +44,7 @@ io.on('connection', function (socket) {
 		}
 	});
 	socket.on('move', function (data, callback) {
-		console.log(`move to ${data}`);
+		console.log(`Player ${curr_game.player_index}: move to ${data}`);
 		if (curr_game.game_state === game.GameState.Ready && curr_game.turns_left !== 0) {
 			if (curr_game.players[curr_game.player_index].move(curr_game.game_graph, data)) {
 				callback()
@@ -55,6 +55,15 @@ io.on('connection', function (socket) {
 			}
 		} else {
 			socket.emit('error', `Move to ${data} is an invalid action`);
+		}
+	});
+
+	socket.on('pass', function () {
+		console.log(`Player ${curr_game.player_index}: pass move`);
+		if (curr_game.game_state === game.GameState.Ready && curr_game.turns_left !== 0) {
+			curr_game.pass_turn(socket)
+		} else {
+			socket.emit('error', `Cannot pass turn right now`);
 		}
 	});
 

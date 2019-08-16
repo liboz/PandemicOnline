@@ -122,39 +122,51 @@ Game.prototype.decrement_turn = function () {
 
 Game.prototype.use_turn = function (socket) {
     if (!this.decrement_turn()) {
-        for (let i = 0; i < 2; i++) {
-            let card = this.players[this.player_index].draw(this)
-            if (card === 'Epidemic') {
-                this.players[this.player_index].hand.delete(card)
-                this.epidemic(socket)
-            }
-        }
-
-        socket.emit('update game state', this.toJSON())
-        if (this.players[this.player_index].hand.size > this.players[this.player_index].hand_size_limit) {
-            this.game_state = GameState.DiscardingCard
-            socket.emit('discard cards')
-            socket.on('discard', (cards, callback) => {
-                console.log(cards)
-                if (this.players[this.player_index].can_discard(cards)) {
-                    callback()
-                    this.players[this.player_index].discard(cards)
-                    socket.removeAllListeners('discard')
-                    this.infect_stage()
-                    this.next_player()
-                    this.turns_left = 4;
-                    this.game_state = GameState.Ready
-                    socket.emit('update game state', this.toJSON())
-                }
-            }, );
-        } else {
-            this.infect_stage()
-            this.next_player()
-            this.turns_left = 4;
-            socket.emit('update game state', this.toJSON())
-        }
+        this.turn_end(socket);
     } else  {
         socket.emit('update game state', this.toJSON())
+    }
+}
+
+Game.prototype.turn_end = function(socket) {
+    for (let i = 0; i < 2; i++) {
+        let card = this.players[this.player_index].draw(this)
+        if (card === 'Epidemic') {
+            this.players[this.player_index].hand.delete(card)
+            this.epidemic(socket)
+        }
+    }
+
+    socket.emit('update game state', this.toJSON())
+    if (this.players[this.player_index].hand.size > this.players[this.player_index].hand_size_limit) {
+        this.game_state = GameState.DiscardingCard
+        socket.emit('discard cards')
+        socket.on('discard', (cards, callback) => {
+            console.log(cards)
+            if (this.players[this.player_index].can_discard(cards)) {
+                callback()
+                this.players[this.player_index].discard(cards)
+                socket.removeAllListeners('discard')
+                this.infect_stage()
+                this.next_player()
+                this.turns_left = 4;
+                this.game_state = GameState.Ready
+                socket.emit('update game state', this.toJSON())
+            }
+        }, );
+    } else {
+        this.infect_stage()
+        this.next_player()
+        this.turns_left = 4;
+        socket.emit('update game state', this.toJSON())
+    }
+}
+
+Game.prototype.pass_turn = function (socket) {
+    while (this.decrement_turn()) {
+    }
+    if (socket) {
+        this.turn_end(socket);
     }
 }
 
