@@ -32,8 +32,8 @@ export class GameComponent implements OnInit {
 
   nodes: any;
   links: any;
-  force: any;
   isMoving: any;
+  displayTreatColorChoice = false;
 
   getTextBox(selection) {
     selection
@@ -190,7 +190,7 @@ export class GameComponent implements OnInit {
   onSelectedNode(selectedNode: any) {
     if (this.isMoving && selectedNode.isValidDestination) {
       this.socket.emit('move', selectedNode.name, () => {
-        console.log('callbacked')
+        console.log(`move to ${selectedNode.name} success callbacked`)
       })
       this.isMoving = false;
     }
@@ -208,6 +208,24 @@ export class GameComponent implements OnInit {
 
   onMove() {
     this.isMoving = !this.isMoving;
+  }
+
+  onTreat() {
+    let location = this.game.players[this.game.player_index].location
+    let cubes = this.game.game_graph[this.game.game_graph_index[location]].cubes
+    let cubes_on = Object.keys(cubes).filter(i => cubes[i] > 0)
+    if (cubes_on.length === 1) {
+      this.treat(cubes_on[0])
+    } else  {
+      this.displayTreatColorChoice = true;
+    }
+  }
+
+  treat(color) {
+    this.displayTreatColorChoice = false
+    this.socket.emit('treat', color, () => {
+      console.log(`treat ${color} at ${this.game.players[this.game.player_index].location} callbacked`)
+    })
   }
 
   canPass() {
