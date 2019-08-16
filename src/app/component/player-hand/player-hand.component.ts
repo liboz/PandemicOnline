@@ -24,7 +24,6 @@ export class PlayerHandComponent implements OnInit {
       this.selected = this.hand.map(i => false);
     }
     console.log(this)
-
   }
 
   ngOnInit() {

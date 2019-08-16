@@ -1,14 +1,23 @@
-
-<div>
+<div id="main-holder">
     <div id="map-holder">
         <svg>
             <g>
                 <rect [ngClass]="'background'" [attr.width]="w" [attr.height]="h" x="0" y="0"></rect>
                 <path [attr.d]="path(feature)" *ngFor="let feature of features" [ngClass]="'landmass'"></path>
                 <g [app-link]="link" *ngFor="let link of links"></g>
-                <g [app-node]="node" *ngFor="let node of nodes" (selected)="onSelectedNode($event)" [isMoving]="isMoving"></g>
+                <g [app-node]="node" *ngFor="let node of nodes" (selected)="onSelectedNode($event)"
+                    [isMoving]="isMoving"></g>
             </g>
         </svg>
+    </div>
+    <div id="player-holder">
+        <ng-container *ngIf="hasStarted()">
+            <div *ngFor="let player of game.players">
+                Player {{ player.id }}
+                <app-player-hand [hand]="player.hand" [game]="game">
+                </app-player-hand>
+            </div>
+        </ng-container>
     </div>
 </div>
 <button (click)="onStart()">Start Game</button>
@@ -24,12 +33,11 @@
     <button [disabled]="!game.can_cure" (click)="onDiscover()">Discover Cure</button>
     <button [disabled]="!mustDiscard() || !discardEnough()" (click)="discardSelectedCards()">Discard Selected</button>
     <div *ngIf="mustDiscard()">YOU MUST DISCARD TO 7 CARDS</div>
-    <ul>
-        <div>
-            Player {{ game.player_index }}
-            <app-player-hand [hand]="game.players[game.player_index].hand" [game]="game" (onSelect)="onSelectedCard($event)"></app-player-hand>
-        </div>
-    </ul>
+    <div>
+        Player {{ game.player_index }}
+        <app-player-hand [hand]="game.players[game.player_index].hand" [game]="game"
+            (onSelect)="onSelectedCard($event)"></app-player-hand>
+    </div>
 </div>
 <br>
 <div>
