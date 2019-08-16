@@ -129,6 +129,10 @@ Player.prototype.can_treat = function (game) {
     return Object.values(game.game_graph[this.location].cubes).reduce((a, b) => a + b, 0) > 0
 }
 
+Player.prototype.can_treat_color = function (game, color) {
+    return game.game_graph[this.location].cubes[color] > 0
+}
+
 Player.prototype.treat = function (game, color) {
     game.game_graph[this.location].cubes[color] -= 1
     game.cubes[color] += 1

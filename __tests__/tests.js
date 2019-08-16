@@ -882,7 +882,7 @@ describe('Player', function () {
   });
 
 
-  describe('#Treat Disease', function () {
+  describe('#Cure Disease', function () {
     it('Eradicate after treating last cube', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, 2, seeded);
@@ -918,6 +918,29 @@ describe('Player', function () {
       g.players[0].treat(g, city.Colors.RED)
       expect(g.cured[city.Colors.RED]).toBe(2)
       expect(g.cubes[city.Colors.RED]).toBe(24)
+    });
+  });
+
+  describe('#Treat Disease', function () {
+    it('Can Treat', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, 2, seeded);
+
+      expect(g.players[0].can_treat(g)).toBe(false)
+      expect(g.players[0].can_treat_color(g, city.Colors.RED)).toBe(false)
+      expect(g.players[0].can_treat_color(g, city.Colors.BLUE)).toBe(false)
+      expect(g.players[0].can_treat_color(g, city.Colors.BLACK)).toBe(false)
+      expect(g.players[0].can_treat_color(g, city.Colors.YELLOW)).toBe(false)
+      
+      g.initialize_board()
+      g.players[0].move(g.game_graph, 'Washington')
+      g.players[0].move(g.game_graph, 'New York')
+
+      expect(g.players[0].can_treat(g)).toBe(true)
+      expect(g.players[0].can_treat_color(g, city.Colors.RED)).toBe(false)
+      expect(g.players[0].can_treat_color(g, city.Colors.BLUE)).toBe(true)
+      expect(g.players[0].can_treat_color(g, city.Colors.BLACK)).toBe(false)
+      expect(g.players[0].can_treat_color(g, city.Colors.YELLOW)).toBe(false)
     });
   });
 

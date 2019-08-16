@@ -67,6 +67,22 @@ io.on('connection', function (socket) {
 		}
 	});
 
+	socket.on('treat', function (color, callback) {
+		console.log(`Player ${curr_game.player_index}: treat ${color} at ${curr_game.players[curr_game.player_index].location}`);
+		if (curr_game.game_state === game.GameState.Ready && curr_game.turns_left !== 0) {
+			if (curr_game.players[curr_game.player_index].can_treat_color(curr_game, color)) {
+				curr_game.players[curr_game.player_index].treat(curr_game, color)
+				callback()
+				socket.emit(`treat successful`, curr_game.toJSON());
+				curr_game.use_turn(socket)
+			} else {
+				socket.emit('error', `It is invalid to treat ${color} at ${curr_game.players[curr_game.player_index].location}`);
+			}
+		} else {
+			socket.emit('error', `Treat ${color} at ${curr_game.players[curr_game.player_index].location} is an invalid action`);
+		}
+	});
+
 	socket.on('disconnect', function () {
 		console.log('user disconnected');
 		curr_game = null
