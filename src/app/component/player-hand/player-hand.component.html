@@ -1,6 +1,6 @@
 <div id="hand">
-    <div class="card-wrapper" *ngFor="let item of result(); let i = index" (click)="handleClick(i)">
-        <div [ngClass]="['card', item.selected ? 'selected': 'unselected']"
+    <div [ngClass]="['card-wrapper',  item.selected ? 'selected': 'unselected']" *ngFor="let item of result(); let i = index" (click)="handleClick(i)">
+        <div class="card"
             [ngStyle]="{'background-color': game.game_graph[game.game_graph_index[item.card]].color} ">
             <div class="card-text">{{ item.card }}</div>
         </div>

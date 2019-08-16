@@ -19,11 +19,10 @@ export class PlayerHandComponent implements OnInit {
 
   constructor() { }
 
-  ngOnChange(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges) {
     if (this.hand) {
       this.selected = this.hand.map(i => false);
     }
-    console.log(this)
   }
 
   ngOnInit() {
@@ -31,17 +30,19 @@ export class PlayerHandComponent implements OnInit {
     this.parentEl = document.getElementById("hand")
 
   }
-  
+
   handleClick(i: number) {
-    let count = 0
-    this.selected.forEach(i => {
-      if (i) {
-        count += 1
+    if (this.onSelect.observers.length > 0) {
+      let count = 0
+      this.selected.forEach(i => {
+        if (i) {
+          count += 1
+        }
+      })
+      if (this.hand.length - count > 7 || this.selected[i]) {
+        this.selected[i] = !this.selected[i];
+        this.onSelect.emit(i)
       }
-    })
-    if (this.hand.length - count > 7 || this.selected[i]) {
-      this.selected[i] = !this.selected[i];
-      this.onSelect.emit(i)
     }
   }
 }

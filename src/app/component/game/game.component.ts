@@ -210,6 +210,14 @@ export class GameComponent implements OnInit {
     this.isMoving = !this.isMoving;
   }
 
+  canPass() {
+    return this.game.turns_left > 0 && this.game.game_state === GameState.Ready
+  }
+
+  onPass() {
+    this.socket.emit('pass')
+  }
+
   hasStarted() {
     return this.game.game_state !== GameState.NotStarted;
   }

@@ -31,6 +31,7 @@
     <button [disabled]="!game.can_treat" (click)="onTreat()">Treat Disease</button>
     <button [disabled]="!game.can_trade" (click)="onShare()">Share Knowledge</button>
     <button [disabled]="!game.can_cure" (click)="onDiscover()">Discover Cure</button>
+    <button [disabled]="!canPass()" (click)="onPass()">Pass Turn</button>
     <button [disabled]="!mustDiscard() || !discardEnough()" (click)="discardSelectedCards()">Discard Selected</button>
     <div *ngIf="mustDiscard()">YOU MUST DISCARD TO 7 CARDS</div>
     <div>
