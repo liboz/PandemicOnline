@@ -200,7 +200,8 @@ function GameJSON(game) {
         this.can_build_research_station = game.players[game.player_index].can_build_research_station(game)
         this.can_cure = game.players[game.player_index].can_hand_cure(game)
         this.can_treat = game.players[game.player_index].can_treat(game)
-        this.can_trade = game.players[game.player_index].can_trade(game)
+        this.can_take = game.players[game.player_index].can_take(game)
+        this.can_give = game.players[game.player_index].can_give(game)
     }
 };
 

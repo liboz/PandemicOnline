@@ -89,6 +89,35 @@ io.on('connection', function (socket) {
 		}
 	});
 
+	socket.on('share', function (player_index, card, callback) {
+		if (card) { //dispatcher
+			console.log(`Player ${curr_game.player_index} and Player ${player_index} trade ${card} at ${curr_game.players[curr_game.player_index].location}`);
+		} else {
+			console.log(`Player ${curr_game.player_index} and Player ${player_index} trade ${curr_game.players[curr_game.player_index].location}`);
+		}
+
+		if (curr_game.game_state === game.GameState.Ready && curr_game.turns_left !== 0) {
+			if (!card) {
+				if (curr_game.players[curr_game.player_index].can_give(curr_game)
+					|| curr_game.players[curr_game.player_index].can_take_from_player(curr_game.players[player_index])) {
+					curr_game.players[curr_game.player_index].trade(curr_game.players[player_index])
+					callback()
+					socket.emit(`share successful`, curr_game.toJSON());
+					curr_game.use_turn(socket)
+				} else {
+					socket.emit('error', `Share with Player ${player_index} at ${curr_game.players[curr_game.player_index].location} is an invalid action`);
+				}
+			}
+
+		} else {
+			if (card) {
+				socket.emit('error', `Share with Player ${player_index} at ${curr_game.players[curr_game.player_index].location} the card ${card} is an invalid action`);
+			} else {
+				socket.emit('error', `Share with Player ${player_index} at ${curr_game.players[curr_game.player_index].location} is an invalid action`);
+			}
+		}
+	});
+
 	socket.on('pass', function () {
 		console.log(`Player ${curr_game.player_index}: pass move`);
 		if (curr_game.game_state === game.GameState.Ready && curr_game.turns_left !== 0) {

@@ -157,24 +157,43 @@ Player.prototype.discard = function (cards) {
     return false;
 }
 
-Player.prototype.can_trade = function (game) {
+Player.prototype.can_take = function (game, player) {
     if (game.game_graph[this.location].players.size <= 1) {
         return false
     } else {
         return [...game.game_graph[this.location].players].some(player => {
-            return player.hand.has(this.location)
+            if (player !== this) {
+                return player.hand.has(this.location)
+            }
         })
     }
-
 }
 
-Player.prototype.trade = function (player) {
-    if (this.hand.has(this.location)) {
-        player.hand.add(this.location)
-        this.hand.delete(this.location)
+Player.prototype.can_take_from_player = function (player) {
+    if (this.location !== player.location) {
+        return false
     } else {
-        player.hand.delete(this.location)
-        this.hand.add(this.location)
+        return player.hand.has(this.location)
+    }
+}
+
+Player.prototype.can_give = function (game) {
+    if (game.game_graph[this.location].players.size <= 1) {
+        return false
+    } else {
+        return this.hand.has(this.location)
+    }
+}
+
+Player.prototype.trade = function (player, card) {
+    if (!card) {
+        if (this.hand.has(this.location)) {
+            player.hand.add(this.location)
+            this.hand.delete(this.location)
+        } else {
+            player.hand.delete(this.location)
+            this.hand.add(this.location)
+        }
     }
 }
 
