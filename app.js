@@ -51,10 +51,10 @@ io.on('connection', function (socket) {
 				socket.emit(`move successful`, curr_game.toJSON());
 				curr_game.use_turn(socket)
 			} else {
-				socket.emit('error', `${data} is an invalid location to move to`);
+				socket.emit('invalid action', `${data} is an invalid location to move to`);
 			}
 		} else {
-			socket.emit('error', `Move to ${data} is an invalid action`);
+			socket.emit('invalid action', `Move to ${data} is an invalid action`);
 		}
 	});
 
@@ -66,10 +66,10 @@ io.on('connection', function (socket) {
 				socket.emit(`build successful`, curr_game.toJSON());
 				curr_game.use_turn(socket)
 			} else {
-				socket.emit('error', `Player ${curr_game.player_index} cannot build on ${curr_game.players[curr_game.player_index].location} right now`);
+				socket.emit('invalid action', `Player ${curr_game.player_index} cannot build on ${curr_game.players[curr_game.player_index].location} right now`);
 			}
 		} else {
-			socket.emit('error', `Build is an invalid action right now`);
+			socket.emit('invalid action', `Build is an invalid action right now`);
 		}
 	});
 
@@ -82,10 +82,10 @@ io.on('connection', function (socket) {
 				socket.emit(`treat successful`, curr_game.toJSON());
 				curr_game.use_turn(socket)
 			} else {
-				socket.emit('error', `It is invalid to treat ${color} at ${curr_game.players[curr_game.player_index].location}`);
+				socket.emit('invalid action', `It is invalid to treat ${color} at ${curr_game.players[curr_game.player_index].location}`);
 			}
 		} else {
-			socket.emit('error', `Treat ${color} at ${curr_game.players[curr_game.player_index].location} is an invalid action`);
+			socket.emit('invalid action', `Treat ${color} at ${curr_game.players[curr_game.player_index].location} is an invalid action`);
 		}
 	});
 
@@ -105,15 +105,15 @@ io.on('connection', function (socket) {
 					socket.emit(`share successful`, curr_game.toJSON());
 					curr_game.use_turn(socket)
 				} else {
-					socket.emit('error', `Share with Player ${player_index} at ${curr_game.players[curr_game.player_index].location} is an invalid action`);
+					socket.emit('invalid action', `Share with Player ${player_index} at ${curr_game.players[curr_game.player_index].location} is an invalid action`);
 				}
 			}
 
 		} else {
 			if (card) {
-				socket.emit('error', `Share with Player ${player_index} at ${curr_game.players[curr_game.player_index].location} the card ${card} is an invalid action`);
+				socket.emit('invalid action', `Share with Player ${player_index} at ${curr_game.players[curr_game.player_index].location} the card ${card} is an invalid action`);
 			} else {
-				socket.emit('error', `Share with Player ${player_index} at ${curr_game.players[curr_game.player_index].location} is an invalid action`);
+				socket.emit('invalid action', `Share with Player ${player_index} at ${curr_game.players[curr_game.player_index].location} is an invalid action`);
 			}
 		}
 	});
@@ -123,7 +123,7 @@ io.on('connection', function (socket) {
 		if (curr_game.game_state === game.GameState.Ready && curr_game.turns_left !== 0) {
 			curr_game.pass_turn(socket)
 		} else {
-			socket.emit('error', `Cannot pass turn right now`);
+			socket.emit('invalid action', `Cannot pass turn right now`);
 		}
 	});
 
