@@ -220,7 +220,7 @@ export class GameComponent implements OnInit {
     let cubes_on = Object.keys(cubes).filter(i => cubes[i] > 0)
     if (cubes_on.length === 1) {
       this.treat(cubes_on[0])
-    } else  {
+    } else {
       this.treatColorChoice = cubes_on;
     }
   }
@@ -232,7 +232,22 @@ export class GameComponent implements OnInit {
     })
   }
 
-  
+  onShare() {
+    let location = this.game.players[this.game.player_index].location
+    let location_players = this.game.game_graph[this.game.game_graph_index[location]].players
+    if ((this.game.can_give && !this.game.can_take)
+      || (this.game.can_take && !this.game.can_give)) {
+        if (location_players.length === 2) {
+          let other_player = location_players.filter(i => i !== this.game.player_index)[0]
+          this.socket.emit('share', other_player, null, () => {
+            console.log(`share with ${other_player} at ${location} callbacked`)
+          })
+        }
+    } else if (this.game.can_give && this.game.can_take) { // dispatcher
+
+    }
+  }
+
   canPass() {
     return this.game.turns_left > 0 && this.game.game_state === GameState.Ready
   }
@@ -257,7 +272,7 @@ export class GameComponent implements OnInit {
     this.socket.emit('discard', [...this.selectedCards].map(i => this.game.players[this.game.player_index].hand[i]), () => {
       this.selectedCards = new Set()
     })
-    
+
   }
 }
 

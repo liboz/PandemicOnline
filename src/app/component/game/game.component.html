@@ -28,10 +28,10 @@
     <br>
     <button (click)="onMove()">{{ isMoving ? 'Cancel' : 'Move' }}</button>
     <button [disabled]="!game.can_build_research_station" (click)="onBuild()">Build A Research Station</button>
-    <button [disabled]="!game.can_treat" (click)="onTreat()">Treat Disease</button>
-    <button [disabled]="!game.can_trade" (click)="onShare()">Share Knowledge</button>
-    <button [disabled]="!game.can_cure" (click)="onDiscover()">Discover Cure</button>
-    <button [disabled]="!canPass()" (click)="onPass()">Pass Turn</button>
+    <button [disabled]="!game.can_treat || isMoving" (click)="onTreat()">Treat Disease</button>
+    <button [disabled]="(!game.can_give && !game.can_take) || isMoving" (click)="onShare()">Share Knowledge</button>
+    <button [disabled]="!game.can_cure || isMoving" (click)="onDiscover()">Discover Cure</button>
+    <button [disabled]="!canPass() || isMoving" (click)="onPass()">Pass Turn</button>
     <button [disabled]="!mustDiscard() || !discardEnough()" (click)="discardSelectedCards()">Discard Selected</button>
     <div *ngIf="mustDiscard()">YOU MUST DISCARD TO 7 CARDS</div>
     <div *ngIf="treatColorChoice">
