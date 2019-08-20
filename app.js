@@ -58,12 +58,18 @@ io.on('connection', function (socket) {
 		}
 	});
 
-	socket.on('pass', function () {
-		console.log(`Player ${curr_game.player_index}: pass move`);
+	socket.on('build', function () {
+		console.log(`Player ${curr_game.player_index}: build on ${curr_game.players[curr_game.player_index].location}`);
 		if (curr_game.game_state === game.GameState.Ready && curr_game.turns_left !== 0) {
-			curr_game.pass_turn(socket)
+			if (curr_game.players[curr_game.player_index].can_build_research_station(curr_game)) {
+				curr_game.players[curr_game.player_index].build_research_station(curr_game)
+				socket.emit(`build successful`, curr_game.toJSON());
+				curr_game.use_turn(socket)
+			} else {
+				socket.emit('error', `Player ${curr_game.player_index} cannot build on ${curr_game.players[curr_game.player_index].location} right now`);
+			}
 		} else {
-			socket.emit('error', `Cannot pass turn right now`);
+			socket.emit('error', `Build is an invalid action right now`);
 		}
 	});
 
@@ -80,6 +86,15 @@ io.on('connection', function (socket) {
 			}
 		} else {
 			socket.emit('error', `Treat ${color} at ${curr_game.players[curr_game.player_index].location} is an invalid action`);
+		}
+	});
+
+	socket.on('pass', function () {
+		console.log(`Player ${curr_game.player_index}: pass move`);
+		if (curr_game.game_state === game.GameState.Ready && curr_game.turns_left !== 0) {
+			curr_game.pass_turn(socket)
+		} else {
+			socket.emit('error', `Cannot pass turn right now`);
 		}
 	});
 
