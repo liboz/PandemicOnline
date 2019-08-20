@@ -33,7 +33,7 @@ export class GameComponent implements OnInit {
   nodes: any;
   links: any;
   isMoving: any;
-  displayTreatColorChoice = false;
+  treatColorChoice: string[] = null;
 
   getTextBox(selection) {
     selection
@@ -217,12 +217,12 @@ export class GameComponent implements OnInit {
     if (cubes_on.length === 1) {
       this.treat(cubes_on[0])
     } else  {
-      this.displayTreatColorChoice = true;
+      this.treatColorChoice = cubes_on;
     }
   }
 
   treat(color) {
-    this.displayTreatColorChoice = false
+    this.treatColorChoice = null
     this.socket.emit('treat', color, () => {
       console.log(`treat ${color} at ${this.game.players[this.game.player_index].location} callbacked`)
     })

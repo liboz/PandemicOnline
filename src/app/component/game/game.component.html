@@ -34,6 +34,13 @@
     <button [disabled]="!canPass()" (click)="onPass()">Pass Turn</button>
     <button [disabled]="!mustDiscard() || !discardEnough()" (click)="discardSelectedCards()">Discard Selected</button>
     <div *ngIf="mustDiscard()">YOU MUST DISCARD TO 7 CARDS</div>
+    <div *ngIf="treatColorChoice">
+        <div *ngFor="let cube of treatColorChoice">
+            <button (click)="treat(cube)">
+                Treat {{cube}}
+            </button>
+        </div>
+    </div>
     <div>
         Player {{ game.player_index }}
         <app-player-hand [hand]="game.players[game.player_index].hand" [game]="game"
