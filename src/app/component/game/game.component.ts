@@ -33,7 +33,8 @@ export class GameComponent implements OnInit {
   nodes: any;
   links: any;
   isMoving: any;
-  treatColorChoice: string[] = null;
+  treatColorChoices: string[] = null;
+  shareCardChoices: number[] = null
 
   getTextBox(selection) {
     selection
@@ -221,12 +222,12 @@ export class GameComponent implements OnInit {
     if (cubes_on.length === 1) {
       this.treat(cubes_on[0])
     } else {
-      this.treatColorChoice = cubes_on;
+      this.treatColorChoices = cubes_on;
     }
   }
 
   treat(color) {
-    this.treatColorChoice = null
+    this.treatColorChoices = null
     this.socket.emit('treat', color, () => {
       console.log(`treat ${color} at ${this.game.players[this.game.player_index].location} callbacked`)
     })
@@ -237,15 +238,27 @@ export class GameComponent implements OnInit {
     let location_players = this.game.game_graph[this.game.game_graph_index[location]].players
     if ((this.game.can_give && !this.game.can_take)
       || (this.game.can_take && !this.game.can_give)) {
+        let other_players = location_players.filter(i => i !== this.game.player_index)
         if (location_players.length === 2) {
-          let other_player = location_players.filter(i => i !== this.game.player_index)[0]
-          this.socket.emit('share', other_player, null, () => {
-            console.log(`share with ${other_player} at ${location} callbacked`)
-          })
+          let other_player = other_players[0]
+          this.share(other_player)
+        } else if (this.game.can_take) {
+          let other_player = other_players.filter(i => this.game.players[i].hand.includes(location))
+          this.share(other_player)
+        } else {
+          this.shareCardChoices = other_players
         }
     } else if (this.game.can_give && this.game.can_take) { // dispatcher
 
     }
+  }
+
+  share(other_player)  {
+    let location = this.game.players[this.game.player_index].location
+    this.shareCardChoices = null;
+    this.socket.emit('share', other_player, null, () => {
+      console.log(`share with ${other_player} at ${location} callbacked`)
+    })
   }
 
   canPass() {

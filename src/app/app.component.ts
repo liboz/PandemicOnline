@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
         window.alert(`${data} infected by Epidemic`)
       });
 
-      this.socket.on("error", data => {
+      this.socket.on("invalid action", data => {
         window.alert(data)
       });
 
