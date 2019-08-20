@@ -33,6 +33,10 @@ export class AppComponent implements OnInit {
         this.game = data
       });
 
+      this.socket.on("build successful", data => {
+        this.game = data
+      });
+
       this.socket.on("treat successful", data => {
         this.game = data
       });

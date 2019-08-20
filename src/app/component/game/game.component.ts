@@ -210,6 +210,10 @@ export class GameComponent implements OnInit {
     this.isMoving = !this.isMoving;
   }
 
+  onBuild() {
+    this.socket.emit('build')
+  }
+
   onTreat() {
     let location = this.game.players[this.game.player_index].location
     let cubes = this.game.game_graph[this.game.game_graph_index[location]].cubes
@@ -228,6 +232,7 @@ export class GameComponent implements OnInit {
     })
   }
 
+  
   canPass() {
     return this.game.turns_left > 0 && this.game.game_state === GameState.Ready
   }
