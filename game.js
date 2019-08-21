@@ -66,7 +66,10 @@ Game.prototype.epidemic = function (socket = null) {
     if (socket) {
         socket.emit('epidemic', card)
     }
-    this.game_graph[card].infect_epidemic(this)
+    if (!this.game_graph[card].infect_epidemic(this)) {
+        this.lose_game()
+        console.log('lost during an epidemic')
+    }
     this.infection_deck.intensify()
 };
 
@@ -75,6 +78,7 @@ Game.prototype.infect_stage = function () {
         let card = this.infection_deck.flip_card()
         if (!this.game_graph[card].infect(this)) {
             this.lose_game()
+            console.log('lost during an infect stage')
         }
     }
 };

@@ -53,6 +53,7 @@ Player.prototype.draw = function (game) {
     let card = game.player_deck.flip_card()
     if (card === undefined) {
         game.lose_game();
+        console.log('lost during draw')
     }
     this.hand.add(card)
     return card;
@@ -107,7 +108,7 @@ Player.prototype.can_hand_cure = function (game) {
         let keys = Object.keys(cards)
         for (let i = 0; i < 4; i++) {
             if (game.cured[keys[i]] === 0 && cards[keys[i]] >= 5) {
-                return true
+                return keys[i]
             }
         }
         return false
@@ -133,10 +134,19 @@ Player.prototype.can_treat_color = function (game, color) {
     return game.game_graph[this.location].cubes[color] > 0
 }
 
-Player.prototype.treat = function (game, color) {
-    game.game_graph[this.location].cubes[color] -= 1
-    game.cubes[color] += 1
+Player.prototype.treat = function (game, color, socket = null) {
+    if (game.cured[color] === 1) {
+        game.cubes[color] += game.game_graph[this.location].cubes[color]
+        game.game_graph[this.location].cubes[color] = 0
+    } else {
+        game.cubes[color] += 1
+        game.game_graph[this.location].cubes[color] -= 1
+    }
+
     if (game.cured[color] === 1 && game.cubes[color] === 24) {
+        if (socket){
+            socket.emit("eradicated", color)
+        }
         game.cured[color] = 2
     }
 }

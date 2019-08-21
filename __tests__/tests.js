@@ -28,7 +28,7 @@ describe('City', function () {
       let chennai = g.game_graph['Chennai'];
       g.cured[city.Colors.BLACK] = 2
       for (let i = 0; i < 3; i++) {
-        chennai.infect(g);
+        expect(chennai.infect(g)).toBe(true);
         expect(chennai.cubes[city.Colors.BLUE]).toBe(0);
         expect(chennai.cubes[city.Colors.RED]).toBe(0);
         expect(chennai.cubes[city.Colors.BLACK]).toBe(0);
@@ -499,6 +499,31 @@ describe('Game', function () {
     });
   });
 
+  describe('#Run out of Cubes', function () {
+    it('Epidemic can lose game', function () {
+      let seeded = seedrandom('test33!')
+      let g = new game.Game(cities, 2, seeded);
+      let mexico_city = g.game_graph['Mexico City'];
+      for (let i = 0; i < 3; i++) {
+        mexico_city.infect(g);
+      }
+
+      let miami = g.game_graph['Miami']
+      for (let i = 0; i < 3; i++) {
+        miami.infect(g);
+      }
+      mexico_city.infect(g);
+      let bogota = g.game_graph['Bogota'];
+      bogota.infect(g);
+      miami.infect(g);
+      expect(g.game_state).toBe(game.GameState.NotStarted)
+      expect(g.cubes[city.Colors.YELLOW]).toBe(2)
+      g.epidemic() // lagos
+      expect(g.cubes[city.Colors.YELLOW]).toBe(-1)
+      expect(g.game_state).toBe(game.GameState.Lost)
+    });
+  });
+
   describe('#Next Player', function () {
     it('loops', function () {
       let g = new game.Game(cities, 2);
@@ -794,7 +819,7 @@ describe('Player', function () {
       g.players[0].hand.add('Beijing')
       g.players[0].hand.add('Seoul')
       g.players[0].hand.add('Hong Kong')
-      expect(g.players[0].can_hand_cure(g)).toBe(true)
+      expect(g.players[0].can_hand_cure(g)).toBe(city.Colors.RED)
       g.players[0].cure(g, [...g.players[0].hand])
       expect(g.cured[city.Colors.RED]).toBe(1)
 
@@ -803,7 +828,7 @@ describe('Player', function () {
       g.players[0].hand.add('Istanbul')
       g.players[0].hand.add('Moscow')
       g.players[0].hand.add('Baghdad')
-      expect(g.players[0].can_hand_cure(g)).toBe(true)
+      expect(g.players[0].can_hand_cure(g)).toBe(city.Colors.BLACK)
       g.players[0].move(g.game_graph, 'Miami') // only cure in research station
       expect(g.players[0].can_hand_cure(g)).toBe(false)
       g.players[0].move(g.game_graph, 'Atlanta')
@@ -823,9 +848,9 @@ describe('Player', function () {
       g.players[0].hand.add('Bogota')
       expect(g.players[0].can_hand_cure(g)).toBe(false)
       g.players[0].hand.add('Los Angeles')
-      expect(g.players[0].can_hand_cure(g)).toBe(true)
+      expect(g.players[0].can_hand_cure(g)).toBe(city.Colors.YELLOW)
       g.players[0].hand.add('Miami')
-      expect(g.players[0].can_hand_cure(g)).toBe(true) // 6 cards in hand but doesnt matter
+      expect(g.players[0].can_hand_cure(g)).toBe(city.Colors.YELLOW) // 6 cards in hand but doesnt matter
     });
   });
 
@@ -918,6 +943,37 @@ describe('Player', function () {
       g.players[0].treat(g, city.Colors.RED)
       expect(g.cured[city.Colors.RED]).toBe(2)
       expect(g.cubes[city.Colors.RED]).toBe(24)
+    });
+  });
+
+  describe('#Cure Disease', function () {
+    it('#After Discovering a Cure, Treat all when treating', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, 2, seeded);
+      expect(g.cubes[city.Colors.RED]).toBe(24)
+      g.players[0].discard([...g.players[0].hand])
+      g.epidemic()
+
+      expect(g.cubes[city.Colors.YELLOW]).toBe(21)
+
+      g.players[0].hand.add('Miami')
+      g.players[0].hand.add('Bogota')
+      g.players[0].hand.add('Sao Paulo')
+      g.players[0].hand.add('Lima')
+      g.players[0].hand.add('Lagos')
+
+      expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true)
+      g.players[0].cure(g, [...g.players[0].hand])
+      expect(g.cured[city.Colors.YELLOW]).toBe(1)
+
+      g.players[0].move(g.game_graph, 'Miami')
+      g.players[0].move(g.game_graph, 'Bogota')
+      g.players[0].move(g.game_graph, 'Sao Paulo')
+
+      expect(g.players[0].can_treat(g)).toBe(true)
+      g.players[0].treat(g, city.Colors.YELLOW)
+      expect(g.cured[city.Colors.YELLOW]).toBe(2)
+      expect(g.cubes[city.Colors.YELLOW]).toBe(24)
     });
   });
 

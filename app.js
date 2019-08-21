@@ -32,7 +32,12 @@ io.set('transports', ['websocket']);
 let seeded = seedrandom('test!')
 io.on('connection', function (socket) {
 	console.log('a user connected');
-	curr_game = new game.Game(cities, 2, seeded)
+	curr_game = new game.Game(cities, 4, seeded)
+	curr_game.players[0].hand.add('Atlanta')
+	curr_game.players[0].hand.add('Washington')
+	curr_game.players[0].hand.add('Chicago')
+	curr_game.players[0].hand.add('New York')
+	curr_game.players[0].hand.add('Paris')
 	socket.emit("new game", curr_game.toJSON());
 	socket.on('start game', function () {
 		if (curr_game.game_state === game.GameState.NotStarted) {
@@ -77,7 +82,7 @@ io.on('connection', function (socket) {
 		console.log(`Player ${curr_game.player_index}: treat ${color} at ${curr_game.players[curr_game.player_index].location}`);
 		if (curr_game.game_state === game.GameState.Ready && curr_game.turns_left !== 0) {
 			if (curr_game.players[curr_game.player_index].can_treat_color(curr_game, color)) {
-				curr_game.players[curr_game.player_index].treat(curr_game, color)
+				curr_game.players[curr_game.player_index].treat(curr_game, color, socket)
 				callback()
 				socket.emit(`treat successful`, curr_game.toJSON());
 				curr_game.use_turn(socket)
@@ -115,6 +120,22 @@ io.on('connection', function (socket) {
 			} else {
 				socket.emit('invalid action', `Share with Player ${player_index} at ${curr_game.players[curr_game.player_index].location} is an invalid action`);
 			}
+		}
+	});
+
+	socket.on('discover', function (cards, callback) {
+		console.log(`Player ${curr_game.player_index}: cure at ${curr_game.players[curr_game.player_index].location} with ${cards}`);
+		if (curr_game.game_state === game.GameState.Ready && curr_game.turns_left !== 0) {
+			if (curr_game.players[curr_game.player_index].can_cure(curr_game, cards)) {
+				curr_game.players[curr_game.player_index].cure(curr_game, cards)
+				callback()
+				socket.emit(`discover successful`, curr_game.toJSON(), curr_game.game_graph[cards[0]].color);
+				curr_game.use_turn(socket)
+			} else {
+				socket.emit('invalid action', `It is invalid to cure with ${cards} at ${curr_game.players[curr_game.player_index].location}`);
+			}
+		} else {
+			socket.emit('invalid action', `It is invalid to cure with ${cards} at ${curr_game.players[curr_game.player_index].location}`);
 		}
 	});
 
