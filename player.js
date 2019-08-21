@@ -212,7 +212,6 @@ Player.prototype.trade = function (player, card) {
 
 function PlayerJSON(player, game) {
     this.role = player.role;
-    // todo add test for sorting
     this.hand = [...player.hand].sort((i, j) => {
         let first_index = city.ColorsIndex[game.game_graph[i].color]
         let second_index = city.ColorsIndex[game.game_graph[j].color]

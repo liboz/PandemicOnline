@@ -3,6 +3,7 @@ const cities = require('../data/cities');
 const city = require('../city');
 const infection = require('../infection_deck');
 const player_deck = require('../player_deck');
+const player = require('../player')
 
 const seedrandom = require('seedrandom');
 
@@ -1095,6 +1096,21 @@ describe('Player', function () {
   });
 
 
+  describe('#PlayerJSON', function () {
+    it('Sorted Hand', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, 2, seeded);
+      g.initialize_board()
+      let p1 = new player.PlayerJSON(g.players[0], g)
+      let p2 = new player.PlayerJSON(g.players[1], g)
+      expect(p1.hand).toEqual([
+        'Milan', 'Jakarta', 'Karachi', 'Khartoum'
+      ])
+      expect(p2.hand).toEqual([
+        'Washington', 'Seoul', 'Chennai', 'Riyadh'
+      ])
+    });
+  });
 });
 
 
