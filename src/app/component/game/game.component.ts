@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, SimpleChanges, ErrorHandler } from '@angular/core';
 import * as d3 from 'd3';
 import * as $ from 'jquery'
 import geo from '../../../../data/geo.json';
@@ -34,7 +34,8 @@ export class GameComponent implements OnInit {
   links: any;
   isMoving: any;
   treatColorChoices: string[] = null;
-  shareCardChoices: number[] = null
+  shareCardChoices: number[] = null;
+  discoverCardChoices: string[] = null;
 
   getTextBox(selection) {
     selection
@@ -258,6 +259,22 @@ export class GameComponent implements OnInit {
     this.shareCardChoices = null;
     this.socket.emit('share', other_player, null, () => {
       console.log(`share with ${other_player} at ${location} callbacked`)
+    })
+  }
+
+  onDiscover() {
+    let player = this.game.players[this.game.player_index]
+    let cureColorCards = player.hand.filter(card => 
+      this.game.game_graph[this.game.game_graph_index[card]].color ===  this.game.can_cure)
+    if (cureColorCards.length === 5) {
+      this.discover(cureColorCards)
+    }
+  }
+
+  discover(cards) {
+    this.discoverCardChoices = null
+    this.socket.emit('discover', cards, () => {
+      console.log(`discover with ${cards} at ${this.game.players[this.game.player_index].location} callbacked`)
     })
   }
 

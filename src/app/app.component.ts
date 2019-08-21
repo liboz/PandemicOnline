@@ -41,6 +41,16 @@ export class AppComponent implements OnInit {
         this.game = data
       });
 
+      this.socket.on("discover successful", (data, color) => {
+        window.alert(`Cure for ${color} was discovered`)
+        this.game = data
+      });
+
+      this.socket.on("eradicated", color => {
+        window.alert(`${color} was eradicated`)
+      });
+
+
       this.socket.on("update game state", data => {
         this.game = data
       })
