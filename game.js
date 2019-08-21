@@ -146,7 +146,7 @@ Game.prototype.turn_end = function(socket) {
         this.game_state = GameState.DiscardingCard
         socket.emit('discard cards')
         socket.on('discard', (cards, callback) => {
-            console.log(cards)
+            console.log(`Player ${this.player_index} is discarding ${cards}`)
             if (this.players[this.player_index].can_discard(cards)) {
                 callback()
                 this.players[this.player_index].discard(cards)
@@ -154,7 +154,9 @@ Game.prototype.turn_end = function(socket) {
                 this.infect_stage()
                 this.next_player()
                 this.turns_left = 4;
-                this.game_state = GameState.Ready
+                if (this.game_state !== GameState.Lost && this.game_state !== GameState.Won) {
+                    this.game_state = GameState.Ready
+                }
                 socket.emit('update game state', this.toJSON())
             }
         }, );
@@ -187,8 +189,8 @@ function GameJSON(game) {
         map[city.name] = index;
         return map;
     }, {})
-    this.outbreak_counter = 0
-    this.infection_rate_index = 0
+    this.outbreak_counter = game.outbreak_counter
+    this.infection_rate_index = game.infection_rate_index
     this.infection_rate = [2, 2, 2, 3, 3, 4, 4]
     this.faceup_deck = game.infection_deck.faceup_deck
     this.players = game.players.map(p => new player.PlayerJSON(p))

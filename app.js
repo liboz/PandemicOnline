@@ -32,12 +32,7 @@ io.set('transports', ['websocket']);
 let seeded = seedrandom('test!')
 io.on('connection', function (socket) {
 	console.log('a user connected');
-	curr_game = new game.Game(cities, 4, seeded)
-	curr_game.players[0].hand.add('Atlanta')
-	curr_game.players[0].hand.add('Washington')
-	curr_game.players[0].hand.add('Chicago')
-	curr_game.players[0].hand.add('New York')
-	curr_game.players[0].hand.add('Paris')
+	curr_game = new game.Game(cities, 2, seeded)
 	socket.emit("new game", curr_game.toJSON());
 	socket.on('start game', function () {
 		if (curr_game.game_state === game.GameState.NotStarted) {
