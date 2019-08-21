@@ -48,6 +48,7 @@ function Game(cities, num_players, rng = seedrandom()) {
     this.player_index = 0
     this.turns_left = 4
     this.game_state = GameState.NotStarted
+    this.log = []
 
     //this.geoJSON = city.City.toGeoJSON(this.game_graph)
 };
@@ -60,11 +61,12 @@ Game.prototype.outbreak = function () {
     return true
 };
 
-Game.prototype.epidemic = function (socket = null) {
+Game.prototype.epidemic = function (io = null, match_name) {
     this.infection_rate_index += 1;
     let card = this.infection_deck.infect_epidemic();
-    if (socket) {
-        socket.emit('epidemic', card)
+    this.log.push(`${card} was drawn in an epidemic`)
+    if (io) {
+        io.in(match_name).emit('epidemic', card)
     }
     if (!this.game_graph[card].infect_epidemic(this)) {
         this.lose_game()
@@ -110,6 +112,7 @@ Game.prototype.next_player = function () {
     if (this.player_index == this.players.length) {
         this.player_index = 0;
     }
+    this.log.push(`It is now Player ${this.player_index}'s turn`)
 }
 
 Game.prototype.decrement_turn = function () {
@@ -124,29 +127,30 @@ Game.prototype.decrement_turn = function () {
     }
 }
 
-Game.prototype.use_turn = function (socket) {
+Game.prototype.use_turn = function (socket, io, match_name) {
     if (!this.decrement_turn()) {
-        this.turn_end(socket);
+        this.turn_end(socket, io, match_name);
     } else  {
-        socket.emit('update game state', this.toJSON())
+        io.in(match_name).emit('update game state', this.toJSON())
     }
 }
 
-Game.prototype.turn_end = function(socket) {
+Game.prototype.turn_end = function(socket, io, match_name) {
     for (let i = 0; i < 2; i++) {
         let card = this.players[this.player_index].draw(this)
         if (card === 'Epidemic') {
             this.players[this.player_index].hand.delete(card)
-            this.epidemic(socket)
+            this.epidemic(io, match_name)
         }
     }
 
-    socket.emit('update game state', this.toJSON())
+    io.in(match_name).emit('update game state', this.toJSON())
     if (this.players[this.player_index].hand.size > this.players[this.player_index].hand_size_limit) {
         this.game_state = GameState.DiscardingCard
         socket.emit('discard cards')
         socket.on('discard', (cards, callback) => {
-            console.log(`Player ${this.player_index} is discarding ${cards}`)
+            let log_string = `Player ${this.player_index} is discarding ${cards}`
+            console.log(log_string)
             if (this.players[this.player_index].can_discard(cards)) {
                 callback()
                 this.players[this.player_index].discard(cards)
@@ -157,22 +161,23 @@ Game.prototype.turn_end = function(socket) {
                 if (this.game_state !== GameState.Lost && this.game_state !== GameState.Won) {
                     this.game_state = GameState.Ready
                 }
-                socket.emit('update game state', this.toJSON())
+                this.log.push(log_string)
+                io.in(match_name).emit('update game state', this.toJSON())
             }
         }, );
     } else {
         this.infect_stage()
         this.next_player()
         this.turns_left = 4;
-        socket.emit('update game state', this.toJSON())
+        io.in(match_name).emit('update game state', this.toJSON())
     }
 }
 
-Game.prototype.pass_turn = function (socket) {
+Game.prototype.pass_turn = function (socket, io, match_name) {
     while (this.decrement_turn()) {
     }
     if (socket) {
-        this.turn_end(socket);
+        this.turn_end(socket, io, match_name);
     }
 }
 
@@ -208,11 +213,19 @@ function GameJSON(game) {
         this.can_treat = game.players[game.player_index].can_treat(game)
         this.can_take = game.players[game.player_index].can_take(game)
         this.can_give = game.players[game.player_index].can_give(game)
+        this.log = game.log
     }
+};
+
+function GameMap(cities) {
+    let game_graph = city.City.load(cities)
+    this.game_graph = Object.values(game_graph).map(c => new city.CityJSON(c))
+    this.game_state = GameState.NotStarted
 };
 
 module.exports = {
     Game: Game,
     GameJSON: GameJSON,
-    GameState: GameState
+    GameState: GameState,
+    GameMap: GameMap
 };
