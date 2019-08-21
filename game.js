@@ -193,7 +193,7 @@ function GameJSON(game) {
     this.infection_rate_index = game.infection_rate_index
     this.infection_rate = [2, 2, 2, 3, 3, 4, 4]
     this.faceup_deck = game.infection_deck.faceup_deck
-    this.players = game.players.map(p => new player.PlayerJSON(p))
+    this.players = game.players.map(p => new player.PlayerJSON(p, game))
 
     this.research_stations = [...game.research_stations]
     this.cured = game.cured

@@ -5,6 +5,13 @@ const colors = {
     YELLOW: 'yellow'
 }
 
+const colors_index = {
+    blue: 0,
+    red: 1,
+    black: 2,
+    yellow: 3
+}
+
 function City(name, location, color, index) {
     this.name = name;
     this.color = color;
@@ -117,5 +124,6 @@ function CityJSON(city) {
 module.exports = {
     City: City,
     Colors: colors,
+    ColorsIndex: colors_index,
     CityJSON: CityJSON
 };

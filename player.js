@@ -1,3 +1,6 @@
+
+const city = require('./city');
+
 function Player(id, role, location = "Atlanta") {
     this.role = role;
     this.hand = new Set()
@@ -207,9 +210,27 @@ Player.prototype.trade = function (player, card) {
     }
 }
 
-function PlayerJSON(player) {
+function PlayerJSON(player, game) {
     this.role = player.role;
-    this.hand = [...player.hand]
+    // todo add test for sorting
+    this.hand = [...player.hand].sort((i, j) => {
+        let first_index = city.ColorsIndex[game.game_graph[i].color]
+        let second_index = city.ColorsIndex[game.game_graph[j].color]
+        if (first_index > second_index) {
+            return 1
+        }
+        if (first_index < second_index) {
+            return -1
+        } 
+
+        if (i > j) {
+            return 1
+        } 
+
+        if (i < j) {
+            return -1
+        } 
+    })
     this.location = player.location
     this.id = player.id
 };
