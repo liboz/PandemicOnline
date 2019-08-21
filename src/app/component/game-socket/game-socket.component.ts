@@ -18,11 +18,15 @@ export class GameSocketComponent implements OnInit {
   ngOnInit() {
     let match_name = this.route.snapshot.paramMap.get('match_name');
 
-    this.api.getGames().subscribe(result => {
+    this.api.getGames(match_name).subscribe(result => {
       this.game = result
-      this.socket = io('http://localhost:3000', {
+      this.socket = io(`http://localhost:3000/`, {
         transports: ['websocket']
       });
+
+      this.socket.emit('join', match_name, () => {
+        console.log(`joined ${match_name} succesfully`)
+      })
 
       this.socket.on("move successful", data => {
         this.game = data

@@ -88,4 +88,12 @@
             </li>
         </ul>
     </div>
+    <div id="log">
+        Game Log: 
+        <ul>
+            <li *ngFor="let item of game.log.slice().reverse()">
+                {{ item }}
+            </li>
+        </ul>
+    </div>
 </div>

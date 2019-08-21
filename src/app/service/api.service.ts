@@ -12,8 +12,8 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  getGames() {
-    return this.http.get('http://localhost:3000');
+  getGames(match_name) {
+    return this.http.get(`http://localhost:3000/${match_name}`);
   }
 
   private handleError(error: HttpErrorResponse) {
