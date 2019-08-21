@@ -10,7 +10,10 @@ import { NodeComponent } from './component/node/node.component';
 import { LinkComponent } from './component/link/link.component';
 import { DiseaseCubeComponent } from './component/disease-cube/disease-cube.component';
 import { PlayerComponent } from './component/player/player.component';
-import { PlayerHandComponent } from './component/player-hand/player-hand.component'; 
+import { PlayerHandComponent } from './component/player-hand/player-hand.component';
+import { ModalComponent } from './component/modal/modal.component';
+import { ModalService } from './service/modal.service'
+import { DomService } from './service/dom.service'
 
 @NgModule({
   declarations: [
@@ -20,14 +23,15 @@ import { PlayerHandComponent } from './component/player-hand/player-hand.compone
     LinkComponent,
     DiseaseCubeComponent,
     PlayerComponent,
-    PlayerHandComponent
+    PlayerHandComponent,
+    ModalComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule, 
+    AppRoutingModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [ModalService, DomService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

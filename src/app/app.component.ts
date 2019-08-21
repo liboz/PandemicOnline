@@ -57,7 +57,7 @@ export class AppComponent implements OnInit {
 
       this.socket.on('discard cards', data =>  {
         this.game.game_state = GameState.DiscardingCard;
-        console.log('hello!');
+        console.log('discarding cards!');
       })
 
       this.socket.on("epidemic", data => {

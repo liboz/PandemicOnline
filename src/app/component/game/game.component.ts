@@ -1,7 +1,9 @@
-import { Component, OnInit, Input, ViewEncapsulation, SimpleChanges, ErrorHandler } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, SimpleChanges, ErrorHandler, OnChanges } from '@angular/core';
+import { ModalService } from '../../service/modal.service';
 import * as d3 from 'd3';
 import * as $ from 'jquery'
 import geo from '../../../../data/geo.json';
+import { ModalComponent } from '../modal/modal.component'
 
 @Component({
   selector: 'app-game',
@@ -9,7 +11,7 @@ import geo from '../../../../data/geo.json';
   styleUrls: ['./game.component.styl'],
   encapsulation: ViewEncapsulation.None
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnChanges {
   objectKeys = Object.keys;
   @Input() game: any;
   @Input() socket: any;
@@ -57,11 +59,17 @@ export class GameComponent implements OnInit {
 
   initialized = false;
   selectedCards: Set<number>
-  constructor() { }
+  constructor(private modalService: ModalService) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.initialized) {
       this.createChart()
+    } 
+    
+    if (changes.game.currentValue.game_state === GameState.Lost) {
+      this.modalService.init(ModalComponent, { lost: true }, {})
+    } else if (changes.game.currentValue.game_state === GameState.Won ) {
+      this.modalService.init(ModalComponent, { lost: false }, {})
     }
   }
 

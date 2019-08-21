@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, Output, EventEmitter, OnChanges } from '@angular/core';
 
 @Component({
   selector: 'app-player-hand',
   templateUrl: './player-hand.component.html',
   styleUrls: ['./player-hand.component.styl']
 })
-export class PlayerHandComponent implements OnInit {
+export class PlayerHandComponent implements OnInit, OnChanges {
   @Input() hand: string[] = []
   @Input() game: any;
   @Output() onSelect = new EventEmitter<any>();
