@@ -16,6 +16,7 @@ export class PlayerHandComponent implements OnInit {
   }
   selected: boolean[] = []
   parentEl: HTMLElement
+  @Input() cardLimit = 7
 
   constructor() { }
 
@@ -39,7 +40,7 @@ export class PlayerHandComponent implements OnInit {
           count += 1
         }
       })
-      if (this.hand.length - count > 7 || this.selected[i]) {
+      if (this.hand.length - count > this.cardLimit || this.selected[i]) {
         this.selected[i] = !this.selected[i];
         this.onSelect.emit(i)
       }

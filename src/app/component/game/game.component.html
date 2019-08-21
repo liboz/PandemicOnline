@@ -20,18 +20,23 @@
         </ng-container>
     </div>
 </div>
-<button (click)="onStart()">Start Game</button>
+<button *ngIf="!hasStarted()" (click)="onStart()">Start Game</button>
 <div *ngIf="hasStarted()">
     Player: {{game.player_index}}
     <br>
     Turns Left: {{game.turns_left}}
     <br>
-    <button (click)="onMove()">{{ isMoving ? 'Cancel' : 'Move' }}</button>
-    <button [disabled]="!game.can_build_research_station" (click)="onBuild()">Build A Research Station</button>
-    <button [disabled]="!game.can_treat || isMoving" (click)="onTreat()">Treat Disease</button>
-    <button [disabled]="(!game.can_give && !game.can_take) || isMoving" (click)="onShare()">Share Knowledge</button>
-    <button [disabled]="!game.can_cure || isMoving" (click)="onDiscover()">Discover Cure</button>
-    <button [disabled]="!canPass() || isMoving" (click)="onPass()">Pass Turn</button>
+    <button [disabled]="cannotDoPrimaryAction() && !isMoving"
+        (click)="onMove()">{{ isMoving ? 'Cancel' : 'Move' }}</button>
+    <button [disabled]="!game.can_build_research_station || cannotDoPrimaryAction()" (click)="onBuild()">Build A
+        Research Station</button>
+    <button [disabled]="!game.can_treat || cannotDoPrimaryAction()" (click)="onTreat()">Treat Disease</button>
+    <button [disabled]="(!game.can_give && !game.can_take) || (cannotDoPrimaryAction() && !shareCardChoices)"
+        (click)="onShare()">{{ shareCardChoices ? 'Cancel' : 'Share Knowledge' }}</button>
+    <button [disabled]="!game.can_cure || (cannotDoPrimaryAction() && !cureColorCards)"
+        (click)="onDiscover()">Discover Cure</button>
+    <button *ngIf="cureColorCards" (click)="cancelDiscover()">Cancel Discover Cure</button>
+    <button [disabled]="cannotDoPrimaryAction()" (click)="onPass()">Pass Turn</button>
     <button [disabled]="!mustDiscard() || !discardEnough()" (click)="discardSelectedCards()">Discard Selected</button>
     <div *ngIf="mustDiscard()">YOU MUST DISCARD TO 7 CARDS</div>
     <div *ngIf="treatColorChoices">
@@ -48,10 +53,15 @@
             </button>
         </div>
     </div>
-    <div>
+    <div *ngIf="!cureColorCards">
         Player {{ game.player_index }}
         <app-player-hand [hand]="game.players[game.player_index].hand" [game]="game"
             (onSelect)="onSelectedCard($event)"></app-player-hand>
+    </div>
+    <div *ngIf="cureColorCards">
+        SELECT THE CARDS TO NOT USE FOR DISCOVERING
+        <app-player-hand [hand]="cureColorCards" [game]="game" (onSelect)="onSelectedCard($event)" [cardLimit]="5">
+        </app-player-hand>
     </div>
 </div>
 <br>

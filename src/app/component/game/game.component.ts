@@ -35,7 +35,7 @@ export class GameComponent implements OnInit {
   isMoving: any;
   treatColorChoices: string[] = null;
   shareCardChoices: number[] = null;
-  discoverCardChoices: string[] = null;
+  cureColorCards: string[] = null;
 
   getTextBox(selection) {
     selection
@@ -235,10 +235,13 @@ export class GameComponent implements OnInit {
   }
 
   onShare() {
-    let location = this.game.players[this.game.player_index].location
-    let location_players = this.game.game_graph[this.game.game_graph_index[location]].players
-    if ((this.game.can_give && !this.game.can_take)
-      || (this.game.can_take && !this.game.can_give)) {
+    if (this.shareCardChoices) {
+      this.shareCardChoices = null
+    } else {
+      let location = this.game.players[this.game.player_index].location
+      let location_players = this.game.game_graph[this.game.game_graph_index[location]].players
+      if ((this.game.can_give && !this.game.can_take)
+        || (this.game.can_take && !this.game.can_give)) {
         let other_players = location_players.filter(i => i !== this.game.player_index)
         if (location_players.length === 2) {
           let other_player = other_players[0]
@@ -249,12 +252,14 @@ export class GameComponent implements OnInit {
         } else {
           this.shareCardChoices = other_players
         }
-    } else if (this.game.can_give && this.game.can_take) { // dispatcher
+      } else if (this.game.can_give && this.game.can_take) { // dispatcher
 
+      }
     }
+
   }
 
-  share(other_player)  {
+  share(other_player) {
     let location = this.game.players[this.game.player_index].location
     this.shareCardChoices = null;
     this.socket.emit('share', other_player, null, () => {
@@ -263,19 +268,34 @@ export class GameComponent implements OnInit {
   }
 
   onDiscover() {
-    let player = this.game.players[this.game.player_index]
-    let cureColorCards = player.hand.filter(card => 
-      this.game.game_graph[this.game.game_graph_index[card]].color ===  this.game.can_cure)
-    if (cureColorCards.length === 5) {
+    if (this.cureColorCards) {
+      let selected = new Set([...this.selectedCards].map(i => this.cureColorCards[i]))
+      let cureColorCards = this.cureColorCards.filter(i => !selected.has(i))
+      this.selectedCards = new Set()
       this.discover(cureColorCards)
+    } else {
+      let player = this.game.players[this.game.player_index]
+      let cureColorCards = player.hand.filter(card =>
+        this.game.game_graph[this.game.game_graph_index[card]].color === this.game.can_cure)
+      if (cureColorCards.length === 5) {
+        this.discover(cureColorCards)
+      } else {
+        this.cureColorCards = cureColorCards
+      }
     }
   }
 
   discover(cards) {
-    this.discoverCardChoices = null
+    this.cureColorCards = null
     this.socket.emit('discover', cards, () => {
+      this.selectedCards = new Set()
       console.log(`discover with ${cards} at ${this.game.players[this.game.player_index].location} callbacked`)
     })
+  }
+
+  cancelDiscover() {
+    this.cureColorCards = null;
+    this.selectedCards = new Set();
   }
 
   canPass() {
@@ -302,7 +322,11 @@ export class GameComponent implements OnInit {
     this.socket.emit('discard', [...this.selectedCards].map(i => this.game.players[this.game.player_index].hand[i]), () => {
       this.selectedCards = new Set()
     })
+  }
 
+  cannotDoPrimaryAction() {
+    return this.isMoving || this.treatColorChoices || this.shareCardChoices || this.cureColorCards ||
+      this.game.turns_left <= 0 || this.game.game_state !== GameState.Ready
   }
 }
 
