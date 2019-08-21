@@ -5,6 +5,7 @@ import * as $ from 'jquery'
 import geo from '../../../../data/geo.json';
 import { ModalComponent } from '../modal/modal.component'
 
+
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -93,6 +94,7 @@ export class GameComponent implements OnInit, OnChanges {
     this.initialized = true
     this.selectedCards = new Set()
     this.createChart()
+
   }
 
   // zoom to show a bounding box, with optional additional padding as percentage of box size
@@ -315,7 +317,7 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   hasStarted() {
-    return this.game.game_state !== GameState.NotStarted;
+    return this.game && this.game.game_state !== GameState.NotStarted;
   }
 
   mustDiscard() {
