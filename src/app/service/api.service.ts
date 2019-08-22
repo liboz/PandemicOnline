@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 import { catchError, retry } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
@@ -13,7 +14,7 @@ export class ApiService {
   constructor(private http: HttpClient) { }
 
   getGames(match_name) {
-    return this.http.get(`http://localhost:3000/${match_name}`);
+    return this.http.get(`${environment}:3000/${match_name}`);
   }
 
   private handleError(error: HttpErrorResponse) {

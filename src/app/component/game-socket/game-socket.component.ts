@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../service/api.service';
 import { GameState } from "../game/game.component"
+import { environment } from '../../../environments/environment';
 
 import io from "socket.io-client";
 
@@ -20,7 +21,7 @@ export class GameSocketComponent implements OnInit {
 
     this.api.getGames(match_name).subscribe(result => {
       this.game = result
-      this.socket = io(`http://localhost:3000/`, {
+      this.socket = io(`${environment}:3000/`, {
         transports: ['websocket']
       });
 
