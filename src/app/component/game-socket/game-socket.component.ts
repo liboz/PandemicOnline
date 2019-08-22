@@ -21,7 +21,7 @@ export class GameSocketComponent implements OnInit {
 
     this.api.getGames(match_name).subscribe(result => {
       this.game = result
-      this.socket = io(`${environment}:3000/`, {
+      this.socket = io(`${environment.baseUrl}:3000/`, {
         transports: ['websocket']
       });
 

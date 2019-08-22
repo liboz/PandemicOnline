@@ -21,79 +21,86 @@
     </div>
 </div>
 <button *ngIf="!hasStarted()" (click)="onStart()">Start Game</button>
-<div *ngIf="hasStarted()">
-    Player: {{game.player_index}}
-    <br>
-    Turns Left: {{game.turns_left}}
-    <br>
-    <button [disabled]="cannotDoPrimaryAction() && !isMoving"
-        (click)="onMove()">{{ isMoving ? 'Cancel' : 'Move' }}</button>
-    <button [disabled]="!game.can_build_research_station || cannotDoPrimaryAction()" (click)="onBuild()">Build A
-        Research Station</button>
-    <button [disabled]="!game.can_treat || cannotDoPrimaryAction()" (click)="onTreat()">Treat Disease</button>
-    <button [disabled]="(!game.can_give && !game.can_take) || (cannotDoPrimaryAction() && !shareCardChoices)"
-        (click)="onShare()">{{ shareCardChoices ? 'Cancel' : 'Share Knowledge' }}</button>
-    <button [disabled]="!game.can_cure || (cannotDoPrimaryAction() && !cureColorCards)" (click)="onDiscover()">Discover
-        Cure</button>
-    <button *ngIf="cureColorCards" (click)="cancelDiscover()">Cancel Discover Cure</button>
-    <button [disabled]="cannotDoPrimaryAction()" (click)="onPass()">Pass Turn</button>
-    <button [disabled]="!mustDiscard() || !discardEnough()" (click)="discardSelectedCards()">Discard Selected</button>
-    <div *ngIf="mustDiscard()">YOU MUST DISCARD TO 7 CARDS</div>
-    <div *ngIf="treatColorChoices">
-        <div *ngFor="let cube of treatColorChoices">
-            <button (click)="treat(cube)">
-                Treat {{cube}}
-            </button>
+<div id="bottom-holder">
+    <div *ngIf="hasStarted()" id="bottom-left">
+        Player: {{game.player_index}}
+        <br>
+        Turns Left: {{game.turns_left}}
+        <br>
+        <button [disabled]="cannotDoPrimaryAction() && !isMoving"
+            (click)="onMove()">{{ isMoving ? 'Cancel' : 'Move' }}</button>
+        <button [disabled]="!game.can_build_research_station || cannotDoPrimaryAction()" (click)="onBuild()">Build A
+            Research Station</button>
+        <button [disabled]="!game.can_treat || cannotDoPrimaryAction()" (click)="onTreat()">Treat Disease</button>
+        <button [disabled]="(!game.can_give && !game.can_take) || (cannotDoPrimaryAction() && !shareCardChoices)"
+            (click)="onShare()">{{ shareCardChoices ? 'Cancel' : 'Share Knowledge' }}</button>
+        <button [disabled]="!game.can_cure || (cannotDoPrimaryAction() && !cureColorCards)"
+            (click)="onDiscover()">Discover
+            Cure</button>
+        <button *ngIf="cureColorCards" (click)="cancelDiscover()">Cancel Discover Cure</button>
+        <button [disabled]="cannotDoPrimaryAction()" (click)="onPass()">Pass Turn</button>
+        <button [disabled]="!mustDiscard() || !discardEnough()" (click)="discardSelectedCards()">Discard
+            Selected</button>
+        <div *ngIf="mustDiscard()">YOU MUST DISCARD TO 7 CARDS</div>
+        <div *ngIf="treatColorChoices">
+            <div *ngFor="let cube of treatColorChoices">
+                <button (click)="treat(cube)">
+                    Treat {{cube}}
+                </button>
+            </div>
+        </div>
+        <div *ngIf="shareCardChoices">
+            <div *ngFor="let player of shareCardChoices">
+                <button (click)="share(player)">
+                    Give Player {{player}} the {{game.players[game.player_index].location}} card
+                </button>
+            </div>
+        </div>
+        <div *ngIf="!cureColorCards">
+            Your Hand
+            <app-player-hand [hand]="game.players[game.player_index].hand" [game]="game"
+                (onSelect)="onSelectedCard($event)"></app-player-hand>
+        </div>
+        <div *ngIf="cureColorCards">
+            SELECT THE CARDS TO NOT USE FOR DISCOVERING
+            <app-player-hand [hand]="cureColorCards" [game]="game" (onSelect)="onSelectedCard($event)" [cardLimit]="5">
+            </app-player-hand>
         </div>
     </div>
-    <div *ngIf="shareCardChoices">
-        <div *ngFor="let player of shareCardChoices">
-            <button (click)="share(player)">
-                Give Player {{player}} the {{game.players[game.player_index].location}} card
-            </button>
+    <br>
+    <div *ngIf="hasStarted()" id="bottom-middle">
+        <div>
+            Outbreak Counter: {{ game.outbreak_counter }}
+        </div>
+        <div>
+            Infection Rate: {{ game.infection_rate[game.infection_rate_index] }}
+        </div>
+        <div>
+            Cubes:
+            <ul>
+                <li *ngFor="let color of objectKeys(game.cubes)">
+                    {{color + ' : ' + game.cubes[color]}}
+                </li>
+            </ul>
+        </div>
+        <div>
+            Cured:
+            <ul>
+                <li *ngFor="let color of objectKeys(game.cured)">
+                    {{color + ' : ' + game.cured[color]}}
+                </li>
+            </ul>
         </div>
     </div>
-    <div *ngIf="!cureColorCards">
-        Player {{ game.player_index }}
-        <app-player-hand [hand]="game.players[game.player_index].hand" [game]="game"
-            (onSelect)="onSelectedCard($event)"></app-player-hand>
-    </div>
-    <div *ngIf="cureColorCards">
-        SELECT THE CARDS TO NOT USE FOR DISCOVERING
-        <app-player-hand [hand]="cureColorCards" [game]="game" (onSelect)="onSelectedCard($event)" [cardLimit]="5">
-        </app-player-hand>
-    </div>
-</div>
-<br>
-<div *ngIf="hasStarted()">
-    <div>
-        Outbreak Counter: {{ game.outbreak_counter }}
-    </div>
-    <div>
-        Infection Rate: {{ game.infection_rate[game.infection_rate_index] }}
-    </div>
-    <div>
-        Cubes:
-        <ul>
-            <li *ngFor="let color of objectKeys(game.cubes)">
-                {{color + ' : ' + game.cubes[color]}}
-            </li>
-        </ul>
-    </div>
-    <div>
-        Cured:
-        <ul>
-            <li *ngFor="let color of objectKeys(game.cured)">
-                {{color + ' : ' + game.cured[color]}}
-            </li>
-        </ul>
-    </div>
-    <div id="log">
-        Game Log: 
-        <ul>
-            <li *ngFor="let item of game.log.slice().reverse()">
-                {{ item }}
-            </li>
-        </ul>
+
+    <div *ngIf="hasStarted()" id="bottom-right">
+        <div id="log">
+            Game Log:
+            <ul>
+                <li *ngFor="let item of game.log.slice().reverse()">
+                    {{ item }}
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
