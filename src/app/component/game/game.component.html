@@ -98,7 +98,7 @@
         </div>
     </div>
 
-    <div *ngIf="hasStarted()" id="bottom-right">
+    <div *ngIf="hasStarted()" id="bottom-log">
         <div id="log">
             Game Log:
             <ul>
@@ -106,6 +106,14 @@
                     {{ item }}
                 </li>
             </ul>
+        </div>
+    </div>
+
+    <div *ngIf="hasStarted()" id="bottom-right">
+        <div>
+            Infection Deck Faceup:
+            <app-player-hand [hand]="game.faceup_deck" [game]="game">
+            </app-player-hand>
         </div>
     </div>
 </div>

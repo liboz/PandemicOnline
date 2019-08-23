@@ -25,18 +25,22 @@ export class JoinComponent implements OnInit {
     return this.game.game_state !== GameState.Lost && this.game.game_state !== GameState.Won;
   }
 
+  private joinGameInternal() {
+    this.socket.emit('join', this.match_name, this.player_name, (player_index) => {
+      console.log(`${this.player_name} joined ${this.match_name} successfully`)
+      this.modalService.joinAs(new PlayerInfo(this.player_name, player_index))
+    })
+  }
+
   joinGame() {
     if (this.player_name) {
-      this.socket.emit('join', this.match_name, this.player_name, (player_index) => {
-        console.log(`${this.player_name} joined ${this.match_name} successfully`)
-        this.modalService.joinAs(new PlayerInfo(this.player_name, player_index))
-      })
+      this.joinGameInternal()
     }
   }
 
   choosePlayer(player: any) {
     this.player_name = player.name
-    this.joinGame()
+    this.joinGameInternal()
   }
 
 }
