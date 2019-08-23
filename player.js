@@ -1,5 +1,6 @@
-
 const city = require('./city');
+const roles = require('./roles');
+
 
 function Player(id, name, role, location = "Atlanta") {
     this.name = name
@@ -30,13 +31,13 @@ Player.prototype.move = function (game, final_destination, socket = null) {
 };
 
 Player.prototype.movePiece = function (game, game_graph, final_destination, socket) {
-    if (this.role === Roles.Medic) {
+    if (this.role === roles.Roles.Medic) {
         this.medicMoveTreat(game, socket)
     }
     game_graph[this.location].players.delete(this)
     game_graph[final_destination].players.add(this)
     this.location = final_destination;
-    if (this.role === Roles.Medic) {
+    if (this.role === roles.Roles.Medic) {
         this.medicMoveTreat(game, socket)
     }
 }
@@ -80,11 +81,13 @@ Player.prototype.draw = function (game) {
 }
 
 Player.prototype.can_build_research_station = function (game) {
-    return !game.game_graph[this.location].hasResearchStation && this.hand.has(this.location)
+    return !game.game_graph[this.location].hasResearchStation && (this.hand.has(this.location) || this.role === roles.Roles.OperationsExpert)
 }
 
 Player.prototype.build_research_station = function (game) {
-    this.hand.delete(this.location)
+    if (this.role !== roles.Roles.OperationsExpert) {
+        this.hand.delete(this.location)
+    }
     game.game_graph[this.location].hasResearchStation = true
     game.research_stations.add(this.location)
 }
@@ -93,7 +96,7 @@ Player.prototype.can_cure = function (game, cards) {
     if (!game.game_graph[this.location].hasResearchStation) {
         return false
     } else {
-        let cards_needed = this.role === Roles.Scientist ? 4 : 5;
+        let cards_needed = this.role === roles.Roles.Scientist ? 4 : 5;
         if (cards.length === cards_needed && (new Set(cards).size === cards_needed)) {
             let color = game.game_graph[cards[0]].color
             if (game.cured[color] > 0) {
@@ -126,7 +129,7 @@ Player.prototype.can_hand_cure = function (game) {
             cards[game.game_graph[card].color] += 1
         })
 
-        let cards_needed = this.role === Roles.Scientist ? 4 : 5;
+        let cards_needed = this.role === roles.Roles.Scientist ? 4 : 5;
         let keys = Object.keys(cards)
         for (let i = 0; i < 4; i++) {
             if (game.cured[keys[i]] === 0 && cards[keys[i]] >= cards_needed) {
@@ -157,7 +160,7 @@ Player.prototype.can_treat_color = function (game, color) {
 }
 
 Player.prototype.treat = function (game, color, socket = null) {
-    if (game.cured[color] === 1 || this.role === Roles.Medic) {
+    if (game.cured[color] === 1 || this.role === roles.Roles.Medic) {
         game.cubes[color] += game.game_graph[this.location].cubes[color]
         game.game_graph[this.location].cubes[color] = 0
     } else {
@@ -230,7 +233,7 @@ Player.prototype.trade = function (player, card) {
 }
 
 function PlayerJSON(player, game) {
-    this.name = player.name
+    this.name = player.name;
     this.role = player.role;
     this.hand = [...player.hand].sort((i, j) => {
         let first_index = city.ColorsIndex[game.game_graph[i].color]
@@ -254,18 +257,7 @@ function PlayerJSON(player, game) {
     this.id = player.id
 };
 
-const Roles = {
-    ContingencyPlanner: "Contingency Planner",
-    Dispatcher: "Dispatcher",
-    Medic: "Medic",
-    OperationsExpert: "Operations Expert",
-    QuartantineSpecialist: "Quartantine Specialist",
-    Researcher: "Researcher",
-    Scientist: "Scientist",
-}
-
 module.exports = {
     Player: Player,
     PlayerJSON: PlayerJSON,
-    Roles: Roles
 };

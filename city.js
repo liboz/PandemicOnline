@@ -1,3 +1,5 @@
+const roles = require('./roles')
+
 const colors = {
     BLUE: 'blue',
     RED: 'red',
@@ -32,8 +34,39 @@ City.prototype.add_neighbor = function (neighbor) {
     this.neighbors.add(neighbor)
 };
 
+City.prototype.infect_condition = function (game, color) {
+    if (game.cured[color] === 2) {
+        return false
+    } else {
+        let shouldInfect = true
+        let players = [...this.players]
+        for (let i = 0; i < players.length; i++) {
+            if ((game.cured[color] === 1 && players[i].role === roles.Roles.Medic) || players[i].role === roles.Roles.QuartantineSpecialist) {
+                shouldInfect = false
+                break;
+            }
+        }
+
+        if (shouldInfect) {
+            let neighbors = [...this.neighbors]
+
+            for (let i = 0; i < neighbors.length; i++) {
+                let neighbor_players = [...neighbors[i].players]
+                for (let j = 0; j < neighbor_players.length; j++) {
+                    if (neighbor_players[j].role === roles.Roles.QuartantineSpecialist) {
+                        shouldInfect = false
+                        break;
+                    }
+                }
+            }
+        }
+
+        return shouldInfect;
+    }
+}
+
 City.prototype.infect = function (game, color = this.color, visited = new Set()) {
-    if (game.cured[color] != 2) {
+    if (this.infect_condition(game, color)) {
         if (this.cubes[color] < 3) {
             game.cubes[color] -= 1
             this.cubes[color] += 1
@@ -60,7 +93,7 @@ City.prototype.infect = function (game, color = this.color, visited = new Set())
 };
 
 City.prototype.infect_epidemic = function (game) {
-    if (game.cured[this.color] != 2) {
+    if (this.infect_condition(game, this.color)) {
         let original_cubes = this.cubes[this.color]
         this.cubes[this.color] = 3;
         game.cubes[this.color] -= this.cubes[this.color] - original_cubes
