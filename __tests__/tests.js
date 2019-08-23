@@ -11,7 +11,7 @@ const seedrandom = require('seedrandom');
 describe('City', function () {
   describe('#Infect', function () {
     it('Increases the counter of cubes based on color', function () {
-      let g = new game.Game(cities, 2);
+      let g = new game.Game(cities, 2, ["test", "test"]);;
       let chennai = g.game_graph['Chennai'];
       for (let i = 0; i < 3; i++) {
         chennai.infect(g);
@@ -25,7 +25,7 @@ describe('City', function () {
 
   describe('#Infect', function () {
     it('No Infect when Eradicated', function () {
-      let g = new game.Game(cities, 2);
+      let g = new game.Game(cities, 2, ["test", "test"]);;
       let chennai = g.game_graph['Chennai'];
       g.cured[city.Colors.BLACK] = 2
       for (let i = 0; i < 3; i++) {
@@ -40,7 +40,7 @@ describe('City', function () {
 
   describe('#Infect', function () {
     it('Epidemic', function () {
-      let g = new game.Game(cities, 2);
+      let g = new game.Game(cities, 2, ["test", "test"]);;
       let chennai = g.game_graph['Chennai'];
 
       for (let i = 0; i < 3; i++) {
@@ -55,7 +55,7 @@ describe('City', function () {
 
   describe('#ChainReaction', function () {
     it('Create Chain Infection', function () {
-      let g = new game.Game(cities, 2);
+      let g = new game.Game(cities, 2, ["test", "test"]);;
       let chennai = g.game_graph['Chennai'];
       for (let i = 0; i < 4; i++) {
         chennai.infect(g);
@@ -110,7 +110,7 @@ describe('City', function () {
 
   describe('#ChainReaction', function () {
     it('Outbreak Counter Multiple Chains', function () {
-      let g = new game.Game(cities, 2);
+      let g = new game.Game(cities, 2, ["test", "test"]);;
       let chennai = g.game_graph['Chennai'];
       for (let i = 0; i < 3; i++) {
         chennai.infect(g);
@@ -131,7 +131,7 @@ describe('City', function () {
 
   describe('#ChainReaction', function () {
     it('Outbreak Counter Multiple Chains No Infinite', function () {
-      let g = new game.Game(cities, 2);
+      let g = new game.Game(cities, 2, ["test", "test"]);;
       let chennai = g.game_graph['Chennai'];
       for (let i = 0; i < 3; i++) {
         chennai.infect(g);
@@ -154,7 +154,7 @@ describe('City', function () {
 
   describe('#ChainReaction', function () {
     it('Outbreak Counter One Chain', function () {
-      let g = new game.Game(cities, 2);
+      let g = new game.Game(cities, 2, ["test", "test"]);;
       let tokyo = g.game_graph['Taipei'];
       for (let i = 0; i < 3; i++) {
         tokyo.infect(g);
@@ -389,7 +389,7 @@ describe('Game', function () {
   describe('#Epidemic', function () {
     it('Intensifies', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);;
       expect(g.infection_rate_index).toBe(0)
       expect(g.game_graph['Sao Paulo'].cubes[city.Colors.YELLOW]).toBe(0)
       expect(g.game_graph['Buenos Aires'].cubes[city.Colors.YELLOW]).toBe(0)
@@ -411,7 +411,7 @@ describe('Game', function () {
   describe('#Epidemic', function () {
     it('No Epidemic Cubes when Disease Eradicated', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);;
       g.cured[city.Colors.YELLOW] = 2
       g.epidemic();
       expect(g.infection_rate_index).toBe(1)
@@ -423,7 +423,7 @@ describe('Game', function () {
   describe('#Initialize Board', function () {
     it('Right Number of Cubes ', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);;
       expect(g.game_state).toBe(game.GameState.NotStarted)
       for (let i = 0; i < 2; i++) { // running initialize_board twice does nothing
         g.initialize_board();
@@ -447,7 +447,7 @@ describe('Game', function () {
   describe('#Infect Stage', function () {
     it('Check Right number of cards ', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);;
       g.cured[city.Colors.RED] = 2 //eradicate all the diseases so we dont have to deal with outbreak counter
       g.cured[city.Colors.BLACK] = 2
       g.cured[city.Colors.BLUE] = 2
@@ -463,7 +463,7 @@ describe('Game', function () {
   describe('#Outbreak', function () {
     it('over 8 ends game ', function () {
       let seeded = seedrandom('test33!') // want exactly 8!
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);;
       for (let i = 0; i < 3; i++) {
         g.infect_stage();
         g.epidemic()
@@ -480,7 +480,7 @@ describe('Game', function () {
   describe('#Run out of Cubes', function () {
     it('Lose game', function () {
       let seeded = seedrandom('test33!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);;
       let chennai = g.game_graph['Chennai'];
       for (let i = 0; i < 3; i++) {
         chennai.infect(g);
@@ -503,7 +503,7 @@ describe('Game', function () {
   describe('#Run out of Cubes', function () {
     it('Epidemic can lose game', function () {
       let seeded = seedrandom('test33!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);;
       let mexico_city = g.game_graph['Mexico City'];
       for (let i = 0; i < 3; i++) {
         mexico_city.infect(g);
@@ -527,7 +527,7 @@ describe('Game', function () {
 
   describe('#Next Player', function () {
     it('loops', function () {
-      let g = new game.Game(cities, 2);
+      let g = new game.Game(cities, 2, ["test", "test"]);;
       g.players.forEach((p, index) => {
         expect(g.player_index).toBe(index)
         g.next_player()
@@ -538,7 +538,7 @@ describe('Game', function () {
 
   describe('#Turns', function () {
     it('stops when at 0', function () {
-      let g = new game.Game(cities, 2);
+      let g = new game.Game(cities, 2, ["test", "test"]);;
       expect(g.turns_left).toBe(4)
       expect(g.decrement_turn()).toBe(true)
       expect(g.turns_left).toBe(3)
@@ -555,24 +555,24 @@ describe('Game', function () {
 
   describe('#Turns', function () {
     it('pass Turns', function () {
-      let g = new game.Game(cities, 2);
+      let g = new game.Game(cities, 2, ["test", "test"]);;
       g.pass_turn()
       expect(g.turns_left).toBe(0)
 
-      g = new game.Game(cities, 2);
+      g = new game.Game(cities, 2, ["test", "test"]);;
       g.decrement_turn()
       expect(g.turns_left).toBe(3)
       g.pass_turn()
       expect(g.turns_left).toBe(0)
 
-      g = new game.Game(cities, 2);
+      g = new game.Game(cities, 2, ["test", "test"]);;
       g.decrement_turn()
       g.decrement_turn()
       expect(g.turns_left).toBe(2)
       g.pass_turn()
       expect(g.turns_left).toBe(0)
 
-      g = new game.Game(cities, 2);
+      g = new game.Game(cities, 2, ["test", "test"]);;
       g.decrement_turn()
       g.decrement_turn()
       g.decrement_turn()
@@ -580,7 +580,7 @@ describe('Game', function () {
       g.pass_turn()
       expect(g.turns_left).toBe(0)
 
-      g = new game.Game(cities, 2);
+      g = new game.Game(cities, 2, ["test", "test"]);;
       g.decrement_turn()
       g.decrement_turn()
       g.decrement_turn()
@@ -597,7 +597,7 @@ describe('Player', function () {
   describe('#Movement', function () {
     it('Drive/Ferry', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);;
       expect(g.players[0].move(g.game_graph, 'Chicago')).toBe(true)
       expect(g.players[0].location).toBe('Chicago')
       expect(g.game_graph['Chicago'].players.has(g.players[0])).toBe(true)
@@ -623,7 +623,7 @@ describe('Player', function () {
   describe('#Movement', function () {
     it('Charter/Direct', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);;
       g.players[0].discard([...g.players[0].hand])
       expect(g.players[0].move(g.game_graph, 'Beijing')).toBe(false)
       expect(g.players[0].location).toBe('Atlanta')
@@ -672,7 +672,7 @@ describe('Player', function () {
   describe('#Movement', function () {
     it('Movable Locations', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);;
       let valid_final_destinations = g.players[0].get_valid_final_destinations(g).sort()
       expect(valid_final_destinations).toEqual([
         'Chicago', 'Washington', 'Miami', 'Khartoum', 'Milan', 'Jakarta', 'Karachi'
@@ -703,7 +703,7 @@ describe('Player', function () {
   describe('#Research Station', function () {
     it('Can Build', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
       expect(g.research_stations).toEqual(new Set(['Atlanta']))
       expect(g.players[0].can_build_research_station(g)).toBe(false);
       g.players[0].discard([...g.players[0].hand])
@@ -730,7 +730,7 @@ describe('Player', function () {
   describe('#Draw out the Deck', function () {
     it('Lose Game', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
       for (let i = 0; i < 45; i++) { // 48 cities + 5 epidemic, but start with 8 cards removed with 2 people
         g.players[0].draw(g)
         expect(g.game_state).toBe(game.GameState.NotStarted)
@@ -743,7 +743,7 @@ describe('Player', function () {
   describe('#Cure', function () {
     it('Eradicate', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
       g.players[0].discard([...g.players[0].hand])
 
       g.players[0].hand.add('Chennai')
@@ -778,7 +778,7 @@ describe('Player', function () {
   describe('#Cure', function () {
     it('Can Cure', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
       g.players[0].discard([...g.players[0].hand])
 
       g.infect_stage() // infect tokyo
@@ -811,7 +811,7 @@ describe('Player', function () {
   describe('#Cure', function () {
     it('Can Hand Cure', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
       g.players[0].discard([...g.players[0].hand])
 
       g.infect_stage() // infect tokyo
@@ -858,7 +858,7 @@ describe('Player', function () {
   describe('#Cure', function () {
     it('Need the cards in hand', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
       g.infect_stage() // infect tokyo
       expect(g.players[0].can_cure(g, ['Tokyo', 'Osaka', 'Beijing', 'Seoul', 'Hong Kong'])).toBe(false)
     });
@@ -867,7 +867,7 @@ describe('Player', function () {
   describe('#Cure', function () {
     it('Cure all means game won', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
       g.players[0].discard([...g.players[0].hand])
 
       g.players[0].hand.add('Chennai')
@@ -911,7 +911,7 @@ describe('Player', function () {
   describe('#Cure Disease', function () {
     it('Eradicate after treating last cube', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
       expect(g.cubes[city.Colors.RED]).toBe(24)
       g.players[0].discard([...g.players[0].hand])
       g.infect_stage() // infect tokyo
@@ -950,7 +950,7 @@ describe('Player', function () {
   describe('#Cure Disease', function () {
     it('#After Discovering a Cure, Treat all when treating', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
       expect(g.cubes[city.Colors.RED]).toBe(24)
       g.players[0].discard([...g.players[0].hand])
       g.epidemic()
@@ -981,7 +981,7 @@ describe('Player', function () {
   describe('#Treat Disease', function () {
     it('Can Treat', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
 
       expect(g.players[0].can_treat(g)).toBe(false)
       expect(g.players[0].can_treat_color(g, city.Colors.RED)).toBe(false)
@@ -1004,7 +1004,7 @@ describe('Player', function () {
   describe('#Discard Cards', function () {
     it('Check Validity', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
       g.players[0].draw(g)
       g.players[0].draw(g)
       g.players[0].draw(g)
@@ -1026,7 +1026,7 @@ describe('Player', function () {
   describe('#Trade Cards', function () {
     it('Check Validity', function () {
       let seeded = seedrandom('test167!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
       expect(g.players[0].can_take(g)).toBe(false)
       expect(g.players[0].can_give(g)).toBe(false)
       expect(g.players[1].can_take(g)).toBe(false)
@@ -1068,7 +1068,7 @@ describe('Player', function () {
   describe('#Trade Cards', function () {
     it('Take From Specific Player', function () {
       let seeded = seedrandom('test167!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
       g.players[0].hand.add('Atlanta')
       expect(g.players[0].can_take_from_player(g.players[1])).toBe(false)
       expect(g.players[1].can_take_from_player(g.players[0])).toBe(true)
@@ -1099,7 +1099,7 @@ describe('Player', function () {
   describe('#PlayerJSON', function () {
     it('Sorted Hand', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], seeded);
       g.initialize_board()
       let p1 = new player.PlayerJSON(g.players[0], g)
       let p2 = new player.PlayerJSON(g.players[1], g)
