@@ -78,7 +78,7 @@ City.prototype.infect = function (game, color = this.color, visited = new Set())
         } else {
             visited.add(this);
             let end = game.outbreak();
-            game.log.append(`Outbreak at ${this.name}`)
+            game.log.push(`Outbreak at ${this.name}`)
             this.neighbors.forEach((neighbor) => {
                 if (!visited.has(neighbor)) {
                     end = neighbor.infect(game, color, visited) && end; //want to always infect first

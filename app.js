@@ -94,7 +94,7 @@ io.on('connection', function (socket) {
 			let filtered_players = players().slice(0, num_players)
 			let filtered_roles = player_roles().slice(0, num_players)
 			console.log(`start game with ${filtered_players} in room ${match_name}`);
-			games[match_name].game = new game.Game(cities, num_players, filtered_players, filtered_roles, seeded)
+			games[match_name].game = new game.Game(cities, num_players, filtered_players, filtered_roles, 4, seeded)
 			curr_game().initialize_board()
 			curr_game().log.push("game initialized")
 			io.in(match_name).emit("game initialized", curr_game().toJSON());
