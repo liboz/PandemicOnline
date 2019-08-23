@@ -13,7 +13,9 @@
     <div id="player-holder">
         <ng-container *ngIf="hasStarted()">
             <div *ngFor="let player of game.players">
-                Player {{ player.id }} ({{player.name}})
+                <div [ngStyle]="{'background': bgColor(player.id), 'color': 'white' }">
+                    Player {{ player.id }} ({{player.name}}) - {{ player.role}}
+                </div>
                 <app-player-hand [hand]="player.hand" [game]="game">
                 </app-player-hand>
             </div>

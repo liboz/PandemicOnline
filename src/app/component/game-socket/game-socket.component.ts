@@ -37,7 +37,16 @@ export class GameSocketComponent implements OnInit {
         transports: ['websocket']
       });
 
-      this.modalService.init(JoinComponent, { game: this.game, socket: this.socket, match_name: this.match_name }, {})
+      this.socket.emit("match name", this.match_name)
+
+      this.socket.on("roles", roles => {
+        if (!this.player_name) {
+          this.modalService.destroy()
+          this.modalService.init(JoinComponent, { game: this.game, socket: this.socket, roles: roles }, {})
+        }
+      })
+
+
       this.socket.on("move successful", data => {
         this.game = data
       });
@@ -88,7 +97,7 @@ export class GameSocketComponent implements OnInit {
         this.player_name = playerInfo.player_name;
         this.player_index = playerInfo.player_index;
         this.modalService.destroy()
-    });
+      });
   }
 
   ngOnDestroy() {

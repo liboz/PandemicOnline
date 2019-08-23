@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 import * as $ from 'jquery'
 import geo from '../../../../data/geo.json';
 import { ModalComponent } from '../modal/modal.component'
+import { PlayerComponent } from '../player/player.component';
 
 @Component({
   selector: 'app-game',
@@ -338,6 +339,10 @@ export class GameComponent implements OnInit, OnChanges {
   cannotDoPrimaryAction() {
     return this.isMoving || this.treatColorChoices || this.shareCardChoices || this.cureColorCards ||
       this.game.turns_left <= 0 || this.game.game_state !== GameState.Ready
+  }
+
+  bgColor(id: number) {
+    return PlayerComponent.playerInfo[id]
   }
 }
 

@@ -11,6 +11,8 @@ export class JoinComponent implements OnInit {
   @Input() game: any
   @Input() socket: any
   @Input() match_name: string
+  @Input() roles: string[]
+  selected_role: string
   player_name = ""
   constructor(private modalService: ModalService) { }
 
@@ -26,8 +28,8 @@ export class JoinComponent implements OnInit {
   }
 
   private joinGameInternal() {
-    this.socket.emit('join', this.match_name, this.player_name, (player_index) => {
-      console.log(`${this.player_name} joined ${this.match_name} successfully`)
+    this.socket.emit('join', this.selected_role, this.player_name, (player_index) => {
+      console.log(`${this.player_name} joined as ${this.selected_role} successfully`)
       this.modalService.joinAs(new PlayerInfo(this.player_name, player_index))
     })
   }
@@ -40,6 +42,7 @@ export class JoinComponent implements OnInit {
 
   choosePlayer(player: any) {
     this.player_name = player.name
+    this.selected_role = player.role
     this.joinGameInternal()
   }
 
