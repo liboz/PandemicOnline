@@ -1,0 +1,13 @@
+<div *ngIf="hasStarted()">
+    Join Game as:
+    <div *ngFor="let player of game.players">
+        <button (click)="choosePlayer(player)">{{player.name}}</button>
+    </div>
+</div>
+<div *ngIf="!hasStarted()">
+    Join Game as:
+    <div>
+        <input [(ngModel)]="player_name">
+        <button (click)="joinGame()">JOIN</button>
+    </div>
+</div>

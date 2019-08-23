@@ -4,7 +4,14 @@ import { ApiService } from '../../service/api.service';
 import { GameState } from "../game/game.component"
 import { environment } from '../../../environments/environment';
 
+import { ModalService } from '../../service/modal.service';
+import { PlayerInfo } from '../join/join.component';
+
+import { JoinComponent } from '../join/join.component';
+
+
 import io from "socket.io-client";
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-game-socket',
@@ -13,22 +20,24 @@ import io from "socket.io-client";
 })
 export class GameSocketComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute, private api: ApiService) { }
+  constructor(private route: ActivatedRoute, private api: ApiService, private modalService: ModalService) { }
   game: any;
   socket: any;
-  ngOnInit() {
-    let match_name = this.route.snapshot.paramMap.get('match_name');
+  match_name: string;
+  player_name: string;
+  player_index: number;
+  subscription: Subscription;
 
-    this.api.getGames(match_name).subscribe(result => {
+  ngOnInit() {
+    this.match_name = this.route.snapshot.paramMap.get('match_name');
+
+    this.api.getGames(this.match_name).subscribe(result => {
       this.game = result
       this.socket = io(`${environment.baseUrl}:3000/`, {
         transports: ['websocket']
       });
 
-      this.socket.emit('join', match_name, () => {
-        console.log(`joined ${match_name} succesfully`)
-      })
-
+      this.modalService.init(JoinComponent, { game: this.game, socket: this.socket, match_name: this.match_name }, {})
       this.socket.on("move successful", data => {
         this.game = data
       });
@@ -73,6 +82,17 @@ export class GameSocketComponent implements OnInit {
         console.log(data)
       });
     })
+
+    this.subscription = this.modalService.join$.subscribe(
+      playerInfo => {
+        this.player_name = playerInfo.player_name;
+        this.player_index = playerInfo.player_index;
+        this.modalService.destroy()
+    });
   }
 
+  ngOnDestroy() {
+    // prevent memory leak when component destroyed
+    this.subscription.unsubscribe();
+  }
 }

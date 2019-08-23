@@ -9,7 +9,7 @@ import {
 @Injectable()
 export class DomService {
 
-  private childComponentRef:any;
+  private childComponentRef: any;
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private appRef: ApplicationRef,
@@ -44,19 +44,19 @@ export class DomService {
   }
 
 
-  private attachConfig(config, componentRef){
+  private attachConfig(config, componentRef) {
     let inputs = config.inputs;
     let outputs = config.outputs;
-    for(var key in inputs){
+    for (var key in inputs) {
       componentRef.instance[key] = inputs[key];
     }
-    for(var key in outputs){
+    for (var key in outputs) {
       componentRef.instance[key] = outputs[key];
     }
-    
+
   }
 }
-interface childConfig{
-  inputs:object,
-  outputs:object
+interface childConfig {
+  inputs: object,
+  outputs: object
 }

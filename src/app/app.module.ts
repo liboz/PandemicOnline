@@ -16,7 +16,8 @@ import { ModalComponent } from './component/modal/modal.component';
 import { ModalService } from './service/modal.service'
 import { DomService } from './service/dom.service';
 import { HomeComponent } from './component/home/home.component';
-import { GameSocketComponent } from './component/game-socket/game-socket.component'
+import { GameSocketComponent } from './component/game-socket/game-socket.component';
+import { JoinComponent } from './component/join/join.component'
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { GameSocketComponent } from './component/game-socket/game-socket.compone
     PlayerHandComponent,
     ModalComponent,
     HomeComponent,
-    GameSocketComponent
+    GameSocketComponent,
+    JoinComponent
   ],
   imports: [
     BrowserModule,

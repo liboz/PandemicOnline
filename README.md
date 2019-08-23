@@ -27,7 +27,7 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 
-sudo fallocate -l 1G /swapfile
+sudo fallocate -l 3G /swapfile
 sudo chmod 600 /swapfile
 sudo mkswap /swapfile
 sudo swapon /swapfile
@@ -44,4 +44,8 @@ sudo swapoff -v /swapfile
 Next, remove the swap file entry /swapfile swap swap defaults 0 0 from the /etc/fstab file.
 sudo rm /swapfile
 
- sudo nano -c /etc/nginx/nginx.conf
+sudo nano -c /etc/nginx/nginx.conf
+
+
+sudo rm -r  /var/www/deploy/PandemicOnline
+sudo cp dist/PandemicOnline  /var/www/deploy/ -r

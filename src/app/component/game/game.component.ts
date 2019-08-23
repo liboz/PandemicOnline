@@ -5,7 +5,6 @@ import * as $ from 'jquery'
 import geo from '../../../../data/geo.json';
 import { ModalComponent } from '../modal/modal.component'
 
-
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -16,6 +15,8 @@ export class GameComponent implements OnInit, OnChanges {
   objectKeys = Object.keys;
   @Input() game: any;
   @Input() socket: any;
+  @Input() player_name: string;
+  @Input() player_index: number;
 
   features = geo.features
   w = 2500;
@@ -65,12 +66,13 @@ export class GameComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (this.initialized) {
       this.createChart()
-    } 
-    
-    if (changes.game.currentValue.game_state === GameState.Lost) {
-      this.modalService.init(ModalComponent, { lost: true }, {})
-    } else if (changes.game.currentValue.game_state === GameState.Won ) {
-      this.modalService.init(ModalComponent, { lost: false }, {})
+    }
+    if (changes.game) {
+      if (changes.game.currentValue.game_state === GameState.Lost) {
+        this.modalService.init(ModalComponent, { lost: true }, {})
+      } else if (changes.game.currentValue.game_state === GameState.Won) {
+        this.modalService.init(ModalComponent, { lost: false }, {})
+      }
     }
   }
 
@@ -94,7 +96,6 @@ export class GameComponent implements OnInit, OnChanges {
     this.initialized = true
     this.selectedCards = new Set()
     this.createChart()
-
   }
 
   // zoom to show a bounding box, with optional additional padding as percentage of box size

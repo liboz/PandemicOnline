@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { DomService } from './dom.service';
 
+import { Subject }    from 'rxjs';
+import { PlayerInfo } from '../component/join/join.component';
+
 @Injectable()
 export class ModalService {
 
@@ -21,5 +24,11 @@ export class ModalService {
   destroy() {
     this.domService.removeComponent();
     document.getElementById(this.modalElementId).className = 'hidden';
+  }
+
+  private joinSource = new Subject<PlayerInfo>();
+  join$ = this.joinSource.asObservable();
+  joinAs(playerInfo: PlayerInfo) {
+    this.joinSource.next(playerInfo);
   }
 }
