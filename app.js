@@ -20,9 +20,13 @@ app.use(express.static('public'))
 app.use(cors())
 
 //routes
+app.get('/', (req, res) => {
+	res.send(games)
+})
+
 app.get('/:match_name', (req, res) => {
 	let curr_game = games[req.params['match_name']]
-	res.send(!curr_game ? dummy_game : curr_game.toJSON())
+	res.send(!curr_game || !curr_game.game ? dummy_game : curr_game.game.toJSON())
 })
 
 //Listen on port 3000
@@ -35,26 +39,43 @@ let seeded = seedrandom('test!')
 io.on('connection', function (socket) {
 	console.log('a user connected');
 	let match_name = null
-	let curr_game = function () {
-		return games[match_name];
+	
+	let players = function () {
+		return games[match_name].players;
 	}
-	socket.on('join', function (name, callback) {
+	let curr_game = function () {
+		// can this happen if no players have joined?
+		return games[match_name].game;
+	}
+	socket.on('join', function (name, player_name, callback) {
 		match_name = name
+		if (!games[match_name]) {
+			games[match_name] = {
+				players: [],
+				game: null
+			}
+		}
 		socket.join(match_name);
-		callback()
-		console.log(`someone joined ${match_name}`)
+		let player_index = players().findIndex(i => i === player_name) // should lock maybe?
+		if (player_index === -1) {
+			player_index = players().length
+			players().push(player_name)
+		}
+		callback(player_index)
+		console.log(`${player_name} joined ${match_name} as Player ${player_index}`)
 	});
 
 	socket.on('start game', function () {
 		if (!curr_game() || curr_game().game_state === game.GameState.NotStarted) {
-			let num_players = io.sockets.adapter.rooms[match_name].length
+			let num_players = players().length
 			if (num_players > 5) {
 				num_players = 5
 			} else if (num_players < 2) {
 				num_players = 2
 			}
-			console.log(`start game with ${num_players} players in room ${match_name}`);
-			games[match_name] = new game.Game(cities, num_players, seeded)
+			let filtered_players = players().slice(0, num_players)
+			console.log(`start game with ${filtered_players} in room ${match_name}`);
+			games[match_name].game = new game.Game(cities, num_players, filtered_players, seeded)
 			curr_game().initialize_board()
 			curr_game().log.push("game initialized")
 			io.in(match_name).emit("game initialized", curr_game().toJSON());

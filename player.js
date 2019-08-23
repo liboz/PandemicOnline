@@ -1,7 +1,8 @@
 
 const city = require('./city');
 
-function Player(id, role, location = "Atlanta") {
+function Player(id, name, role, location = "Atlanta") {
+    this.name = name
     this.role = role;
     this.hand = new Set()
     this.location = location
@@ -211,6 +212,7 @@ Player.prototype.trade = function (player, card) {
 }
 
 function PlayerJSON(player, game) {
+    this.name = player.name
     this.role = player.role;
     this.hand = [...player.hand].sort((i, j) => {
         let first_index = city.ColorsIndex[game.game_graph[i].color]

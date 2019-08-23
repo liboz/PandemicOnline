@@ -5,3 +5,7 @@ Online Pandemic Simulator
 
 # Todo
 - Deal with when you can both charter and direct flight
+
+pm2 start app.js
+pm2 save
+pm2 startup

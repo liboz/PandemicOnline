@@ -12,7 +12,7 @@ const GameState = {
     Lost: 4
 }
 
-function Game(cities, num_players, rng = seedrandom()) {
+function Game(cities, num_players, filtered_players, rng = seedrandom()) {
     this.game_graph = city.City.load(cities)
     this.outbreak_counter = 0
     this.infection_rate_index = 0
@@ -20,8 +20,9 @@ function Game(cities, num_players, rng = seedrandom()) {
     this.rng = rng;
     this.infection_deck = new infection.InfectionDeck(cities, this.rng)
     this.players = []
+    console.log(filtered_players)
     for (let i = 0; i < num_players; i++) {
-        this.players.push(new player.Player(i))
+        this.players.push(new player.Player(i, filtered_players[i]))
     }
     this.players.forEach(player => {
         this.game_graph[player.location].players.add(player)
@@ -149,7 +150,7 @@ Game.prototype.turn_end = function(socket, io, match_name) {
         this.game_state = GameState.DiscardingCard
         socket.emit('discard cards')
         socket.on('discard', (cards, callback) => {
-            let log_string = `Player ${this.player_index} is discarding ${cards}`
+            let log_string = `Player ${this.player_index} discards ${cards}`
             console.log(log_string)
             if (this.players[this.player_index].can_discard(cards)) {
                 callback()
@@ -163,6 +164,8 @@ Game.prototype.turn_end = function(socket, io, match_name) {
                 }
                 this.log.push(log_string)
                 io.in(match_name).emit('update game state', this.toJSON())
+            } else {
+                socket.emit(`Discarding ${cards} is invalid`)
             }
         }, );
     } else {
