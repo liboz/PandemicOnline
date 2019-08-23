@@ -1,4 +1,4 @@
-<div *ngIf="hasStarted()">
+<div *ngIf="hasStarted() && notEnded()">
     Join Game as:
     <div *ngFor="let player of game.players">
         <button (click)="choosePlayer(player)">{{player.name}}</button>

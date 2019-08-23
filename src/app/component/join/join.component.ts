@@ -21,6 +21,10 @@ export class JoinComponent implements OnInit {
     return this.game && this.game.game_state !== GameState.NotStarted;
   }
 
+  notEnded() {
+    return this.game.game_state !== GameState.Lost && this.game.game_state !== GameState.Won;
+  }
+
   joinGame() {
     if (this.player_name) {
       this.socket.emit('join', this.match_name, this.player_name, (player_index) => {
