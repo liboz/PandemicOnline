@@ -598,23 +598,23 @@ describe('Player', function () {
     it('Drive/Ferry', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, 2, ["test", "test"], [player.Roles.ContingencyPlanner, player.Roles.Researcher], seeded);
-      expect(g.players[0].move(g.game_graph, 'Chicago')).toBe(true)
+      expect(g.players[0].move(g, 'Chicago')).toBe(true)
       expect(g.players[0].location).toBe('Chicago')
       expect(g.game_graph['Chicago'].players.has(g.players[0])).toBe(true)
 
-      expect(g.players[0].move(g.game_graph, 'New York')).toBe(false)
+      expect(g.players[0].move(g, 'New York')).toBe(false)
       expect(g.players[0].location).toBe('Chicago')
       expect(g.game_graph['Chicago'].players.has(g.players[0])).toBe(true)
 
-      expect(g.players[0].move(g.game_graph, 'San Francisco')).toBe(true)
+      expect(g.players[0].move(g, 'San Francisco')).toBe(true)
       expect(g.players[0].location).toBe('San Francisco')
       expect(g.game_graph['San Francisco'].players.has(g.players[0])).toBe(true)
 
-      expect(g.players[0].move(g.game_graph, 'Tokyo')).toBe(true)
+      expect(g.players[0].move(g, 'Tokyo')).toBe(true)
       expect(g.players[0].location).toBe('Tokyo')
       expect(g.game_graph['Tokyo'].players.has(g.players[0])).toBe(true)
 
-      expect(g.players[0].move(g.game_graph, 'Atlanta')).toBe(false)
+      expect(g.players[0].move(g, 'Atlanta')).toBe(false)
       expect(g.players[0].location).toBe('Tokyo')
       expect(g.game_graph['Tokyo'].players.has(g.players[0])).toBe(true)
     });
@@ -625,14 +625,14 @@ describe('Player', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, 2, ["test", "test"], [player.Roles.ContingencyPlanner, player.Roles.Researcher], seeded);
       g.players[0].discard([...g.players[0].hand])
-      expect(g.players[0].move(g.game_graph, 'Beijing')).toBe(false)
+      expect(g.players[0].move(g, 'Beijing')).toBe(false)
       expect(g.players[0].location).toBe('Atlanta')
       g.players[0].draw(g)
       g.players[0].draw(g)
 
       //Direct
       expect(g.players[0].hand.has('Beijing')).toBe(true)
-      expect(g.players[0].move(g.game_graph, 'Beijing')).toBe(true)
+      expect(g.players[0].move(g, 'Beijing')).toBe(true)
       expect(g.players[0].location).toBe('Beijing')
       expect(g.game_graph['Beijing'].players.has(g.players[0])).toBe(true)
       expect(g.players[0].hand.has('Beijing')).toBe(false)
@@ -643,26 +643,26 @@ describe('Player', function () {
 
       //Drive/Ferry      
       expect(g.players[0].hand.has('Shanghai')).toBe(false)
-      expect(g.players[0].move(g.game_graph, 'Shanghai')).toBe(true)
+      expect(g.players[0].move(g, 'Shanghai')).toBe(true)
       expect(g.players[0].location).toBe('Shanghai')
       expect(g.game_graph['Shanghai'].players.has(g.players[0])).toBe(true)
       expect(g.players[0].hand.has('Shanghai')).toBe(false)
 
       expect(g.players[0].hand.has('Hong Kong')).toBe(false)
-      expect(g.players[0].move(g.game_graph, 'Hong Kong')).toBe(true)
+      expect(g.players[0].move(g, 'Hong Kong')).toBe(true)
       expect(g.players[0].location).toBe('Hong Kong')
       expect(g.game_graph['Hong Kong'].players.has(g.players[0])).toBe(true)
       expect(g.players[0].hand.has('Hong Kong')).toBe(false)
 
       expect(g.players[0].hand.has('Ho Chi Minh City')).toBe(true)
-      expect(g.players[0].move(g.game_graph, 'Ho Chi Minh City')).toBe(true)
+      expect(g.players[0].move(g, 'Ho Chi Minh City')).toBe(true)
       expect(g.players[0].location).toBe('Ho Chi Minh City')
       expect(g.game_graph['Ho Chi Minh City'].players.has(g.players[0])).toBe(true)
 
       //Charter
       expect(g.players[0].hand.has('Ho Chi Minh City')).toBe(true)
       expect(g.players[0].hand.has('Tokyo')).toBe(false)
-      expect(g.players[0].move(g.game_graph, 'Tokyo')).toBe(true)
+      expect(g.players[0].move(g, 'Tokyo')).toBe(true)
       expect(g.players[0].location).toBe('Tokyo')
       expect(g.game_graph['Tokyo'].players.has(g.players[0])).toBe(true)
       expect(g.players[0].hand.has('Ho Chi Minh City')).toBe(false)
@@ -679,11 +679,11 @@ describe('Player', function () {
       ].map(i => g.game_graph[i].index).sort())
 
       g.players[0].draw(g)
-      g.players[0].move(g.game_graph, 'Chicago')
-      g.players[0].move(g.game_graph, 'San Francisco')
-      g.players[0].move(g.game_graph, 'Tokyo')
-      g.players[0].move(g.game_graph, 'Seoul')
-      g.players[0].move(g.game_graph, 'Beijing')
+      g.players[0].move(g, 'Chicago')
+      g.players[0].move(g, 'San Francisco')
+      g.players[0].move(g, 'Tokyo')
+      g.players[0].move(g, 'Seoul')
+      g.players[0].move(g, 'Beijing')
       expect(g.players[0].hand.has('Beijing')).toBe(true)
       valid_final_destinations = g.players[0].get_valid_final_destinations(g).sort() // all locations with a charter
       expect(valid_final_destinations).toEqual([...Array(48).keys()].sort())
@@ -710,11 +710,11 @@ describe('Player', function () {
 
       g.players[0].draw(g)
       expect(g.players[0].hand).toEqual(new Set(['Beijing']))
-      g.players[0].move(g.game_graph, 'Chicago')
-      g.players[0].move(g.game_graph, 'San Francisco')
-      g.players[0].move(g.game_graph, 'Tokyo')
-      g.players[0].move(g.game_graph, 'Seoul')
-      g.players[0].move(g.game_graph, 'Beijing')
+      g.players[0].move(g, 'Chicago')
+      g.players[0].move(g, 'San Francisco')
+      g.players[0].move(g, 'Tokyo')
+      g.players[0].move(g, 'Seoul')
+      g.players[0].move(g, 'Beijing')
       expect(g.players[0].hand).toEqual(new Set(['Beijing']))
       expect(g.players[0].can_build_research_station(g)).toBe(true);
       expect(g.game_graph['Beijing'].hasResearchStation).toEqual(false)
@@ -722,8 +722,8 @@ describe('Player', function () {
       expect(g.players[0].hand).toEqual(new Set())
       expect(g.research_stations).toEqual(new Set(['Atlanta', 'Beijing']))
       expect(g.game_graph['Beijing'].hasResearchStation).toEqual(true)
-      expect(g.players[0].move(g.game_graph, 'Atlanta')).toBe(true)
-      expect(g.players[0].move(g.game_graph, 'Beijing')).toBe(true)
+      expect(g.players[0].move(g, 'Atlanta')).toBe(true)
+      expect(g.players[0].move(g, 'Beijing')).toBe(true)
     });
   });
 
@@ -758,7 +758,7 @@ describe('Player', function () {
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true)
       g.players[0].hand.add('Miami')
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(false) // submitted too many cards
-      g.players[0].move(g.game_graph, 'Miami')
+      g.players[0].move(g, 'Miami')
       expect(g.players[0].can_build_research_station(g)).toBe(true)
       g.players[0].build_research_station(g)
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true)
@@ -792,7 +792,7 @@ describe('Player', function () {
       g.players[0].hand.add('Miami')
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(false) // submitted too many cards
       expect(g.players[0].can_hand_cure(g)).toBe(city.Colors.BLACK)
-      g.players[0].move(g.game_graph, 'Miami')
+      g.players[0].move(g, 'Miami')
       expect(g.players[0].can_build_research_station(g)).toBe(true)
       g.players[0].build_research_station(g)
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true)
@@ -831,9 +831,9 @@ describe('Player', function () {
       g.players[0].hand.add('Moscow')
       g.players[0].hand.add('Baghdad')
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true)
-      g.players[0].move(g.game_graph, 'Miami') // only cure in research station
+      g.players[0].move(g, 'Miami') // only cure in research station
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(false)
-      g.players[0].move(g.game_graph, 'Atlanta')
+      g.players[0].move(g, 'Atlanta')
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true)
       g.players[0].discard(['Moscow'])
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(false)
@@ -864,9 +864,9 @@ describe('Player', function () {
       g.players[0].hand.add('Moscow')
       g.players[0].hand.add('Baghdad')
       expect(g.players[0].can_hand_cure(g)).toBe(city.Colors.BLACK)
-      g.players[0].move(g.game_graph, 'Miami') // only cure in research station
+      g.players[0].move(g, 'Miami') // only cure in research station
       expect(g.players[0].can_hand_cure(g)).toBe(false)
-      g.players[0].move(g.game_graph, 'Atlanta')
+      g.players[0].move(g, 'Atlanta')
       g.players[0].cure(g, [...g.players[0].hand])
 
       g.players[0].hand.add('Algiers') // cant cure already cured
@@ -962,17 +962,17 @@ describe('Player', function () {
       g.players[0].cure(g, [...g.players[0].hand])
       expect(g.cured[city.Colors.RED]).toBe(1)
 
-      g.players[0].move(g.game_graph, 'Chicago')
-      g.players[0].move(g.game_graph, 'San Francisco')
-      g.players[0].move(g.game_graph, 'Tokyo')
+      g.players[0].move(g, 'Chicago')
+      g.players[0].move(g, 'San Francisco')
+      g.players[0].move(g, 'Tokyo')
 
       expect(g.players[0].can_treat(g)).toBe(true)
       g.players[0].treat(g, city.Colors.RED)
       expect(g.cured[city.Colors.RED]).toBe(1)
       expect(g.cubes[city.Colors.RED]).toBe(23)
 
-      g.players[0].move(g.game_graph, 'Osaka')
-      g.players[0].move(g.game_graph, 'Taipei')
+      g.players[0].move(g, 'Osaka')
+      g.players[0].move(g, 'Taipei')
 
       expect(g.players[0].can_treat(g)).toBe(true)
       g.players[0].treat(g, city.Colors.RED)
@@ -1001,9 +1001,9 @@ describe('Player', function () {
       g.players[0].cure(g, [...g.players[0].hand])
       expect(g.cured[city.Colors.YELLOW]).toBe(1)
 
-      g.players[0].move(g.game_graph, 'Miami')
-      g.players[0].move(g.game_graph, 'Bogota')
-      g.players[0].move(g.game_graph, 'Sao Paulo')
+      g.players[0].move(g, 'Miami')
+      g.players[0].move(g, 'Bogota')
+      g.players[0].move(g, 'Sao Paulo')
 
       expect(g.players[0].can_treat(g)).toBe(true)
       g.players[0].treat(g, city.Colors.YELLOW)
@@ -1024,14 +1024,64 @@ describe('Player', function () {
       expect(g.players[0].can_treat_color(g, city.Colors.YELLOW)).toBe(false)
 
       g.initialize_board()
-      g.players[0].move(g.game_graph, 'Washington')
-      g.players[0].move(g.game_graph, 'New York')
+      g.players[0].move(g, 'Washington')
+      g.players[0].move(g, 'New York')
 
       expect(g.players[0].can_treat(g)).toBe(true)
       expect(g.players[0].can_treat_color(g, city.Colors.RED)).toBe(false)
       expect(g.players[0].can_treat_color(g, city.Colors.BLUE)).toBe(true)
       expect(g.players[0].can_treat_color(g, city.Colors.BLACK)).toBe(false)
       expect(g.players[0].can_treat_color(g, city.Colors.YELLOW)).toBe(false)
+    });
+  });
+
+  describe('#Treat Disease', function () {
+    it('Medic Treats All', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, 2, ["test", "test"], [player.Roles.Medic, player.Roles.Researcher], seeded);
+
+      g.initialize_board()
+      g.players[0].move(g, 'Washington')
+      g.players[0].move(g, 'New York')
+      g.players[0].move(g, 'London')
+      expect(g.players[0].can_treat(g)).toBe(true)
+      expect(g.players[0].can_treat_color(g, city.Colors.BLUE)).toBe(true)
+      expect(g.game_graph['London'].cubes[city.Colors.BLUE]).toBe(3)
+      g.players[0].treat(g, city.Colors.BLUE)
+      expect(g.game_graph['London'].cubes[city.Colors.BLUE]).toBe(0)
+
+      g.players[0].move(g, 'Jakarta')
+      g.players[0].move(g, 'Ho Chi Minh City')
+      expect(g.players[0].can_treat(g)).toBe(true)
+      expect(g.players[0].can_treat_color(g, city.Colors.RED)).toBe(true)
+      expect(g.game_graph['Ho Chi Minh City'].cubes[city.Colors.RED]).toBe(2)
+      g.players[0].treat(g, city.Colors.RED)
+      expect(g.game_graph['Ho Chi Minh City'].cubes[city.Colors.RED]).toBe(0)
+    });
+  });
+
+  describe('#Movement', function () {
+    it('Medic Treats When Moving If Cure Has been Discovered', function () {
+      let seeded = seedrandom('test!')
+      let g = new game.Game(cities, 2, ["test", "test"], [player.Roles.Medic, player.Roles.Researcher], seeded);
+
+      g.initialize_board()
+      g.cured[city.Colors.BLUE] = 1
+      g.players[0].move(g, 'Washington')
+      g.players[0].move(g, 'New York')
+      expect(g.game_graph['London'].cubes[city.Colors.BLUE]).toBe(3)
+      g.players[0].move(g, 'London')
+      expect(g.players[0].can_treat(g)).toBe(false)
+      expect(g.players[0].can_treat_color(g, city.Colors.BLUE)).toBe(false)
+      expect(g.game_graph['London'].cubes[city.Colors.BLUE]).toBe(0)
+
+      g.cured[city.Colors.RED] = 1
+      g.players[0].move(g, 'Jakarta')
+      expect(g.game_graph['Ho Chi Minh City'].cubes[city.Colors.RED]).toBe(2)
+      g.players[0].move(g, 'Ho Chi Minh City')
+      expect(g.players[0].can_treat(g)).toBe(false)
+      expect(g.players[0].can_treat_color(g, city.Colors.RED)).toBe(false)
+      expect(g.game_graph['Ho Chi Minh City'].cubes[city.Colors.RED]).toBe(0)
     });
   });
 
@@ -1070,18 +1120,18 @@ describe('Player', function () {
       expect(g.players[0].can_give(g)).toBe(true)
       expect(g.players[1].can_take(g)).toBe(true)
       expect(g.players[1].can_give(g)).toBe(false)
-      g.players[0].move(g.game_graph, 'Miami')
+      g.players[0].move(g, 'Miami')
       expect(g.players[0].can_take(g)).toBe(false)
       expect(g.players[0].can_give(g)).toBe(false)
       expect(g.players[1].can_take(g)).toBe(false)
       expect(g.players[1].can_give(g)).toBe(false)
-      g.players[0].move(g.game_graph, 'Atlanta')
+      g.players[0].move(g, 'Atlanta')
       g.players[0].trade(g.players[1])
       expect(g.players[0].hand.has('Atlanta')).toBe(false)
       expect(g.players[1].hand.has('Atlanta')).toBe(true)
 
-      g.players[0].move(g.game_graph, 'Miami')
-      g.players[1].move(g.game_graph, 'Miami')
+      g.players[0].move(g, 'Miami')
+      g.players[1].move(g, 'Miami')
       expect(g.players[0].can_take(g)).toBe(false)
       expect(g.players[0].can_give(g)).toBe(false)
       expect(g.players[1].can_take(g)).toBe(false)
@@ -1106,16 +1156,16 @@ describe('Player', function () {
       g.players[0].hand.add('Atlanta')
       expect(g.players[0].can_take_from_player(g.players[1])).toBe(false)
       expect(g.players[1].can_take_from_player(g.players[0])).toBe(true)
-      g.players[0].move(g.game_graph, 'Miami')
+      g.players[0].move(g, 'Miami')
       expect(g.players[0].can_take_from_player(g.players[1])).toBe(false)
       expect(g.players[1].can_take_from_player(g.players[0])).toBe(false)
-      g.players[0].move(g.game_graph, 'Atlanta')
+      g.players[0].move(g, 'Atlanta')
       g.players[0].trade(g.players[1])
       expect(g.players[0].hand.has('Atlanta')).toBe(false)
       expect(g.players[1].hand.has('Atlanta')).toBe(true)
 
-      g.players[0].move(g.game_graph, 'Miami')
-      g.players[1].move(g.game_graph, 'Miami')
+      g.players[0].move(g, 'Miami')
+      g.players[1].move(g, 'Miami')
       expect(g.players[0].can_take_from_player(g.players[1])).toBe(false)
       expect(g.players[1].can_take_from_player(g.players[0])).toBe(false)
       g.players[1].hand.add('Miami')

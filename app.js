@@ -87,7 +87,7 @@ io.on('connection', function (socket) {
 		let log_string = `Player ${curr_game().player_index}: move to ${data}`
 		console.log(log_string);
 		if (curr_game().game_state === game.GameState.Ready && curr_game().turns_left !== 0) {
-			if (curr_game().players[curr_game().player_index].move(curr_game().game_graph, data)) {
+			if (curr_game().players[curr_game().player_index].move(curr_game(), data, socket)) {
 				callback()
 				curr_game().log.push(log_string)
 				socket.emit(`move successful`, curr_game().toJSON());

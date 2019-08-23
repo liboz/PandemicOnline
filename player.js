@@ -10,29 +10,45 @@ function Player(id, name, role, location = "Atlanta") {
     this.hand_size_limit = 7
 };
 
-Player.prototype.move = function (game_graph, final_destination) {
+Player.prototype.move = function (game, final_destination, socket = null) {
+    let game_graph = game.game_graph
     if (game_graph[this.location].neighbors.has(game_graph[final_destination]) || // drive/ferry
         game_graph[this.location].hasResearchStation && game_graph[final_destination].hasResearchStation) { //shuttle
-        game_graph[this.location].players.delete(this)
-        game_graph[final_destination].players.add(this)
-        this.location = final_destination;
+        this.movePiece(game, game_graph, final_destination, socket)
         return true
     } else if (this.hand.has(final_destination)) { // direct
         this.hand.delete(final_destination)
-        game_graph[this.location].players.delete(this)
-        game_graph[final_destination].players.add(this)
-        this.location = final_destination;
+        this.movePiece(game, game_graph, final_destination, socket)
         return true
     } else if (this.hand.has(this.location)) { // charter
         this.hand.delete(this.location)
-        game_graph[this.location].players.delete(this)
-        game_graph[final_destination].players.add(this)
-        this.location = final_destination;
+        this.movePiece(game, game_graph, final_destination, socket)
         return true
     } else {
         return false;
     }
 };
+
+Player.prototype.movePiece = function (game, game_graph, final_destination, socket) {
+    if (this.role === Roles.Medic) {
+        this.medicMoveTreat(game, socket)
+    }
+    game_graph[this.location].players.delete(this)
+    game_graph[final_destination].players.add(this)
+    this.location = final_destination;
+    if (this.role === Roles.Medic) {
+        this.medicMoveTreat(game, socket)
+    }
+}
+
+Player.prototype.medicMoveTreat = function (game, socket) {
+    let colors = Object.keys(game.cured)
+    colors.forEach(c => {
+        if (game.cured[c] === 1) {
+            this.treat(game, c, socket)
+        }
+    })
+}
 
 Player.prototype.get_valid_final_destinations = function (game) {
     if (this.hand.has(this.location)) {
@@ -141,7 +157,7 @@ Player.prototype.can_treat_color = function (game, color) {
 }
 
 Player.prototype.treat = function (game, color, socket = null) {
-    if (game.cured[color] === 1) {
+    if (game.cured[color] === 1 || this.role === Roles.Medic) {
         game.cubes[color] += game.game_graph[this.location].cubes[color]
         game.game_graph[this.location].cubes[color] = 0
     } else {
@@ -150,7 +166,7 @@ Player.prototype.treat = function (game, color, socket = null) {
     }
 
     if (game.cured[color] === 1 && game.cubes[color] === 24) {
-        if (socket){
+        if (socket) {
             socket.emit("eradicated", color)
         }
         game.cured[color] = 2
@@ -224,21 +240,21 @@ function PlayerJSON(player, game) {
         }
         if (first_index < second_index) {
             return -1
-        } 
+        }
 
         if (i > j) {
             return 1
-        } 
+        }
 
         if (i < j) {
             return -1
-        } 
+        }
     })
     this.location = player.location
     this.id = player.id
 };
 
-const Roles ={
+const Roles = {
     ContingencyPlanner: "Contingency Planner",
     Dispatcher: "Dispatcher",
     Medic: "Medic",
