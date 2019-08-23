@@ -44,9 +44,9 @@ describe('City', function () {
   });
 
   describe('#Infect', function () {
-    it('Quartantine Specialist Prevents Infect in Nearby Cities', function () {
+    it('Quarantine Specialist Prevents Infect in Nearby Cities', function () {
       let seeded = seedrandom('test!')
-      let g = new game.Game(cities, 2, ["test", "test"], [roles.Roles.QuartantineSpecialist, roles.Roles.Researcher], seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], [roles.Roles.QuarantineSpecialist, roles.Roles.Researcher], seeded);
       
       let atlanta = g.game_graph['Atlanta'];
       expect(atlanta.cubes[city.Colors.BLUE]).toBe(0);

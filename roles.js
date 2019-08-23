@@ -3,7 +3,7 @@ const Roles = {
     Dispatcher: "Dispatcher",
     Medic: "Medic",
     OperationsExpert: "Operations Expert",
-    QuartantineSpecialist: "Quartantine Specialist",
+    QuarantineSpecialist: "Quarantine Specialist",
     Researcher: "Researcher",
     Scientist: "Scientist",
 }

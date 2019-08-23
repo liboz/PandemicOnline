@@ -8,6 +8,8 @@ var cors = require('cors')
 const seedrandom = require('seedrandom');
 const cities = require('./data/cities')
 const game = require('./game')
+const roles = require('./roles')
+
 
 let games = {}
 let dummy_game = new game.GameMap(cities)
@@ -47,22 +49,38 @@ io.on('connection', function (socket) {
 		// can this happen if no players have joined?
 		return games[match_name].game;
 	}
-	socket.on('join', function (name, player_name, callback) {
+
+	let player_roles = function () {
+		// can this happen if no players have joined?
+		return games[match_name].player_roles;
+	}
+
+	socket.on('match name', function(name) {
 		match_name = name
 		if (!games[match_name]) {
 			games[match_name] = {
 				players: [],
-				game: null
+				game: null,
+				available_roles: new Set([roles.Roles.Medic, roles.Roles.QuarantineSpecialist, roles.Roles.Scientist, roles.Roles.OperationsExpert]),
+				player_roles: []
 			}
 		}
 		socket.join(match_name);
+		emitRoles(socket, games, match_name)
+	})
+
+	socket.on('join', function (role, player_name, callback) {
+		// add logic for role is invalid
 		let player_index = players().findIndex(i => i === player_name) // should lock maybe?
 		if (player_index === -1) {
 			player_index = players().length
 			players().push(player_name)
+			player_roles().push(role)
 		}
 		callback(player_index)
-		console.log(`${player_name} joined ${match_name} as Player ${player_index}`)
+		games[match_name].available_roles.delete(role)
+		emitRoles(socket.to(match_name), games, match_name)
+		console.log(`${player_name} joined ${match_name} as Player ${player_index} in role ${role}`)
 	});
 
 	socket.on('start game', function () {
@@ -74,8 +92,9 @@ io.on('connection', function (socket) {
 				num_players = 2
 			}
 			let filtered_players = players().slice(0, num_players)
+			let filtered_roles = player_roles().slice(0, num_players)
 			console.log(`start game with ${filtered_players} in room ${match_name}`);
-			games[match_name].game = new game.Game(cities, num_players, filtered_players, seeded)
+			games[match_name].game = new game.Game(cities, num_players, filtered_players, filtered_roles, seeded)
 			curr_game().initialize_board()
 			curr_game().log.push("game initialized")
 			io.in(match_name).emit("game initialized", curr_game().toJSON());
@@ -176,7 +195,7 @@ io.on('connection', function (socket) {
 				curr_game().players[curr_game().player_index].cure(curr_game(), cards)
 				callback()
 				curr_game().log.push(log_string)
-				socket.emit(`discover successful`, curr_game().toJSON(), curr_game().game_graph[cards[0]].color);
+				io.in(match_name).emit(`discover successful`, curr_game().toJSON(), curr_game().game_graph[cards[0]].color);
 				curr_game().use_turn(socket, io, match_name)
 			} else {
 				socket.emit('invalid action', `It is invalid to cure with ${cards} at ${curr_game().players[curr_game().player_index].location}`);
@@ -205,3 +224,7 @@ io.on('connection', function (socket) {
 		}
 	});
 });
+
+function emitRoles(socket, games, match_name) {
+	socket.emit("roles", [...games[match_name].available_roles])
+}

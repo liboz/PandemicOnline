@@ -41,7 +41,7 @@ City.prototype.infect_condition = function (game, color) {
         let shouldInfect = true
         let players = [...this.players]
         for (let i = 0; i < players.length; i++) {
-            if ((game.cured[color] === 1 && players[i].role === roles.Roles.Medic) || players[i].role === roles.Roles.QuartantineSpecialist) {
+            if ((game.cured[color] === 1 && players[i].role === roles.Roles.Medic) || players[i].role === roles.Roles.QuarantineSpecialist) {
                 shouldInfect = false
                 break;
             }
@@ -53,7 +53,7 @@ City.prototype.infect_condition = function (game, color) {
             for (let i = 0; i < neighbors.length; i++) {
                 let neighbor_players = [...neighbors[i].players]
                 for (let j = 0; j < neighbor_players.length; j++) {
-                    if (neighbor_players[j].role === roles.Roles.QuartantineSpecialist) {
+                    if (neighbor_players[j].role === roles.Roles.QuarantineSpecialist) {
                         shouldInfect = false
                         break;
                     }
@@ -78,7 +78,7 @@ City.prototype.infect = function (game, color = this.color, visited = new Set())
         } else {
             visited.add(this);
             let end = game.outbreak();
-            //console.log({'outbreak': this.name});
+            game.log.append(`Outbreak at ${this.name}`)
             this.neighbors.forEach((neighbor) => {
                 if (!visited.has(neighbor)) {
                     end = neighbor.infect(game, color, visited) && end; //want to always infect first

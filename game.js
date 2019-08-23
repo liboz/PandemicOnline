@@ -147,6 +147,7 @@ Game.prototype.turn_end = function(socket, io, match_name) {
     io.in(match_name).emit('update game state', this.toJSON())
     if (this.players[this.player_index].hand.size > this.players[this.player_index].hand_size_limit) {
         this.game_state = GameState.DiscardingCard
+        // Send notification of discard to other players
         socket.emit('discard cards')
         socket.on('discard', (cards, callback) => {
             let log_string = `Player ${this.player_index} discards ${cards}`

@@ -11,6 +11,7 @@ function Player(id, name, role, location = "Atlanta") {
     this.hand_size_limit = 7
 };
 
+// add operations expert, dispatcher
 Player.prototype.move = function (game, final_destination, socket = null) {
     let game_graph = game.game_graph
     if (game_graph[this.location].neighbors.has(game_graph[final_destination]) || // drive/ferry
