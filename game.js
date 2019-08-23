@@ -12,7 +12,7 @@ const GameState = {
     Lost: 4
 }
 
-function Game(cities, num_players, filtered_players, rng = seedrandom()) {
+function Game(cities, num_players, filtered_players, roles, rng = seedrandom()) {
     this.game_graph = city.City.load(cities)
     this.outbreak_counter = 0
     this.infection_rate_index = 0
@@ -20,9 +20,8 @@ function Game(cities, num_players, filtered_players, rng = seedrandom()) {
     this.rng = rng;
     this.infection_deck = new infection.InfectionDeck(cities, this.rng)
     this.players = []
-    console.log(filtered_players)
     for (let i = 0; i < num_players; i++) {
-        this.players.push(new player.Player(i, filtered_players[i]))
+        this.players.push(new player.Player(i, filtered_players[i], roles[i]))
     }
     this.players.forEach(player => {
         this.game_graph[player.location].players.add(player)

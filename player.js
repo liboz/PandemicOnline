@@ -77,7 +77,8 @@ Player.prototype.can_cure = function (game, cards) {
     if (!game.game_graph[this.location].hasResearchStation) {
         return false
     } else {
-        if (cards.length === 5 && (new Set(cards).size === 5)) {
+        let cards_needed = this.role === Roles.Scientist ? 4 : 5;
+        if (cards.length === cards_needed && (new Set(cards).size === cards_needed)) {
             let color = game.game_graph[cards[0]].color
             if (game.cured[color] > 0) {
                 return false
@@ -88,7 +89,7 @@ Player.prototype.can_cure = function (game, cards) {
                         count += 1
                     }
                 })
-                return count === 5;
+                return count === cards_needed;
             }
         }
         return false;
@@ -109,9 +110,10 @@ Player.prototype.can_hand_cure = function (game) {
             cards[game.game_graph[card].color] += 1
         })
 
+        let cards_needed = this.role === Roles.Scientist ? 4 : 5;
         let keys = Object.keys(cards)
         for (let i = 0; i < 4; i++) {
-            if (game.cured[keys[i]] === 0 && cards[keys[i]] >= 5) {
+            if (game.cured[keys[i]] === 0 && cards[keys[i]] >= cards_needed) {
                 return keys[i]
             }
         }
@@ -236,7 +238,18 @@ function PlayerJSON(player, game) {
     this.id = player.id
 };
 
+const Roles ={
+    ContingencyPlanner: "Contingency Planner",
+    Dispatcher: "Dispatcher",
+    Medic: "Medic",
+    OperationsExpert: "Operations Expert",
+    QuartantineSpecialist: "Quartantine Specialist",
+    Researcher: "Researcher",
+    Scientist: "Scientist",
+}
+
 module.exports = {
     Player: Player,
-    PlayerJSON: PlayerJSON
+    PlayerJSON: PlayerJSON,
+    Roles: Roles
 };
