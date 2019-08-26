@@ -160,7 +160,7 @@ Player.prototype.can_treat_color = function (game, color) {
     return game.game_graph[this.location].cubes[color] > 0
 }
 
-Player.prototype.treat = function (game, color, socket = null) {
+Player.prototype.treat = function (game, color, io = null) {
     if (game.cured[color] === 1 || this.role === roles.Roles.Medic) {
         game.cubes[color] += game.game_graph[this.location].cubes[color]
         game.game_graph[this.location].cubes[color] = 0
@@ -170,8 +170,8 @@ Player.prototype.treat = function (game, color, socket = null) {
     }
 
     if (game.cured[color] === 1 && game.cubes[color] === 24) {
-        if (socket) {
-            socket.emit("eradicated", color)
+        if (io) {
+            io.emit("eradicated", color)
         }
         game.cured[color] = 2
     }

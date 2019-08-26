@@ -39,7 +39,6 @@ io.set('transports', ['websocket']);
 
 let seeded = seedrandom('test!')
 io.on('connection', function (socket) {
-	
 	let match_name = socket.handshake.query.match_name
 	if (!games[match_name]) {
 		games[match_name] = {
@@ -138,7 +137,7 @@ io.on('connection', function (socket) {
 		console.log(log_string);
 		if (curr_game().game_state === game.GameState.Ready && curr_game().turns_left !== 0) {
 			if (curr_game().players[curr_game().player_index].can_treat_color(curr_game(), color)) {
-				curr_game().players[curr_game().player_index].treat(curr_game(), color, socket)
+				curr_game().players[curr_game().player_index].treat(curr_game(), color, io.in(match_name))
 				callback()
 				curr_game().log.push(log_string)
 				socket.emit(`treat successful`, curr_game().toJSON());

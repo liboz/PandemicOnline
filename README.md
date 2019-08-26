@@ -9,3 +9,12 @@ Online Pandemic Simulator
 pm2 start app.js
 pm2 save
 pm2 startup
+
+pm2 restart
+pm2 ls
+pm2 logs
+
+When passing card, doesn't force discard when target has more than 7
+Words too small on certain screens
+Lost screen too big
+cancel treat when given choice
