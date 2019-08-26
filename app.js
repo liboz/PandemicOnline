@@ -39,9 +39,20 @@ io.set('transports', ['websocket']);
 
 let seeded = seedrandom('test!')
 io.on('connection', function (socket) {
-	console.log('a user connected');
-	let match_name = null
 	
+	let match_name = socket.handshake.query.match_name
+	if (!games[match_name]) {
+		games[match_name] = {
+			players: [],
+			game: null,
+			available_roles: new Set([roles.Roles.Medic, roles.Roles.QuarantineSpecialist, roles.Roles.Scientist, roles.Roles.OperationsExpert]),
+			player_roles: []
+		}
+	}
+	socket.join(match_name);
+	emitRoles(socket, games, match_name)
+	console.log(`a user connected to ${match_name}`);
+
 	let players = function () {
 		return games[match_name].players;
 	}
@@ -54,20 +65,6 @@ io.on('connection', function (socket) {
 		// can this happen if no players have joined?
 		return games[match_name].player_roles;
 	}
-
-	socket.on('match name', function(name) {
-		match_name = name
-		if (!games[match_name]) {
-			games[match_name] = {
-				players: [],
-				game: null,
-				available_roles: new Set([roles.Roles.Medic, roles.Roles.QuarantineSpecialist, roles.Roles.Scientist, roles.Roles.OperationsExpert]),
-				player_roles: []
-			}
-		}
-		socket.join(match_name);
-		emitRoles(socket, games, match_name)
-	})
 
 	socket.on('join', function (role, player_name, callback) {
 		// add logic for role is invalid
@@ -217,10 +214,12 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('disconnect', function () {
-		console.log('user disconnected');
-		let room = io.sockets.adapter.rooms[match_name]
-		if (room && room.length === 0) {
-			games[match_name] = null
+		console.log(`user disconnected from ${match_name}`);
+		if (match_name) {
+			let room = io.sockets.adapter.rooms[match_name]
+			if (room && room.length === 0) {
+				games[match_name] = null
+			}
 		}
 	});
 });

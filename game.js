@@ -3,6 +3,7 @@ const infection = require('./infection_deck')
 const seedrandom = require('seedrandom');
 const player_deck = require('./player_deck')
 const player = require('./player')
+const roles = require('./roles')
 
 const GameState = {
     NotStarted: 0,
@@ -213,6 +214,7 @@ function GameJSON(game) {
         this.valid_final_destinations = game.players[game.player_index].get_valid_final_destinations(game)
         this.can_build_research_station = game.players[game.player_index].can_build_research_station(game)
         this.can_cure = game.players[game.player_index].can_hand_cure(game)
+        this.cards_needed_to_cure = game.players[game.player_index].role === roles.Roles.Scientist ? 4 : 5
         this.can_treat = game.players[game.player_index].can_treat(game)
         this.can_take = game.players[game.player_index].can_take(game)
         this.can_give = game.players[game.player_index].can_give(game)
