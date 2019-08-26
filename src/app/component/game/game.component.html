@@ -69,7 +69,7 @@
             <div *ngIf="cureColorCards">
                 SELECT THE CARDS TO NOT USE FOR DISCOVERING
                 <app-player-hand [hand]="cureColorCards" [game]="game" (onSelect)="onSelectedCard($event)"
-                    [cardLimit]="5">
+                    [cardLimit]="game.cards_needed_to_cure">
                 </app-player-hand>
             </div>
         </div>

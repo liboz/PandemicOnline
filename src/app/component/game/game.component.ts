@@ -289,7 +289,7 @@ export class GameComponent implements OnInit, OnChanges {
       let player = this.game.players[this.game.player_index]
       let cureColorCards = player.hand.filter(card =>
         this.game.game_graph[this.game.game_graph_index[card]].color === this.game.can_cure)
-      if (cureColorCards.length === 5) {
+      if (cureColorCards.length === this.game.cards_needed_to_cure) {
         this.discover(cureColorCards)
       } else {
         this.cureColorCards = cureColorCards

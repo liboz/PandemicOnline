@@ -34,10 +34,8 @@ export class GameSocketComponent implements OnInit {
     this.api.getGames(this.match_name).subscribe(result => {
       this.game = result
       this.socket = io(`${environment.baseUrl}:3000/`, {
-        transports: ['websocket']
+        transports: ['websocket'], query: `match_name=${this.match_name}`
       });
-
-      this.socket.emit("match name", this.match_name)
 
       this.socket.on("roles", roles => {
         if (!this.player_name) {
@@ -45,7 +43,6 @@ export class GameSocketComponent implements OnInit {
           this.modalService.init(JoinComponent, { game: this.game, socket: this.socket, roles: roles }, {})
         }
       })
-
 
       this.socket.on("move successful", data => {
         this.game = data
