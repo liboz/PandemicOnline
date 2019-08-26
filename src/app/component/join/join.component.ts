@@ -35,7 +35,7 @@ export class JoinComponent implements OnInit {
   }
 
   joinGame() {
-    if (this.player_name) {
+    if (this.player_name && this.selected_role) {
       this.joinGameInternal()
     }
   }
