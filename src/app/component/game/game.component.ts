@@ -70,8 +70,10 @@ export class GameComponent implements OnInit, OnChanges {
     }
     if (changes.game) {
       if (changes.game.currentValue.game_state === GameState.Lost) {
+        this.modalService.destroy()
         this.modalService.init(ModalComponent, { lost: true }, {})
       } else if (changes.game.currentValue.game_state === GameState.Won) {
+        this.modalService.destroy()
         this.modalService.init(ModalComponent, { lost: false }, {})
       }
     }
