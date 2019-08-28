@@ -115,6 +115,57 @@ io.on('connection', function (socket) {
 		}
 	});
 
+	socket.on('direct flight', function (data) {
+		let log_string = `Player ${curr_game().player_index}: Direct Flight to ${data}`
+		console.log(log_string);
+		if (curr_game().game_state === game.GameState.Ready && curr_game().turns_left !== 0) {
+			if (curr_game().players[curr_game().player_index].canDirectFlight(data)) {
+				curr_game().players[curr_game().player_index].directFlight(curr_game(), data, socket)
+				curr_game().log.push(log_string)
+				socket.emit(`move choice successful`, curr_game().toJSON());
+				curr_game().use_turn(socket, io, match_name)
+			} else {
+				socket.emit('invalid action', `${data} is an invalid location to direct flight to`);
+			}
+		} else {
+			socket.emit('invalid action', `Move to ${data} is an invalid action`);
+		}
+	});
+
+	socket.on('charter flight', function (data) {
+		let log_string = `Player ${curr_game().player_index}: Charter Flight to ${data}`
+		console.log(log_string);
+		if (curr_game().game_state === game.GameState.Ready && curr_game().turns_left !== 0) {
+			if (curr_game().players[curr_game().player_index].canCharterFlight()) {
+				curr_game().players[curr_game().player_index].charterFlight(curr_game(), data, socket)
+				curr_game().log.push(log_string)
+				socket.emit(`move choice successful`, curr_game().toJSON());
+				curr_game().use_turn(socket, io, match_name)
+			} else {
+				socket.emit('invalid action', `${data} is an invalid location to charter flight to`);
+			}
+		} else {
+			socket.emit('invalid action', `Move to ${data} is an invalid action`);
+		}
+	});
+
+	socket.on('operations expert move', function (final_destination, card) {
+		let log_string = `Player ${curr_game().player_index}: Operations Expert Move to ${final_destination} by discarding ${card}`
+		console.log(log_string);
+		if (curr_game().game_state === game.GameState.Ready && curr_game().turns_left !== 0) {
+			if (curr_game().players[curr_game().player_index].canOperationsExpertMoveWithCard(curr_game(), card)) {
+				curr_game().players[curr_game().player_index].operationsExpertMove(curr_game(), final_destination, card, socket)
+				curr_game().log.push(log_string)
+				socket.emit(`move choice successful`, curr_game().toJSON());
+				curr_game().use_turn(socket, io, match_name)
+			} else {
+				socket.emit('invalid action', `Discarding ${card} to move to ${final_destination} is an invalid Operations Expert Move`);
+			}
+		} else {
+			socket.emit('invalid action', `Discarding ${card} to move to ${final_destination} is an invalid Operations Expert Move`);
+		}
+	});
+
 	socket.on('build', function () {
 		let log_string = `Player ${curr_game().player_index}: build on ${curr_game().players[curr_game().player_index].location}`
 		console.log(log_string);
@@ -191,7 +242,12 @@ io.on('connection', function (socket) {
 				curr_game().players[curr_game().player_index].cure(curr_game(), cards)
 				callback()
 				curr_game().log.push(log_string)
-				io.in(match_name).emit(`discover successful`, curr_game().toJSON(), curr_game().game_graph[cards[0]].color);
+				if (curr_game().cured[color] === 2) {
+					io.in(match_name).emit("eradicated", color)
+				} else {
+					io.in(match_name).emit(`discover successful`, curr_game().toJSON(), curr_game().game_graph[cards[0]].color);
+				}
+				
 				curr_game().use_turn(socket, io, match_name)
 			} else {
 				socket.emit('invalid action', `It is invalid to cure with ${cards} at ${curr_game().players[curr_game().player_index].location}`);
@@ -211,6 +267,25 @@ io.on('connection', function (socket) {
 			socket.emit('invalid action', `Cannot pass turn right now`);
 		}
 	});
+
+	socket.on('discard', (cards, callback) => {
+		let log_string = `Player ${curr_game().player_index} discards ${cards}`
+		console.log(log_string)
+		if (curr_game().players[curr_game().player_index].can_discard(cards)) {
+			callback()
+			curr_game().players[curr_game().player_index].discard(cards)
+			curr_game().log.push(log_string)
+			curr_game().infect_stage()
+			curr_game().next_player()
+			curr_game().turns_left = 4;
+			if (curr_game().game_state !== game.GameState.Lost && curr_game().game_state !== game.GameState.Won) {
+				curr_game().game_state = game.GameState.Ready
+			}
+			io.in(match_name).emit('update game state', curr_game().toJSON())
+		} else {
+			socket.emit(`Discarding ${cards} is invalid`)
+		}
+	}, );
 
 	socket.on('disconnect', function () {
 		console.log(`user disconnected from ${match_name}`);

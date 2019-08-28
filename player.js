@@ -19,17 +19,46 @@ Player.prototype.move = function (game, final_destination, socket = null) {
         this.movePiece(game, game_graph, final_destination, socket)
         return true
     } else if (this.hand.has(final_destination)) { // direct
-        this.hand.delete(final_destination)
-        this.movePiece(game, game_graph, final_destination, socket)
+        this.directFlight(game, final_destination, socket)
         return true
     } else if (this.hand.has(this.location)) { // charter
-        this.hand.delete(this.location)
-        this.movePiece(game, game_graph, final_destination, socket)
+        this.charterFlight(game, final_destination, socket)
         return true
     } else {
         return false;
     }
 };
+
+Player.prototype.canDirectFlight = function (final_destination) {
+    return this.hand.has(final_destination)
+};
+
+Player.prototype.directFlight = function (game, final_destination, socket = null) {
+    this.hand.delete(final_destination)
+    this.movePiece(game, game.game_graph, final_destination, socket)
+}
+
+Player.prototype.charterFlight = function (game, final_destination, socket = null) {
+    this.hand.delete(this.location)
+    this.movePiece(game, game.game_graph, final_destination, socket)
+};
+
+Player.prototype.canCharterFlight = function () {
+    return this.hand.has(this.location)
+}
+
+Player.prototype.operationsExpertMove = function (game, final_destination, card, socket = null) {
+    this.hand.delete(card)
+    this.movePiece(game, game.game_graph, final_destination, socket)
+};
+
+Player.prototype.canOperationsExpertMoveWithCard = function (game, card) {
+    return this.canOperationsExpertMove(game) && this.hand.has(card)
+};
+
+Player.prototype.canOperationsExpertMove = function (game) {
+    return this.role === roles.Roles.OperationsExpert && game.game_graph[this.location].hasResearchStation && this.hand.size > 0
+}
 
 Player.prototype.movePiece = function (game, game_graph, final_destination, socket) {
     if (this.role === roles.Roles.Medic) {
@@ -53,7 +82,7 @@ Player.prototype.medicMoveTreat = function (game, socket) {
 }
 
 Player.prototype.get_valid_final_destinations = function (game) {
-    if (this.hand.has(this.location)) {
+    if (this.canCharterFlight() || this.canOperationsExpertMove(game)) {
         //go everywhere!!!
         return Object.values(game.game_graph).map(i => i.index);
     } else {

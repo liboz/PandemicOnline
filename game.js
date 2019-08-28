@@ -148,27 +148,9 @@ Game.prototype.turn_end = function(socket, io, match_name) {
     io.in(match_name).emit('update game state', this.toJSON())
     if (this.players[this.player_index].hand.size > this.players[this.player_index].hand_size_limit) {
         this.game_state = GameState.DiscardingCard
+        this.log.push(`Player ${this.player_index} is discarding a card`)
         // Send notification of discard to other players
-        socket.emit('discard cards')
-        socket.on('discard', (cards, callback) => {
-            let log_string = `Player ${this.player_index} discards ${cards}`
-            console.log(log_string)
-            if (this.players[this.player_index].can_discard(cards)) {
-                callback()
-                this.players[this.player_index].discard(cards)
-                socket.removeAllListeners('discard')
-                this.infect_stage()
-                this.next_player()
-                this.turns_left = 4;
-                if (this.game_state !== GameState.Lost && this.game_state !== GameState.Won) {
-                    this.game_state = GameState.Ready
-                }
-                this.log.push(log_string)
-                io.in(match_name).emit('update game state', this.toJSON())
-            } else {
-                socket.emit(`Discarding ${cards} is invalid`)
-            }
-        }, );
+        io.emit('discard cards')
     } else {
         this.infect_stage()
         this.next_player()
@@ -212,6 +194,8 @@ function GameJSON(game) {
     this.turns_left = game.turns_left
     if (game.game_state !== GameState.NotStarted) {
         this.valid_final_destinations = game.players[game.player_index].get_valid_final_destinations(game)
+        this.can_charter_flight = game.players[game.player_index].canCharterFlight()
+        this.can_operations_expert_move = game.players[game.player_index].canOperationsExpertMove(game)
         this.can_build_research_station = game.players[game.player_index].can_build_research_station(game)
         this.can_cure = game.players[game.player_index].can_hand_cure(game)
         this.cards_needed_to_cure = game.players[game.player_index].role === roles.Roles.Scientist ? 4 : 5
