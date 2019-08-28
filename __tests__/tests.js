@@ -679,12 +679,14 @@ describe('Player', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, 2, ["test", "test"], [roles.Roles.ContingencyPlanner, roles.Roles.Researcher], 5, seeded);
       g.players[0].discard([...g.players[0].hand])
+      expect(g.players[0].canDirectFlight('Beijing')).toBe(false)
       expect(g.players[0].move(g, 'Beijing')).toBe(false)
       expect(g.players[0].location).toBe('Atlanta')
       g.players[0].draw(g)
       g.players[0].draw(g)
 
       //Direct Flight
+      expect(g.players[0].canDirectFlight('Beijing')).toBe(true)
       expect(g.players[0].hand.has('Beijing')).toBe(true)
       expect(g.players[0].move(g, 'Beijing')).toBe(true)
       expect(g.players[0].location).toBe('Beijing')
@@ -731,13 +733,18 @@ describe('Player', function () {
       let g = new game.Game(cities, 2, ["test", "test"], [roles.Roles.OperationsExpert, roles.Roles.Researcher], 5, seeded);
       expect(g.players[0].canOperationsExpertMove(g)).toBe(true)
       expect(g.players[1].canOperationsExpertMove(g)).toBe(false)
-      
+
       g.players[0].discard([...g.players[0].hand])
       expect(g.players[0].canOperationsExpertMove(g)).toBe(false)
       g.players[0].draw(g)
       expect(g.players[0].canOperationsExpertMove(g)).toBe(true)
       g.players[0].move(g, 'Chicago')
       expect(g.players[0].canOperationsExpertMove(g)).toBe(false)
+      g.players[0].move(g, 'Atlanta')
+      expect(g.players[0].canOperationsExpertMoveWithCard(g, 'Atlanta')).toBe(false)
+      expect(g.players[0].canOperationsExpertMoveWithCard(g, 'Beijing')).toBe(true)
+      g.players[0].operationsExpertMove(g, 'Tokyo', 'Beijing')
+      expect(g.players[0].location).toBe('Tokyo')
     });
   });
 
@@ -746,13 +753,11 @@ describe('Player', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, 2, ["test", "test"], [roles.Roles.ContingencyPlanner, roles.Roles.OperationsExpert], 5, seeded);
       let all_locations = [...Array(48).keys()].sort()
+
       let valid_final_destinations = g.players[0].get_valid_final_destinations(g).sort()
       expect(valid_final_destinations).toEqual([
         'Chicago', 'Washington', 'Miami', 'Khartoum', 'Milan', 'Jakarta', 'Karachi'
       ].map(i => g.game_graph[i].index).sort())
-
-      let operations_locations = g.players[1].get_valid_final_destinations(g).sort()
-      expect(operations_locations).toEqual(all_locations)
 
       g.players[0].draw(g)
       g.players[0].move(g, 'Chicago')
@@ -769,10 +774,19 @@ describe('Player', function () {
       expect(g.game_graph['Beijing'].hasResearchStation).toEqual(false)
       g.players[0].build_research_station(g)
 
-      valid_final_destinations = g.players[0].get_valid_final_destinations(g).sort() // all locations with a charter
+      valid_final_destinations = g.players[0].get_valid_final_destinations(g).sort()
       expect(valid_final_destinations).toEqual([
         'Shanghai', 'Seoul', 'Khartoum', 'Milan', 'Jakarta', 'Karachi', 'Atlanta'
-      ].map(i => g.game_graph[i].index).sort())
+      ].map(i => g.game_graph[i].index).sort())  // adjacent + direct flight + shuttle flight
+
+      let valid_final_destinations_player2 = g.players[1].get_valid_final_destinations(g).sort()
+      expect(valid_final_destinations_player2).toEqual(all_locations) //operations expert in a research station
+
+      g.players[1].move(g, 'Chicago')
+      valid_final_destinations_player2 = g.players[1].get_valid_final_destinations(g).sort()
+      expect(valid_final_destinations_player2).toEqual([
+        'Atlanta', 'Washington', 'Montreal', 'Mexico City', 'Los Angeles', 'San Francisco', 'Seoul', 'Chennai', 'Riyadh'
+      ].map(i => g.game_graph[i].index).sort()) // adjacent + direct flight
     });
   });
 

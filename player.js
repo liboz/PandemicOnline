@@ -11,17 +11,20 @@ function Player(id, name, role, location = "Atlanta") {
     this.hand_size_limit = 7
 };
 
-// add operations expert, dispatcher
+// add dispatcher
 Player.prototype.move = function (game, final_destination, socket = null) {
     let game_graph = game.game_graph
-    if (game_graph[this.location].neighbors.has(game_graph[final_destination]) || // drive/ferry
-        game_graph[this.location].hasResearchStation && game_graph[final_destination].hasResearchStation) { //shuttle
+    if (game_graph[this.location].neighbors.has(game_graph[final_destination]) || 
+        game_graph[this.location].hasResearchStation && game_graph[final_destination].hasResearchStation) { 
+        // drive/ferry + shuttle
         this.movePiece(game, game_graph, final_destination, socket)
         return true
-    } else if (this.hand.has(final_destination)) { // direct
+    } else if (this.hand.has(final_destination)) { 
+        // direct
         this.directFlight(game, final_destination, socket)
         return true
-    } else if (this.hand.has(this.location)) { // charter
+    } else if (this.hand.has(this.location)) { 
+        // charter
         this.charterFlight(game, final_destination, socket)
         return true
     } else {
