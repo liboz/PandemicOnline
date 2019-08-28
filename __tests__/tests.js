@@ -1144,6 +1144,12 @@ describe('Player', function () {
       expect(g.players[0].can_treat_color(g, city.Colors.BLUE)).toBe(true)
       expect(g.players[0].can_treat_color(g, city.Colors.BLACK)).toBe(false)
       expect(g.players[0].can_treat_color(g, city.Colors.YELLOW)).toBe(false)
+      
+      expect(g.game_graph['New York'].cubes[city.Colors.BLUE]).toBe(1)
+      expect(g.cubes[city.Colors.BLUE]).toBe(19)
+      g.players[0].treat(g, city.Colors.BLUE)
+      expect(g.game_graph['New York'].cubes[city.Colors.BLUE]).toBe(0)
+      expect(g.cubes[city.Colors.BLUE]).toBe(20)
     });
   });
 
@@ -1201,6 +1207,7 @@ describe('Player', function () {
     it('Check Validity', function () {
       let seeded = seedrandom('test!')
       let g = new game.Game(cities, 2, ["test", "test"], [roles.Roles.ContingencyPlanner, roles.Roles.Researcher], 5, seeded);
+      expect(g.players[0].can_discard(new Set())).toBe(false)
       g.players[0].draw(g)
       g.players[0].draw(g)
       g.players[0].draw(g)
