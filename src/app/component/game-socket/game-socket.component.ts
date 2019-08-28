@@ -38,7 +38,7 @@ export class GameSocketComponent implements OnInit {
       });
 
       this.socket.on("roles", roles => {
-        if (!this.player_name) {
+        if (this.game.game_state !== GameState.Lost && this.game.game_state != GameState.Won && !this.player_name) {
           this.modalService.destroy()
           this.modalService.init(JoinComponent, { game: this.game, socket: this.socket, roles: roles }, {})
         }
@@ -53,7 +53,7 @@ export class GameSocketComponent implements OnInit {
       });
 
       this.socket.on("move choice successful", data => {
-        this.modalService.cancel()
+        this.modalService.destroyEvent()
         this.game = data
       })
 

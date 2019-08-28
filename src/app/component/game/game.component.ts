@@ -103,7 +103,7 @@ export class GameComponent implements OnInit, OnChanges {
     this.initialized = true
     this.selectedCards = new Set()
     this.createChart()
-    this.subscription = this.modalService.cancel$.subscribe(
+    this.subscription = this.modalService.destroy$.subscribe(
       () => {
         this.isMoving = false;
         this.modalService.destroy()

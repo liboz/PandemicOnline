@@ -26,7 +26,7 @@ export class MoveChoiceSelectorComponent implements OnInit {
   }
 
   onCancel() {
-    this.modalService.cancel()
+    this.modalService.destroyEvent()
   }
 
   onDirectFlight() {

@@ -32,9 +32,9 @@ export class ModalService {
     this.joinSource.next(playerInfo);
   }
 
-  private cancelSource = new Subject<void>();
-  cancel$ = this.cancelSource.asObservable();
-  cancel() {
-    this.cancelSource.next();
+  private destroySource = new Subject<void>();
+  destroy$ = this.destroySource.asObservable();
+  destroyEvent() {
+    this.destroySource.next();
   }
 }
