@@ -25,7 +25,10 @@
 <button *ngIf="!hasStarted()" (click)="onStart()">Start Game</button>
 <div id="bottom-holder">
     <div *ngIf="hasStarted()" id="bottom-left">
-        {{ game.player_index !== player_index ? 'Player ' + game.player_index + '\'s (' + game.players[game.player_index].name + ')' : 'Your' }}  turn
+        <div [ngStyle]="{'background': bgColor(game.player_index), 'color': 'white' }">
+            Current Turn: {{ game.player_index !== player_index ? 'Player ' + game.player_index  : 'You' }}
+            ({{game.players[game.player_index].name}}) - {{ game.players[game.player_index].role }}
+        </div>
         <br>
         Actions Left: {{game.turns_left}}
         <br>
@@ -62,8 +65,10 @@
         </div>
         <br>
         <div *ngIf="player_name">
-            <div *ngIf="!cureColorCards">
-                Your ({{ game.players[player_index].name + ': ' + game.players[player_index].role }}) Hand
+            <div *ngIf="!cureColorCards" [ngStyle]="{'background': bgColor(player_index)}">
+                <div style="color: white">
+                    Your ({{ game.players[player_index].name + ' - ' + game.players[player_index].role }}) Hand
+                </div>
                 <app-player-hand [hand]="game.players[player_index].hand" [game]="game"
                     (onSelect)="onSelectedCard($event)"></app-player-hand>
             </div>
