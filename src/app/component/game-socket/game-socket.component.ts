@@ -48,6 +48,15 @@ export class GameSocketComponent implements OnInit {
         this.game = data
       });
 
+      this.socket.on("move successful", data => {
+        this.game = data
+      });
+
+      this.socket.on("move choice successful", data => {
+        this.modalService.cancel()
+        this.game = data
+      })
+
       this.socket.on("build successful", data => {
         this.game = data
       });
@@ -72,7 +81,7 @@ export class GameSocketComponent implements OnInit {
 
       this.socket.on('discard cards', data => {
         this.game.game_state = GameState.DiscardingCard;
-        console.log('discarding cards!');
+        this.game.log.push(`Player ${this.game.player_index} is discarding a card`)
       })
 
       this.socket.on("epidemic", data => {

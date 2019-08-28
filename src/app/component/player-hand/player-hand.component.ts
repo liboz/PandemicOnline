@@ -8,6 +8,7 @@ import { Component, OnInit, Input, SimpleChanges, Output, EventEmitter, OnChange
 export class PlayerHandComponent implements OnInit, OnChanges {
   @Input() hand: string[] = []
   @Input() game: any;
+  @Input() cardLimit = 7
   @Output() onSelect = new EventEmitter<any>();
   result() {
     return this.hand.map((c, index) => {
@@ -15,8 +16,7 @@ export class PlayerHandComponent implements OnInit, OnChanges {
     });
   }
   selected: boolean[] = []
-  parentEl: HTMLElement
-  @Input() cardLimit = 7
+  
 
   constructor() { }
 
@@ -28,8 +28,6 @@ export class PlayerHandComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.selected = this.hand.map(i => false)
-    this.parentEl = document.getElementById("hand")
-
   }
 
   handleClick(i: number) {

@@ -5,6 +5,8 @@ import * as $ from 'jquery'
 import geo from '../../../../data/geo.json';
 import { ModalComponent } from '../modal/modal.component'
 import { PlayerComponent } from '../player/player.component';
+import { MoveChoiceSelectorComponent } from '../move-choice-selector/move-choice-selector.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-game',
@@ -41,6 +43,8 @@ export class GameComponent implements OnInit, OnChanges {
   treatColorChoices: string[] = null;
   shareCardChoices: number[] = null;
   cureColorCards: string[] = null;
+  subscription: Subscription
+
 
   getTextBox(selection) {
     selection
@@ -99,6 +103,12 @@ export class GameComponent implements OnInit, OnChanges {
     this.initialized = true
     this.selectedCards = new Set()
     this.createChart()
+    this.subscription = this.modalService.cancel$.subscribe(
+      () => {
+        this.isMoving = false;
+        this.modalService.destroy()
+      }
+    )
   }
 
   // zoom to show a bounding box, with optional additional padding as percentage of box size
@@ -205,14 +215,52 @@ export class GameComponent implements OnInit, OnChanges {
 
   onSelectedNode(selectedNode: any) {
     if (this.isMoving && selectedNode.isValidDestination) {
-      this.socket.emit('move', selectedNode.name, () => {
-        console.log(`move to ${selectedNode.name} success callbacked`)
-      })
-      this.isMoving = false;
+      let curr_player = this.game.players[this.game.player_index]
+      let curr_city = this.game.game_graph[this.game.game_graph_index[curr_player.location]]
+      let target_city = this.game.game_graph[this.game.game_graph_index[selectedNode.name]]
+      let neighbors = curr_city.neighbors
+      console.log(neighbors, selectedNode, curr_player)
+      if (neighbors.includes(selectedNode.id) || (curr_city.hasResearchStation && target_city.hasResearchStation)) {
+        this.moveEmit(selectedNode)
+        this.isMoving = false;
+      } else {
+        // choice 1 = direct, choice 2 = charter, choice 3 = operations expert
+        let choices = [false, false, false]
+        if (curr_player.hand.includes(selectedNode.name)) {
+          choices[0] = true
+        }
+        if (this.game.can_charter_flight) {
+          choices[1] = true
+        }
+        if (this.game.can_operations_expert_move) {
+          choices[2] = true
+        }
+        if (choices[2] || choices.reduce((a, b) => b ? a + 1 : a, 0) > 1) {
+          this.modalService.init(MoveChoiceSelectorComponent, {
+            game: this.game,
+            hand: curr_player.hand,
+            socket: this.socket,
+            canDirect: choices[0],
+            canCharter: choices[1],
+            canOperationsExpertMove: choices[2],
+            currLocation: curr_city.name,
+            targetLocation: target_city.name
+          }, {})
+        } else {
+          this.moveEmit(selectedNode)
+          this.isMoving = false;
+        }
+      }
     }
   }
 
-  onSelectedCard(cardIndex: any) {
+  moveEmit(selectedNode) {
+    this.socket.emit('move', selectedNode.name, () => {
+      console.log(`move to ${selectedNode.name} success callbacked`)
+    })
+  }
+
+  onSelectedCard(cardIndex: number) {
     if (!this.selectedCards.delete(cardIndex)) {
       this.selectedCards.add(cardIndex)
     }
@@ -325,7 +373,7 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   mustDiscard() {
-    return this.game.game_state === GameState.DiscardingCard;
+    return this.game.player_index === this.player_index && this.game.game_state === GameState.DiscardingCard;
   }
 
   discardEnough() {
@@ -333,6 +381,7 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   discardSelectedCards() {
+    console.log('hello?', this.selectedCards, [...this.selectedCards].map(i => this.game.players[this.game.player_index].hand[i]))
     this.socket.emit('discard', [...this.selectedCards].map(i => this.game.players[this.game.player_index].hand[i]), () => {
       this.selectedCards = new Set()
     })
@@ -345,6 +394,11 @@ export class GameComponent implements OnInit, OnChanges {
 
   bgColor(id: number) {
     return PlayerComponent.playerInfo[id]
+  }
+
+  ngOnDestroy() {
+    // prevent memory leak when component destroyed
+    this.subscription.unsubscribe();
   }
 }
 

@@ -31,4 +31,10 @@ export class ModalService {
   joinAs(playerInfo: PlayerInfo) {
     this.joinSource.next(playerInfo);
   }
+
+  private cancelSource = new Subject<void>();
+  cancel$ = this.cancelSource.asObservable();
+  cancel() {
+    this.cancelSource.next();
+  }
 }

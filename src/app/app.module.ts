@@ -17,7 +17,8 @@ import { ModalService } from './service/modal.service'
 import { DomService } from './service/dom.service';
 import { HomeComponent } from './component/home/home.component';
 import { GameSocketComponent } from './component/game-socket/game-socket.component';
-import { JoinComponent } from './component/join/join.component'
+import { JoinComponent } from './component/join/join.component';
+import { MoveChoiceSelectorComponent } from './component/move-choice-selector/move-choice-selector.component'
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { JoinComponent } from './component/join/join.component'
     ModalComponent,
     HomeComponent,
     GameSocketComponent,
-    JoinComponent
+    JoinComponent,
+    MoveChoiceSelectorComponent
   ],
   imports: [
     BrowserModule,
