@@ -39,8 +39,15 @@ export class GameSocketComponent implements OnInit {
 
       this.socket.on("roles", roles => {
         if (this.game.game_state !== GameState.Lost && this.game.game_state != GameState.Won && !this.player_name) {
-          this.modalService.destroy()
-          this.modalService.init(JoinComponent, { game: this.game, socket: this.socket, roles: roles }, {})
+          let config = { game: this.game, socket: this.socket, roles: roles }
+          let currentComponent = this.modalService.currentComponent()
+          if (!currentComponent || currentComponent !== "JoinComponent") {
+            this.modalService.destroy()
+            this.modalService.init(JoinComponent, config, {})
+          } else {
+            config['selected_role'] = null // not actually an input. kinda hacky...
+            this.modalService.updateConfig(config, {})
+          }
         }
       })
 

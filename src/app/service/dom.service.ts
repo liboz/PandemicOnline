@@ -55,7 +55,14 @@ export class DomService {
     for (var key in outputs) {
       componentRef.instance[key] = outputs[key];
     }
+  }
 
+  reattachConfig(config) {
+    this.attachConfig(config, this.childComponentRef)
+  }
+
+  getCurrentComponentName() {
+    return this.childComponentRef ? this.childComponentRef.componentType.name : null
   }
 }
 interface childConfig {

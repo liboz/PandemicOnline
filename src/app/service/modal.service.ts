@@ -26,6 +26,18 @@ export class ModalService {
     document.getElementById(this.modalElementId).className = 'hidden';
   }
 
+  updateConfig(inputs: object, outputs: object) {
+    let componentConfig = {
+      inputs:inputs,
+      outputs:outputs
+    }
+    this.domService.reattachConfig(componentConfig)
+  }
+
+  currentComponent() {
+    return this.domService.getCurrentComponentName()
+  }
+
   private joinSource = new Subject<PlayerInfo>();
   join$ = this.joinSource.asObservable();
   joinAs(playerInfo: PlayerInfo) {
