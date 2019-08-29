@@ -67,16 +67,20 @@ io.on('connection', function (socket) {
 
 	socket.on('join', function (role, player_name, callback) {
 		// add logic for role is invalid
-		let player_index = players().findIndex(i => i === player_name) // should lock maybe?
-		if (player_index === -1) {
-			player_index = players().length
-			players().push(player_name)
-			player_roles().push(role)
+		if (games[match_name].available_roles.has(role)) {
+			let player_index = players().findIndex(i => i === player_name) // should lock maybe?
+			if (player_index === -1) {
+				player_index = players().length
+				players().push(player_name)
+				player_roles().push(role)
+			}
+			callback(player_index)
+			games[match_name].available_roles.delete(role)
+			emitRoles(socket.to(match_name), games, match_name)
+			console.log(`${player_name} joined ${match_name} as Player ${player_index} in role ${role}`)
+		} else {
+			socket.emit('invalid action', `Joining ${match_name} as Player ${player_index} with name ${player_name} in role ${role} is an invalid action`);
 		}
-		callback(player_index)
-		games[match_name].available_roles.delete(role)
-		emitRoles(socket.to(match_name), games, match_name)
-		console.log(`${player_name} joined ${match_name} as Player ${player_index} in role ${role}`)
 	});
 
 	socket.on('start game', function () {
@@ -258,7 +262,7 @@ io.on('connection', function (socket) {
 				} else {
 					io.in(match_name).emit(`discover successful`, curr_game().toJSON(), curr_game().game_graph[cards[0]].color);
 				}
-				
+
 				curr_game().use_turn(socket, io, match_name)
 			} else {
 				socket.emit('invalid action', `It is invalid to cure with ${cards} at ${curr_game().players[curr_game().player_index].location}`);
@@ -296,7 +300,7 @@ io.on('connection', function (socket) {
 		} else {
 			socket.emit(`Discarding ${cards} is invalid`)
 		}
-	}, );
+	});
 
 	socket.on('disconnect', function () {
 		console.log(`user disconnected from ${match_name}`);
