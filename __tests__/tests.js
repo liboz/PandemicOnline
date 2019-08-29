@@ -441,6 +441,19 @@ describe('Player Deck', function () {
       expect(d).toEqual({ 10: 4, 13: 1 });
     });
   });
+
+  describe('#Partition', function () {
+    it('Hand Size Is Correct', function () {
+      let seeded = seedrandom()
+      let g = new game.Game(cities, 3, ["test", "test", "test"], [roles.Roles.ContingencyPlanner, roles.Roles.Researcher, roles.Roles.Scientist], 5, seeded);
+      
+      g.players.forEach(i => expect(i.hand.size).toBe(3))
+
+      g = new game.Game(cities, 2, ["test", "test", ], [roles.Roles.ContingencyPlanner, roles.Roles.Researcher], 5, seeded);
+
+      g.players.forEach(i => expect(i.hand.size).toBe(4))
+    });
+  });
 });
 
 
