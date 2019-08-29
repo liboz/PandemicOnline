@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges} from '@angular/core';
+import { Component, OnInit, Input} from '@angular/core';
 import { GameState } from '../game/game.component'
 import { ModalService } from 'src/app/service/modal.service';
 
@@ -7,7 +7,7 @@ import { ModalService } from 'src/app/service/modal.service';
   templateUrl: './join.component.html',
   styleUrls: ['./join.component.styl']
 })
-export class JoinComponent implements OnInit, OnChanges {
+export class JoinComponent implements OnInit {
   
   @Input() game: any
   @Input() socket: any
