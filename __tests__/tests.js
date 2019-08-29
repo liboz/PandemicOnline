@@ -1144,7 +1144,7 @@ describe('Player', function () {
       expect(g.players[0].can_treat_color(g, city.Colors.BLUE)).toBe(true)
       expect(g.players[0].can_treat_color(g, city.Colors.BLACK)).toBe(false)
       expect(g.players[0].can_treat_color(g, city.Colors.YELLOW)).toBe(false)
-      
+
       expect(g.game_graph['New York'].cubes[city.Colors.BLUE]).toBe(1)
       expect(g.cubes[city.Colors.BLUE]).toBe(19)
       g.players[0].treat(g, city.Colors.BLUE)
@@ -1229,7 +1229,7 @@ describe('Player', function () {
   describe('#Trade Cards', function () {
     it('Check Validity', function () {
       let seeded = seedrandom('test167!')
-      let g = new game.Game(cities, 2, ["test", "test"], [roles.Roles.ContingencyPlanner, roles.Roles.Researcher], 5, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], [roles.Roles.ContingencyPlanner, roles.Roles.Scientist], 5, seeded);
       expect(g.players[0].can_take(g)).toBe(false)
       expect(g.players[0].can_give(g)).toBe(false)
       expect(g.players[1].can_take(g)).toBe(false)
@@ -1271,7 +1271,7 @@ describe('Player', function () {
   describe('#Trade Cards', function () {
     it('Take From Specific Player', function () {
       let seeded = seedrandom('test167!')
-      let g = new game.Game(cities, 2, ["test", "test"], [roles.Roles.ContingencyPlanner, roles.Roles.Researcher], 5, seeded);
+      let g = new game.Game(cities, 2, ["test", "test"], [roles.Roles.ContingencyPlanner, roles.Roles.Scientist], 5, seeded);
       g.players[0].hand.add('Atlanta')
       expect(g.players[0].can_take_from_player(g.players[1])).toBe(false)
       expect(g.players[1].can_take_from_player(g.players[0])).toBe(true)
@@ -1295,6 +1295,55 @@ describe('Player', function () {
       expect(g.players[1].hand.has('Atlanta')).toBe(true)
       expect(g.players[0].hand.has('Miami')).toBe(true)
       expect(g.players[1].hand.has('Miami')).toBe(false)
+    });
+  });
+
+  describe('#Trade Cards', function () {
+    it('Always be able to take from Researcher', function () {
+      let seeded = seedrandom('test167!')
+      let g = new game.Game(cities, 2, ["test", "test"], [roles.Roles.ContingencyPlanner, roles.Roles.Researcher], 5, seeded);
+      expect(g.players[0].can_take(g)).toBe(true)
+      expect(g.players[0].can_take_from_player(g.players[1], 'Tokyo')).toBe(false)
+      expect(g.players[0].can_take_from_player(g.players[1], 'Algiers')).toBe(true)
+      expect(g.players[0].can_give(g)).toBe(false)
+      expect(g.players[1].can_give(g)).toBe(true)
+      expect(g.players[1].can_give_card(g, 'Tokyo')).toBe(false)
+      expect(g.players[1].can_give_card(g, 'Algiers')).toBe(true)
+
+      expect(g.players[0].hand.has('Algiers')).toBe(false)
+      expect(g.players[1].hand.has('Algiers')).toBe(true)
+      g.players[1].trade(g.players[0], 'Algiers')
+      expect(g.players[0].hand.has('Algiers')).toBe(true)
+      expect(g.players[1].hand.has('Algiers')).toBe(false)
+      g.players[0].trade(g.players[1], 'Algiers')
+      
+      
+      g.players[0].move(g, 'Miami')
+      expect(g.players[0].can_take(g)).toBe(false)
+      expect(g.players[0].can_take_from_player(g.players[1], 'Algiers')).toBe(false)
+      expect(g.players[1].can_take_from_player(g.players[0])).toBe(false)
+      expect(g.players[0].can_give(g)).toBe(false)
+      expect(g.players[1].can_give(g)).toBe(false)
+      
+      g.players[1].move(g, 'Miami')
+      expect(g.players[0].can_take(g)).toBe(true)
+      expect(g.players[0].can_take_from_player(g.players[1], 'Algiers')).toBe(true)
+      expect(g.players[1].can_take_from_player(g.players[0])).toBe(false)
+      expect(g.players[0].can_give(g)).toBe(false)
+      expect(g.players[1].can_give(g)).toBe(true)
+      expect(g.players[1].can_give_card(g, 'Algiers')).toBe(true)
+
+      expect(g.players[0].hand.has('Algiers')).toBe(false)
+      expect(g.players[1].hand.has('Algiers')).toBe(true)
+      g.players[1].trade(g.players[0], 'Algiers')
+      expect(g.players[0].hand.has('Algiers')).toBe(true)
+      expect(g.players[1].hand.has('Algiers')).toBe(false)
+
+      expect(g.players[0].can_take(g)).toBe(true)
+      expect(g.players[1].can_give(g)).toBe(true)
+      g.players[1].discard([...g.players[1].hand]) // need cards in hand to trade!
+      expect(g.players[0].can_take(g)).toBe(false)
+      expect(g.players[1].can_give(g)).toBe(false) 
     });
   });
 

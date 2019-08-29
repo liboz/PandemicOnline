@@ -44,7 +44,7 @@ io.on('connection', function (socket) {
 		games[match_name] = {
 			players: [],
 			game: null,
-			available_roles: new Set([roles.Roles.Medic, roles.Roles.QuarantineSpecialist, roles.Roles.Scientist, roles.Roles.OperationsExpert]),
+			available_roles: new Set([roles.Roles.Medic, roles.Roles.QuarantineSpecialist, roles.Roles.Researcher, roles.Roles.Scientist, roles.Roles.OperationsExpert]),
 			player_roles: []
 		}
 	}
@@ -203,7 +203,7 @@ io.on('connection', function (socket) {
 
 	socket.on('share', function (player_index, card, callback) {
 		let log_string = ""
-		if (card) { //dispatcher
+		if (card) { //researcher
 			log_string = `Player ${curr_game().player_index} and Player ${player_index} trade ${card} at ${curr_game().players[curr_game().player_index].location}`
 		} else {
 			log_string = `Player ${curr_game().player_index} and Player ${player_index} trade ${curr_game().players[curr_game().player_index].location}`
@@ -222,6 +222,17 @@ io.on('connection', function (socket) {
 					curr_game().use_turn(socket, io, match_name)
 				} else {
 					socket.emit('invalid action', `Share with Player ${player_index} at ${curr_game().players[curr_game().player_index].location} is an invalid action`);
+				}
+			} else {
+				if (curr_game().players[curr_game().player_index].can_give_card(curr_game(), card)
+					|| curr_game().players[curr_game().player_index].can_take_from_player(curr_game().players[player_index], card)) {
+					curr_game().players[curr_game().player_index].trade(curr_game().players[player_index], card)
+					callback()
+					curr_game().log.push(log_string)
+					socket.emit(`research share successful`, curr_game().toJSON());
+					curr_game().use_turn(socket, io, match_name)
+				} else {
+					socket.emit('invalid action', `Share ${card} with Player ${player_index} at ${curr_game().players[curr_game().player_index].location} is an invalid action`);
 				}
 			}
 

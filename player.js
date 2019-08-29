@@ -14,16 +14,16 @@ function Player(id, name, role, location = "Atlanta") {
 // add dispatcher
 Player.prototype.move = function (game, final_destination, socket = null) {
     let game_graph = game.game_graph
-    if (game_graph[this.location].neighbors.has(game_graph[final_destination]) || 
-        game_graph[this.location].hasResearchStation && game_graph[final_destination].hasResearchStation) { 
+    if (game_graph[this.location].neighbors.has(game_graph[final_destination]) ||
+        game_graph[this.location].hasResearchStation && game_graph[final_destination].hasResearchStation) {
         // drive/ferry + shuttle
         this.movePiece(game, game_graph, final_destination, socket)
         return true
-    } else if (this.hand.has(final_destination)) { 
+    } else if (this.hand.has(final_destination)) {
         // direct
         this.directFlight(game, final_destination, socket)
         return true
-    } else if (this.hand.has(this.location)) { 
+    } else if (this.hand.has(this.location)) {
         // charter
         this.charterFlight(game, final_destination, socket)
         return true
@@ -225,23 +225,27 @@ Player.prototype.discard = function (cards) {
     return false;
 }
 
-Player.prototype.can_take = function (game, player) {
+Player.prototype.can_take = function (game) {
     if (game.game_graph[this.location].players.size <= 1) {
         return false
     } else {
         return [...game.game_graph[this.location].players].some(player => {
             if (player !== this) {
-                return player.hand.has(this.location)
+                return player.hand.has(this.location) || (player.role === roles.Roles.Researcher && player.hand.size > 0);
             }
         })
     }
 }
 
-Player.prototype.can_take_from_player = function (player) {
+Player.prototype.can_take_from_player = function (player, card = null) {
     if (this.location !== player.location) {
         return false
     } else {
-        return player.hand.has(this.location)
+        if (card) {
+            return player.hand.has(this.location) || (player.role === roles.Roles.Researcher && player.hand.has(card))
+        } else {
+            return player.hand.has(this.location)
+        }
     }
 }
 
@@ -249,19 +253,29 @@ Player.prototype.can_give = function (game) {
     if (game.game_graph[this.location].players.size <= 1) {
         return false
     } else {
-        return this.hand.has(this.location)
+        return this.hand.has(this.location) || (this.role === roles.Roles.Researcher && this.hand.size > 0);
     }
+}
+
+Player.prototype.can_give_card = function (game, card) {
+    return this.can_give(game) && (this.role === roles.Roles.Researcher && this.hand.has(card))
 }
 
 Player.prototype.trade = function (player, card) {
     if (!card) {
-        if (this.hand.has(this.location)) {
-            player.hand.add(this.location)
-            this.hand.delete(this.location)
-        } else {
-            player.hand.delete(this.location)
-            this.hand.add(this.location)
-        }
+        this.tradeCard(player, this.location)
+    } else {
+        this.tradeCard(player, card)
+    }
+}
+
+Player.prototype.tradeCard = function(player, c) {
+    if (this.hand.has(c)) {
+        player.hand.add(c)
+        this.hand.delete(c)
+    } else {
+        player.hand.delete(c)
+        this.hand.add(c)
     }
 }
 
