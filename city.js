@@ -46,7 +46,7 @@ City.prototype.infect_condition = function (game, color) {
                 break;
             }
         }
-
+        
         if (shouldInfect) {
             let neighbors = [...this.neighbors]
 
@@ -60,7 +60,7 @@ City.prototype.infect_condition = function (game, color) {
                 }
             }
         }
-
+        
         return shouldInfect;
     }
 }

@@ -40,6 +40,11 @@ describe('City', function () {
       expect(washington.cubes[city.Colors.BLUE]).toBe(0);
       expect(washington.infect(g)).toBe(true);
       expect(washington.cubes[city.Colors.BLUE]).toBe(0);
+
+      g.cured[city.Colors.BLUE] = 1 // washington triggers eradicate
+      expect(atlanta.cubes[city.Colors.BLUE]).toBe(0);
+      expect(atlanta.infect(g)).toBe(true);
+      expect(atlanta.cubes[city.Colors.BLUE]).toBe(1);
     });
   });
 
