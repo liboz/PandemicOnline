@@ -57,9 +57,9 @@
             </div>
         </div>
         <div *ngIf="shareCardChoices">
-            <div *ngFor="let player of shareCardChoices">
-                <button (click)="share(player)">
-                    Give Player {{player}} the {{game.players[game.player_index].location}} card
+            <div *ngFor="let choice of shareCardChoices">
+                <button (click)="choice.onClick()">
+                    {{ choice.action }} Player {{choice.player_id}} {{ choice.location ? 'the ' + choice.location + ' card' : '(Researcher Ability)'}}
                 </button>
             </div>
         </div>

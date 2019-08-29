@@ -57,6 +57,10 @@ export class GameSocketComponent implements OnInit {
         this.game = data
       })
 
+      this.socket.on("research share successful", data => {
+        this.game = data
+      })
+
       this.socket.on("build successful", data => {
         this.game = data
       });

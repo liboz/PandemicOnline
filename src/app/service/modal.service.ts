@@ -37,4 +37,10 @@ export class ModalService {
   destroyEvent() {
     this.destroySource.next();
   }
+
+  private clearShareSource = new Subject<void>();
+  clearShare$ = this.clearShareSource.asObservable();
+  clearShare() {
+    this.clearShareSource.next();
+  }
 }

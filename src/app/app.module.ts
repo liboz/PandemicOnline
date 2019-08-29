@@ -18,7 +18,8 @@ import { DomService } from './service/dom.service';
 import { HomeComponent } from './component/home/home.component';
 import { GameSocketComponent } from './component/game-socket/game-socket.component';
 import { JoinComponent } from './component/join/join.component';
-import { MoveChoiceSelectorComponent } from './component/move-choice-selector/move-choice-selector.component'
+import { MoveChoiceSelectorComponent } from './component/move-choice-selector/move-choice-selector.component';
+import { ResearcherShareSelectorComponent } from './component/researcher-share-selector/researcher-share-selector.component'
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { MoveChoiceSelectorComponent } from './component/move-choice-selector/mo
     HomeComponent,
     GameSocketComponent,
     JoinComponent,
-    MoveChoiceSelectorComponent
+    MoveChoiceSelectorComponent,
+    ResearcherShareSelectorComponent
   ],
   imports: [
     BrowserModule,

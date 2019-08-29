@@ -7,6 +7,7 @@ import { ModalComponent } from '../modal/modal.component'
 import { PlayerComponent } from '../player/player.component';
 import { MoveChoiceSelectorComponent } from '../move-choice-selector/move-choice-selector.component';
 import { Subscription } from 'rxjs';
+import { ResearcherShareSelectorComponent } from '../researcher-share-selector/researcher-share-selector.component';
 
 @Component({
   selector: 'app-game',
@@ -41,9 +42,10 @@ export class GameComponent implements OnInit, OnChanges {
   links: any;
   isMoving: any;
   treatColorChoices: string[] = null;
-  shareCardChoices: number[] = null;
+  shareCardChoices: ShareCard[] = null;
   cureColorCards: string[] = null;
-  subscription: Subscription
+  destroySubscription: Subscription
+  clearShareCardsSubscription: Subscription
 
 
   getTextBox(selection) {
@@ -103,12 +105,17 @@ export class GameComponent implements OnInit, OnChanges {
     this.initialized = true
     this.selectedCards = new Set()
     this.createChart()
-    this.subscription = this.modalService.destroy$.subscribe(
+    this.destroySubscription = this.modalService.destroy$.subscribe(
       () => {
         this.isMoving = false;
         this.modalService.destroy()
       }
     )
+
+    this.clearShareCardsSubscription = this.modalService.clearShare$.subscribe(() => {
+      this.shareCardChoices = null
+      this.modalService.destroyEvent()
+    })
   }
 
   // zoom to show a bounding box, with optional additional padding as percentage of box size
@@ -219,7 +226,6 @@ export class GameComponent implements OnInit, OnChanges {
       let curr_city = this.game.game_graph[this.game.game_graph_index[curr_player.location]]
       let target_city = this.game.game_graph[this.game.game_graph_index[selectedNode.name]]
       let neighbors = curr_city.neighbors
-      console.log(neighbors, selectedNode, curr_player)
       if (neighbors.includes(selectedNode.id) || (curr_city.hasResearchStation && target_city.hasResearchStation)) {
         this.moveEmit(selectedNode)
         this.isMoving = false;
@@ -300,25 +306,80 @@ export class GameComponent implements OnInit, OnChanges {
     if (this.shareCardChoices) {
       this.shareCardChoices = null
     } else {
-      let location = this.game.players[this.game.player_index].location
+      let curr_player = this.game.players[this.game.player_index]
+      let location = curr_player.location
       let location_players = this.game.game_graph[this.game.game_graph_index[location]].players
-      if ((this.game.can_give && !this.game.can_take)
-        || (this.game.can_take && !this.game.can_give)) {
-        let other_players = location_players.filter(i => i !== this.game.player_index)
+      let other_players_ids = location_players.filter(i => i !== this.game.player_index)
+      let other_players = other_players_ids.map(i => this.game.players[i])
+      // non researcher case
+      if (curr_player.role !== Roles.Researcher && other_players.every(i => i.role !== Roles.Researcher)) {
+        // only 2 players
         if (location_players.length === 2) {
-          let other_player = other_players[0]
+          let other_player = other_players_ids[0]
           this.share(other_player)
         } else if (this.game.can_take) {
-          let other_player = other_players.filter(i => this.game.players[i].hand.includes(location))
+          // since there is no researcher, there is only 1 possible take option
+          let other_player = other_players_ids.filter(i => this.game.players[i].hand.includes(location))
           this.share(other_player)
         } else {
-          this.shareCardChoices = other_players
+          // we can potentially give to every other player on the same node
+          this.shareCardChoices = other_players_ids.map(i => new ShareCard(ShareCard.Give, i, this.game.players[this.game.player_index].location, () => this.share(i)))
         }
-      } else if (this.game.can_give && this.game.can_take) { // dispatcher
+      } else {
+        // researcher
+        if (location_players.length === 2) {
+          // just need to figure out who is the researcher and who isn't
+          let other_player = other_players_ids[0]
+          if (curr_player.role === Roles.Researcher) {
+            this.shareResearcher(curr_player, other_player, curr_player.id)
+          } else {
+            this.shareResearcher(this.game.players[other_player], other_player, curr_player.id)
+          }
+        } else if (this.game.can_take) {
+          // since there are multiple players, we can potentially take from 1 other player + a researcher
 
+          let other_player = other_players_ids.filter(i => this.game.players[i].hand.includes(location))[0]
+          if (this.game.players[other_player].role === Roles.Researcher) {
+            // That one player we can take from is a researcher, in which case we just do researcher take
+            this.shareResearcher(this.game.players[other_player], other_player, curr_player.id)
+          } else {
+            // the choice of 1 other player
+            this.shareCardChoices = [new ShareCard(ShareCard.Take,
+              other_player, this.game.players[this.game.player_index].location, () => this.share(other_player))]
+            //  if that researcher is us, the action needs to be a give
+            if (curr_player.role === Roles.Researcher) {
+              other_players_ids.forEach(id => {
+                this.shareCardChoices.push(new ShareCard(ShareCard.Give,
+                  id, null, () => this.shareResearcher(curr_player, id, curr_player.id)))
+              });
+            } else {
+              // otherwise, we can also take from the researcher
+              let researcher = other_players.filter(i => i.role === Roles.Researcher)[0]
+              this.shareCardChoices.push(new ShareCard(ShareCard.Take,
+                researcher.id, null, () => this.shareResearcher(researcher, researcher.id, this.game.player_index)))
+            }
+          }
+        } else {
+          // we are giving to another player. 
+          // since we should always be able to take from a researcher, this only happens when we are the researcher, so we researcher share
+          this.shareCardChoices = other_players_ids.map(id => {
+            return new ShareCard(ShareCard.Give,
+              id, null, () => this.shareResearcher(curr_player, id, curr_player.id))
+          });
+        }
       }
     }
 
+  }
+
+  shareResearcher(researcher, target_player_index, curr_player_index) {
+    this.modalService.init(ResearcherShareSelectorComponent, {
+      hand: researcher.hand,
+      game: this.game,
+      socket: this.socket,
+      target_player_index: target_player_index,
+      curr_player_index: curr_player_index
+    }, {})
   }
 
   share(other_player) {
@@ -381,7 +442,6 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   discardSelectedCards() {
-    console.log('hello?', this.selectedCards, [...this.selectedCards].map(i => this.game.players[this.game.player_index].hand[i]))
     this.socket.emit('discard', [...this.selectedCards].map(i => this.game.players[this.game.player_index].hand[i]), () => {
       this.selectedCards = new Set()
     })
@@ -398,7 +458,8 @@ export class GameComponent implements OnInit, OnChanges {
 
   ngOnDestroy() {
     // prevent memory leak when component destroyed
-    this.subscription.unsubscribe();
+    this.destroySubscription.unsubscribe();
+    this.clearShareCardsSubscription.unsubscribe();
   }
 }
 
@@ -410,3 +471,36 @@ export const GameState = {
   Won: 3,
   Lost: 4
 }
+
+
+const Roles = {
+  ContingencyPlanner: "Contingency Planner",
+  Dispatcher: "Dispatcher",
+  Medic: "Medic",
+  OperationsExpert: "Operations Expert",
+  QuarantineSpecialist: "Quarantine Specialist",
+  Researcher: "Researcher",
+  Scientist: "Scientist",
+}
+
+
+class ShareCard {
+  public static Take = "Take from";
+  public static Give = "Give";
+
+  action: string
+  location: string
+  player_id: number
+  onClick: () => void
+  constructor(action, player_id, location, onClick) {
+    this.action = action
+    this.player_id = player_id
+    this.location = location
+    this.onClick = onClick
+  }
+
+  ngOnInit() {
+  }
+}
+
+
