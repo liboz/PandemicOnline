@@ -311,6 +311,8 @@ export class GameComponent implements OnInit, OnChanges {
       let location_players = this.game.game_graph[this.game.game_graph_index[location]].players
       let other_players_ids = location_players.filter(i => i !== this.game.player_index)
       let other_players = other_players_ids.map(i => this.game.players[i])
+
+
       // non researcher case
       if (curr_player.role !== Roles.Researcher && other_players.every(i => i.role !== Roles.Researcher)) {
         // only 2 players
@@ -326,37 +328,68 @@ export class GameComponent implements OnInit, OnChanges {
           this.shareCardChoices = other_players_ids.map(i => new ShareCard(ShareCard.Give, i, this.game.players[this.game.player_index].location, () => this.share(i)))
         }
       } else {
+        
         // researcher
         if (location_players.length === 2) {
           // just need to figure out who is the researcher and who isn't
           let other_player = other_players_ids[0]
           if (curr_player.role === Roles.Researcher) {
-            this.shareResearcher(curr_player, other_player, curr_player.id)
+            if (curr_player.hand.length === 0) {
+              this.share(other_player)
+            } else {
+              if (this.game.players[other_player].hand.includes(location)) {
+                this.shareCardChoices = [new ShareCard(ShareCard.Take, other_player,
+                  this.game.players[this.game.player_index].location, () => this.share(other_player))]
+                this.shareCardChoices.push(new ShareCard(ShareCard.Give,
+                  other_player, null, () => this.shareResearcher(curr_player, other_player, curr_player.id)))
+              } else {
+                this.shareResearcher(curr_player, other_player, curr_player.id)
+              }
+            }
           } else {
-            this.shareResearcher(this.game.players[other_player], other_player, curr_player.id)
+            if (curr_player.hand.size === 0 || !curr_player.hand.includes(location)) {
+              this.shareResearcher(this.game.players[other_player], other_player, curr_player.id)
+            } else {
+              let researcher = other_players.filter(i => i.role === Roles.Researcher)[0]
+              this.shareCardChoices = [new ShareCard(ShareCard.Give, other_player,
+                this.game.players[this.game.player_index].location, () => this.share(other_player))]
+              this.shareCardChoices.push(new ShareCard(ShareCard.Take,
+                other_player, null, () => this.shareResearcher(researcher, researcher.id, curr_player.id)))
+            }
+
           }
         } else if (this.game.can_take) {
           // since there are multiple players, we can potentially take from 1 other player + a researcher
 
-          let other_player = other_players_ids.filter(i => this.game.players[i].hand.includes(location))[0]
-          if (this.game.players[other_player].role === Roles.Researcher) {
-            // That one player we can take from is a researcher, in which case we just do researcher take
-            this.shareResearcher(this.game.players[other_player], other_player, curr_player.id)
-          } else {
-            // the choice of 1 other player
-            this.shareCardChoices = [new ShareCard(ShareCard.Take,
-              other_player, this.game.players[this.game.player_index].location, () => this.share(other_player))]
-            //  if that researcher is us, the action needs to be a give
-            if (curr_player.role === Roles.Researcher) {
-              other_players_ids.forEach(id => {
-                this.shareCardChoices.push(new ShareCard(ShareCard.Give,
-                  id, null, () => this.shareResearcher(curr_player, id, curr_player.id)))
-              });
+          let other_player = other_players_ids.filter(i => this.game.players[i].hand.includes(location))
+          console.log(other_player)
+          if (other_player.length > 0) {
+            if (this.game.players[other_player[0]].role === Roles.Researcher) {
+              // That one player we can take from is a researcher, in which case we just do researcher take
+              this.shareResearcher(this.game.players[other_player], other_player, curr_player.id)
             } else {
-              // otherwise, we can also take from the researcher
-              let researcher = other_players.filter(i => i.role === Roles.Researcher)[0]
-              this.shareCardChoices.push(new ShareCard(ShareCard.Take,
-                researcher.id, null, () => this.shareResearcher(researcher, researcher.id, this.game.player_index)))
+              this.shareCardChoices = [new ShareCard(ShareCard.Take, other_player[0],
+                this.game.players[this.game.player_index].location, () => this.share(other_player))]
+              //  if that researcher is us, the action needs to be a give
+              if (curr_player.role === Roles.Researcher) {
+                other_players_ids.forEach(id => {
+                  this.shareCardChoices.push(new ShareCard(ShareCard.Give,
+                    id, null, () => this.shareResearcher(curr_player, id, curr_player.id)))
+                });
+              } else {
+                // otherwise, we can also take from the researcher
+                let researcher = other_players.filter(i => i.role === Roles.Researcher)[0]
+                this.shareCardChoices.push(new ShareCard(ShareCard.Take,
+                  researcher.id, null, () => this.shareResearcher(researcher, researcher.id, this.game.player_index)))
+              }
+            }
+          } else {
+            // the one player is non-existent, just a researcher
+            let researcher = other_players.filter(i => i.role === Roles.Researcher)[0]
+            if (curr_player.role === Roles.Researcher) {
+              this.shareResearcher(curr_player, researcher.id, curr_player.id)
+            } else {
+              this.shareResearcher(researcher, researcher.id, curr_player.id)
             }
           }
         } else {
@@ -373,13 +406,15 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   shareResearcher(researcher, target_player_index, curr_player_index) {
-    this.modalService.init(ResearcherShareSelectorComponent, {
-      hand: researcher.hand,
-      game: this.game,
-      socket: this.socket,
-      target_player_index: target_player_index,
-      curr_player_index: curr_player_index
-    }, {})
+    if (researcher.hand.length > 0) {
+      this.modalService.init(ResearcherShareSelectorComponent, {
+        hand: researcher.hand,
+        game: this.game,
+        socket: this.socket,
+        target_player_index: target_player_index,
+        curr_player_index: curr_player_index
+      }, {})
+    }
   }
 
   share(other_player) {
