@@ -22,7 +22,12 @@
         </ng-container>
     </div>
 </div>
-<button *ngIf="!hasStarted()" (click)="onStart()">Start Game</button>
+<div *ngIf="!hasStarted()" >
+    <button (click)="onStart()">Start Game</button>
+    <div *ngFor="let difficulty of difficulties">
+        <input type="radio" [(ngModel)]="selectedDifficulty" [value]="difficulty[1]"> {{ difficulty[0] }}
+    </div>
+</div>
 <div id="bottom-holder">
     <div *ngIf="hasStarted()" id="bottom-left">
         <div [ngStyle]="{'background': bgColor(game.player_index), 'color': 'white' }">

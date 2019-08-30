@@ -46,7 +46,8 @@ export class GameComponent implements OnInit, OnChanges {
   cureColorCards: string[] = null;
   destroySubscription: Subscription
   clearShareCardsSubscription: Subscription
-
+  difficulties = Object.entries(GameDifficulty)
+  selectedDifficulty: number;
 
   getTextBox(selection) {
     selection
@@ -273,7 +274,7 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   onStart() {
-    this.socket.emit('start game')
+    this.socket.emit('start game', this.selectedDifficulty)
   }
 
   onMove() {
@@ -495,7 +496,7 @@ export class GameComponent implements OnInit, OnChanges {
     // prevent memory leak when component destroyed
     this.destroySubscription.unsubscribe();
     this.clearShareCardsSubscription.unsubscribe();
-  }
+  }  
 }
 
 
@@ -539,3 +540,8 @@ class ShareCard {
 }
 
 
+const GameDifficulty = {
+  Introductory: 4,
+  Standard: 5,
+  Heroic: 6
+}
