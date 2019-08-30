@@ -67,7 +67,7 @@ io.on('connection', function (socket) {
 
 	socket.on('join', function (role, player_name, callback) {
 		// add logic for role is invalid
-		if (games[match_name].available_roles.has(role)) {
+		if (games[match_name].available_roles.has(role) || (curr_game() && curr_game().game_state !== game.GameState.NotStarted ) ) {
 			let player_index = players().findIndex(i => i === player_name) // should lock maybe?
 			if (player_index === -1) {
 				player_index = players().length
@@ -286,13 +286,24 @@ io.on('connection', function (socket) {
 	socket.on('discard', (cards, callback) => {
 		let log_string = `Player ${curr_game().player_index} discards ${cards}`
 		console.log(log_string)
-		if (curr_game().players[curr_game().player_index].can_discard(cards)) {
+		let valid = false
+		let p_index = curr_game().player_index
+		for (let player of curr_game().players) {
+			if (player.hand.size > player.hand_size_limit) {
+				valid = true
+				p_index = player.id
+				break;
+			}
+		}
+		if (valid && curr_game().players[p_index].can_discard(cards)) {
 			callback()
-			curr_game().players[curr_game().player_index].discard(cards)
+			curr_game().players[p_index].discard(cards)
 			curr_game().log.push(log_string)
-			curr_game().infect_stage()
-			curr_game().next_player()
-			curr_game().turns_left = 4;
+			if (curr_game().turns_left === 0) {
+				curr_game().infect_stage()
+				curr_game().next_player()
+				curr_game().turns_left = 4;
+			}
 			if (curr_game().game_state !== game.GameState.Lost && curr_game().game_state !== game.GameState.Won) {
 				curr_game().game_state = game.GameState.Ready
 			}

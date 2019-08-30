@@ -130,9 +130,19 @@ Game.prototype.decrement_turn = function () {
 
 Game.prototype.use_turn = function (socket, io, match_name) {
     if (!this.decrement_turn()) {
+        // TODO add to separate discard of after share and from drawing in end turn
         this.turn_end(socket, io, match_name);
     } else  {
         io.in(match_name).emit('update game state', this.toJSON())
+        for (let player of this.players) {
+            if (player.hand.size > player.hand_size_limit) {
+                this.game_state = GameState.DiscardingCard
+                this.log.push(`Player ${player.id} is discarding a card`)
+                // Send notification of discard to other players
+                io.emit('discard cards')
+                break;
+            }
+        }
     }
 }
 
@@ -146,12 +156,19 @@ Game.prototype.turn_end = function(socket, io, match_name) {
     }
 
     io.in(match_name).emit('update game state', this.toJSON())
-    if (this.players[this.player_index].hand.size > this.players[this.player_index].hand_size_limit) {
-        this.game_state = GameState.DiscardingCard
-        this.log.push(`Player ${this.player_index} is discarding a card`)
-        // Send notification of discard to other players
-        io.emit('discard cards')
-    } else {
+    let next_turn = true
+    for (let player of this.players) {
+        if (player.hand.size > player.hand_size_limit) {
+            this.game_state = GameState.DiscardingCard
+            this.log.push(`Player ${player.id} is discarding a card`)
+            // Send notification of discard to other players
+            io.emit('discard cards')
+            next_turn = false
+            break;
+        }
+    }
+
+    if (next_turn) {
         this.infect_stage()
         this.next_player()
         this.turns_left = 4;
