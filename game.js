@@ -13,6 +13,13 @@ const GameState = {
     Lost: 4
 }
 
+
+const GameDifficulty = {
+    4: 'Introductory',
+    5: 'Standard',
+    6: 'Heroic'
+}
+
 function Game(cities, num_players, filtered_players, roles, num_epidemics, rng = seedrandom()) {
     this.game_graph = city.City.load(cities)
     this.outbreak_counter = 0
@@ -50,6 +57,7 @@ function Game(cities, num_players, filtered_players, roles, num_epidemics, rng =
     this.turns_left = 4
     this.game_state = GameState.NotStarted
     this.log = []
+    this.difficulty = num_epidemics
 
     //this.geoJSON = city.City.toGeoJSON(this.game_graph)
 };
@@ -132,7 +140,7 @@ Game.prototype.use_turn = function (socket, io, match_name) {
     if (!this.decrement_turn()) {
         // TODO add to separate discard of after share and from drawing in end turn
         this.turn_end(socket, io, match_name);
-    } else  {
+    } else {
         io.in(match_name).emit('update game state', this.toJSON())
         for (let player of this.players) {
             if (player.hand.size > player.hand_size_limit) {
@@ -147,7 +155,7 @@ Game.prototype.use_turn = function (socket, io, match_name) {
     }
 }
 
-Game.prototype.turn_end = function(socket, io, match_name) {
+Game.prototype.turn_end = function (socket, io, match_name) {
     for (let i = 0; i < 2; i++) {
         let card = this.players[this.player_index].draw(this)
         if (card === 'Epidemic') {
@@ -195,7 +203,7 @@ function GameJSON(game) {
         return null;
     }
     this.game_graph = Object.values(game.game_graph).map(c => new city.CityJSON(c))
-    this.game_graph_index = this.game_graph.reduce(function(map, city, index) {
+    this.game_graph_index = this.game_graph.reduce(function (map, city, index) {
         map[city.name] = index;
         return map;
     }, {})
@@ -222,6 +230,7 @@ function GameJSON(game) {
         this.can_take = game.players[game.player_index].can_take(game)
         this.can_give = game.players[game.player_index].can_give(game)
         this.log = game.log
+        this.difficulty = game.difficulty
     }
     if (game.game_state === GameState.DiscardingCard) {
         this.must_discard_index = game.must_discard_index
@@ -234,9 +243,11 @@ function GameMap(cities) {
     this.game_state = GameState.NotStarted
 };
 
+
 module.exports = {
     Game: Game,
     GameJSON: GameJSON,
     GameState: GameState,
-    GameMap: GameMap
+    GameMap: GameMap,
+    GameDifficulty: GameDifficulty
 };
