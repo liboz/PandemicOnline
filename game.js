@@ -137,9 +137,10 @@ Game.prototype.use_turn = function (socket, io, match_name) {
         for (let player of this.players) {
             if (player.hand.size > player.hand_size_limit) {
                 this.game_state = GameState.DiscardingCard
+                this.must_discard_index = player.id
                 this.log.push(`Player ${player.id} is discarding a card`)
                 // Send notification of discard to other players
-                io.emit('discard cards')
+                io.emit('discard cards', this.must_discard_index)
                 break;
             }
         }
@@ -160,9 +161,10 @@ Game.prototype.turn_end = function(socket, io, match_name) {
     for (let player of this.players) {
         if (player.hand.size > player.hand_size_limit) {
             this.game_state = GameState.DiscardingCard
+            this.must_discard_index = player.id
             this.log.push(`Player ${player.id} is discarding a card`)
             // Send notification of discard to other players
-            io.emit('discard cards')
+            io.emit('discard cards', this.must_discard_index)
             next_turn = false
             break;
         }
@@ -220,6 +222,9 @@ function GameJSON(game) {
         this.can_take = game.players[game.player_index].can_take(game)
         this.can_give = game.players[game.player_index].can_give(game)
         this.log = game.log
+    }
+    if (game.game_state === GameState.DiscardingCard) {
+        this.must_discard_index = game.must_discard_index
     }
 };
 
