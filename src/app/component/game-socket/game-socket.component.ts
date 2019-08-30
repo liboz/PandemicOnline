@@ -92,7 +92,8 @@ export class GameSocketComponent implements OnInit {
 
       this.socket.on('discard cards', data => {
         this.game.game_state = GameState.DiscardingCard;
-        this.game.log.push(`Player ${this.game.player_index} is discarding a card`)
+        this.game.must_discard_index = data
+        this.game.log.push(`Player ${this.game.must_discard_index} is discarding a card`)
       })
 
       this.socket.on("epidemic", data => {

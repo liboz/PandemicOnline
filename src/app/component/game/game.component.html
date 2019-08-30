@@ -32,22 +32,29 @@
         <br>
         Actions Left: {{game.turns_left}}
         <br>
-        <div *ngIf="game.player_index === player_index">
-            <button [disabled]="cannotDoPrimaryAction() && !isMoving"
-                (click)="onMove()">{{ isMoving ? 'Cancel' : 'Move' }}</button>
-            <button [disabled]="!game.can_build_research_station || cannotDoPrimaryAction()" (click)="onBuild()">Build A
-                Research Station</button>
-            <button [disabled]="!game.can_treat || cannotDoPrimaryAction()" (click)="onTreat()">Treat Disease</button>
-            <button [disabled]="(!game.can_give && !game.can_take) || (cannotDoPrimaryAction() && !shareCardChoices)"
-                (click)="onShare()">{{ shareCardChoices ? 'Cancel' : 'Share Knowledge' }}</button>
-            <button [disabled]="!game.can_cure || (cannotDoPrimaryAction() && !cureColorCards)"
-                (click)="onDiscover()">Discover
-                Cure</button>
-            <button *ngIf="cureColorCards" (click)="cancelDiscover()">Cancel Discover Cure</button>
-            <button [disabled]="cannotDoPrimaryAction()" (click)="onPass()">Pass Turn</button>
-            <button [disabled]="!mustDiscard() || !discardEnough()" (click)="discardSelectedCards()">Discard
+        <div style="display: flex">
+            <div *ngIf="game.player_index === player_index">
+                <button [disabled]="cannotDoPrimaryAction() && !isMoving"
+                    (click)="onMove()">{{ isMoving ? 'Cancel' : 'Move' }}</button>
+                <button [disabled]="!game.can_build_research_station || cannotDoPrimaryAction()"
+                    (click)="onBuild()">Build A
+                    Research Station</button>
+                <button [disabled]="!game.can_treat || cannotDoPrimaryAction()" (click)="onTreat()">Treat
+                    Disease</button>
+                <button
+                    [disabled]="(!game.can_give && !game.can_take) || (cannotDoPrimaryAction() && !shareCardChoices)"
+                    (click)="onShare()">{{ shareCardChoices ? 'Cancel' : 'Share Knowledge' }}</button>
+                <button [disabled]="!game.can_cure || (cannotDoPrimaryAction() && !cureColorCards)"
+                    (click)="onDiscover()">Discover
+                    Cure</button>
+                <button *ngIf="cureColorCards" (click)="cancelDiscover()">Cancel Discover Cure</button>
+                <button [disabled]="cannotDoPrimaryAction()" (click)="onPass()">Pass Turn</button>
+            </div>
+            <button *ngIf="mustDiscard()" [disabled]="!mustDiscard() || !discardEnough()"
+                (click)="discardSelectedCards()">Discard
                 Selected</button>
         </div>
+
         <div *ngIf="mustDiscard()">YOU MUST DISCARD TO 7 CARDS</div>
         <div *ngIf="treatColorChoices">
             <div *ngFor="let cube of treatColorChoices">
@@ -59,7 +66,8 @@
         <div *ngIf="shareCardChoices">
             <div *ngFor="let choice of shareCardChoices">
                 <button (click)="choice.onClick()">
-                    {{ choice.action }} Player {{choice.player_id}} {{ choice.location ? 'the ' + choice.location + ' card' : '(Researcher Ability)'}}
+                    {{ choice.action }} Player {{choice.player_id}}
+                    {{ choice.location ? 'the ' + choice.location + ' card' : '(Researcher Ability)'}}
                 </button>
             </div>
         </div>

@@ -469,15 +469,15 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   mustDiscard() {
-    return this.game.player_index === this.player_index && this.game.game_state === GameState.DiscardingCard;
+    return this.game.must_discard_index === this.player_index && this.game.game_state === GameState.DiscardingCard;
   }
 
   discardEnough() {
-    return this.game.players[this.game.player_index].hand.length - this.selectedCards.size === 7
+    return this.game.players[this.game.must_discard_index].hand.length - this.selectedCards.size === 7
   }
 
   discardSelectedCards() {
-    this.socket.emit('discard', [...this.selectedCards].map(i => this.game.players[this.game.player_index].hand[i]), () => {
+    this.socket.emit('discard', [...this.selectedCards].map(i => this.game.players[this.game.must_discard_index].hand[i]), () => {
       this.selectedCards = new Set()
     })
   }
