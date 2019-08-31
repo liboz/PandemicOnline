@@ -54,3 +54,9 @@ sudo nano -c /etc/nginx/nginx.conf
 sudo nano -c /var/log/nginx/access.log
 sudo nano -c /var/log/nginx/error.log
 sudo service nginx restart
+
+TODO one after another snackbar, delay?
+Click card to move to city
+Big discard button
+name, disappears when update roles
+lost notification gone
