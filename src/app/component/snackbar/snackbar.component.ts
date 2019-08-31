@@ -29,9 +29,9 @@ import { transition, trigger, style, animate } from '@angular/animations';
 })
 export class SnackbarComponent implements OnInit {
 
-  private show = false;
-  private message: string = 'This is snackbar';
-  private type: string = 'success';
+  show = false;
+  message: string = 'This is snackbar';
+  type: string = 'success';
   private snackbarSubscription: Subscription;
   constructor(private snackbarService: SnackbarService) { }
 
