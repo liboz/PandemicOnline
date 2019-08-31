@@ -73,7 +73,7 @@ Game.prototype.outbreak = function () {
 Game.prototype.epidemic = function (io = null, match_name) {
     this.infection_rate_index += 1;
     let card = this.infection_deck.infect_epidemic();
-    this.log.push(`${card} was drawn in an epidemic`)
+    this.log.push(`${card} was infected in an epidemic`)
     if (io) {
         io.in(match_name).emit('epidemic', card)
     }
@@ -146,7 +146,7 @@ Game.prototype.use_turn = function (socket, io, match_name) {
             if (player.hand.size > player.hand_size_limit) {
                 this.game_state = GameState.DiscardingCard
                 this.must_discard_index = player.id
-                this.log.push(`Player ${player.id} is discarding a card`)
+                this.log.push(`Player ${player.id} is discarding cards`)
                 // Send notification of discard to other players
                 io.emit('discard cards', this.must_discard_index)
                 break;
@@ -170,7 +170,7 @@ Game.prototype.turn_end = function (socket, io, match_name) {
         if (player.hand.size > player.hand_size_limit) {
             this.game_state = GameState.DiscardingCard
             this.must_discard_index = player.id
-            this.log.push(`Player ${player.id} is discarding a card`)
+            this.log.push(`Player ${player.id} is discarding cards`)
             // Send notification of discard to other players
             io.emit('discard cards', this.must_discard_index)
             next_turn = false

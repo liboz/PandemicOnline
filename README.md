@@ -14,7 +14,14 @@ pm2 restart
 pm2 ls
 pm2 logs
 
-When passing card, doesn't force discard when target has more than 7
 Words too small on certain screens
-Lost screen too big
 cancel treat when given choice
+
+
+this.hand.forEach(c => {
+            s.add(game.game_graph[c].index) 
+        })
+
+        game.game_graph[c] was undefined
+        lost during draw 
+        appeared before
