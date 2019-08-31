@@ -57,6 +57,5 @@ sudo service nginx restart
 
 TODO one after another snackbar, delay?
 Click card to move to city
-Big discard button
 name, disappears when update roles
 lost notification gone

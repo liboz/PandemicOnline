@@ -37,8 +37,8 @@
         <br>
         Actions Left: {{game.turns_left}}
         <br>
-        <div style="display: flex">
-            <div *ngIf="game.player_index === player_index">
+        <div>
+            <ng-container *ngIf="game.player_index === player_index">
                 <button [disabled]="cannotDoPrimaryAction() && !isMoving"
                     (click)="onMove()">{{ isMoving ? 'Cancel' : 'Move' }}</button>
                 <button [disabled]="!game.can_build_research_station || cannotDoPrimaryAction()"
@@ -54,7 +54,7 @@
                     Cure</button>
                 <button *ngIf="cureColorCards" (click)="cancelDiscover()">Cancel Discover Cure</button>
                 <button [disabled]="cannotDoPrimaryAction()" (click)="onPass()">Pass Turn</button>
-            </div>
+            </ng-container>
             <button *ngIf="mustDiscard()" [disabled]="!mustDiscard() || !discardEnough()"
                 (click)="discardSelectedCards()">Discard
                 Selected</button>

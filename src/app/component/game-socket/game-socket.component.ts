@@ -94,7 +94,7 @@ export class GameSocketComponent implements OnInit {
       this.socket.on('discard cards', data => {
         this.game.game_state = GameState.DiscardingCard;
         this.game.must_discard_index = data
-        if (this.game.must_discard_index === this.game.player_index) {
+        if (this.game.must_discard_index === this.player_index) {
           this.snackBarService.show(`You need to discard some cards`, 'danger')
         } else {
           this.snackBarService.show(`Player ${this.game.must_discard_index} is discarding some cards`, 'danger')
