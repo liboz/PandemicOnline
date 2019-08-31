@@ -274,7 +274,9 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   onStart() {
-    this.socket.emit('start game', this.selectedDifficulty)
+    if (this.selectedDifficulty) {
+      this.socket.emit('start game', this.selectedDifficulty)
+    }
   }
 
   onMove() {
