@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -19,7 +20,9 @@ import { HomeComponent } from './component/home/home.component';
 import { GameSocketComponent } from './component/game-socket/game-socket.component';
 import { JoinComponent } from './component/join/join.component';
 import { MoveChoiceSelectorComponent } from './component/move-choice-selector/move-choice-selector.component';
-import { ResearcherShareSelectorComponent } from './component/researcher-share-selector/researcher-share-selector.component'
+import { ResearcherShareSelectorComponent } from './component/researcher-share-selector/researcher-share-selector.component';
+import { SnackbarComponent } from './component/snackbar/snackbar.component'
+import { SnackbarService } from './service/snackbar.service';
 
 @NgModule({
   declarations: [
@@ -35,15 +38,17 @@ import { ResearcherShareSelectorComponent } from './component/researcher-share-s
     GameSocketComponent,
     JoinComponent,
     MoveChoiceSelectorComponent,
-    ResearcherShareSelectorComponent
+    ResearcherShareSelectorComponent,
+    SnackbarComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule
   ],
-  providers: [ModalService, DomService],
+  providers: [ModalService, DomService, SnackbarService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -12,6 +12,7 @@ import { JoinComponent } from '../join/join.component';
 
 import io from "socket.io-client";
 import { Subscription } from 'rxjs';
+import { SnackbarService } from 'src/app/service/snackbar.service';
 
 @Component({
   selector: 'app-game-socket',
@@ -20,7 +21,7 @@ import { Subscription } from 'rxjs';
 })
 export class GameSocketComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute, private api: ApiService, private modalService: ModalService) { }
+  constructor(private route: ActivatedRoute, private api: ApiService, private modalService: ModalService, private snackBarService: SnackbarService) { }
   game: any;
   socket: any;
   match_name: string;
@@ -77,12 +78,12 @@ export class GameSocketComponent implements OnInit {
       });
 
       this.socket.on("discover successful", (data, color) => {
-        window.alert(`Cure for ${color} was discovered`)
+        this.snackBarService.show(`Cure for ${color} was discovered`)
         this.game = data
       });
 
       this.socket.on("eradicated", color => {
-        window.alert(`${color} was eradicated`)
+        this.snackBarService.show(`${color} was eradicated`)
       });
 
 
@@ -97,11 +98,11 @@ export class GameSocketComponent implements OnInit {
       })
 
       this.socket.on("epidemic", data => {
-        window.alert(`${data} infected by Epidemic`)
+        this.snackBarService.show(`${data} infected by Epidemic`, 'danger')
       });
 
       this.socket.on("invalid action", data => {
-        window.alert(data)
+        this.snackBarService.show(data, 'danger')
       });
 
       this.socket.on("game initialized", data => {
