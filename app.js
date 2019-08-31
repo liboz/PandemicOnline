@@ -257,10 +257,11 @@ io.on('connection', function (socket) {
 				curr_game().players[curr_game().player_index].cure(curr_game(), cards)
 				callback()
 				curr_game().log.push(log_string)
+				let color = curr_game().game_graph[cards[0]].color
 				if (curr_game().cured[color] === 2) {
 					io.in(match_name).emit("eradicated", color)
 				} else {
-					io.in(match_name).emit(`discover successful`, curr_game().toJSON(), curr_game().game_graph[cards[0]].color);
+					io.in(match_name).emit(`discover successful`, curr_game().toJSON(), color);
 				}
 
 				curr_game().use_turn(socket, io, match_name)
