@@ -46,7 +46,7 @@ sudo swapon --show
 
 Next, remove the swap file entry /swapfile swap swap defaults 0 0 from the /etc/fstab file.
 
-
+NODE_OPTIONS=--max-old-space-size=8192
 ng build --prod
 sudo rm -r  /var/www/deploy/PandemicOnline
 sudo cp dist/PandemicOnline  /var/www/deploy/ -r
