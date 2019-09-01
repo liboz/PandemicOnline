@@ -1,6 +1,5 @@
 const city = require('./city');
-const roles = require('./roles');
-
+const other = require('./other');
 
 function Player(id, name, role, location = "Atlanta") {
     this.name = name
@@ -60,17 +59,17 @@ Player.prototype.canOperationsExpertMoveWithCard = function (game, card) {
 };
 
 Player.prototype.canOperationsExpertMove = function (game) {
-    return this.role === roles.Roles.OperationsExpert && game.game_graph[this.location].hasResearchStation && this.hand.size > 0
+    return this.role === other.Roles.OperationsExpert && game.game_graph[this.location].hasResearchStation && this.hand.size > 0
 }
 
 Player.prototype.movePiece = function (game, game_graph, final_destination, socket) {
-    if (this.role === roles.Roles.Medic) {
+    if (this.role === other.Roles.Medic) {
         this.medicMoveTreat(game, socket)
     }
     game_graph[this.location].players.delete(this)
     game_graph[final_destination].players.add(this)
     this.location = final_destination;
-    if (this.role === roles.Roles.Medic) {
+    if (this.role === other.Roles.Medic) {
         this.medicMoveTreat(game, socket)
     }
 }
@@ -85,40 +84,45 @@ Player.prototype.medicMoveTreat = function (game, socket) {
 }
 
 Player.prototype.get_valid_final_destinations = function (game) {
-    if (this.canCharterFlight() || this.canOperationsExpertMove(game)) {
-        //go everywhere!!!
-        return Object.values(game.game_graph).map(i => i.index);
-    } else {
-        let s = new Set([...game.game_graph[this.location].neighbors].map(i => i.index))
-        this.hand.forEach(c => {
-            s.add(game.game_graph[c].index)
-        })
-        if (game.game_graph[this.location].hasResearchStation) {
-            game.research_stations.forEach(c => {
+    if (game.game_state === other.GameState.Ready) {
+        if (this.canCharterFlight() || this.canOperationsExpertMove(game)) {
+            //go everywhere!!!
+            return Object.values(game.game_graph).map(i => i.index);
+        } else {
+            let s = new Set([...game.game_graph[this.location].neighbors].map(i => i.index))
+            
+            this.hand.forEach(c => {
                 s.add(game.game_graph[c].index)
             })
+            if (game.game_graph[this.location].hasResearchStation) {
+                game.research_stations.forEach(c => {
+                    s.add(game.game_graph[c].index)
+                })
+            }
+            s.delete(game.game_graph[this.location].index)
+            return [...s]
         }
-        s.delete(game.game_graph[this.location].index)
-        return [...s]
+    } else {
+        return []
     }
 }
 
 Player.prototype.draw = function (game) {
     let card = game.player_deck.flip_card()
     if (card === undefined) {
-        game.lose_game();
-        console.log('lost during draw')
+        game.lose_game_draw();
+    } else {
+        this.hand.add(card)
     }
-    this.hand.add(card)
     return card;
 }
 
 Player.prototype.can_build_research_station = function (game) {
-    return !game.game_graph[this.location].hasResearchStation && (this.hand.has(this.location) || this.role === roles.Roles.OperationsExpert)
+    return !game.game_graph[this.location].hasResearchStation && (this.hand.has(this.location) || this.role === other.Roles.OperationsExpert)
 }
 
 Player.prototype.build_research_station = function (game) {
-    if (this.role !== roles.Roles.OperationsExpert) {
+    if (this.role !== other.Roles.OperationsExpert) {
         this.hand.delete(this.location)
     }
     game.game_graph[this.location].hasResearchStation = true
@@ -129,7 +133,7 @@ Player.prototype.can_cure = function (game, cards) {
     if (!game.game_graph[this.location].hasResearchStation) {
         return false
     } else {
-        let cards_needed = this.role === roles.Roles.Scientist ? 4 : 5;
+        let cards_needed = this.role === other.Roles.Scientist ? 4 : 5;
         if (cards.length === cards_needed && (new Set(cards).size === cards_needed)) {
             let color = game.game_graph[cards[0]].color
             if (game.cured[color] > 0) {
@@ -162,7 +166,7 @@ Player.prototype.can_hand_cure = function (game) {
             cards[game.game_graph[card].color] += 1
         })
 
-        let cards_needed = this.role === roles.Roles.Scientist ? 4 : 5;
+        let cards_needed = this.role === other.Roles.Scientist ? 4 : 5;
         let keys = Object.keys(cards)
         for (let i = 0; i < 4; i++) {
             if (game.cured[keys[i]] === 0 && cards[keys[i]] >= cards_needed) {
@@ -193,7 +197,7 @@ Player.prototype.can_treat_color = function (game, color) {
 }
 
 Player.prototype.treat = function (game, color, io = null) {
-    if (game.cured[color] === 1 || this.role === roles.Roles.Medic) {
+    if (game.cured[color] === 1 || this.role === other.Roles.Medic) {
         game.cubes[color] += game.game_graph[this.location].cubes[color]
         game.game_graph[this.location].cubes[color] = 0
     } else {
@@ -231,7 +235,7 @@ Player.prototype.can_take = function (game) {
     } else {
         return [...game.game_graph[this.location].players].some(player => {
             if (player !== this) {
-                return player.hand.has(this.location) || (player.role === roles.Roles.Researcher && player.hand.size > 0);
+                return player.hand.has(this.location) || (player.role === other.Roles.Researcher && player.hand.size > 0);
             }
         })
     }
@@ -242,7 +246,7 @@ Player.prototype.can_take_from_player = function (player, card = null) {
         return false
     } else {
         if (card) {
-            return player.hand.has(this.location) || (player.role === roles.Roles.Researcher && player.hand.has(card))
+            return player.hand.has(this.location) || (player.role === other.Roles.Researcher && player.hand.has(card))
         } else {
             return player.hand.has(this.location)
         }
@@ -253,12 +257,12 @@ Player.prototype.can_give = function (game) {
     if (game.game_graph[this.location].players.size <= 1) {
         return false
     } else {
-        return this.hand.has(this.location) || (this.role === roles.Roles.Researcher && this.hand.size > 0);
+        return this.hand.has(this.location) || (this.role === other.Roles.Researcher && this.hand.size > 0);
     }
 }
 
 Player.prototype.can_give_card = function (game, card) {
-    return this.can_give(game) && (this.role === roles.Roles.Researcher && this.hand.has(card))
+    return this.can_give(game) && (this.role === other.Roles.Researcher && this.hand.has(card))
 }
 
 Player.prototype.trade = function (player, card) {

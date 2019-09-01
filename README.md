@@ -25,3 +25,5 @@ this.hand.forEach(c => {
         game.game_graph[c] was undefined
         lost during draw 
         appeared before
+
+quarantine shouldn't stop initial

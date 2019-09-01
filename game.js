@@ -3,16 +3,7 @@ const infection = require('./infection_deck')
 const seedrandom = require('seedrandom');
 const player_deck = require('./player_deck')
 const player = require('./player')
-const roles = require('./roles')
-
-const GameState = {
-    NotStarted: 0,
-    Ready: 1,
-    DiscardingCard: 2,
-    Won: 3,
-    Lost: 4
-}
-
+const other = require('./other')
 
 const GameDifficulty = {
     4: 'Introductory',
@@ -55,7 +46,7 @@ function Game(cities, num_players, filtered_players, roles, num_epidemics, rng =
     }
     this.player_index = 0
     this.turns_left = 4
-    this.game_state = GameState.NotStarted
+    this.game_state = other.GameState.NotStarted
     this.log = []
     this.difficulty = num_epidemics
 
@@ -65,6 +56,7 @@ function Game(cities, num_players, filtered_players, roles, num_epidemics, rng =
 Game.prototype.outbreak = function () {
     this.outbreak_counter += 1
     if (this.outbreak_counter === 8) {
+        this.log.push('Game Lost due to outbreak counter exceeding 8')
         return false
     }
     return true
@@ -95,7 +87,7 @@ Game.prototype.infect_stage = function () {
 };
 
 Game.prototype.initialize_board = function () {
-    if (this.game_state === GameState.NotStarted) {
+    if (this.game_state === other.GameState.NotStarted) {
         for (let i = 2; i >= 0; i--) { // do all 3 cube infections, then 2 cube etc
             for (let j = 0; j < 3; j++) {
                 let card = this.infection_deck.flip_card()
@@ -104,16 +96,26 @@ Game.prototype.initialize_board = function () {
                 }
             }
         }
-        this.game_state = GameState.Ready;
+        this.game_state = other.GameState.Ready;
     }
 };
 
 Game.prototype.lose_game = function () {
-    this.game_state = GameState.Lost
+    this.game_state = other.GameState.Lost
+}
+
+Game.prototype.lose_game_draw = function () {
+    this.lose_game()
+    this.log.push('Game Lost due to insufficient number of cards left in the Player Deck')
+}
+
+Game.prototype.lose_game_cubes = function (color) {
+    this.lose_game()
+    this.log.push(`Game Lost due to insufficient number of ${color} cubes`)
 }
 
 Game.prototype.win_game = function () {
-    this.game_state = GameState.Won
+    this.game_state = other.GameState.Won
 }
 
 Game.prototype.next_player = function () {
@@ -144,7 +146,7 @@ Game.prototype.use_turn = function (socket, io, match_name) {
         io.in(match_name).emit('update game state', this.toJSON())
         for (let player of this.players) {
             if (player.hand.size > player.hand_size_limit) {
-                this.game_state = GameState.DiscardingCard
+                this.game_state = other.GameState.DiscardingCard
                 this.must_discard_index = player.id
                 this.log.push(`Player ${player.id} is discarding cards`)
                 // Send notification of discard to other players
@@ -165,24 +167,26 @@ Game.prototype.turn_end = function (socket, io, match_name) {
     }
 
     io.in(match_name).emit('update game state', this.toJSON())
-    let next_turn = true
-    for (let player of this.players) {
-        if (player.hand.size > player.hand_size_limit) {
-            this.game_state = GameState.DiscardingCard
-            this.must_discard_index = player.id
-            this.log.push(`Player ${player.id} is discarding cards`)
-            // Send notification of discard to other players
-            io.emit('discard cards', this.must_discard_index)
-            next_turn = false
-            break;
+    if (this.game_state === other.GameState.Ready) {
+        let next_turn = true
+        for (let player of this.players) {
+            if (player.hand.size > player.hand_size_limit) {
+                this.game_state = other.GameState.DiscardingCard
+                this.must_discard_index = player.id
+                this.log.push(`Player ${player.id} is discarding cards`)
+                // Send notification of discard to other players
+                io.emit('discard cards', this.must_discard_index)
+                next_turn = false
+                break;
+            }
         }
-    }
 
-    if (next_turn) {
-        this.infect_stage()
-        this.next_player()
-        this.turns_left = 4;
-        io.in(match_name).emit('update game state', this.toJSON())
+        if (next_turn) {
+            this.infect_stage()
+            this.next_player()
+            this.turns_left = 4;
+            io.in(match_name).emit('update game state', this.toJSON())
+        }
     }
 }
 
@@ -219,20 +223,21 @@ function GameJSON(game) {
     this.game_state = game.game_state
     this.player_index = game.player_index
     this.turns_left = game.turns_left
-    if (game.game_state !== GameState.NotStarted) {
+    if (game.game_state !== other.GameState.NotStarted) {
         this.valid_final_destinations = game.players[game.player_index].get_valid_final_destinations(game)
         this.can_charter_flight = game.players[game.player_index].canCharterFlight()
         this.can_operations_expert_move = game.players[game.player_index].canOperationsExpertMove(game)
         this.can_build_research_station = game.players[game.player_index].can_build_research_station(game)
         this.can_cure = game.players[game.player_index].can_hand_cure(game)
-        this.cards_needed_to_cure = game.players[game.player_index].role === roles.Roles.Scientist ? 4 : 5
+        this.cards_needed_to_cure = game.players[game.player_index].role === other.Roles.Scientist ? 4 : 5
         this.can_treat = game.players[game.player_index].can_treat(game)
         this.can_take = game.players[game.player_index].can_take(game)
         this.can_give = game.players[game.player_index].can_give(game)
+        this.player_deck_cards_remaining = game.player_deck.deck.length
         this.log = game.log
         this.difficulty = game.difficulty
     }
-    if (game.game_state === GameState.DiscardingCard) {
+    if (game.game_state === other.GameState.DiscardingCard) {
         this.must_discard_index = game.must_discard_index
     }
 };
@@ -240,14 +245,13 @@ function GameJSON(game) {
 function GameMap(cities) {
     let game_graph = city.City.load(cities)
     this.game_graph = Object.values(game_graph).map(c => new city.CityJSON(c))
-    this.game_state = GameState.NotStarted
+    this.game_state = other.GameState.NotStarted
 };
 
 
 module.exports = {
     Game: Game,
     GameJSON: GameJSON,
-    GameState: GameState,
     GameMap: GameMap,
     GameDifficulty: GameDifficulty
 };
