@@ -1,7 +1,9 @@
-<div *ngIf="show"
-     @state
-     [ngClass]="['snackbar-wrap',type]">
-  <p class="snackbar-text">
-    {{message}}
-  </p>
+<div *ngIf="show()" @state>
+  <div class="snackbar-wrap">
+    <div *ngFor="let item of items" [ngClass]="[item.type]">
+      <p class="snackbar-text">
+        {{item.message}}
+      </p>
+    </div>
+  </div>
 </div>

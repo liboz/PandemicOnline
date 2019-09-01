@@ -29,9 +29,8 @@ import { transition, trigger, style, animate } from '@angular/animations';
 })
 export class SnackbarComponent implements OnInit {
 
-  show = false;
-  message: string = 'This is snackbar';
-  type: string = 'success';
+  show = () => this.items.length > 0;
+  items: SnackBarItem[] = []
   private snackbarSubscription: Subscription;
   constructor(private snackbarService: SnackbarService) { }
 
@@ -39,15 +38,11 @@ export class SnackbarComponent implements OnInit {
     this.snackbarSubscription = this.snackbarService.snackbarState
     .subscribe(
       (state) => {
-        if (state.type) {
-          this.type = state.type;
-        } else {
-          this.type = 'success';
-        }
-        this.message = state.message;
-        this.show = state.show;
+        let snackbar = new SnackBarItem(state.message, state.type)
+        this.items.push(snackbar);
+        console.log(this.items)
         setTimeout(() => {
-          this.show = false;
+          this.items.shift();
         }, 3000);
       });
   }
@@ -56,4 +51,15 @@ export class SnackbarComponent implements OnInit {
     this.snackbarSubscription.unsubscribe();
   }
 
+}
+
+
+class SnackBarItem {
+  message: string = 'This is snackbar'; 
+  type: string = 'success';
+
+  constructor(message: string, type: string) { 
+    this.message = message
+    this.type = type
+  }
 }

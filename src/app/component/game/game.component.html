@@ -22,7 +22,7 @@
         </ng-container>
     </div>
 </div>
-<div *ngIf="!hasStarted()" >
+<div *ngIf="!hasStarted()">
     <button (click)="onStart()">Start Game</button>
     <div *ngFor="let difficulty of difficulties">
         <input type="radio" [(ngModel)]="selectedDifficulty" [value]="difficulty[1]"> {{ difficulty[0] }}
@@ -98,9 +98,15 @@
         <div>
             Outbreak Counter: {{ game.outbreak_counter }}
         </div>
+        <hr>
         <div>
             Infection Rate: {{ game.infection_rate[game.infection_rate_index] }}
         </div>
+        <hr>
+        <div>
+            Player Deck Cards Remaining: {{ game.player_deck_cards_remaining }}
+        </div>
+        <hr>
         <div>
             Cubes:
             <ul>
@@ -109,6 +115,7 @@
                 </li>
             </ul>
         </div>
+        <hr>
         <div>
             Cured:
             <ul>
