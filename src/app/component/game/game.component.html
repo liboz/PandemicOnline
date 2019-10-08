@@ -44,8 +44,9 @@
                 <button [disabled]="!game.can_build_research_station || cannotDoPrimaryAction()"
                     (click)="onBuild()">Build A
                     Research Station</button>
-                <button [disabled]="!game.can_treat || cannotDoPrimaryAction()" (click)="onTreat()">Treat
-                    Disease</button>
+                <button [disabled]="!game.can_treat || (cannotDoPrimaryAction() && !treatColorChoices)"
+                    (click)="onTreat()">
+                    {{ treatColorChoices ? 'Cancel' : 'Treat Disease' }}</button>
                 <button
                     [disabled]="(!game.can_give && !game.can_take) || (cannotDoPrimaryAction() && !shareCardChoices)"
                     (click)="onShare()">{{ shareCardChoices ? 'Cancel' : 'Share Knowledge' }}</button>
