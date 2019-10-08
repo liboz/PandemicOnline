@@ -81,6 +81,27 @@ describe('City', function () {
     });
   });
 
+  describe('#Infect', function () {
+    it('Quarantine Specialist Does Nothing in Initialization', function () {
+      let seeded = seedrandom('5') // initial infection contains Atlanta
+      let g = new game.Game(cities, 2, ["test", "test"], [other.Roles.QuarantineSpecialist, other.Roles.Researcher], 5, seeded);
+
+      g.initialize_board();
+      let infected = [
+        'London', 'Sao Paulo', 'Tokyo',
+        'Atlanta', 'Hong Kong', 'Manila',
+        'Moscow', 'New York', 'Bangkok',
+      ].reverse()
+      expect(g.infection_deck.faceup_deck).toEqual(infected);
+      for (let i = 0; i < infected.length; i++) {
+        let cube_count = 3 - Math.trunc(i / 3)
+        let c = g.game_graph[infected[i]]
+        expect(c.cubes[c.color]).toBe(cube_count)
+      }
+
+    });
+  });
+
 
   describe('#Infect', function () {
     it('No Infect when Eradicated', function () {
@@ -446,10 +467,10 @@ describe('Player Deck', function () {
     it('Hand Size Is Correct', function () {
       let seeded = seedrandom()
       let g = new game.Game(cities, 3, ["test", "test", "test"], [other.Roles.ContingencyPlanner, other.Roles.Researcher, other.Roles.Scientist], 5, seeded);
-      
+
       g.players.forEach(i => expect(i.hand.size).toBe(3))
 
-      g = new game.Game(cities, 2, ["test", "test", ], [other.Roles.ContingencyPlanner, other.Roles.Researcher], 5, seeded);
+      g = new game.Game(cities, 2, ["test", "test",], [other.Roles.ContingencyPlanner, other.Roles.Researcher], 5, seeded);
 
       g.players.forEach(i => expect(i.hand.size).toBe(4))
     });
@@ -1337,15 +1358,15 @@ describe('Player', function () {
       expect(g.players[0].hand.has('Algiers')).toBe(true)
       expect(g.players[1].hand.has('Algiers')).toBe(false)
       g.players[0].trade(g.players[1], 'Algiers')
-      
-      
+
+
       g.players[0].move(g, 'Miami')
       expect(g.players[0].can_take(g)).toBe(false)
       expect(g.players[0].can_take_from_player(g.players[1], 'Algiers')).toBe(false)
       expect(g.players[1].can_take_from_player(g.players[0])).toBe(false)
       expect(g.players[0].can_give(g)).toBe(false)
       expect(g.players[1].can_give(g)).toBe(false)
-      
+
       g.players[1].move(g, 'Miami')
       expect(g.players[0].can_take(g)).toBe(true)
       expect(g.players[0].can_take_from_player(g.players[1], 'Algiers')).toBe(true)
@@ -1364,7 +1385,7 @@ describe('Player', function () {
       expect(g.players[1].can_give(g)).toBe(true)
       g.players[1].discard([...g.players[1].hand]) // need cards in hand to trade!
       expect(g.players[0].can_take(g)).toBe(false)
-      expect(g.players[1].can_give(g)).toBe(false) 
+      expect(g.players[1].can_give(g)).toBe(false)
     });
   });
 

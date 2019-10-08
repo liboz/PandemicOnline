@@ -92,7 +92,8 @@ Game.prototype.initialize_board = function () {
             for (let j = 0; j < 3; j++) {
                 let card = this.infection_deck.flip_card()
                 for (let k = 0; k <= i; k++) { //# of cubes to infect based on index i
-                    this.game_graph[card].infect(this)
+                    let city = this.game_graph[card]
+                    city.infect(this, city.color, new Set(), true)
                 }
             }
         }
