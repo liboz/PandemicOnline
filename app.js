@@ -67,7 +67,7 @@ io.on('connection', function (socket) {
 
 	socket.on('join', function (role, player_name, callback) {
 		// add logic for role is invalid
-		if (games[match_name].available_roles.has(role) || (curr_game() && curr_game().game_state !== other.GameState.NotStarted ) ) {
+		if (games[match_name].available_roles.has(role) || (curr_game() && curr_game().game_state !== other.GameState.NotStarted)) {
 			let player_index = players().findIndex(i => i === player_name) // should lock maybe?
 			if (player_index === -1) {
 				player_index = players().length
@@ -87,17 +87,18 @@ io.on('connection', function (socket) {
 		if (!curr_game() || curr_game().game_state === other.GameState.NotStarted) {
 			let num_players = players().length
 			if (num_players > 5) {
-				num_players = 5
+				socket.emit('invalid action', `Cannot start game with over 5 players`);
 			} else if (num_players < 2) {
-				num_players = 2
+				socket.emit('invalid action', `Cannot start game with fewer than 2 players`);
+			} else {
+				let filtered_players = players().slice(0, num_players)
+				let filtered_roles = player_roles().slice(0, num_players)
+				console.log(`start game with ${filtered_players} in room ${match_name}`);
+				games[match_name].game = new game.Game(cities, num_players, filtered_players, filtered_roles, difficulty, seeded)
+				curr_game().initialize_board()
+				curr_game().log.push(`game initialized at ${game.GameDifficulty[difficulty]} difficulty`)
+				io.in(match_name).emit("game initialized", curr_game().toJSON());
 			}
-			let filtered_players = players().slice(0, num_players)
-			let filtered_roles = player_roles().slice(0, num_players)
-			console.log(`start game with ${filtered_players} in room ${match_name}`);
-			games[match_name].game = new game.Game(cities, num_players, filtered_players, filtered_roles, difficulty, seeded)
-			curr_game().initialize_board()
-			curr_game().log.push(`game initialized at ${game.GameDifficulty[difficulty]} difficulty`)
-			io.in(match_name).emit("game initialized", curr_game().toJSON());
 		} else {
 			console.log(`Game ${match_name} has already started and has current game state: ${curr_game().game_state}`);
 		}
