@@ -13,12 +13,12 @@
     "cors": "^2.8.5",
     "denque": "^1.4.1",
     "express": "^4.17.1",
-    "nodemon": "^1.19.1",
-    "seedrandom": "^3.0.1",
-    "socket.io": "^2.2.0"
+    "nodemon": "^1.19.3",
+    "seedrandom": "^3.0.5",
+    "socket.io": "^2.3.0"
   },
   "devDependencies": {
-    "coveralls": "^3.0.5",
-    "jest": "^24.8.0"
+    "coveralls": "^3.0.6",
+    "jest": "^24.9.0"
   }
 }
