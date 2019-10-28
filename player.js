@@ -10,43 +10,51 @@ function Player(id, name, role, location = "Atlanta") {
     this.hand_size_limit = 7
 };
 
+Player.prototype.dispatcher_move = function(game, other_player, final_destination, socket = null) {
+    if (this.role !== other.Roles.Dispatcher) {
+        return false
+    } else {
+        return other_player.move(game, final_destination, this.hand, socket)
+    }
+}
+
 // add dispatcher
-Player.prototype.move = function (game, final_destination, socket = null) {
+Player.prototype.move = function (game, final_destination, player_hand = this.hand, socket = null) {
     let game_graph = game.game_graph
     if (game_graph[this.location].neighbors.has(game_graph[final_destination]) ||
         game_graph[this.location].hasResearchStation && game_graph[final_destination].hasResearchStation) {
         // drive/ferry + shuttle
         this.movePiece(game, game_graph, final_destination, socket)
         return true
-    } else if (this.hand.has(final_destination)) {
+    } else if (player_hand.has(final_destination)) {
         // direct
-        this.directFlight(game, final_destination, socket)
+        this.directFlight(game, final_destination, player_hand, socket)
         return true
-    } else if (this.hand.has(this.location)) {
+    } else if (player_hand.has(this.location)) {
         // charter
-        this.charterFlight(game, final_destination, socket)
+        this.charterFlight(game, final_destination, player_hand, socket)
         return true
     } else {
         return false;
     }
 };
 
-Player.prototype.canDirectFlight = function (final_destination) {
-    return this.hand.has(final_destination)
+Player.prototype.canDirectFlight = function (final_destination, hand = this.hand) {
+    return hand.has(final_destination)
 };
 
-Player.prototype.directFlight = function (game, final_destination, socket = null) {
-    this.hand.delete(final_destination)
+Player.prototype.directFlight = function (game, final_destination, hand, socket) {
+    hand.delete(final_destination)
     this.movePiece(game, game.game_graph, final_destination, socket)
 }
 
-Player.prototype.charterFlight = function (game, final_destination, socket = null) {
-    this.hand.delete(this.location)
+Player.prototype.charterFlight = function (game, final_destination, hand, socket) {
+    hand.delete(this.location)
     this.movePiece(game, game.game_graph, final_destination, socket)
 };
 
-Player.prototype.canCharterFlight = function () {
-    return this.hand.has(this.location)
+Player.prototype.canCharterFlight = function (hand = this.hand) {
+    return hand.has(this.location)
 }
 
 Player.prototype.operationsExpertMove = function (game, final_destination, card, socket = null) {
@@ -83,15 +91,16 @@ Player.prototype.medicMoveTreat = function (game, socket) {
     })
 }
 
-Player.prototype.get_valid_final_destinations = function (game) {
+Player.prototype.get_valid_final_destinations = function (game, hand = this.hand) {
     if (game.game_state === other.GameState.Ready) {
-        if (this.canCharterFlight() || this.canOperationsExpertMove(game)) {
+        // note that disptcher can't use operations expert move!
+        if (this.canCharterFlight(hand) || (hand === this.hand && this.canOperationsExpertMove(game))) {
             //go everywhere!!!
             return Object.values(game.game_graph).map(i => i.index);
         } else {
             let s = new Set([...game.game_graph[this.location].neighbors].map(i => i.index))
             
-            this.hand.forEach(c => {
+            hand.forEach(c => {
                 s.add(game.game_graph[c].index)
             })
             if (game.game_graph[this.location].hasResearchStation) {
@@ -104,6 +113,21 @@ Player.prototype.get_valid_final_destinations = function (game) {
         }
     } else {
         return []
+    }
+}
+
+Player.prototype.get_valid_dispatcher_final_destinations = function (game) {
+    if (game.game_state === other.GameState.Ready) {
+        let result = {}
+        for (let player of game.players) {
+            if (player !== this) {
+                console.log(player, this.hand)
+                result[player.id] = player.get_valid_final_destinations(game, this.hand)
+            }
+        }
+        return result
+    } else {
+        return {}
     }
 }
 

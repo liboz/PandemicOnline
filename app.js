@@ -107,7 +107,8 @@ io.on('connection', function (socket) {
 		let log_string = `Player ${curr_game().player_index}: move to ${data}`
 		console.log(log_string);
 		if (curr_game().game_state === other.GameState.Ready && curr_game().turns_left !== 0) {
-			if (curr_game().players[curr_game().player_index].move(curr_game(), data, socket)) {
+			let curr_player = curr_game().players[curr_game().player_index]
+			if (curr_player.move(curr_game(), data, curr_player.hand, socket)) {
 				callback()
 				curr_game().log.push(log_string)
 				socket.emit(`move successful`, curr_game().toJSON());
@@ -124,8 +125,9 @@ io.on('connection', function (socket) {
 		let log_string = `Player ${curr_game().player_index}: Direct Flight to ${data}`
 		console.log(log_string);
 		if (curr_game().game_state === other.GameState.Ready && curr_game().turns_left !== 0) {
-			if (curr_game().players[curr_game().player_index].canDirectFlight(data)) {
-				curr_game().players[curr_game().player_index].directFlight(curr_game(), data, socket)
+			let curr_player = curr_game().players[curr_game().player_index]
+			if (curr_player.canDirectFlight(data)) {
+				curr_player.directFlight(curr_game(), data, curr_player.hand, socket)
 				curr_game().log.push(log_string)
 				socket.emit(`move choice successful`, curr_game().toJSON());
 				curr_game().use_turn(socket, io, match_name)
@@ -141,8 +143,9 @@ io.on('connection', function (socket) {
 		let log_string = `Player ${curr_game().player_index}: Charter Flight to ${data}`
 		console.log(log_string);
 		if (curr_game().game_state === other.GameState.Ready && curr_game().turns_left !== 0) {
-			if (curr_game().players[curr_game().player_index].canCharterFlight()) {
-				curr_game().players[curr_game().player_index].charterFlight(curr_game(), data, socket)
+			let curr_player = curr_game().players[curr_game().player_index]
+			if (curr_player.canCharterFlight()) {
+				curr_player.charterFlight(curr_game(), data, curr_player.hand, socket)
 				curr_game().log.push(log_string)
 				socket.emit(`move choice successful`, curr_game().toJSON());
 				curr_game().use_turn(socket, io, match_name)
