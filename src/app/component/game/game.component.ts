@@ -288,14 +288,19 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   onTreat() {
-    let location = this.game.players[this.game.player_index].location
-    let cubes = this.game.game_graph[this.game.game_graph_index[location]].cubes
-    let cubes_on = Object.keys(cubes).filter(i => cubes[i] > 0)
-    if (cubes_on.length === 1) {
-      this.treat(cubes_on[0])
+    if (this.treatColorChoices) {
+      this.treatColorChoices = null
     } else {
-      this.treatColorChoices = cubes_on;
+      let location = this.game.players[this.game.player_index].location
+      let cubes = this.game.game_graph[this.game.game_graph_index[location]].cubes
+      let cubes_on = Object.keys(cubes).filter(i => cubes[i] > 0)
+      if (cubes_on.length === 1) {
+        this.treat(cubes_on[0])
+      } else {
+        this.treatColorChoices = cubes_on;
+      }
     }
+
   }
 
   treat(color) {
@@ -331,7 +336,7 @@ export class GameComponent implements OnInit, OnChanges {
           this.shareCardChoices = other_players_ids.map(i => new ShareCard(ShareCard.Give, i, this.game.players[this.game.player_index].location, () => this.share(i)))
         }
       } else {
-        
+
         // researcher
         if (location_players.length === 2) {
           // just need to figure out who is the researcher and who isn't
@@ -498,7 +503,7 @@ export class GameComponent implements OnInit, OnChanges {
     // prevent memory leak when component destroyed
     this.destroySubscription.unsubscribe();
     this.clearShareCardsSubscription.unsubscribe();
-  }  
+  }
 }
 
 
