@@ -35,7 +35,6 @@ app.get('/:match_name', (req, res) => {
 const server = app.listen(8080)
 
 const io = socketIO(server);
-io.set('transports', ['websocket']);
 io.set('origins', '*');
 
 let seeded = seedrandom('test!')
