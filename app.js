@@ -31,8 +31,8 @@ app.get('/:match_name', (req, res) => {
 	res.send(!curr_game || !curr_game.game ? dummy_game : curr_game.game.toJSON())
 })
 
-//Listen on port 3000
-const server = app.listen(3000)
+//Listen on port 8080
+const server = app.listen(8080)
 
 const io = socketIO(server);
 io.set('transports', ['websocket']);
