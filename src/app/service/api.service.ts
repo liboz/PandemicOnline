@@ -14,7 +14,7 @@ export class ApiService {
   constructor(private http: HttpClient) { }
 
   getGames(match_name) {
-    return this.http.get(`${environment.baseUrl}:3000/${match_name}`);
+    return this.http.get(`${environment.baseUrl}/${match_name}`);
   }
 
   private handleError(error: HttpErrorResponse) {
