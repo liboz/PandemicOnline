@@ -17,3 +17,7 @@ env: flex
 # [END runtime]
 network:
   session_affinity: true
+handlers:
+- url: /.*
+  http_headers: 
+    Access-Control-Allow-Origin: "*"
