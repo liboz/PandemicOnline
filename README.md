@@ -5,11 +5,17 @@ Online Pandemic Simulator
 
 # Instructions
 
+
+curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo npm i -g pm2 
+npm install
+
 pm2 start app.js
 pm2 save
 pm2 startup
 
-pm2 restart
+pm2 restart app
 pm2 ls
 pm2 logs
 
