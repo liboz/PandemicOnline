@@ -14,3 +14,5 @@
 # [START runtime]
 runtime: nodejs10
 # [END runtime]
+network:
+  session_affinity: true
