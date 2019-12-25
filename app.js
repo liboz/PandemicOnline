@@ -36,6 +36,7 @@ const server = app.listen(3000)
 
 const io = socketIO(server);
 io.set('transports', ['websocket']);
+io.set('origins', ['https://pandemic-online-angular.s3.amazonaws.com', 'http://pandemic-online-angular.s3.amazonaws.com']);
 
 let seeded = seedrandom('test!')
 io.on('connection', function (socket) {
