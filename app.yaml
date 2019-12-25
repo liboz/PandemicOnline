@@ -13,6 +13,7 @@
 #
 # [START runtime]
 runtime: nodejs10
+env: flex
 # [END runtime]
 network:
   session_affinity: true
