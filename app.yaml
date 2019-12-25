@@ -19,5 +19,5 @@ network:
   session_affinity: true
 handlers:
 - url: /.*
-  http_headers: 
-    Access-Control-Allow-Origin: "*"
+  http_headers:
+    Access-Control-Allow-Origin: '*'
