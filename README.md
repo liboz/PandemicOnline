@@ -5,7 +5,7 @@ firebase deploy
 
 # Live Instance
 
-pandemic.live
+[pandemic.live](pandemic.live)
 
 # Todo
 
