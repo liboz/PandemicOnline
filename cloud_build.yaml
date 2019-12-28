@@ -1,7 +1,9 @@
 steps:
-- name: 'gcr.io/cloud-builders/npm'
+- name: node:lts
+  entrypoint: npm
   args: ['install']
-- name: 'gcr.io/cloud-builders/npm'
+- name: node:lts
+  entrypoint: npm
   args: ['run', 'test:cloudbuild']
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy"]
