@@ -1,5 +1,6 @@
 steps:
-- name: 'gcr.io/cloud-builders/npm'
+- name: node:lts
+  entrypoint: npm
   args: ['install']
 - name: 'gcr.io/$PROJECT_ID/ng'
   args: ['build', '--prod']
