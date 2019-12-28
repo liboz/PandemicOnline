@@ -1,0 +1,8 @@
+steps:
+- name: 'gcr.io/cloud-builders/npm'
+  args: ['install']
+- name: 'gcr.io/$PROJECT_ID/ng'
+  args: ['build', '--prod']
+- name: "gcr.io/$PROJECT_ID/firebase"
+  args: ["deploy", "--project", "$PROJECT_ID", "--token", "$_TOKEN"]
+timeout: "1600s"
