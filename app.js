@@ -69,6 +69,13 @@ io.on("connection", function(socket) {
     return games[match_name].player_roles;
   };
 
+  let isReady = function() {
+    return (
+      curr_game().game_state === other.GameState.Ready &&
+      curr_game().turns_left !== 0
+    );
+  };
+
   socket.on("join", function(role, player_name, callback) {
     // add logic for role is invalid
     if (
@@ -136,10 +143,7 @@ io.on("connection", function(socket) {
   socket.on("move", function(data, callback) {
     let log_string = `Player ${curr_game().player_index}: move to ${data}`;
     console.log(log_string);
-    if (
-      curr_game().game_state === other.GameState.Ready &&
-      curr_game().turns_left !== 0
-    ) {
+    if (isReady()) {
       let curr_player = curr_game().players[curr_game().player_index];
       if (curr_player.move(curr_game(), data, curr_player.hand, socket)) {
         callback();
@@ -162,10 +166,7 @@ io.on("connection", function(socket) {
       curr_game().player_index
     }: Direct Flight to ${data}`;
     console.log(log_string);
-    if (
-      curr_game().game_state === other.GameState.Ready &&
-      curr_game().turns_left !== 0
-    ) {
+    if (isReady()) {
       let curr_player = curr_game().players[curr_game().player_index];
       if (curr_player.canDirectFlight(data)) {
         curr_player.directFlight(curr_game(), data, curr_player.hand, socket);
@@ -188,10 +189,7 @@ io.on("connection", function(socket) {
       curr_game().player_index
     }: Charter Flight to ${data}`;
     console.log(log_string);
-    if (
-      curr_game().game_state === other.GameState.Ready &&
-      curr_game().turns_left !== 0
-    ) {
+    if (isReady()) {
       let curr_player = curr_game().players[curr_game().player_index];
       if (curr_player.canCharterFlight()) {
         curr_player.charterFlight(curr_game(), data, curr_player.hand, socket);
@@ -214,10 +212,7 @@ io.on("connection", function(socket) {
       curr_game().player_index
     }: Operations Expert Move to ${final_destination} by discarding ${card}`;
     console.log(log_string);
-    if (
-      curr_game().game_state === other.GameState.Ready &&
-      curr_game().turns_left !== 0
-    ) {
+    if (isReady()) {
       if (
         curr_game().players[
           curr_game().player_index
@@ -246,15 +241,46 @@ io.on("connection", function(socket) {
     }
   });
 
+  socket.on("dispatcher move", function(other_player, final_destination) {
+    let log_string = `Player ${
+      curr_game().player_index
+    }: Dispatcher Move ${other_player} to ${final_destination}`;
+    console.log(log_string);
+    if (isReady()) {
+      if (
+        curr_game().players[
+          curr_game().player_index
+        ].canOperationsExpertMoveWithCard(curr_game(), card)
+      ) {
+        curr_game().players[curr_game().player_index].dispatcher_move(
+          curr_game(),
+          other_player,
+          final_destination,
+          socket
+        );
+        curr_game().log.push(log_string);
+        socket.emit(`move choice successful`, curr_game().toJSON());
+        curr_game().use_turn(socket, io, match_name);
+      } else {
+        socket.emit(
+          "invalid action",
+          `Moving ${other_player} to ${final_destination} is an invalid Dispatcher Move`
+        );
+      }
+    } else {
+      socket.emit(
+        "invalid action",
+        `Moving ${other_player} to ${final_destination} is an invalid Dispatcher Move`
+      );
+    }
+  });
+
   socket.on("build", function() {
     let log_string = `Player ${curr_game().player_index}: build on ${
       curr_game().players[curr_game().player_index].location
     }`;
     console.log(log_string);
-    if (
-      curr_game().game_state === other.GameState.Ready &&
-      curr_game().turns_left !== 0
-    ) {
+    if (isReady()) {
       if (
         curr_game().players[
           curr_game().player_index
@@ -284,10 +310,7 @@ io.on("connection", function(socket) {
       curr_game().players[curr_game().player_index].location
     }`;
     console.log(log_string);
-    if (
-      curr_game().game_state === other.GameState.Ready &&
-      curr_game().turns_left !== 0
-    ) {
+    if (isReady()) {
       if (
         curr_game().players[curr_game().player_index].can_treat_color(
           curr_game(),
@@ -340,10 +363,7 @@ io.on("connection", function(socket) {
 
     console.log(log_string);
 
-    if (
-      curr_game().game_state === other.GameState.Ready &&
-      curr_game().turns_left !== 0
-    ) {
+    if (isReady()) {
       if (!card) {
         if (
           curr_game().players[curr_game().player_index].can_give(curr_game()) ||
@@ -418,10 +438,7 @@ io.on("connection", function(socket) {
       curr_game().players[curr_game().player_index].location
     } with ${cards}`;
     console.log(log_string);
-    if (
-      curr_game().game_state === other.GameState.Ready &&
-      curr_game().turns_left !== 0
-    ) {
+    if (isReady()) {
       if (
         curr_game().players[curr_game().player_index].can_cure(
           curr_game(),
@@ -464,10 +481,7 @@ io.on("connection", function(socket) {
   socket.on("pass", function() {
     let log_string = `Player ${curr_game().player_index}: pass move`;
     console.log(log_string);
-    if (
-      curr_game().game_state === other.GameState.Ready &&
-      curr_game().turns_left !== 0
-    ) {
+    if (isReady()) {
       curr_game().log.push(log_string);
       curr_game().pass_turn(socket, io, match_name);
     } else {

@@ -1309,11 +1309,7 @@ describe("Player", function() {
       valid_final_destinations = g.players[2].get_valid_dispatcher_final_destinations(
         g
       );
-      console.log(g.players[2].hand);
-      let b = valid_final_destinations[0].map(
-        i => Object.values(g.game_graph).map(c => new city.CityJSON(c))[i]
-      );
-      console.log(b);
+
       expect(valid_final_destinations[0].sort()).toEqual(
         ["Chicago", "Washington", "Miami", "Milan", "Riyadh", "Essen"]
           .map(i => g.game_graph[i].index)

@@ -169,7 +169,6 @@ Player.prototype.get_valid_dispatcher_final_destinations = function(game) {
     let result = {};
     for (let player of game.players) {
       if (player !== this) {
-        console.log(player, this.hand);
         result[player.id] = player.get_valid_final_destinations(
           game,
           this.hand
