@@ -1,5 +1,12 @@
 steps:
-
+- name: node:lts
+  entrypoint: npm
+  args: ['install']
+- name: node:lts
+  entrypoint: npm
+  args: ['run', 'test:cloudbuild']
+- name: "gcr.io/cloud-builders/gcloud"
+  args: ["app", "deploy"]
 - name: gcr.io/cloud-builders/gcloud
   entrypoint: 'bash'
   args: ['./delete_old_versions.bash']
