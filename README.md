@@ -7,8 +7,8 @@ Online Pandemic Simulator
 Words too small on certain screens
 
 this.hand.forEach(c => {
-            s.add(game.game_graph[c].index) 
-        })
+s.add(game.game_graph[c].index)
+})
 
         game.game_graph[c] was undefined
         lost during draw 

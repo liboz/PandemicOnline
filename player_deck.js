@@ -1,50 +1,52 @@
-const random = require('./random');
+const random = require("./random");
 
 function PlayerDeck(cities, events, num_epidemics, rng, game = null) {
-    this.rng = rng;
-    this.num_epidemics = num_epidemics;
-    this.base_deck = [...cities.map(city => city.name), ...events];
-    this.shuffle(this.base_deck);
-    if (game !== null) {
-        let num_cards = 0
-        if (game.players.length == 3) {
-            num_cards = 9
-        } else {
-            num_cards = 8
-        }
-        for (let i = 0; i < num_cards; i++) {
-            game.initial_cards_for_players.push(this.base_deck.pop())
-        }
+  this.rng = rng;
+  this.num_epidemics = num_epidemics;
+  this.base_deck = [...cities.map(city => city.name), ...events];
+  this.shuffle(this.base_deck);
+  if (game !== null) {
+    let num_cards = 0;
+    if (game.players.length == 3) {
+      num_cards = 9;
+    } else {
+      num_cards = 8;
     }
-
-    this.partitions = this.partition_deck()
-    this.shuffle(this.partitions)
-    this.partitions.forEach(p => {
-        p.push("Epidemic");
-        this.shuffle(p);
-    })
-    this.deck = [].concat.apply([], this.partitions)
-};
-
-PlayerDeck.prototype.partition_deck = function () {
-    let size_partition = Math.trunc(this.base_deck.length / this.num_epidemics);
-    let partitions = []
-    for (var i = 0; i < this.num_epidemics - 1; i++) {
-        partitions.push(this.base_deck.slice(i * size_partition, (i + 1) * size_partition))
+    for (let i = 0; i < num_cards; i++) {
+      game.initial_cards_for_players.push(this.base_deck.pop());
     }
-    partitions.push(this.base_deck.slice(i * size_partition))
-    return partitions
+  }
+
+  this.partitions = this.partition_deck();
+  this.shuffle(this.partitions);
+  this.partitions.forEach(p => {
+    p.push("Epidemic");
+    this.shuffle(p);
+  });
+  this.deck = [].concat.apply([], this.partitions);
 }
 
-PlayerDeck.prototype.shuffle = function (array) {
-    random.shuffle(array, this.rng);
+PlayerDeck.prototype.partition_deck = function() {
+  let size_partition = Math.trunc(this.base_deck.length / this.num_epidemics);
+  let partitions = [];
+  for (var i = 0; i < this.num_epidemics - 1; i++) {
+    partitions.push(
+      this.base_deck.slice(i * size_partition, (i + 1) * size_partition)
+    );
+  }
+  partitions.push(this.base_deck.slice(i * size_partition));
+  return partitions;
 };
 
-PlayerDeck.prototype.flip_card = function () {
-    let card = this.deck.pop()
-    return card;
+PlayerDeck.prototype.shuffle = function(array) {
+  random.shuffle(array, this.rng);
+};
+
+PlayerDeck.prototype.flip_card = function() {
+  let card = this.deck.pop();
+  return card;
 };
 
 module.exports = {
-    PlayerDeck: PlayerDeck,
+  PlayerDeck: PlayerDeck
 };
