@@ -4,20 +4,23 @@ import {
   ComponentFactoryResolver,
   EmbeddedViewRef,
   ApplicationRef
-} from '@angular/core';
+} from "@angular/core";
 
 @Injectable()
 export class DomService {
-
   private childComponentRef: any;
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private appRef: ApplicationRef,
     private injector: Injector
-  ) { }
+  ) {}
 
-  public appendComponentTo(parentId: string, child: any, childConfig?: childConfig) {
-    // Create a component reference from the component 
+  public appendComponentTo(
+    parentId: string,
+    child: any,
+    childConfig?: childConfig
+  ) {
+    // Create a component reference from the component
     const childComponentRef = this.componentFactoryResolver
       .resolveComponentFactory(child)
       .create(this.injector);
@@ -35,7 +38,6 @@ export class DomService {
 
     // Append DOM element to the body
     document.getElementById(parentId).appendChild(childDomElem);
-
   }
 
   public removeComponent() {
@@ -44,7 +46,6 @@ export class DomService {
       this.childComponentRef.destroy();
     }
   }
-
 
   private attachConfig(config, componentRef) {
     let inputs = config.inputs;
@@ -58,14 +59,16 @@ export class DomService {
   }
 
   reattachConfig(config) {
-    this.attachConfig(config, this.childComponentRef)
+    this.attachConfig(config, this.childComponentRef);
   }
 
   getCurrentComponentName() {
-    return this.childComponentRef ? this.childComponentRef.componentType.name : null
+    return this.childComponentRef
+      ? this.childComponentRef.componentType.name
+      : null;
   }
 }
 interface childConfig {
-  inputs: object,
-  outputs: object
+  inputs: object;
+  outputs: object;
 }

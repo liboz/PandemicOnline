@@ -1,16 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ResearcherShareSelectorComponent } from './researcher-share-selector.component';
+import { ResearcherShareSelectorComponent } from "./researcher-share-selector.component";
 
-describe('ResearcherShareSelectorComponent', () => {
+describe("ResearcherShareSelectorComponent", () => {
   let component: ResearcherShareSelectorComponent;
   let fixture: ComponentFixture<ResearcherShareSelectorComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ResearcherShareSelectorComponent ]
-    })
-    .compileComponents();
+      declarations: [ResearcherShareSelectorComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('ResearcherShareSelectorComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

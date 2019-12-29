@@ -1,41 +1,44 @@
-import { Injectable } from '@angular/core';
-import { DomService } from './dom.service';
+import { Injectable } from "@angular/core";
+import { DomService } from "./dom.service";
 
-import { Subject }    from 'rxjs';
-import { PlayerInfo } from '../component/join/join.component';
+import { Subject } from "rxjs";
+import { PlayerInfo } from "../component/join/join.component";
 
 @Injectable()
 export class ModalService {
+  constructor(private domService: DomService) {}
 
-  constructor(private domService: DomService) { }
-
-  private modalElementId = 'modal-container';
-  private overlayElementId = 'overlay';
+  private modalElementId = "modal-container";
+  private overlayElementId = "overlay";
 
   init(component: any, inputs: object, outputs: object) {
     let componentConfig = {
-      inputs:inputs,
-      outputs:outputs
-    }
-    this.domService.appendComponentTo(this.modalElementId, component, componentConfig);
-    document.getElementById(this.modalElementId).className = 'show';
+      inputs: inputs,
+      outputs: outputs
+    };
+    this.domService.appendComponentTo(
+      this.modalElementId,
+      component,
+      componentConfig
+    );
+    document.getElementById(this.modalElementId).className = "show";
   }
 
   destroy() {
     this.domService.removeComponent();
-    document.getElementById(this.modalElementId).className = 'hidden';
+    document.getElementById(this.modalElementId).className = "hidden";
   }
 
   updateConfig(inputs: object, outputs: object) {
     let componentConfig = {
-      inputs:inputs,
-      outputs:outputs
-    }
-    this.domService.reattachConfig(componentConfig)
+      inputs: inputs,
+      outputs: outputs
+    };
+    this.domService.reattachConfig(componentConfig);
   }
 
   currentComponent() {
-    return this.domService.getCurrentComponentName()
+    return this.domService.getCurrentComponentName();
   }
 
   private joinSource = new Subject<PlayerInfo>();

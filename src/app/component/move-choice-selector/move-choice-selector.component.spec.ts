@@ -1,16 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { MoveChoiceSelectorComponent } from './move-choice-selector.component';
+import { MoveChoiceSelectorComponent } from "./move-choice-selector.component";
 
-describe('MoveChoiceSelectorComponent', () => {
+describe("MoveChoiceSelectorComponent", () => {
   let component: MoveChoiceSelectorComponent;
   let fixture: ComponentFixture<MoveChoiceSelectorComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MoveChoiceSelectorComponent ]
-    })
-    .compileComponents();
+      declarations: [MoveChoiceSelectorComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('MoveChoiceSelectorComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

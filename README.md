@@ -7,7 +7,6 @@ firebase deploy
 
 [pandemic.live](https://pandemic.live)
 
-
 # Cloud Deployment
 
 Uses https://github.com/GoogleCloudPlatform/cloud-builders-community/tree/master/ng and https://github.com/GoogleCloudPlatform/cloud-builders-community/tree/master/firebase

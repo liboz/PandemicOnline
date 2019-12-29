@@ -1,16 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { GameSocketComponent } from './game-socket.component';
+import { GameSocketComponent } from "./game-socket.component";
 
-describe('GameSocketComponent', () => {
+describe("GameSocketComponent", () => {
   let component: GameSocketComponent;
   let fixture: ComponentFixture<GameSocketComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GameSocketComponent ]
-    })
-    .compileComponents();
+      declarations: [GameSocketComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('GameSocketComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

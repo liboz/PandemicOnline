@@ -1,9 +1,16 @@
 <div>
-    Select Researcher Card to Trade:
+  Select Researcher Card to Trade:
 </div>
-<app-player-hand [hand]="hand" [game]="game" (onSelect)="onSelectedCard($event)" [cardLimit]="hand.length - 1">
+<app-player-hand
+  [hand]="hand"
+  [game]="game"
+  (onSelect)="onSelectedCard($event)"
+  [cardLimit]="hand.length - 1"
+>
 </app-player-hand>
 <div>
-    <button [disabled]="!selectedCard" (click)="onSubmit()">Trade {{ selectedCard }}</button>
-    <button (click)="onCancel()">Cancel</button>
+  <button [disabled]="!selectedCard" (click)="onSubmit()">
+    Trade {{ selectedCard }}
+  </button>
+  <button (click)="onCancel()">Cancel</button>
 </div>
