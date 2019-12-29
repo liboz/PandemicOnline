@@ -7,4 +7,6 @@ steps:
   args: ['run', 'test:cloudbuild']
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy"]
+- name: 'ubuntu'
+  args: ['bash', './dekete_old_versions.bash']
 timeout: "1600s"
