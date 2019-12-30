@@ -70,6 +70,12 @@
           {{ isMoving ? "Cancel" : "Move" }}
         </button>
         <button
+          [disabled]="cannotDoPrimaryAction() && !isMoving"
+          (click)="onDispatcherMove()"
+        >
+          Dispatcher Move
+        </button>
+        <button
           [disabled]="
             !game.can_build_research_station || cannotDoPrimaryAction()
           "

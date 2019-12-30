@@ -1,0 +1,61 @@
+export interface Game {
+  game_graph: GameGraph[];
+  game_graph_index: { [key: string]: number };
+  outbreak_counter: number;
+  infection_rate_index: number;
+  infection_rate: number[];
+  faceup_deck: string[];
+  players: Player[];
+  research_stations: string[];
+  cured: Cubes;
+  cubes: Cubes;
+  game_state: number;
+  player_index: number;
+  turns_left: number;
+  valid_final_destinations: number[];
+  can_charter_flight: boolean;
+  can_operations_expert_move: boolean;
+  can_build_research_station: boolean;
+  can_cure: boolean;
+  cards_needed_to_cure: number;
+  can_treat: boolean;
+  can_take: boolean;
+  can_give: boolean;
+  player_deck_cards_remaining: number;
+  log: string[];
+  difficulty: number;
+  must_discard_index: number;
+}
+
+export interface Cubes {
+  blue: number;
+  red: number;
+  black: number;
+  yellow: number;
+}
+
+export interface GameGraph {
+  name: string;
+  color: Color;
+  location: number[];
+  cubes: Cubes;
+  hasResearchStation: boolean;
+  players: number[];
+  index: number;
+  neighbors: number[];
+}
+
+export enum Color {
+  Black = "black",
+  Blue = "blue",
+  Red = "red",
+  Yellow = "yellow"
+}
+
+export interface Player {
+  name: string;
+  role: string;
+  hand: string[];
+  location: string;
+  id: number;
+}

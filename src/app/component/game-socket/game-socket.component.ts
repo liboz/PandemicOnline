@@ -13,6 +13,8 @@ import io from "socket.io-client";
 import { Subscription } from "rxjs";
 import { SnackbarService } from "src/app/service/snackbar.service";
 
+import { Game } from "../../../../data/types";
+
 @Component({
   selector: "app-game-socket",
   templateUrl: "./game-socket.component.html",
@@ -25,8 +27,8 @@ export class GameSocketComponent implements OnInit {
     private modalService: ModalService,
     private snackBarService: SnackbarService
   ) {}
-  game: any;
-  socket: any;
+  game: Game;
+  socket: SocketIOClient.Socket;
   match_name: string;
   player_name: string;
   player_index: number;

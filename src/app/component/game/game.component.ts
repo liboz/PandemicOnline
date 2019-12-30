@@ -630,6 +630,10 @@ export class GameComponent implements OnInit, OnChanges {
     );
   }
 
+  isDispatcher() {
+    return this.game.players[this.game.player_index].role === Roles.Dispatcher;
+  }
+
   cannotDoPrimaryAction() {
     return (
       this.isMoving ||
