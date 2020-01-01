@@ -43,6 +43,7 @@ io.on("connection", function(socket) {
       players: [],
       game: null,
       available_roles: new Set([
+        other.Roles.Dispatcher,
         other.Roles.Medic,
         other.Roles.QuarantineSpecialist,
         other.Roles.Researcher,
@@ -241,20 +242,23 @@ io.on("connection", function(socket) {
     }
   });
 
-  socket.on("dispatcher move", function(other_player, final_destination) {
+  socket.on("dispatcher move", function(other_player_index, final_destination) {
     let log_string = `Player ${
       curr_game().player_index
-    }: Dispatcher Move ${other_player} to ${final_destination}`;
+    }: Dispatcher Move ${other_player_index} to ${final_destination}`;
     console.log(log_string);
     if (isReady()) {
-      if (
-        curr_game().players[
-          curr_game().player_index
-        ].canOperationsExpertMoveWithCard(curr_game(), card)
-      ) {
-        curr_game().players[curr_game().player_index].dispatcher_move(
+      let curr_player = curr_game().players[curr_game().player_index];
+      let valid_dispatcher_final_destinations = new Set(
+        curr_player.get_valid_dispatcher_final_destinations(curr_game())[
+          other_player_index
+        ]
+      );
+
+      if (valid_dispatcher_final_destinations.has(final_destination)) {
+        curr_player.dispatcher_move(
           curr_game(),
-          other_player,
+          curr_game().players[other_player_index],
           final_destination,
           socket
         );
@@ -264,13 +268,13 @@ io.on("connection", function(socket) {
       } else {
         socket.emit(
           "invalid action",
-          `Moving ${other_player} to ${final_destination} is an invalid Dispatcher Move`
+          `Moving ${other_player_index} to ${final_destination} is an invalid Dispatcher Move`
         );
       }
     } else {
       socket.emit(
         "invalid action",
-        `Moving ${other_player} to ${final_destination} is an invalid Dispatcher Move`
+        `Moving ${other_player_index} to ${final_destination} is an invalid Dispatcher Move`
       );
     }
   });
