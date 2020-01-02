@@ -8,13 +8,19 @@ import { ModalService } from 'src/app/service/modal.service';
 })
 export class DispatcherMoveComponent implements OnInit {
 
-  constructor(private modalService: ModalService) {}
+  constructor(private modalService: ModalService) { }
 
   ngOnInit() {
   }
 
-  onCancel() {
-    this.modalService.destroyEvent();
-  }
+  dispatcherMoveTargetSelect() {
+    this.modalService.dispatcherMove(
+      0
+    );
+}
+
+onCancel() {
+  this.modalService.destroyEvent();
+}
 
 }

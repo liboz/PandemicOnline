@@ -55,6 +55,8 @@ export class GameComponent implements OnInit, OnChanges {
   cureColorCards: string[] = null;
   destroySubscription: Subscription;
   clearShareCardsSubscription: Subscription;
+  dispatcherMoveSubscription: Subscription;
+  dispatcherMoveOtherPlayer: number;
   difficulties = Object.entries(GameDifficulty);
   selectedDifficulty: number;
 
@@ -126,6 +128,12 @@ export class GameComponent implements OnInit, OnChanges {
         this.modalService.destroyEvent();
       }
     );
+    this.dispatcherMoveSubscription = this.modalService.dispatcherMove$.subscribe(
+      (player_index) => {
+        this.dispatcherMoveOtherPlayer = player_index;
+        this.modalService.destroyEvent();
+      }
+    )
   }
 
   // zoom to show a bounding box, with optional additional padding as percentage of box size
@@ -641,13 +649,6 @@ export class GameComponent implements OnInit, OnChanges {
       DispatcherMoveComponent,
       {
         game: this.game,
-        hand: curr_player.hand,
-        socket: this.socket,
-        canDirect: choices[0],
-        canCharter: choices[1],
-        canOperationsExpertMove: choices[2],
-        currLocation: curr_city.name,
-        targetLocation: target_city.name
       },
       {}
     );
