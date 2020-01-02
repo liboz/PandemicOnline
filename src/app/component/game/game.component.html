@@ -70,6 +70,7 @@
           {{ isMoving ? "Cancel" : "Move" }}
         </button>
         <button
+          *ngIf="isDispatcher()"
           [disabled]="cannotDoPrimaryAction() && !isMoving"
           (click)="onDispatcherMove()"
         >

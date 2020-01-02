@@ -23,6 +23,7 @@ import { MoveChoiceSelectorComponent } from "./component/move-choice-selector/mo
 import { ResearcherShareSelectorComponent } from "./component/researcher-share-selector/researcher-share-selector.component";
 import { SnackbarComponent } from "./component/snackbar/snackbar.component";
 import { SnackbarService } from "./service/snackbar.service";
+import { DispatcherMoveComponent } from './component/dispatcher-move/dispatcher-move.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { SnackbarService } from "./service/snackbar.service";
     JoinComponent,
     MoveChoiceSelectorComponent,
     ResearcherShareSelectorComponent,
-    SnackbarComponent
+    SnackbarComponent,
+    DispatcherMoveComponent
   ],
   imports: [
     BrowserModule,

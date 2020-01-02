@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { ModalService } from "src/app/service/modal.service";
+import { Game } from 'data/types';
 
 @Component({
   selector: "app-researcher-share-selector",
@@ -7,9 +8,9 @@ import { ModalService } from "src/app/service/modal.service";
   styleUrls: ["./researcher-share-selector.component.styl"]
 })
 export class ResearcherShareSelectorComponent implements OnInit {
-  @Input() hand: any;
-  @Input() socket: any;
-  @Input() game: any;
+  @Input() hand: string[];
+  @Input() game: Game;
+  @Input() socket: SocketIOClient.Socket;
   @Input() target_player_index: number;
   @Input() curr_player_index: number;
   selectedCard: string;

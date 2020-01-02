@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from "@angular/core";
-import { GameState } from "../game/game.component";
 import { ModalService } from "src/app/service/modal.service";
+import { Game, GameState, Player } from 'data/types';
 
 @Component({
   selector: "app-join",
@@ -8,8 +8,8 @@ import { ModalService } from "src/app/service/modal.service";
   styleUrls: ["./join.component.styl"]
 })
 export class JoinComponent implements OnInit {
-  @Input() game: any;
-  @Input() socket: any;
+  @Input() game: Game;
+  @Input() socket: SocketIOClient.Socket;
   @Input() match_name: string;
   @Input() roles: string[];
   selected_role: string;
@@ -51,7 +51,7 @@ export class JoinComponent implements OnInit {
     }
   }
 
-  choosePlayer(player: any) {
+  choosePlayer(player: Player) {
     this.player_name = player.name;
     this.selected_role = player.role;
     this.joinGameInternal();

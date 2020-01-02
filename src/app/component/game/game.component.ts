@@ -16,6 +16,8 @@ import { PlayerComponent } from "../player/player.component";
 import { MoveChoiceSelectorComponent } from "../move-choice-selector/move-choice-selector.component";
 import { Subscription } from "rxjs";
 import { ResearcherShareSelectorComponent } from "../researcher-share-selector/researcher-share-selector.component";
+import { Game, GameState, Roles } from 'data/types';
+import { DispatcherMoveComponent } from '../dispatcher-move/dispatcher-move.component';
 
 @Component({
   selector: "app-game",
@@ -25,8 +27,8 @@ import { ResearcherShareSelectorComponent } from "../researcher-share-selector/r
 })
 export class GameComponent implements OnInit, OnChanges {
   objectKeys = Object.keys;
-  @Input() game: any;
-  @Input() socket: any;
+  @Input() game: Game;
+  @Input() socket: SocketIOClient.Socket;
   @Input() player_name: string;
   @Input() player_index: number;
 
@@ -57,7 +59,7 @@ export class GameComponent implements OnInit, OnChanges {
   selectedDifficulty: number;
 
   getTextBox(selection) {
-    selection.each(function(d) {
+    selection.each(function (d) {
       d.bbox = this.getBBox();
     });
   }
@@ -72,7 +74,7 @@ export class GameComponent implements OnInit, OnChanges {
 
   initialized = false;
   selectedCards: Set<number>;
-  constructor(private modalService: ModalService) {}
+  constructor(private modalService: ModalService) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.initialized) {
@@ -100,7 +102,7 @@ export class GameComponent implements OnInit, OnChanges {
     this.countriesGroup = d3.select("#map-holder > svg > g").attr("id", "map");
 
     // add zoom functionality
-    this.zoomed = function() {
+    this.zoomed = function () {
       let t = d3.event.transform;
       d3.select("g").attr(
         "transform",
@@ -343,7 +345,7 @@ export class GameComponent implements OnInit, OnChanges {
     this.socket.emit("treat", color, () => {
       console.log(
         `treat ${color} at ${
-          this.game.players[this.game.player_index].location
+        this.game.players[this.game.player_index].location
         } callbacked`
       );
     });
@@ -423,7 +425,7 @@ export class GameComponent implements OnInit, OnChanges {
             }
           } else {
             if (
-              curr_player.hand.size === 0 ||
+              curr_player.hand.length === 0 ||
               !curr_player.hand.includes(location)
             ) {
               this.shareResearcher(
@@ -465,7 +467,7 @@ export class GameComponent implements OnInit, OnChanges {
             if (this.game.players[other_player[0]].role === Roles.Researcher) {
               // That one player we can take from is a researcher, in which case we just do researcher take
               this.shareResearcher(
-                this.game.players[other_player],
+                this.game.players[other_player[0]],
                 other_player,
                 curr_player.id
               );
@@ -580,7 +582,7 @@ export class GameComponent implements OnInit, OnChanges {
       this.selectedCards = new Set();
       console.log(
         `discover with ${cards} at ${
-          this.game.players[this.game.player_index].location
+        this.game.players[this.game.player_index].location
         } callbacked`
       );
     });
@@ -613,7 +615,7 @@ export class GameComponent implements OnInit, OnChanges {
   discardEnough() {
     return (
       this.game.players[this.game.must_discard_index].hand.length -
-        this.selectedCards.size ===
+      this.selectedCards.size ===
       7
     );
   }
@@ -632,6 +634,23 @@ export class GameComponent implements OnInit, OnChanges {
 
   isDispatcher() {
     return this.game.players[this.game.player_index].role === Roles.Dispatcher;
+  }
+
+  onDispatcherMove() {
+    this.modalService.init(
+      DispatcherMoveComponent,
+      {
+        game: this.game,
+        hand: curr_player.hand,
+        socket: this.socket,
+        canDirect: choices[0],
+        canCharter: choices[1],
+        canOperationsExpertMove: choices[2],
+        currLocation: curr_city.name,
+        targetLocation: target_city.name
+      },
+      {}
+    );
   }
 
   cannotDoPrimaryAction() {
@@ -656,24 +675,6 @@ export class GameComponent implements OnInit, OnChanges {
   }
 }
 
-export const GameState = {
-  NotStarted: 0,
-  Ready: 1,
-  DiscardingCard: 2,
-  Won: 3,
-  Lost: 4
-};
-
-const Roles = {
-  ContingencyPlanner: "Contingency Planner",
-  Dispatcher: "Dispatcher",
-  Medic: "Medic",
-  OperationsExpert: "Operations Expert",
-  QuarantineSpecialist: "Quarantine Specialist",
-  Researcher: "Researcher",
-  Scientist: "Scientist"
-};
-
 class ShareCard {
   public static Take = "Take from";
   public static Give = "Give";
@@ -689,7 +690,7 @@ class ShareCard {
     this.onClick = onClick;
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 }
 
 const GameDifficulty = {

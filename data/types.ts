@@ -16,7 +16,7 @@ export interface Game {
   can_charter_flight: boolean;
   can_operations_expert_move: boolean;
   can_build_research_station: boolean;
-  can_cure: boolean;
+  can_cure: boolean | string;
   cards_needed_to_cure: number;
   can_treat: boolean;
   can_take: boolean;
@@ -59,3 +59,21 @@ export interface Player {
   location: string;
   id: number;
 }
+
+export const GameState = {
+  NotStarted: 0,
+  Ready: 1,
+  DiscardingCard: 2,
+  Won: 3,
+  Lost: 4
+};
+
+export const Roles = {
+  ContingencyPlanner: "Contingency Planner",
+  Dispatcher: "Dispatcher",
+  Medic: "Medic",
+  OperationsExpert: "Operations Expert",
+  QuarantineSpecialist: "Quarantine Specialist",
+  Researcher: "Researcher",
+  Scientist: "Scientist"
+};

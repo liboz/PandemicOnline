@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ApiService } from "../../service/api.service";
-import { GameState } from "../game/game.component";
 import { environment } from "../../../environments/environment";
 
 import { ModalService } from "../../service/modal.service";
@@ -13,7 +12,7 @@ import io from "socket.io-client";
 import { Subscription } from "rxjs";
 import { SnackbarService } from "src/app/service/snackbar.service";
 
-import { Game } from "../../../../data/types";
+import { Game, GameState } from "../../../../data/types";
 
 @Component({
   selector: "app-game-socket",
