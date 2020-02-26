@@ -6,7 +6,8 @@ var cors = require("cors");
 const seedrandom = require("seedrandom");
 const cities = require("./data/cities");
 const game = require("./game");
-const other = require("./other");
+
+import { Roles, GameState } from "./types";
 
 let games = {};
 let dummy_game = new game.GameMap(cities);
@@ -43,12 +44,12 @@ io.on("connection", function(socket) {
       players: [],
       game: null,
       available_roles: new Set([
-        other.Roles.Dispatcher,
-        other.Roles.Medic,
-        other.Roles.QuarantineSpecialist,
-        other.Roles.Researcher,
-        other.Roles.Scientist,
-        other.Roles.OperationsExpert
+        Roles.Dispatcher,
+        Roles.Medic,
+        Roles.QuarantineSpecialist,
+        Roles.Researcher,
+        Roles.Scientist,
+        Roles.OperationsExpert
       ]),
       player_roles: []
     };
@@ -72,8 +73,7 @@ io.on("connection", function(socket) {
 
   let isReady = function() {
     return (
-      curr_game().game_state === other.GameState.Ready &&
-      curr_game().turns_left !== 0
+      curr_game().game_state === GameState.Ready && curr_game().turns_left !== 0
     );
   };
 
@@ -81,7 +81,7 @@ io.on("connection", function(socket) {
     // add logic for role is invalid
     if (
       games[match_name].available_roles.has(role) ||
-      (curr_game() && curr_game().game_state !== other.GameState.NotStarted)
+      (curr_game() && curr_game().game_state !== GameState.NotStarted)
     ) {
       let player_index = players().findIndex(i => i === player_name); // should lock maybe?
       if (player_index === -1) {
@@ -104,7 +104,7 @@ io.on("connection", function(socket) {
   });
 
   socket.on("start game", function(difficulty) {
-    if (!curr_game() || curr_game().game_state === other.GameState.NotStarted) {
+    if (!curr_game() || curr_game().game_state === GameState.NotStarted) {
       let num_players = players().length;
       if (num_players > 5) {
         socket.emit("invalid action", `Cannot start game with over 5 players`);
@@ -515,10 +515,10 @@ io.on("connection", function(socket) {
         curr_game().turns_left = 4;
       }
       if (
-        curr_game().game_state !== other.GameState.Lost &&
-        curr_game().game_state !== other.GameState.Won
+        curr_game().game_state !== GameState.Lost &&
+        curr_game().game_state !== GameState.Won
       ) {
-        curr_game().game_state = other.GameState.Ready;
+        curr_game().game_state = GameState.Ready;
       }
       io.in(match_name).emit("update game state", curr_game().toJSON());
     } else {

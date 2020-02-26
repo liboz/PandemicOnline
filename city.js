@@ -1,5 +1,4 @@
-const other = require("./other");
-
+import { Roles } from "./types";
 const colors = {
   BLUE: "blue",
   RED: "red",
@@ -46,9 +45,8 @@ City.prototype.infect_condition = function(
     let players = [...this.players];
     for (let i = 0; i < players.length; i++) {
       if (
-        (game.cured[color] === 1 && players[i].role === other.Roles.Medic) ||
-        (!initialization &&
-          players[i].role === other.Roles.QuarantineSpecialist)
+        (game.cured[color] === 1 && players[i].role === Roles.Medic) ||
+        (!initialization && players[i].role === Roles.QuarantineSpecialist)
       ) {
         shouldInfect = false;
         break;
@@ -63,7 +61,7 @@ City.prototype.infect_condition = function(
         for (let j = 0; j < neighbor_players.length; j++) {
           if (
             !initialization &&
-            neighbor_players[j].role === other.Roles.QuarantineSpecialist
+            neighbor_players[j].role === Roles.QuarantineSpecialist
           ) {
             shouldInfect = false;
             break;

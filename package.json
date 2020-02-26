@@ -2,7 +2,7 @@
   "name": "pandemic",
   "version": "1.0.0",
   "description": "Online Pandemic Simulator",
-  "main": "app.js",
+  "main": "app.mjs",
   "scripts": {
     "test": "jest --watch",
     "test:cloudbuild": "jest",
@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/socket.io": "^2.1.4",
     "cors": "^2.8.5",
     "denque": "^1.4.1",
     "express": "^4.17.1",
@@ -19,11 +20,15 @@
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
+    "@types/node": "~8.9.4",
     "coveralls": "^3.0.6",
     "husky": "^3.1.0",
     "jest": "^24.9.0",
     "prettier": "1.19.1",
-    "pretty-quick": "^2.0.1"
+    "pretty-quick": "^2.0.1",
+    "ts-node": "~7.0.0",
+    "tslint": "~5.15.0",
+    "typescript": "~3.5.3"
   },
   "engines": {
     "node": "12.x"
