@@ -1,8 +1,11 @@
 import {
   Cubes,
-  GameGraph,
+  City,
   Game as GameJson,
-  Player as PlayerJson
+  Player as PlayerJson,
+  CityData,
+  Player,
+  Color
 } from "./types";
 import { Socket } from "socket.io";
 
@@ -21,12 +24,12 @@ const GameDifficulty = {
 };
 
 class Game {
-  game_graph: GameGraph;
+  game_graph: Record<string, City>;
   outbreak_counter: number;
   infection_rate_index: number;
   infection_rate: number[];
   infection_deck: any;
-  players: any[];
+  players: Player[];
   initial_cards_for_players: any[];
   player_deck: any;
   research_stations: Set<string>;
@@ -41,11 +44,11 @@ class Game {
   must_discard_index: number;
 
   constructor(
-    cities,
+    cities: CityData[],
     num_players: number,
-    filtered_players,
+    filtered_players: string[],
     roles: Roles[],
-    num_epidemics,
+    num_epidemics: number,
     rng = seedrandom()
   ) {
     this.game_graph = city.City.load(cities);
@@ -157,7 +160,7 @@ class Game {
     );
   }
 
-  lose_game_cubes(color) {
+  lose_game_cubes(color: Color) {
     this.lose_game();
     this.log.push(`Game Lost due to insufficient number of ${color} cubes`);
   }
@@ -251,7 +254,7 @@ class Game {
 }
 
 class GameJSON implements GameJson {
-  game_graph: GameGraph[];
+  game_graph: City[];
   game_graph_index: { [key: string]: number };
   outbreak_counter: number;
   infection_rate_index: number;
@@ -284,10 +287,15 @@ class GameJSON implements GameJson {
     this.game_graph = Object.values(game.game_graph).map(
       c => new city.CityJSON(c)
     );
-    this.game_graph_index = this.game_graph.reduce(function(map, city, index) {
+    this.game_graph_index = this.game_graph.reduce(function(
+      map: Record<string, number>,
+      city,
+      index
+    ) {
       map[city.name] = index;
       return map;
-    }, {});
+    },
+    {});
     this.outbreak_counter = game.outbreak_counter;
     this.infection_rate_index = game.infection_rate_index;
     this.infection_rate = [2, 2, 2, 3, 3, 4, 4];
@@ -329,7 +337,7 @@ class GameJSON implements GameJson {
   }
 }
 
-function GameMap(cities) {
+function GameMap(cities: CityData) {
   let game_graph = city.City.load(cities);
   this.game_graph = Object.values(game_graph).map(c => new city.CityJSON(c));
   this.game_state = GameState.NotStarted;

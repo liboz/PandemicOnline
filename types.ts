@@ -1,5 +1,5 @@
 export interface Game {
-  game_graph: GameGraph[];
+  game_graph: City[];
   game_graph_index: { [key: string]: number };
   outbreak_counter: number;
   infection_rate_index: number;
@@ -34,7 +34,7 @@ export interface Cubes {
   yellow: number;
 }
 
-export interface GameGraph {
+export interface GameGraphJSON {
   name: string;
   color: Color;
   location: number[];
@@ -43,6 +43,17 @@ export interface GameGraph {
   players: number[];
   index: number;
   neighbors: number[];
+}
+
+export interface City {
+  name: string;
+  color: Color;
+  location: [number, number];
+  cubes: Cubes;
+  hasResearchStation: boolean;
+  players: Set<Player>;
+  index: number;
+  neighbors: City;
 }
 
 export enum Color {
@@ -70,10 +81,26 @@ export enum GameState {
   Lost = 4
 }
 
-export interface Player {
+export interface PlayerJSON {
   name: string;
   role: string;
   hand: string[];
   location: string;
   id: number;
+}
+
+export interface Player {
+  name: string;
+  role: string;
+  hand: Set<string>;
+  location: string;
+  id: number;
+  hand_size_limit: number;
+}
+
+export interface CityData {
+  name: string;
+  location: [number, number];
+  color: Color;
+  adjacent: string[];
 }
