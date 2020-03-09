@@ -1,5 +1,5 @@
-export interface Game {
-  game_graph: City[];
+export interface GameJson {
+  game_graph: CityJson[];
   game_graph_index: { [key: string]: number };
   outbreak_counter: number;
   infection_rate_index: number;
@@ -45,15 +45,15 @@ export interface GameGraphJSON {
   neighbors: number[];
 }
 
-export interface City {
+export interface CityJson {
   name: string;
   color: Color;
   location: [number, number];
   cubes: Cubes;
   hasResearchStation: boolean;
-  players: Set<Player>;
+  players: number[];
   index: number;
-  neighbors: City;
+  neighbors: number[];
 }
 
 export enum Color {

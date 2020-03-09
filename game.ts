@@ -1,11 +1,10 @@
 import {
   Cubes,
-  City,
-  Game as GameJson,
   Player as PlayerJson,
   CityData,
   Player,
-  Color
+  Color,
+  GameJson
 } from "./types";
 import { Socket } from "socket.io";
 
@@ -16,6 +15,7 @@ const player_deck = require("./player_deck");
 const player = require("./player");
 
 import { Roles, GameState } from "./types";
+import { City, CityJSON } from "./city";
 
 const GameDifficulty = {
   4: "Introductory",
@@ -23,7 +23,7 @@ const GameDifficulty = {
   6: "Heroic"
 };
 
-class Game {
+export class Game {
   game_graph: Record<string, City>;
   outbreak_counter: number;
   infection_rate_index: number;
@@ -254,7 +254,7 @@ class Game {
 }
 
 class GameJSON implements GameJson {
-  game_graph: City[];
+  game_graph: CityJSON[];
   game_graph_index: { [key: string]: number };
   outbreak_counter: number;
   infection_rate_index: number;
