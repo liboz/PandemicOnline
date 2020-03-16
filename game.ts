@@ -9,7 +9,7 @@ const player_deck = require("./player_deck");
 import { Roles, GameState } from "./types";
 import { City, CityJSON } from "./city";
 
-const GameDifficulty = {
+export const GameDifficulty: Record<number, string> = {
   4: "Introductory",
   5: "Standard",
   6: "Heroic"
@@ -327,10 +327,14 @@ class GameJSON implements GameJson {
   }
 }
 
-function GameMap(cities: CityData[]) {
-  let game_graph = City.load(cities);
-  this.game_graph = Object.values(game_graph).map(c => new CityJSON(c));
-  this.game_state = GameState.NotStarted;
+export class GameMap {
+  game_state: GameState;
+  game_graph: CityJSON[];
+  constructor(cities: CityData[]) {
+    let game_graph = City.load(cities);
+    this.game_graph = Object.values(game_graph).map(c => new CityJSON(c));
+    this.game_state = GameState.NotStarted;
+  }
 }
 
 module.exports = {

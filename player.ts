@@ -372,7 +372,7 @@ export class Player {
     );
   }
 
-  trade(player: Player, card: string) {
+  trade(player: Player, card?: string) {
     if (!card) {
       this.tradeCard(player, this.location);
     } else {

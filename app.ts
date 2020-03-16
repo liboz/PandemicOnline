@@ -1,16 +1,18 @@
-const express = require("express");
+import { Game, GameDifficulty, GameMap } from "./game";
+import { Roles } from "./types";
+import express from "express";
+import cors from "cors";
+
 const app = express();
 const socketIO = require("socket.io");
-var cors = require("cors");
 
 const seedrandom = require("seedrandom");
 const cities = require("./data/cities");
-const game = require("./game");
 
 const types = require("./types");
 
-let games = {};
-let dummy_game = new game.GameMap(cities);
+let games: Record<string, GameObject> = {};
+let dummy_game = new GameMap(cities);
 
 //console.log(games[0])
 
@@ -44,12 +46,12 @@ io.on("connection", function(socket) {
       players: [],
       game: null,
       available_roles: new Set([
-        types.Roles.Dispatcher,
-        types.Roles.Medic,
-        types.Roles.QuarantineSpecialist,
-        types.Roles.Researcher,
-        types.Roles.Scientist,
-        types.Roles.OperationsExpert
+        Roles.Dispatcher,
+        Roles.Medic,
+        Roles.QuarantineSpecialist,
+        Roles.Researcher,
+        Roles.Scientist,
+        Roles.OperationsExpert
       ]),
       player_roles: []
     };
@@ -78,7 +80,7 @@ io.on("connection", function(socket) {
     );
   };
 
-  socket.on("join", function(role, player_name, callback) {
+  socket.on("join", function(role: Roles, player_name: string, callback) {
     // add logic for role is invalid
     if (
       games[match_name].available_types.roles.has(role) ||
@@ -104,7 +106,7 @@ io.on("connection", function(socket) {
     }
   });
 
-  socket.on("start game", function(difficulty) {
+  socket.on("start game", function(difficulty: number) {
     if (!curr_game() || curr_game().game_state === types.GameState.NotStarted) {
       let num_players = players().length;
       if (num_players > 5) {
@@ -120,7 +122,7 @@ io.on("connection", function(socket) {
         console.log(
           `start game with ${filtered_players} in room ${match_name}`
         );
-        games[match_name].game = new game.Game(
+        games[match_name].game = new Game(
           cities,
           num_players,
           filtered_players,
@@ -130,7 +132,7 @@ io.on("connection", function(socket) {
         );
         curr_game().initialize_board();
         curr_game().log.push(
-          `game initialized at ${game.GameDifficulty[difficulty]} difficulty`
+          `game initialized at ${GameDifficulty[difficulty]} difficulty`
         );
         io.in(match_name).emit("game initialized", curr_game().toJSON());
       }
@@ -540,4 +542,11 @@ io.on("connection", function(socket) {
 
 function emitRoles(socket, games, match_name) {
   socket.emit("roles", [...games[match_name].available_roles]);
+}
+
+interface GameObject {
+  game: Game;
+  available_roles: Set<Roles>;
+  players: string[];
+  player_roles: any[];
 }
