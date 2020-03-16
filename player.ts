@@ -1,10 +1,9 @@
 import { Game } from "./game";
 import { Socket } from "socket.io";
-import { Roles } from "./types";
+import { Roles, GameState, PlayerJson, Cubes } from "./types";
+import { ColorsIndex, City } from "./city";
 
-const city = require("./city");
-
-class Player {
+export class Player {
   hand: Set<string>;
   hand_size_limit: number;
   constructor(
@@ -25,7 +24,7 @@ class Player {
     game: Game,
     other_player: Player,
     final_destination: string,
-    socket: Socket = null
+    socket: SocketIO.Namespace = null
   ) {
     if (this.role !== Roles.Dispatcher) {
       return false;
@@ -39,7 +38,7 @@ class Player {
     game: Game,
     final_destination: string,
     player_hand = this.hand,
-    socket: Socket = null
+    socket: SocketIO.Namespace = null
   ) {
     let game_graph = game.game_graph;
     if (
@@ -71,7 +70,7 @@ class Player {
     game: Game,
     final_destination: string,
     hand: Set<string>,
-    socket: Socket
+    socket: SocketIO.Namespace
   ) {
     hand.delete(final_destination);
     this.movePiece(game, game.game_graph, final_destination, socket);
@@ -81,7 +80,7 @@ class Player {
     game: Game,
     final_destination: string,
     hand: Set<string>,
-    socket: Socket
+    socket: SocketIO.Namespace
   ) {
     hand.delete(this.location);
     this.movePiece(game, game.game_graph, final_destination, socket);
@@ -95,7 +94,7 @@ class Player {
     game: Game,
     final_destination: string,
     card: string,
-    socket: Socket = null
+    socket: SocketIO.Namespace = null
   ) {
     this.hand.delete(card);
     this.movePiece(game, game.game_graph, final_destination, socket);
@@ -113,7 +112,12 @@ class Player {
     );
   }
 
-  movePiece(game: Game, game_graph, final_destination: string, socket: Socket) {
+  movePiece(
+    game: Game,
+    game_graph: Record<string, City>,
+    final_destination: string,
+    socket: SocketIO.Namespace
+  ) {
     if (this.role === Roles.Medic) {
       this.medicMoveTreat(game, socket);
     }
@@ -125,7 +129,7 @@ class Player {
     }
   }
 
-  medicMoveTreat(game: Game, socket: Socket) {
+  medicMoveTreat(game: Game, socket: SocketIO.Namespace) {
     let colors = Object.keys(game.cured);
     colors.forEach(c => {
       if (game.cured[c] === 1) {
@@ -134,7 +138,7 @@ class Player {
     });
   }
 
-  get_valid_final_destinations(game, hand = this.hand) {
+  get_valid_final_destinations(game: Game, hand = this.hand) {
     if (game.game_state === GameState.Ready) {
       // note that disptcher can't use operations expert move!
       if (
@@ -164,9 +168,11 @@ class Player {
     }
   }
 
-  get_valid_dispatcher_final_destinations(game) {
+  get_valid_dispatcher_final_destinations(
+    game: Game
+  ): Record<string, number[]> {
     if (game.game_state === GameState.Ready) {
-      let result = {};
+      let result: Record<string, number[]> = {};
       for (let player of game.players) {
         if (player !== this) {
           result[player.id] = player.get_valid_final_destinations(
@@ -181,7 +187,7 @@ class Player {
     }
   }
 
-  draw(game) {
+  draw(game: Game) {
     let card = game.player_deck.flip_card();
     if (card === undefined) {
       game.lose_game_draw();
@@ -191,14 +197,14 @@ class Player {
     return card;
   }
 
-  can_build_research_station(game) {
+  can_build_research_station(game: Game) {
     return (
       !game.game_graph[this.location].hasResearchStation &&
       (this.hand.has(this.location) || this.role === Roles.OperationsExpert)
     );
   }
 
-  build_research_station(game) {
+  build_research_station(game: Game) {
     if (this.role !== Roles.OperationsExpert) {
       this.hand.delete(this.location);
     }
@@ -206,7 +212,7 @@ class Player {
     game.research_stations.add(this.location);
   }
 
-  can_cure(game, cards) {
+  can_cure(game: Game, cards: string[]) {
     if (!game.game_graph[this.location].hasResearchStation) {
       return false;
     } else {
@@ -232,11 +238,11 @@ class Player {
     }
   }
 
-  can_hand_cure(game) {
+  can_hand_cure(game: Game) {
     if (!game.game_graph[this.location].hasResearchStation) {
       return false;
     } else {
-      let cards = {
+      let cards: Cubes = {
         blue: 0,
         red: 0,
         black: 0,
@@ -257,7 +263,7 @@ class Player {
     }
   }
 
-  cure(game, cards) {
+  cure(game: Game, cards: string[]) {
     let color = game.game_graph[cards[0]].color;
     cards.forEach(card => {
       this.hand.delete(card);
@@ -268,7 +274,7 @@ class Player {
     }
   }
 
-  can_treat(game) {
+  can_treat(game: Game) {
     return (
       Object.values(game.game_graph[this.location].cubes).reduce(
         (a, b) => a + b,
@@ -277,11 +283,11 @@ class Player {
     );
   }
 
-  can_treat_color(game, color) {
+  can_treat_color(game: Game, color: string) {
     return game.game_graph[this.location].cubes[color] > 0;
   }
 
-  treat(game, color, io = null) {
+  treat(game: Game, color: string, io: SocketIO.Namespace = null) {
     if (game.cured[color] === 1 || this.role === Roles.Medic) {
       game.cubes[color] += game.game_graph[this.location].cubes[color];
       game.game_graph[this.location].cubes[color] = 0;
@@ -298,7 +304,7 @@ class Player {
     }
   }
 
-  can_discard(cards) {
+  can_discard(cards: string[]) {
     if (Array.isArray(cards)) {
       return (
         this.hand.size - cards.length == this.hand_size_limit &&
@@ -309,7 +315,7 @@ class Player {
     return false;
   }
 
-  discard(cards) {
+  discard(cards: string[]) {
     if (cards.every(c => this.hand.has(c))) {
       cards.forEach(c => this.hand.delete(c));
       return true;
@@ -317,7 +323,7 @@ class Player {
     return false;
   }
 
-  can_take(game) {
+  can_take(game: Game) {
     if (game.game_graph[this.location].players.size <= 1) {
       return false;
     } else {
@@ -332,7 +338,7 @@ class Player {
     }
   }
 
-  can_take_from_player(player, card = null) {
+  can_take_from_player(player: Player, card: string = null) {
     if (this.location !== player.location) {
       return false;
     } else {
@@ -347,7 +353,7 @@ class Player {
     }
   }
 
-  can_give(game) {
+  can_give(game: Game) {
     if (game.game_graph[this.location].players.size <= 1) {
       return false;
     } else {
@@ -358,7 +364,7 @@ class Player {
     }
   }
 
-  can_give_card(game, card) {
+  can_give_card(game: Game, card: string) {
     return (
       this.can_give(game) &&
       this.role === Roles.Researcher &&
@@ -366,7 +372,7 @@ class Player {
     );
   }
 
-  trade(player, card) {
+  trade(player: Player, card: string) {
     if (!card) {
       this.tradeCard(player, this.location);
     } else {
@@ -374,7 +380,7 @@ class Player {
     }
   }
 
-  tradeCard(player, c) {
+  tradeCard(player: Player, c: string) {
     if (this.hand.has(c)) {
       player.hand.add(c);
       this.hand.delete(c);
@@ -385,29 +391,36 @@ class Player {
   }
 }
 
-function PlayerJSON(player, game) {
-  this.name = player.name;
-  this.role = player.role;
-  this.hand = [...player.hand].sort((i, j) => {
-    let first_index = city.ColorsIndex[game.game_graph[i].color];
-    let second_index = city.ColorsIndex[game.game_graph[j].color];
-    if (first_index > second_index) {
-      return 1;
-    }
-    if (first_index < second_index) {
-      return -1;
-    }
+export class PlayerJSON implements PlayerJson {
+  name: string;
+  role: string;
+  hand: string[];
+  location: string;
+  id: number;
+  constructor(public player: Player, public game: Game) {
+    this.name = player.name;
+    this.role = player.role;
+    this.hand = [...player.hand].sort((i, j) => {
+      let first_index = ColorsIndex[game.game_graph[i].color];
+      let second_index = ColorsIndex[game.game_graph[j].color];
+      if (first_index > second_index) {
+        return 1;
+      }
+      if (first_index < second_index) {
+        return -1;
+      }
 
-    if (i > j) {
-      return 1;
-    }
+      if (i > j) {
+        return 1;
+      }
 
-    if (i < j) {
-      return -1;
-    }
-  });
-  this.location = player.location;
-  this.id = player.id;
+      if (i < j) {
+        return -1;
+      }
+    });
+    this.location = player.location;
+    this.id = player.id;
+  }
 }
 
 module.exports = {

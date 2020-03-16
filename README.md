@@ -13,5 +13,3 @@ s.add(game.game_graph[c].index)
         game.game_graph[c] was undefined
         lost during draw
         appeared before
-
-Upgrade to Node13 - - Add { "type": "module" } in the nearest package.json. - CHange app.mjs to app.js

@@ -5,7 +5,7 @@ export interface GameJson {
   infection_rate_index: number;
   infection_rate: number[];
   faceup_deck: string[];
-  players: Player[];
+  players: PlayerJson[];
   research_stations: string[];
   cured: Cubes;
   cubes: Cubes;
@@ -16,7 +16,7 @@ export interface GameJson {
   can_charter_flight: boolean;
   can_operations_expert_move: boolean;
   can_build_research_station: boolean;
-  can_cure: boolean;
+  can_cure: boolean | string;
   cards_needed_to_cure: number;
   can_treat: boolean;
   can_take: boolean;
@@ -27,7 +27,7 @@ export interface GameJson {
   must_discard_index: number;
 }
 
-export interface Cubes {
+export interface Cubes extends Record<string, number> {
   blue: number;
   red: number;
   black: number;
@@ -81,21 +81,12 @@ export enum GameState {
   Lost = 4
 }
 
-export interface PlayerJSON {
+export interface PlayerJson {
   name: string;
   role: string;
   hand: string[];
   location: string;
   id: number;
-}
-
-export interface Player {
-  name: string;
-  role: string;
-  hand: Set<string>;
-  location: string;
-  id: number;
-  hand_size_limit: number;
 }
 
 export interface CityData {

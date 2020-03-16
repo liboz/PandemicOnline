@@ -1,18 +1,10 @@
-import {
-  Cubes,
-  Player as PlayerJson,
-  CityData,
-  Player,
-  Color,
-  GameJson
-} from "./types";
+import { Cubes, CityData, Color, GameJson, PlayerJson } from "./types";
 import { Socket } from "socket.io";
+import { Player, PlayerJSON } from "./player";
 
-const city = require("./city");
 const infection = require("./infection_deck");
 const seedrandom = require("seedrandom");
 const player_deck = require("./player_deck");
-const player = require("./player");
 
 import { Roles, GameState } from "./types";
 import { City, CityJSON } from "./city";
@@ -51,7 +43,7 @@ export class Game {
     num_epidemics: number,
     rng = seedrandom()
   ) {
-    this.game_graph = city.City.load(cities);
+    this.game_graph = City.load(cities);
     this.outbreak_counter = 0;
     this.infection_rate_index = 0;
     this.infection_rate = [2, 2, 2, 3, 3, 4, 4];
@@ -59,7 +51,7 @@ export class Game {
     this.infection_deck = new infection.InfectionDeck(cities, this.rng);
     this.players = [];
     for (let i = 0; i < num_players; i++) {
-      this.players.push(new player.Player(i, filtered_players[i], roles[i]));
+      this.players.push(new Player(i, filtered_players[i], roles[i]));
     }
     this.players.forEach(player => {
       this.game_graph[player.location].players.add(player);
@@ -271,7 +263,7 @@ class GameJSON implements GameJson {
   can_charter_flight: boolean;
   can_operations_expert_move: boolean;
   can_build_research_station: boolean;
-  can_cure: boolean;
+  can_cure: boolean | string;
   cards_needed_to_cure: number;
   can_treat: boolean;
   can_take: boolean;
@@ -284,9 +276,7 @@ class GameJSON implements GameJson {
     if (game === null) {
       return null;
     }
-    this.game_graph = Object.values(game.game_graph).map(
-      c => new city.CityJSON(c)
-    );
+    this.game_graph = Object.values(game.game_graph).map(c => new CityJSON(c));
     this.game_graph_index = this.game_graph.reduce(function(
       map: Record<string, number>,
       city,
@@ -300,7 +290,7 @@ class GameJSON implements GameJson {
     this.infection_rate_index = game.infection_rate_index;
     this.infection_rate = [2, 2, 2, 3, 3, 4, 4];
     this.faceup_deck = game.infection_deck.faceup_deck;
-    this.players = game.players.map(p => new player.PlayerJSON(p, game));
+    this.players = game.players.map(p => new PlayerJSON(p, game));
 
     this.research_stations = [...game.research_stations];
     this.cured = game.cured;
@@ -337,9 +327,9 @@ class GameJSON implements GameJson {
   }
 }
 
-function GameMap(cities: CityData) {
-  let game_graph = city.City.load(cities);
-  this.game_graph = Object.values(game_graph).map(c => new city.CityJSON(c));
+function GameMap(cities: CityData[]) {
+  let game_graph = City.load(cities);
+  this.game_graph = Object.values(game_graph).map(c => new CityJSON(c));
   this.game_state = GameState.NotStarted;
 }
 

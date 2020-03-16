@@ -1,5 +1,6 @@
-import { Roles, Color, Cubes, Player, CityData, CityJson } from "./types";
+import { Roles, Color, Cubes, CityData, CityJson } from "./types";
 import { Game } from "./game";
+import { Player } from "./player";
 
 /*
 export interface City {
@@ -20,7 +21,7 @@ const colors = {
   YELLOW: "yellow"
 };
 
-const colors_index = {
+export const ColorsIndex = {
   blue: 0,
   red: 1,
   black: 2,
@@ -208,6 +209,5 @@ export class CityJSON implements CityJson {
 module.exports = {
   City: City,
   Colors: colors,
-  ColorsIndex: colors_index,
   CityJSON: CityJSON
 };

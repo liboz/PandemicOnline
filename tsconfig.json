@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "target": "es2017",
@@ -13,5 +14,6 @@
       "*": ["node_modules/*", "src/types/*"]
     }
   },
-  "include": ["./*"]
+  "include": ["./*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }
