@@ -1,10 +1,9 @@
 import { Cubes, CityData, Color, GameJson, PlayerJson } from "./types";
 import { Socket } from "socket.io";
 import { Player, PlayerJSON } from "./player";
-
-const infection = require("./infection_deck");
-const seedrandom = require("seedrandom");
-const player_deck = require("./player_deck");
+import { PlayerDeck } from "./player_deck";
+import { InfectionDeck } from "./infection_deck";
+import seedrandom from "seedrandom";
 
 import { Roles, GameState } from "./types";
 import { City, CityJSON } from "./city";
@@ -20,10 +19,10 @@ export class Game {
   outbreak_counter: number;
   infection_rate_index: number;
   infection_rate: number[];
-  infection_deck: any;
+  infection_deck: InfectionDeck;
   players: Player[];
-  initial_cards_for_players: any[];
-  player_deck: any;
+  initial_cards_for_players: string[];
+  player_deck: PlayerDeck;
   research_stations: Set<string>;
   cured: Cubes;
   cubes: Cubes;
@@ -31,8 +30,8 @@ export class Game {
   turns_left: number;
   game_state: GameState;
   log: string[];
-  difficulty: any;
-  rng: any;
+  difficulty: number;
+  rng: seedrandom.prng;
   must_discard_index: number;
 
   constructor(
@@ -40,7 +39,7 @@ export class Game {
     num_players: number,
     filtered_players: string[],
     roles: Roles[],
-    num_epidemics: number,
+    num_epidemics: number = 4,
     rng = seedrandom()
   ) {
     this.game_graph = City.load(cities);
@@ -48,7 +47,7 @@ export class Game {
     this.infection_rate_index = 0;
     this.infection_rate = [2, 2, 2, 3, 3, 4, 4];
     this.rng = rng;
-    this.infection_deck = new infection.InfectionDeck(cities, this.rng);
+    this.infection_deck = new InfectionDeck(cities, this.rng);
     this.players = [];
     for (let i = 0; i < num_players; i++) {
       this.players.push(new Player(i, filtered_players[i], roles[i]));
@@ -57,7 +56,7 @@ export class Game {
       this.game_graph[player.location].players.add(player);
     });
     this.initial_cards_for_players = [];
-    this.player_deck = new player_deck.PlayerDeck(
+    this.player_deck = new PlayerDeck(
       cities,
       [],
       num_epidemics,
@@ -100,7 +99,7 @@ export class Game {
     return true;
   }
 
-  epidemic(io: SocketIO.Server = null, match_name: string) {
+  epidemic(io: SocketIO.Server = null, match_name: string = null) {
     this.infection_rate_index += 1;
     let card = this.infection_deck.infect_epidemic();
     this.log.push(`${card} was infected in an epidemic`);
@@ -233,7 +232,11 @@ export class Game {
     }
   }
 
-  pass_turn(socket: Socket, io: SocketIO.Server, match_name: string) {
+  pass_turn(
+    socket: Socket = null,
+    io: SocketIO.Server = null,
+    match_name: string = null
+  ) {
     while (this.decrement_turn()) {}
     if (socket) {
       this.turn_end(socket, io, match_name);
@@ -336,10 +339,3 @@ export class GameMap {
     this.game_state = GameState.NotStarted;
   }
 }
-
-module.exports = {
-  Game: Game,
-  GameJSON: GameJSON,
-  GameMap: GameMap,
-  GameDifficulty: GameDifficulty
-};

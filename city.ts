@@ -14,7 +14,7 @@ export interface City {
   neighbors: City;
 }*/
 
-const colors = {
+export const Colors = {
   BLUE: "blue",
   RED: "red",
   BLACK: "black",
@@ -205,9 +205,3 @@ export class CityJSON implements CityJson {
     this.neighbors = [...city.neighbors].map(i => i.index);
   }
 }
-
-module.exports = {
-  City: City,
-  Colors: colors,
-  CityJSON: CityJSON
-};

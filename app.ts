@@ -552,5 +552,5 @@ interface GameObject {
   game: Game;
   available_roles: Set<Roles>;
   players: string[];
-  player_roles: any[];
+  player_roles: Roles[];
 }

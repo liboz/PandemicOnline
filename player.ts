@@ -422,8 +422,3 @@ export class PlayerJSON implements PlayerJson {
     this.id = player.id;
   }
 }
-
-module.exports = {
-  Player: Player,
-  PlayerJSON: PlayerJSON
-};
