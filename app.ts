@@ -1,18 +1,18 @@
 import { Game, GameDifficulty, GameMap } from "./game";
 import { Roles } from "./types";
+import { Cities } from "./data/cities";
 import express from "express";
 import cors from "cors";
+import socketIO from "socket.io";
 
 const app = express();
-const socketIO = require("socket.io");
 
 const seedrandom = require("seedrandom");
-const cities = require("./data/cities");
 
 const types = require("./types");
 
 let games: Record<string, GameObject> = {};
-let dummy_game = new GameMap(cities);
+let dummy_game = new GameMap(Cities);
 
 //console.log(games[0])
 
@@ -83,7 +83,7 @@ io.on("connection", function(socket) {
   socket.on("join", function(role: Roles, player_name: string, callback) {
     // add logic for role is invalid
     if (
-      games[match_name].available_types.roles.has(role) ||
+      games[match_name].available_roles.has(role) ||
       (curr_game() && curr_game().game_state !== types.GameState.NotStarted)
     ) {
       let player_index = players().findIndex(i => i === player_name); // should lock maybe?
@@ -93,7 +93,7 @@ io.on("connection", function(socket) {
         player_roles().push(role);
       }
       callback(player_index);
-      games[match_name].available_types.roles.delete(role);
+      games[match_name].available_roles.delete(role);
       emitRoles(socket.to(match_name), games, match_name);
       console.log(
         `${player_name} joined ${match_name} as Player ${player_index} in role ${role}`
@@ -101,7 +101,7 @@ io.on("connection", function(socket) {
     } else {
       socket.emit(
         "invalid action",
-        `Joining ${match_name} as Player ${player_index} with name ${player_name} in role ${role} is an invalid action`
+        `Joining ${match_name} as Player name ${player_name} in role ${role} is an invalid action`
       );
     }
   });
@@ -123,7 +123,7 @@ io.on("connection", function(socket) {
           `start game with ${filtered_players} in room ${match_name}`
         );
         games[match_name].game = new Game(
-          cities,
+          Cities,
           num_players,
           filtered_players,
           filtered_roles,
@@ -540,7 +540,11 @@ io.on("connection", function(socket) {
   });
 });
 
-function emitRoles(socket, games, match_name) {
+function emitRoles(
+  socket: SocketIO.Socket,
+  games: Record<string, GameObject>,
+  match_name: string
+) {
   socket.emit("roles", [...games[match_name].available_roles]);
 }
 

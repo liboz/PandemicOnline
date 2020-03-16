@@ -24,7 +24,7 @@ export class Player {
     game: Game,
     other_player: Player,
     final_destination: string,
-    socket: SocketIO.Namespace = null
+    socket: NodeJS.EventEmitter = null
   ) {
     if (this.role !== Roles.Dispatcher) {
       return false;
@@ -38,7 +38,7 @@ export class Player {
     game: Game,
     final_destination: string,
     player_hand = this.hand,
-    socket: SocketIO.Namespace = null
+    socket: NodeJS.EventEmitter = null
   ) {
     let game_graph = game.game_graph;
     if (
@@ -70,7 +70,7 @@ export class Player {
     game: Game,
     final_destination: string,
     hand: Set<string>,
-    socket: SocketIO.Namespace
+    socket: NodeJS.EventEmitter
   ) {
     hand.delete(final_destination);
     this.movePiece(game, game.game_graph, final_destination, socket);
@@ -80,7 +80,7 @@ export class Player {
     game: Game,
     final_destination: string,
     hand: Set<string>,
-    socket: SocketIO.Namespace
+    socket: NodeJS.EventEmitter
   ) {
     hand.delete(this.location);
     this.movePiece(game, game.game_graph, final_destination, socket);
@@ -94,7 +94,7 @@ export class Player {
     game: Game,
     final_destination: string,
     card: string,
-    socket: SocketIO.Namespace = null
+    socket: NodeJS.EventEmitter = null
   ) {
     this.hand.delete(card);
     this.movePiece(game, game.game_graph, final_destination, socket);
@@ -116,7 +116,7 @@ export class Player {
     game: Game,
     game_graph: Record<string, City>,
     final_destination: string,
-    socket: SocketIO.Namespace
+    socket: NodeJS.EventEmitter
   ) {
     if (this.role === Roles.Medic) {
       this.medicMoveTreat(game, socket);
@@ -129,7 +129,7 @@ export class Player {
     }
   }
 
-  medicMoveTreat(game: Game, socket: SocketIO.Namespace) {
+  medicMoveTreat(game: Game, socket: NodeJS.EventEmitter) {
     let colors = Object.keys(game.cured);
     colors.forEach(c => {
       if (game.cured[c] === 1) {
@@ -287,7 +287,7 @@ export class Player {
     return game.game_graph[this.location].cubes[color] > 0;
   }
 
-  treat(game: Game, color: string, io: SocketIO.Namespace = null) {
+  treat(game: Game, color: string, io: NodeJS.EventEmitter = null) {
     if (game.cured[color] === 1 || this.role === Roles.Medic) {
       game.cubes[color] += game.game_graph[this.location].cubes[color];
       game.game_graph[this.location].cubes[color] = 0;
