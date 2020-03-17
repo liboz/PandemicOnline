@@ -1,5 +1,5 @@
 import { Game } from "../game";
-import { Cities } from "../data/Cities";
+import { Cities } from "../data/cities";
 import { PlayerJSON } from "../player";
 import { PlayerDeck } from "../player_deck";
 import seedrandom from "seedrandom";
