@@ -397,7 +397,7 @@ export class PlayerJSON implements PlayerJson {
   hand: string[];
   location: string;
   id: number;
-  constructor(public player: Player, public game: Game) {
+  constructor(player: Player, game: Game) {
     this.name = player.name;
     this.role = player.role;
     this.hand = [...player.hand].sort((i, j) => {

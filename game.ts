@@ -321,7 +321,7 @@ class GameJSON implements GameJson {
       this.can_take = game.players[game.player_index].can_take(game);
       this.can_give = game.players[game.player_index].can_give(game);
       this.player_deck_cards_remaining = game.player_deck.deck.length;
-      this.log = game.log;
+      this.log = [...game.log];
       this.difficulty = game.difficulty;
     }
     if (game.game_state === GameState.DiscardingCard) {
