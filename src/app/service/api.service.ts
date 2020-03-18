@@ -6,7 +6,7 @@ import { environment } from "../../environments/environment";
 import { catchError, retry } from "rxjs/operators";
 import { Observable, throwError } from "rxjs";
 
-import { Game } from "../../../data/types";
+import { Client } from "../../../data/types";
 
 @Injectable({
   providedIn: "root"
@@ -14,8 +14,8 @@ import { Game } from "../../../data/types";
 export class ApiService {
   constructor(private http: HttpClient) {}
 
-  getGames(match_name): Observable<Game> {
-    return this.http.get<Game>(`${environment.baseUrl}/${match_name}`);
+  getGames(match_name): Observable<Client.Game> {
+    return this.http.get<Client.Game>(`${environment.baseUrl}/${match_name}`);
   }
 
   private handleError(error: HttpErrorResponse) {

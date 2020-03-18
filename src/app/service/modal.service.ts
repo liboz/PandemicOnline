@@ -59,9 +59,9 @@ export class ModalService {
     this.clearShareSource.next();
   }
 
-  private dispatcherMoveSource = new Subject<number>();
-  dispatcherMove$ = this.dispatcherMoveSource.asObservable();
-  dispatcherMove(target_player: number) {
-    this.dispatcherMoveSource.next(target_player);
+  private dispatcherMoveTargetSource = new Subject<number>();
+  dispatcherMoveTarget$ = this.dispatcherMoveTargetSource.asObservable();
+  dispatcherMoveTarget(target_player_id: number) {
+    this.dispatcherMoveTargetSource.next(target_player_id);
   }
 }

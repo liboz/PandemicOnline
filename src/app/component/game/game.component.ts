@@ -16,8 +16,8 @@ import { PlayerComponent } from "../player/player.component";
 import { MoveChoiceSelectorComponent } from "../move-choice-selector/move-choice-selector.component";
 import { Subscription } from "rxjs";
 import { ResearcherShareSelectorComponent } from "../researcher-share-selector/researcher-share-selector.component";
-import { Game, GameState, Roles } from 'data/types';
-import { DispatcherMoveComponent } from '../dispatcher-move/dispatcher-move.component';
+import { Client } from "data/types";
+import { DispatcherMoveComponent } from "../dispatcher-move/dispatcher-move.component";
 
 @Component({
   selector: "app-game",
@@ -27,7 +27,7 @@ import { DispatcherMoveComponent } from '../dispatcher-move/dispatcher-move.comp
 })
 export class GameComponent implements OnInit, OnChanges {
   objectKeys = Object.keys;
-  @Input() game: Game;
+  @Input() game: Client.Game;
   @Input() socket: SocketIOClient.Socket;
   @Input() player_name: string;
   @Input() player_index: number;
@@ -61,7 +61,7 @@ export class GameComponent implements OnInit, OnChanges {
   selectedDifficulty: number;
 
   getTextBox(selection) {
-    selection.each(function (d) {
+    selection.each(function(d) {
       d.bbox = this.getBBox();
     });
   }
@@ -76,17 +76,19 @@ export class GameComponent implements OnInit, OnChanges {
 
   initialized = false;
   selectedCards: Set<number>;
-  constructor(private modalService: ModalService) { }
+  constructor(private modalService: ModalService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.initialized) {
       this.createChart();
     }
     if (changes.game) {
-      if (changes.game.currentValue.game_state === GameState.Lost) {
+      if (changes.game.currentValue.game_state === Client.GameState.Lost) {
         this.modalService.destroy();
         this.modalService.init(ModalComponent, { lost: true }, {});
-      } else if (changes.game.currentValue.game_state === GameState.Won) {
+      } else if (
+        changes.game.currentValue.game_state === Client.GameState.Won
+      ) {
         this.modalService.destroy();
         this.modalService.init(ModalComponent, { lost: false }, {});
       }
@@ -104,7 +106,7 @@ export class GameComponent implements OnInit, OnChanges {
     this.countriesGroup = d3.select("#map-holder > svg > g").attr("id", "map");
 
     // add zoom functionality
-    this.zoomed = function () {
+    this.zoomed = function() {
       let t = d3.event.transform;
       d3.select("g").attr(
         "transform",
@@ -128,12 +130,12 @@ export class GameComponent implements OnInit, OnChanges {
         this.modalService.destroyEvent();
       }
     );
-    this.dispatcherMoveSubscription = this.modalService.dispatcherMove$.subscribe(
-      (player_index) => {
+    this.dispatcherMoveSubscription = this.modalService.dispatcherMoveTarget$.subscribe(
+      player_index => {
         this.dispatcherMoveOtherPlayer = player_index;
         this.modalService.destroyEvent();
       }
-    )
+    );
   }
 
   // zoom to show a bounding box, with optional additional padding as percentage of box size
@@ -353,7 +355,7 @@ export class GameComponent implements OnInit, OnChanges {
     this.socket.emit("treat", color, () => {
       console.log(
         `treat ${color} at ${
-        this.game.players[this.game.player_index].location
+          this.game.players[this.game.player_index].location
         } callbacked`
       );
     });
@@ -375,8 +377,8 @@ export class GameComponent implements OnInit, OnChanges {
 
       // non researcher case
       if (
-        curr_player.role !== Roles.Researcher &&
-        other_players.every(i => i.role !== Roles.Researcher)
+        curr_player.role !== Client.Roles.Researcher &&
+        other_players.every(i => i.role !== Client.Roles.Researcher)
       ) {
         // only 2 players
         if (location_players.length === 2) {
@@ -405,7 +407,7 @@ export class GameComponent implements OnInit, OnChanges {
         if (location_players.length === 2) {
           // just need to figure out who is the researcher and who isn't
           let other_player = other_players_ids[0];
-          if (curr_player.role === Roles.Researcher) {
+          if (curr_player.role === Client.Roles.Researcher) {
             if (curr_player.hand.length === 0) {
               this.share(other_player);
             } else {
@@ -443,7 +445,7 @@ export class GameComponent implements OnInit, OnChanges {
               );
             } else {
               let researcher = other_players.filter(
-                i => i.role === Roles.Researcher
+                i => i.role === Client.Roles.Researcher
               )[0];
               this.shareCardChoices = [
                 new ShareCard(
@@ -472,7 +474,10 @@ export class GameComponent implements OnInit, OnChanges {
           );
           console.log(other_player);
           if (other_player.length > 0) {
-            if (this.game.players[other_player[0]].role === Roles.Researcher) {
+            if (
+              this.game.players[other_player[0]].role ===
+              Client.Roles.Researcher
+            ) {
               // That one player we can take from is a researcher, in which case we just do researcher take
               this.shareResearcher(
                 this.game.players[other_player[0]],
@@ -489,7 +494,7 @@ export class GameComponent implements OnInit, OnChanges {
                 )
               ];
               //  if that researcher is us, the action needs to be a give
-              if (curr_player.role === Roles.Researcher) {
+              if (curr_player.role === Client.Roles.Researcher) {
                 other_players_ids.forEach(id => {
                   this.shareCardChoices.push(
                     new ShareCard(ShareCard.Give, id, null, () =>
@@ -500,7 +505,7 @@ export class GameComponent implements OnInit, OnChanges {
               } else {
                 // otherwise, we can also take from the researcher
                 let researcher = other_players.filter(
-                  i => i.role === Roles.Researcher
+                  i => i.role === Client.Roles.Researcher
                 )[0];
                 this.shareCardChoices.push(
                   new ShareCard(ShareCard.Take, researcher.id, null, () =>
@@ -516,9 +521,9 @@ export class GameComponent implements OnInit, OnChanges {
           } else {
             // the one player is non-existent, just a researcher
             let researcher = other_players.filter(
-              i => i.role === Roles.Researcher
+              i => i.role === Client.Roles.Researcher
             )[0];
-            if (curr_player.role === Roles.Researcher) {
+            if (curr_player.role === Client.Roles.Researcher) {
               this.shareResearcher(curr_player, researcher.id, curr_player.id);
             } else {
               this.shareResearcher(researcher, researcher.id, curr_player.id);
@@ -590,7 +595,7 @@ export class GameComponent implements OnInit, OnChanges {
       this.selectedCards = new Set();
       console.log(
         `discover with ${cards} at ${
-        this.game.players[this.game.player_index].location
+          this.game.players[this.game.player_index].location
         } callbacked`
       );
     });
@@ -602,7 +607,10 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   canPass() {
-    return this.game.turns_left > 0 && this.game.game_state === GameState.Ready;
+    return (
+      this.game.turns_left > 0 &&
+      this.game.game_state === Client.GameState.Ready
+    );
   }
 
   onPass() {
@@ -610,20 +618,20 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   hasStarted() {
-    return this.game && this.game.game_state !== GameState.NotStarted;
+    return this.game && this.game.game_state !== Client.GameState.NotStarted;
   }
 
   mustDiscard() {
     return (
       this.game.must_discard_index === this.player_index &&
-      this.game.game_state === GameState.DiscardingCard
+      this.game.game_state === Client.GameState.DiscardingCard
     );
   }
 
   discardEnough() {
     return (
       this.game.players[this.game.must_discard_index].hand.length -
-      this.selectedCards.size ===
+        this.selectedCards.size ===
       7
     );
   }
@@ -641,17 +649,30 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   isDispatcher() {
-    return this.game.players[this.game.player_index].role === Roles.Dispatcher;
+    return (
+      this.game.players[this.game.player_index].role === Client.Roles.Dispatcher
+    );
   }
 
   onDispatcherMove() {
-    this.modalService.init(
-      DispatcherMoveComponent,
-      {
-        game: this.game,
-      },
-      {}
-    );
+    if (this.dispatcherMoveOtherPlayer) {
+      this.dispatcherMoveOtherPlayer = null;
+    } else {
+      const other_players = this.game.players.filter(
+        i => i.id !== this.game.player_index
+      );
+      if (other_players.length > 1) {
+        this.modalService.init(
+          DispatcherMoveComponent,
+          {
+            other_players: other_players
+          },
+          {}
+        );
+      } else if (other_players.length === 1) {
+        this.dispatcherMoveOtherPlayer = other_players[0].id;
+      }
+    }
   }
 
   cannotDoPrimaryAction() {
@@ -660,8 +681,9 @@ export class GameComponent implements OnInit, OnChanges {
       this.treatColorChoices ||
       this.shareCardChoices ||
       this.cureColorCards ||
+      this.dispatcherMoveOtherPlayer ||
       this.game.turns_left <= 0 ||
-      this.game.game_state !== GameState.Ready
+      this.game.game_state !== Client.GameState.Ready
     );
   }
 
@@ -691,7 +713,7 @@ class ShareCard {
     this.onClick = onClick;
   }
 
-  ngOnInit() { }
+  ngOnInit() {}
 }
 
 const GameDifficulty = {

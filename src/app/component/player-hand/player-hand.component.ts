@@ -7,7 +7,7 @@ import {
   EventEmitter,
   OnChanges
 } from "@angular/core";
-import { Game } from 'data/types';
+import { Client } from "data/types";
 
 @Component({
   selector: "app-player-hand",
@@ -16,7 +16,7 @@ import { Game } from 'data/types';
 })
 export class PlayerHandComponent implements OnInit, OnChanges {
   @Input() hand: string[] = [];
-  @Input() game: Game;
+  @Input() game: Client.Game;
   @Input() cardLimit = 7;
   @Output() onSelect = new EventEmitter<any>();
   result() {

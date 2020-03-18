@@ -1,26 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalService } from 'src/app/service/modal.service';
+import { Component, OnInit, Input } from "@angular/core";
+import { ModalService } from "src/app/service/modal.service";
+import { Client } from "data/types";
+import { formatPlayer } from "src/app/utils";
 
 @Component({
-  selector: 'app-dispatcher-move',
-  templateUrl: './dispatcher-move.component.html',
-  styleUrls: ['./dispatcher-move.component.styl']
+  selector: "app-dispatcher-move",
+  templateUrl: "./dispatcher-move.component.html",
+  styleUrls: ["./dispatcher-move.component.styl"]
 })
 export class DispatcherMoveComponent implements OnInit {
+  constructor(private modalService: ModalService) {}
 
-  constructor(private modalService: ModalService) { }
+  @Input() other_players: Client.Player[];
+  formatPlayer = formatPlayer;
+  ngOnInit() {}
 
-  ngOnInit() {
+  dispatcherMoveTargetSelect(target_player_id: number) {
+    this.modalService.dispatcherMoveTarget(target_player_id);
   }
 
-  dispatcherMoveTargetSelect() {
-    this.modalService.dispatcherMove(
-      0
-    );
-}
-
-onCancel() {
-  this.modalService.destroyEvent();
-}
-
+  onCancel() {
+    this.modalService.destroyEvent();
+  }
 }

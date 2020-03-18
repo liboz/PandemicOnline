@@ -2,7 +2,7 @@
   Join Game as:
   <div *ngFor="let player of game.players">
     <button (click)="choosePlayer(player)">
-      {{ player.name }} - {{ player.role }}
+      {{ formatPlayer(player) }}
     </button>
   </div>
 </div>

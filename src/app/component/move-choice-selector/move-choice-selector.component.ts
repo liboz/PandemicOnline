@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { ModalService } from "src/app/service/modal.service";
-import { Game } from 'data/types';
+import { Client } from "data/types";
 
 @Component({
   selector: "app-move-choice-selector",
@@ -8,7 +8,7 @@ import { Game } from 'data/types';
   styleUrls: ["./move-choice-selector.component.styl"]
 })
 export class MoveChoiceSelectorComponent implements OnInit {
-  @Input() game: Game;
+  @Input() game: Client.Game;
   @Input() hand: string[];
   @Input() socket: SocketIOClient.Socket;
   @Input() canDirect: boolean;

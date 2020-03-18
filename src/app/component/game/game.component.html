@@ -71,10 +71,10 @@
         </button>
         <button
           *ngIf="isDispatcher()"
-          [disabled]="cannotDoPrimaryAction() && !isMoving"
+          [disabled]="cannotDoPrimaryAction() && !dispatcherMoveOtherPlayer"
           (click)="onDispatcherMove()"
         >
-          Dispatcher Move
+          {{ dispatcherMoveOtherPlayer ? "Cancel" : "Dispatcher Move" }}
         </button>
         <button
           [disabled]="

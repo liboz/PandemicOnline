@@ -12,7 +12,7 @@ import io from "socket.io-client";
 import { Subscription } from "rxjs";
 import { SnackbarService } from "src/app/service/snackbar.service";
 
-import { Game, GameState } from "../../../../data/types";
+import { Client } from "../../../../data/types";
 
 @Component({
   selector: "app-game-socket",
@@ -26,7 +26,7 @@ export class GameSocketComponent implements OnInit {
     private modalService: ModalService,
     private snackBarService: SnackbarService
   ) {}
-  game: Game;
+  game: Client.Game;
   socket: SocketIOClient.Socket;
   match_name: string;
   player_name: string;
@@ -44,8 +44,8 @@ export class GameSocketComponent implements OnInit {
 
       this.socket.on("roles", roles => {
         if (
-          this.game.game_state !== GameState.Lost &&
-          this.game.game_state != GameState.Won &&
+          this.game.game_state !== Client.GameState.Lost &&
+          this.game.game_state != Client.GameState.Won &&
           !this.player_name
         ) {
           let config = { game: this.game, socket: this.socket, roles: roles };
@@ -99,7 +99,7 @@ export class GameSocketComponent implements OnInit {
       });
 
       this.socket.on("discard cards", data => {
-        this.game.game_state = GameState.DiscardingCard;
+        this.game.game_state = Client.GameState.DiscardingCard;
         this.game.must_discard_index = data;
         if (this.game.must_discard_index === this.player_index) {
           this.snackBarService.show(`You need to discard some cards`, "danger");
