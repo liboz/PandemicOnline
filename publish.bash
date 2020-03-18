@@ -1,1 +1,1 @@
-cp app.yaml dist/
+cp app.yaml dist/app.yaml
