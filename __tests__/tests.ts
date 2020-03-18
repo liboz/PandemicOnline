@@ -1,11 +1,11 @@
-import { Game } from "../game";
-import { Cities } from "../data/cities";
-import { PlayerJSON } from "../player";
-import { PlayerDeck } from "../player_deck";
 import seedrandom from "seedrandom";
 import { Colors } from "../city";
-import { Roles, GameState } from "../types";
+import { Cities } from "../data/cities";
+import { Game } from "../game";
 import { InfectionDeck } from "../infection_deck";
+import { PlayerJSON } from "../player";
+import { PlayerDeck } from "../player_deck";
+import { Client } from "../types";
 
 describe("City", function() {
   describe("#Infect", function() {
@@ -14,7 +14,7 @@ describe("City", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       let chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 3; i++) {
@@ -33,7 +33,7 @@ describe("City", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.Medic, Roles.Researcher]
+        [Client.Roles.Medic, Client.Roles.Researcher]
       );
 
       let atlanta = g.game_graph["Atlanta"];
@@ -63,7 +63,7 @@ describe("City", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.QuarantineSpecialist, Roles.Researcher],
+        [Client.Roles.QuarantineSpecialist, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -102,7 +102,7 @@ describe("City", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.QuarantineSpecialist, Roles.Researcher],
+        [Client.Roles.QuarantineSpecialist, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -134,7 +134,7 @@ describe("City", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       let chennai = g.game_graph["Chennai"];
       g.cured[Colors.BLACK] = 2;
@@ -154,7 +154,7 @@ describe("City", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       let chennai = g.game_graph["Chennai"];
 
@@ -174,7 +174,7 @@ describe("City", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       let chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 4; i++) {
@@ -234,7 +234,7 @@ describe("City", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       let chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 3; i++) {
@@ -260,7 +260,7 @@ describe("City", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       let chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 3; i++) {
@@ -287,7 +287,7 @@ describe("City", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       let tokyo = g.game_graph["Taipei"];
       for (let i = 0; i < 3; i++) {
@@ -659,7 +659,11 @@ describe("Player Deck", function() {
         Cities,
         3,
         ["test", "test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher, Roles.Scientist],
+        [
+          Client.Roles.ContingencyPlanner,
+          Client.Roles.Researcher,
+          Client.Roles.Scientist
+        ],
         5,
         seeded
       );
@@ -670,7 +674,7 @@ describe("Player Deck", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -688,7 +692,7 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -717,7 +721,7 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -735,15 +739,15 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
-      expect(g.game_state).toBe(GameState.NotStarted);
+      expect(g.game_state).toBe(Client.GameState.NotStarted);
       for (let i = 0; i < 2; i++) {
         // running initialize_board twice does nothing
         g.initialize_board();
-        expect(g.game_state).toBe(GameState.Ready);
+        expect(g.game_state).toBe(Client.GameState.Ready);
         expect(g.outbreak_counter).toBe(0);
         let infected = [
           "Madrid",
@@ -773,7 +777,7 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -796,7 +800,7 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -804,12 +808,12 @@ describe("Game", function() {
         g.infect_stage();
         g.epidemic();
       }
-      expect(g.game_state).toBe(GameState.NotStarted);
+      expect(g.game_state).toBe(Client.GameState.NotStarted);
       g.epidemic();
       g.epidemic();
       g.infect_stage();
       g.infect_stage();
-      expect(g.game_state).toBe(GameState.Lost);
+      expect(g.game_state).toBe(Client.GameState.Lost);
     });
   });
 
@@ -820,7 +824,7 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -837,9 +841,9 @@ describe("Game", function() {
       let delhi = g.game_graph["Delhi"];
       delhi.infect(g);
       kolkata.infect(g);
-      expect(g.game_state).toBe(GameState.NotStarted);
+      expect(g.game_state).toBe(Client.GameState.NotStarted);
       g.infect_stage(); // next card is Tehran
-      expect(g.game_state).toBe(GameState.Lost);
+      expect(g.game_state).toBe(Client.GameState.Lost);
     });
   });
 
@@ -850,7 +854,7 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -867,11 +871,11 @@ describe("Game", function() {
       let bogota = g.game_graph["Bogota"];
       bogota.infect(g);
       miami.infect(g);
-      expect(g.game_state).toBe(GameState.NotStarted);
+      expect(g.game_state).toBe(Client.GameState.NotStarted);
       expect(g.cubes[Colors.YELLOW]).toBe(2);
       g.epidemic(); // lagos
       expect(g.cubes[Colors.YELLOW]).toBe(-1);
-      expect(g.game_state).toBe(GameState.Lost);
+      expect(g.game_state).toBe(Client.GameState.Lost);
     });
   });
 
@@ -881,7 +885,7 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       g.players.forEach((p, index) => {
         expect(g.player_index).toBe(index);
@@ -897,7 +901,7 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       expect(g.turns_left).toBe(4);
       expect(g.decrement_turn()).toBe(true);
@@ -919,7 +923,7 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       g.pass_turn();
       expect(g.turns_left).toBe(0);
@@ -928,7 +932,7 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       g.decrement_turn();
       expect(g.turns_left).toBe(3);
@@ -939,7 +943,7 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       g.decrement_turn();
       g.decrement_turn();
@@ -951,7 +955,7 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       g.decrement_turn();
       g.decrement_turn();
@@ -964,7 +968,7 @@ describe("Game", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher]
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       g.decrement_turn();
       g.decrement_turn();
@@ -985,7 +989,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1020,7 +1024,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1082,7 +1086,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.Dispatcher, Roles.Researcher],
+        [Client.Roles.Dispatcher, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1158,7 +1162,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.OperationsExpert, Roles.Researcher],
+        [Client.Roles.OperationsExpert, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1190,7 +1194,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.OperationsExpert],
+        [Client.Roles.ContingencyPlanner, Client.Roles.OperationsExpert],
         5,
         seeded
       );
@@ -1285,7 +1289,11 @@ describe("Player", function() {
         Cities,
         3,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.OperationsExpert, Roles.Dispatcher],
+        [
+          Client.Roles.ContingencyPlanner,
+          Client.Roles.OperationsExpert,
+          Client.Roles.Dispatcher
+        ],
         5,
         seeded
       );
@@ -1331,7 +1339,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1365,7 +1373,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.OperationsExpert, Roles.Researcher],
+        [Client.Roles.OperationsExpert, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1394,17 +1402,17 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
       for (let i = 0; i < 45; i++) {
         // 48 Cities + 5 epidemic, but start with 8 cards removed with 2 people
         g.players[0].draw(g);
-        expect(g.game_state).toBe(GameState.NotStarted);
+        expect(g.game_state).toBe(Client.GameState.NotStarted);
       }
       g.players[0].draw(g);
-      expect(g.game_state).toBe(GameState.Lost);
+      expect(g.game_state).toBe(Client.GameState.Lost);
     });
   });
 
@@ -1415,7 +1423,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1456,7 +1464,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.Scientist, Roles.Researcher],
+        [Client.Roles.Scientist, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1496,7 +1504,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1536,7 +1544,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1590,7 +1598,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1614,7 +1622,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1653,7 +1661,7 @@ describe("Player", function() {
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].cure(g, [...g.players[0].hand]);
 
-      expect(g.game_state).toBe(GameState.Won);
+      expect(g.game_state).toBe(Client.GameState.Won);
     });
   });
 
@@ -1664,7 +1672,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1710,7 +1718,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1748,7 +1756,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1784,7 +1792,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.Medic, Roles.Researcher],
+        [Client.Roles.Medic, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1816,7 +1824,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.Medic, Roles.Researcher],
+        [Client.Roles.Medic, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1848,7 +1856,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -1880,7 +1888,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Scientist],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Scientist],
         5,
         seeded
       );
@@ -1929,7 +1937,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Scientist],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Scientist],
         5,
         seeded
       );
@@ -1966,7 +1974,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
@@ -2029,7 +2037,7 @@ describe("Player", function() {
         Cities,
         2,
         ["test", "test"],
-        [Roles.ContingencyPlanner, Roles.Researcher],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
         5,
         seeded
       );
