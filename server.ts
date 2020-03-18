@@ -4,12 +4,9 @@ import socketIO from "socket.io";
 import { Cities } from "./data/cities";
 import { Game, GameDifficulty, GameMap } from "./game";
 import { Client } from "./types";
+import seedrandom from "seedrandom";
 
 const app = express();
-
-const seedrandom = require("seedrandom");
-
-const types = require("./types");
 
 let games: Record<string, GameObject> = {};
 let dummy_game = new GameMap(Cities);
@@ -75,7 +72,7 @@ io.on("connection", function(socket) {
 
   let isReady = function() {
     return (
-      curr_game().game_state === types.GameState.Ready &&
+      curr_game().game_state === Client.GameState.Ready &&
       curr_game().turns_left !== 0
     );
   };
@@ -88,7 +85,7 @@ io.on("connection", function(socket) {
     // add logic for role is invalid
     if (
       games[match_name].available_roles.has(role) ||
-      (curr_game() && curr_game().game_state !== types.GameState.NotStarted)
+      (curr_game() && curr_game().game_state !== Client.GameState.NotStarted)
     ) {
       let player_index = players().findIndex(i => i === player_name); // should lock maybe?
       if (player_index === -1) {
@@ -111,7 +108,10 @@ io.on("connection", function(socket) {
   });
 
   socket.on("start game", function(difficulty: number) {
-    if (!curr_game() || curr_game().game_state === types.GameState.NotStarted) {
+    if (
+      !curr_game() ||
+      curr_game().game_state === Client.GameState.NotStarted
+    ) {
       let num_players = players().length;
       if (num_players > 5) {
         socket.emit("invalid action", `Cannot start game with over 5 players`);
@@ -522,10 +522,10 @@ io.on("connection", function(socket) {
         curr_game().turns_left = 4;
       }
       if (
-        curr_game().game_state !== types.GameState.Lost &&
-        curr_game().game_state !== types.GameState.Won
+        curr_game().game_state !== Client.GameState.Lost &&
+        curr_game().game_state !== Client.GameState.Won
       ) {
-        curr_game().game_state = types.GameState.Ready;
+        curr_game().game_state = Client.GameState.Ready;
       }
       io.in(match_name).emit("update game state", curr_game().toJSON());
     } else {
