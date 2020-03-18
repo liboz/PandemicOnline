@@ -1,109 +1,108 @@
-const game = require("../game");
-const cities = require("../data/cities");
-const city = require("../city");
-const infection = require("../infection_deck");
-const player_deck = require("../player_deck");
-const player = require("../player");
-const other = require("../other");
-
-const seedrandom = require("seedrandom");
+import { Game } from "../game";
+import { Cities } from "../data/cities";
+import { PlayerJSON } from "../player";
+import { PlayerDeck } from "../player_deck";
+import seedrandom from "seedrandom";
+import { Colors } from "../city";
+import { Roles, GameState } from "../types";
+import { InfectionDeck } from "../infection_deck";
 
 describe("City", function() {
   describe("#Infect", function() {
     it("Increases the counter of cubes based on color", function() {
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       let chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 3; i++) {
         expect(chennai.infect(g)).toBe(true);
-        expect(chennai.cubes[city.Colors.BLUE]).toBe(0);
-        expect(chennai.cubes[city.Colors.RED]).toBe(0);
-        expect(chennai.cubes[city.Colors.BLACK]).toBe(i + 1);
-        expect(chennai.cubes[city.Colors.YELLOW]).toBe(0);
+        expect(chennai.cubes[Colors.BLUE]).toBe(0);
+        expect(chennai.cubes[Colors.RED]).toBe(0);
+        expect(chennai.cubes[Colors.BLACK]).toBe(i + 1);
+        expect(chennai.cubes[Colors.YELLOW]).toBe(0);
       }
     });
   });
 
   describe("#Infect", function() {
     it("Medic Prevents Infect After Cure Discovered", function() {
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.Medic, other.Roles.Researcher]
+        [Roles.Medic, Roles.Researcher]
       );
 
       let atlanta = g.game_graph["Atlanta"];
-      expect(atlanta.cubes[city.Colors.BLUE]).toBe(0);
+      expect(atlanta.cubes[Colors.BLUE]).toBe(0);
       expect(atlanta.infect(g)).toBe(true);
-      expect(atlanta.cubes[city.Colors.BLUE]).toBe(1);
+      expect(atlanta.cubes[Colors.BLUE]).toBe(1);
 
-      g.cured[city.Colors.BLUE] = 1;
+      g.cured[Colors.BLUE] = 1;
 
       expect(g.players[0].move(g, "Washington")).toBe(true);
       let washington = g.game_graph["Washington"];
-      expect(washington.cubes[city.Colors.BLUE]).toBe(0);
+      expect(washington.cubes[Colors.BLUE]).toBe(0);
       expect(washington.infect(g)).toBe(true);
-      expect(washington.cubes[city.Colors.BLUE]).toBe(0);
+      expect(washington.cubes[Colors.BLUE]).toBe(0);
 
-      g.cured[city.Colors.BLUE] = 1; // washington triggers eradicate
-      expect(atlanta.cubes[city.Colors.BLUE]).toBe(0);
+      g.cured[Colors.BLUE] = 1; // washington triggers eradicate
+      expect(atlanta.cubes[Colors.BLUE]).toBe(0);
       expect(atlanta.infect(g)).toBe(true);
-      expect(atlanta.cubes[city.Colors.BLUE]).toBe(1);
+      expect(atlanta.cubes[Colors.BLUE]).toBe(1);
     });
   });
 
   describe("#Infect", function() {
     it("Quarantine Specialist Prevents Infect in Nearby Cities", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.QuarantineSpecialist, other.Roles.Researcher],
+        [Roles.QuarantineSpecialist, Roles.Researcher],
         5,
         seeded
       );
 
       let atlanta = g.game_graph["Atlanta"];
-      expect(atlanta.cubes[city.Colors.BLUE]).toBe(0);
+      expect(atlanta.cubes[Colors.BLUE]).toBe(0);
       expect(atlanta.infect(g)).toBe(true);
-      expect(atlanta.cubes[city.Colors.BLUE]).toBe(0);
+      expect(atlanta.cubes[Colors.BLUE]).toBe(0);
 
       let washington = g.game_graph["Washington"];
-      expect(washington.cubes[city.Colors.BLUE]).toBe(0);
+      expect(washington.cubes[Colors.BLUE]).toBe(0);
       expect(washington.infect(g)).toBe(true);
-      expect(washington.cubes[city.Colors.BLUE]).toBe(0);
+      expect(washington.cubes[Colors.BLUE]).toBe(0);
 
       let chicago = g.game_graph["Chicago"];
-      expect(chicago.cubes[city.Colors.BLUE]).toBe(0);
+      expect(chicago.cubes[Colors.BLUE]).toBe(0);
       expect(chicago.infect(g)).toBe(true);
-      expect(chicago.cubes[city.Colors.BLUE]).toBe(0);
+      expect(chicago.cubes[Colors.BLUE]).toBe(0);
 
       g.players[0].move(g, "Miami");
       //g.players[0].move(g, 'Bogota')
       let saopaulo = g.game_graph["Sao Paulo"];
       g.epidemic(); // Sao Paulo
-      expect(saopaulo.cubes[city.Colors.YELLOW]).toBe(3);
+      expect(saopaulo.cubes[Colors.YELLOW]).toBe(3);
 
       g.infect_stage(); // Sao Paulo
       let bogota = g.game_graph["Bogota"];
-      expect(bogota.cubes[city.Colors.YELLOW]).toBe(0);
+      expect(bogota.cubes[Colors.YELLOW]).toBe(0);
     });
   });
 
   describe("#Infect", function() {
     it("Quarantine Specialist Does Nothing in Initialization", function() {
       let seeded = seedrandom("5"); // initial infection contains Atlanta
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.QuarantineSpecialist, other.Roles.Researcher],
+        [Roles.QuarantineSpecialist, Roles.Researcher],
         5,
         seeded
       );
@@ -131,51 +130,51 @@ describe("City", function() {
 
   describe("#Infect", function() {
     it("No Infect when Eradicated", function() {
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       let chennai = g.game_graph["Chennai"];
-      g.cured[city.Colors.BLACK] = 2;
+      g.cured[Colors.BLACK] = 2;
       for (let i = 0; i < 3; i++) {
         expect(chennai.infect(g)).toBe(true);
-        expect(chennai.cubes[city.Colors.BLUE]).toBe(0);
-        expect(chennai.cubes[city.Colors.RED]).toBe(0);
-        expect(chennai.cubes[city.Colors.BLACK]).toBe(0);
-        expect(chennai.cubes[city.Colors.YELLOW]).toBe(0);
+        expect(chennai.cubes[Colors.BLUE]).toBe(0);
+        expect(chennai.cubes[Colors.RED]).toBe(0);
+        expect(chennai.cubes[Colors.BLACK]).toBe(0);
+        expect(chennai.cubes[Colors.YELLOW]).toBe(0);
       }
     });
   });
 
   describe("#Infect", function() {
     it("Epidemic", function() {
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       let chennai = g.game_graph["Chennai"];
 
       for (let i = 0; i < 3; i++) {
         chennai.infect_epidemic(g);
-        expect(chennai.cubes[city.Colors.BLUE]).toBe(0);
-        expect(chennai.cubes[city.Colors.RED]).toBe(0);
-        expect(chennai.cubes[city.Colors.BLACK]).toBe(3);
-        expect(chennai.cubes[city.Colors.YELLOW]).toBe(0);
+        expect(chennai.cubes[Colors.BLUE]).toBe(0);
+        expect(chennai.cubes[Colors.RED]).toBe(0);
+        expect(chennai.cubes[Colors.BLACK]).toBe(3);
+        expect(chennai.cubes[Colors.YELLOW]).toBe(0);
       }
     });
   });
 
   describe("#ChainReaction", function() {
     it("Create Chain Infection", function() {
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       let chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 4; i++) {
@@ -183,10 +182,10 @@ describe("City", function() {
       }
       expect(chennai.cubes["black"]).toBe(3);
       chennai.neighbors.forEach(neighbor => {
-        expect(neighbor.cubes[city.Colors.BLUE]).toBe(0);
-        expect(neighbor.cubes[city.Colors.RED]).toBe(0);
-        expect(neighbor.cubes[city.Colors.BLACK]).toBe(1);
-        expect(neighbor.cubes[city.Colors.YELLOW]).toBe(0);
+        expect(neighbor.cubes[Colors.BLUE]).toBe(0);
+        expect(neighbor.cubes[Colors.RED]).toBe(0);
+        expect(neighbor.cubes[Colors.BLACK]).toBe(1);
+        expect(neighbor.cubes[Colors.YELLOW]).toBe(0);
       });
 
       let bangkok = g.game_graph["Bangkok"];
@@ -194,48 +193,48 @@ describe("City", function() {
         bangkok.infect(g);
       }
       bangkok.neighbors.forEach(neighbor => {
-        expect(neighbor.cubes[city.Colors.RED]).toBe(1);
+        expect(neighbor.cubes[Colors.RED]).toBe(1);
       });
 
       let kolkata = g.game_graph["Kolkata"];
-      expect(kolkata.cubes[city.Colors.RED]).toBe(1);
+      expect(kolkata.cubes[Colors.RED]).toBe(1);
       expect(kolkata.cubes["black"]).toBe(1);
       for (let i = 0; i < 3; i++) {
         kolkata.infect(g);
       }
 
-      expect(kolkata.cubes[city.Colors.RED]).toBe(1);
-      expect(kolkata.cubes[city.Colors.BLACK]).toBe(3);
+      expect(kolkata.cubes[Colors.RED]).toBe(1);
+      expect(kolkata.cubes[Colors.BLACK]).toBe(3);
 
       chennai.neighbors.forEach(neighbor => {
         if (neighbor === kolkata || kolkata.neighbors.has(neighbor)) {
-          expect(neighbor.cubes[city.Colors.BLACK]).toBe(3);
+          expect(neighbor.cubes[Colors.BLACK]).toBe(3);
         } else {
-          expect(neighbor.cubes[city.Colors.BLACK]).toBe(2);
+          expect(neighbor.cubes[Colors.BLACK]).toBe(2);
         }
       });
 
       kolkata.neighbors.forEach(neighbor => {
         if (neighbor === chennai || chennai.neighbors.has(neighbor)) {
-          expect(neighbor.cubes[city.Colors.BLACK]).toBe(3);
+          expect(neighbor.cubes[Colors.BLACK]).toBe(3);
         } else {
-          expect(neighbor.cubes[city.Colors.BLACK]).toBe(1);
+          expect(neighbor.cubes[Colors.BLACK]).toBe(1);
         }
       });
 
       bangkok.neighbors.forEach(neighbor => {
-        expect(neighbor.cubes[city.Colors.RED]).toBe(1);
+        expect(neighbor.cubes[Colors.RED]).toBe(1);
       });
     });
   });
 
   describe("#ChainReaction", function() {
     it("Outbreak Counter Multiple Chains", function() {
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       let chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 3; i++) {
@@ -257,11 +256,11 @@ describe("City", function() {
 
   describe("#ChainReaction", function() {
     it("Outbreak Counter Multiple Chains No Infinite", function() {
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       let chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 3; i++) {
@@ -284,11 +283,11 @@ describe("City", function() {
 
   describe("#ChainReaction", function() {
     it("Outbreak Counter One Chain", function() {
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       let tokyo = g.game_graph["Taipei"];
       for (let i = 0; i < 3; i++) {
@@ -312,7 +311,7 @@ describe("City", function() {
 describe("Data Integrity", function() {
   describe("#CityNumber", function() {
     it("Is 48", function() {
-      expect(cities.length).toBe(48);
+      expect(Cities.length).toBe(48);
     });
   });
 });
@@ -321,7 +320,7 @@ describe("Infection Deck", function() {
   describe("#Random", function() {
     it("Shuffles", function() {
       let seeded = seedrandom("test!");
-      let i = new infection.InfectionDeck(cities, seeded);
+      let i = new InfectionDeck(Cities, seeded);
       expect(i.facedown_deck.length).toBe(48);
       expect(i.facedown_deck.toArray()).toEqual([
         "Sao Paulo",
@@ -379,7 +378,7 @@ describe("Infection Deck", function() {
   describe("#Flip Card", function() {
     it("Gets Top", function() {
       let seeded = seedrandom("test!");
-      let i = new infection.InfectionDeck(cities, seeded);
+      let i = new InfectionDeck(Cities, seeded);
       expect(i.flip_card()).toBe("Tokyo");
       expect(i.facedown_deck.toArray()).toEqual([
         "Sao Paulo",
@@ -433,7 +432,7 @@ describe("Infection Deck", function() {
       expect(i.faceup_deck).toEqual(["Tokyo"]);
 
       seeded = seedrandom();
-      i = new infection.InfectionDeck(cities, seeded);
+      i = new InfectionDeck(Cities, seeded);
       let peek = i.facedown_deck.peekBack();
       expect(i.flip_card()).toBe(peek);
     });
@@ -442,7 +441,7 @@ describe("Infection Deck", function() {
   describe("#Intensify", function() {
     it("Check Top Cards are correct", function() {
       let seeded = seedrandom();
-      let i = new infection.InfectionDeck(cities, seeded);
+      let i = new InfectionDeck(Cities, seeded);
 
       for (let j = 0; j < 9; j++) {
         let c = i.facedown_deck.peekBack();
@@ -478,7 +477,7 @@ describe("Infection Deck", function() {
   describe("#Infect Epidemic", function() {
     it("Check Bottom Card in the faceup_deck ", function() {
       let seeded = seedrandom("test!");
-      let i = new infection.InfectionDeck(cities, seeded);
+      let i = new InfectionDeck(Cities, seeded);
       expect(i.infect_epidemic()).toBe("Sao Paulo");
       expect(i.facedown_deck.toArray()).toEqual([
         "Buenos Aires",
@@ -532,7 +531,7 @@ describe("Infection Deck", function() {
       expect(i.faceup_deck).toEqual(["Sao Paulo"]);
 
       seeded = seedrandom();
-      i = new infection.InfectionDeck(cities, seeded);
+      i = new InfectionDeck(Cities, seeded);
       let peek = i.facedown_deck.peekFront();
       expect(i.infect_epidemic()).toBe(peek);
     });
@@ -541,7 +540,7 @@ describe("Infection Deck", function() {
   describe("#Big Deck", function() {
     it("Shuffles", function() {
       let seeded = seedrandom("test!");
-      let i = new infection.InfectionDeck(cities, seeded);
+      let i = new InfectionDeck(Cities, seeded);
       for (let j = 0; j < 16; j++) {
         i.flip_card();
       }
@@ -631,17 +630,16 @@ describe("Player Deck", function() {
   describe("#Partition", function() {
     it("Partitions Deck Correctly", function() {
       let seeded = seedrandom();
-      let partitions = new player_deck.PlayerDeck(cities, [], 6, seeded)
-        .partitions;
+      let partitions = new PlayerDeck(Cities, [], 6, seeded).partitions;
       expect(partitions.length).toBe(6);
       partitions.forEach(p => {
         expect(p.length).toBe(9);
         expect(p.filter(c => c === "Epidemic").length).toBe(1);
       });
 
-      partitions = new player_deck.PlayerDeck(cities, [], 5, seeded).partitions;
+      partitions = new PlayerDeck(Cities, [], 5, seeded).partitions;
       expect(partitions.length).toBe(5);
-      let d = {};
+      let d: Record<number, number> = {};
       partitions.forEach(p => {
         if (p.length in d) {
           d[p.length] += 1;
@@ -657,26 +655,22 @@ describe("Player Deck", function() {
   describe("#Partition", function() {
     it("Hand Size Is Correct", function() {
       let seeded = seedrandom();
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         3,
         ["test", "test", "test"],
-        [
-          other.Roles.ContingencyPlanner,
-          other.Roles.Researcher,
-          other.Roles.Scientist
-        ],
+        [Roles.ContingencyPlanner, Roles.Researcher, Roles.Scientist],
         5,
         seeded
       );
 
       g.players.forEach(i => expect(i.hand.size).toBe(3));
 
-      g = new game.Game(
-        cities,
+      g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
@@ -690,27 +684,27 @@ describe("Game", function() {
   describe("#Epidemic", function() {
     it("Intensifies", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
       expect(g.infection_rate_index).toBe(0);
-      expect(g.game_graph["Sao Paulo"].cubes[city.Colors.YELLOW]).toBe(0);
-      expect(g.game_graph["Buenos Aires"].cubes[city.Colors.YELLOW]).toBe(0);
+      expect(g.game_graph["Sao Paulo"].cubes[Colors.YELLOW]).toBe(0);
+      expect(g.game_graph["Buenos Aires"].cubes[Colors.YELLOW]).toBe(0);
       expect(g.infection_deck.facedown_deck.peekFront()).toBe("Sao Paulo");
       g.epidemic();
       expect(g.infection_rate_index).toBe(1);
-      expect(g.game_graph["Sao Paulo"].cubes[city.Colors.YELLOW]).toBe(3);
-      expect(g.game_graph["Buenos Aires"].cubes[city.Colors.YELLOW]).toBe(0);
+      expect(g.game_graph["Sao Paulo"].cubes[Colors.YELLOW]).toBe(3);
+      expect(g.game_graph["Buenos Aires"].cubes[Colors.YELLOW]).toBe(0);
       expect(g.infection_deck.facedown_deck.peekBack()).toBe("Sao Paulo");
       g.epidemic();
       expect(g.infection_rate_index).toBe(2);
-      expect(g.game_graph["Sao Paulo"].cubes[city.Colors.YELLOW]).toBe(3);
-      expect(g.game_graph["Buenos Aires"].cubes[city.Colors.YELLOW]).toBe(3);
+      expect(g.game_graph["Sao Paulo"].cubes[Colors.YELLOW]).toBe(3);
+      expect(g.game_graph["Buenos Aires"].cubes[Colors.YELLOW]).toBe(3);
       expect(g.infection_deck.facedown_deck.peekAt(-2)).toBe("Sao Paulo");
       expect(g.infection_deck.facedown_deck.peekBack()).toBe("Buenos Aires");
     });
@@ -719,37 +713,37 @@ describe("Game", function() {
   describe("#Epidemic", function() {
     it("No Epidemic Cubes when Disease Eradicated", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
-      g.cured[city.Colors.YELLOW] = 2;
+      g.cured[Colors.YELLOW] = 2;
       g.epidemic();
       expect(g.infection_rate_index).toBe(1);
-      expect(g.game_graph["Sao Paulo"].cubes[city.Colors.YELLOW]).toBe(0);
+      expect(g.game_graph["Sao Paulo"].cubes[Colors.YELLOW]).toBe(0);
     });
   });
 
   describe("#Initialize Board", function() {
     it("Right Number of Cubes ", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
-      expect(g.game_state).toBe(other.GameState.NotStarted);
+      expect(g.game_state).toBe(GameState.NotStarted);
       for (let i = 0; i < 2; i++) {
         // running initialize_board twice does nothing
         g.initialize_board();
-        expect(g.game_state).toBe(other.GameState.Ready);
+        expect(g.game_state).toBe(GameState.Ready);
         expect(g.outbreak_counter).toBe(0);
         let infected = [
           "Madrid",
@@ -775,18 +769,18 @@ describe("Game", function() {
   describe("#Infect Stage", function() {
     it("Check Right number of cards ", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
-      g.cured[city.Colors.RED] = 2; //eradicate all the diseases so we dont have to deal with outbreak counter
-      g.cured[city.Colors.BLACK] = 2;
-      g.cured[city.Colors.BLUE] = 2;
-      g.cured[city.Colors.YELLOW] = 2;
+      g.cured[Colors.RED] = 2; //eradicate all the diseases so we dont have to deal with outbreak counter
+      g.cured[Colors.BLACK] = 2;
+      g.cured[Colors.BLUE] = 2;
+      g.cured[Colors.YELLOW] = 2;
       for (let i = 0; i < 6; i++) {
         g.infect_stage();
         expect(g.infection_deck.faceup_deck.length).toBe(g.infection_rate[i]);
@@ -798,11 +792,11 @@ describe("Game", function() {
   describe("#Outbreak", function() {
     it("over 8 ends game ", function() {
       let seeded = seedrandom("test33!"); // want exactly 8!
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
@@ -810,23 +804,23 @@ describe("Game", function() {
         g.infect_stage();
         g.epidemic();
       }
-      expect(g.game_state).toBe(other.GameState.NotStarted);
+      expect(g.game_state).toBe(GameState.NotStarted);
       g.epidemic();
       g.epidemic();
       g.infect_stage();
       g.infect_stage();
-      expect(g.game_state).toBe(other.GameState.Lost);
+      expect(g.game_state).toBe(GameState.Lost);
     });
   });
 
   describe("#Run out of Cubes", function() {
     it("Lose game", function() {
       let seeded = seedrandom("test33!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
@@ -843,20 +837,20 @@ describe("Game", function() {
       let delhi = g.game_graph["Delhi"];
       delhi.infect(g);
       kolkata.infect(g);
-      expect(g.game_state).toBe(other.GameState.NotStarted);
+      expect(g.game_state).toBe(GameState.NotStarted);
       g.infect_stage(); // next card is Tehran
-      expect(g.game_state).toBe(other.GameState.Lost);
+      expect(g.game_state).toBe(GameState.Lost);
     });
   });
 
   describe("#Run out of Cubes", function() {
     it("Epidemic can lose game", function() {
       let seeded = seedrandom("test33!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
@@ -873,21 +867,21 @@ describe("Game", function() {
       let bogota = g.game_graph["Bogota"];
       bogota.infect(g);
       miami.infect(g);
-      expect(g.game_state).toBe(other.GameState.NotStarted);
-      expect(g.cubes[city.Colors.YELLOW]).toBe(2);
+      expect(g.game_state).toBe(GameState.NotStarted);
+      expect(g.cubes[Colors.YELLOW]).toBe(2);
       g.epidemic(); // lagos
-      expect(g.cubes[city.Colors.YELLOW]).toBe(-1);
-      expect(g.game_state).toBe(other.GameState.Lost);
+      expect(g.cubes[Colors.YELLOW]).toBe(-1);
+      expect(g.game_state).toBe(GameState.Lost);
     });
   });
 
   describe("#Next Player", function() {
     it("loops", function() {
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       g.players.forEach((p, index) => {
         expect(g.player_index).toBe(index);
@@ -899,11 +893,11 @@ describe("Game", function() {
 
   describe("#Turns", function() {
     it("stops when at 0", function() {
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       expect(g.turns_left).toBe(4);
       expect(g.decrement_turn()).toBe(true);
@@ -921,31 +915,31 @@ describe("Game", function() {
 
   describe("#Turns", function() {
     it("pass Turns", function() {
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       g.pass_turn();
       expect(g.turns_left).toBe(0);
 
-      g = new game.Game(
-        cities,
+      g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       g.decrement_turn();
       expect(g.turns_left).toBe(3);
       g.pass_turn();
       expect(g.turns_left).toBe(0);
 
-      g = new game.Game(
-        cities,
+      g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       g.decrement_turn();
       g.decrement_turn();
@@ -953,11 +947,11 @@ describe("Game", function() {
       g.pass_turn();
       expect(g.turns_left).toBe(0);
 
-      g = new game.Game(
-        cities,
+      g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       g.decrement_turn();
       g.decrement_turn();
@@ -966,11 +960,11 @@ describe("Game", function() {
       g.pass_turn();
       expect(g.turns_left).toBe(0);
 
-      g = new game.Game(
-        cities,
+      g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher]
+        [Roles.ContingencyPlanner, Roles.Researcher]
       );
       g.decrement_turn();
       g.decrement_turn();
@@ -987,11 +981,11 @@ describe("Player", function() {
   describe("#Movement", function() {
     it("Drive/Ferry", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
@@ -1022,11 +1016,11 @@ describe("Player", function() {
   describe("#Movement", function() {
     it("Charter/Direct", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
@@ -1084,11 +1078,11 @@ describe("Player", function() {
   describe("#Movement", function() {
     it("Dispatcher Move", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.Dispatcher, other.Roles.Researcher],
+        [Roles.Dispatcher, Roles.Researcher],
         5,
         seeded
       );
@@ -1160,11 +1154,11 @@ describe("Player", function() {
   describe("#Movement", function() {
     it("Operations Expert Special Move", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.OperationsExpert, other.Roles.Researcher],
+        [Roles.OperationsExpert, Roles.Researcher],
         5,
         seeded
       );
@@ -1192,11 +1186,11 @@ describe("Player", function() {
   describe("#Movement", function() {
     it("Movable Locations", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.OperationsExpert],
+        [Roles.ContingencyPlanner, Roles.OperationsExpert],
         5,
         seeded
       );
@@ -1287,15 +1281,11 @@ describe("Player", function() {
   describe("#Movement", function() {
     it("Movable Dispatcher Move Locations", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         3,
         ["test", "test"],
-        [
-          other.Roles.ContingencyPlanner,
-          other.Roles.OperationsExpert,
-          other.Roles.Dispatcher
-        ],
+        [Roles.ContingencyPlanner, Roles.OperationsExpert, Roles.Dispatcher],
         5,
         seeded
       );
@@ -1337,11 +1327,11 @@ describe("Player", function() {
   describe("#Research Station", function() {
     it("Can Build", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
@@ -1371,11 +1361,11 @@ describe("Player", function() {
   describe("#Research Station", function() {
     it("Can Build", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.OperationsExpert, other.Roles.Researcher],
+        [Roles.OperationsExpert, Roles.Researcher],
         5,
         seeded
       );
@@ -1400,32 +1390,32 @@ describe("Player", function() {
   describe("#Draw out the Deck", function() {
     it("Lose Game", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
       for (let i = 0; i < 45; i++) {
-        // 48 cities + 5 epidemic, but start with 8 cards removed with 2 people
+        // 48 Cities + 5 epidemic, but start with 8 cards removed with 2 people
         g.players[0].draw(g);
-        expect(g.game_state).toBe(other.GameState.NotStarted);
+        expect(g.game_state).toBe(GameState.NotStarted);
       }
       g.players[0].draw(g);
-      expect(g.game_state).toBe(other.GameState.Lost);
+      expect(g.game_state).toBe(GameState.Lost);
     });
   });
 
   describe("#Cure", function() {
     it("Eradicate", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
@@ -1448,7 +1438,7 @@ describe("Player", function() {
       g.players[0].build_research_station(g);
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].cure(g, [...g.players[0].hand]);
-      expect(g.cured[city.Colors.BLACK]).toBe(2);
+      expect(g.cured[Colors.BLACK]).toBe(2);
 
       g.players[0].hand.add("Algiers"); // cant cure already cured
       g.players[0].hand.add("Cairo");
@@ -1462,11 +1452,11 @@ describe("Player", function() {
   describe("#Cure", function() {
     it("Scientist with 4 cards", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.Scientist, other.Roles.Researcher],
+        [Roles.Scientist, Roles.Researcher],
         5,
         seeded
       );
@@ -1482,13 +1472,13 @@ describe("Player", function() {
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].hand.add("Miami");
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(false); // submitted too many cards
-      expect(g.players[0].can_hand_cure(g)).toBe(city.Colors.BLACK);
+      expect(g.players[0].can_hand_cure(g)).toBe(Colors.BLACK);
       g.players[0].move(g, "Miami");
       expect(g.players[0].can_build_research_station(g)).toBe(true);
       g.players[0].build_research_station(g);
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].cure(g, [...g.players[0].hand]);
-      expect(g.cured[city.Colors.BLACK]).toBe(2);
+      expect(g.cured[Colors.BLACK]).toBe(2);
 
       g.players[0].hand.add("Algiers"); // cant cure already cured
       g.players[0].hand.add("Cairo");
@@ -1502,11 +1492,11 @@ describe("Player", function() {
   describe("#Cure", function() {
     it("Can Cure", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
@@ -1520,7 +1510,7 @@ describe("Player", function() {
       g.players[0].hand.add("Hong Kong");
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].cure(g, [...g.players[0].hand]);
-      expect(g.cured[city.Colors.RED]).toBe(1);
+      expect(g.cured[Colors.RED]).toBe(1);
 
       g.players[0].hand.add("Algiers");
       g.players[0].hand.add("Cairo");
@@ -1542,11 +1532,11 @@ describe("Player", function() {
   describe("#Cure", function() {
     it("Can Hand Cure", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
@@ -1558,16 +1548,16 @@ describe("Player", function() {
       g.players[0].hand.add("Beijing");
       g.players[0].hand.add("Seoul");
       g.players[0].hand.add("Hong Kong");
-      expect(g.players[0].can_hand_cure(g)).toBe(city.Colors.RED);
+      expect(g.players[0].can_hand_cure(g)).toBe(Colors.RED);
       g.players[0].cure(g, [...g.players[0].hand]);
-      expect(g.cured[city.Colors.RED]).toBe(1);
+      expect(g.cured[Colors.RED]).toBe(1);
 
       g.players[0].hand.add("Algiers");
       g.players[0].hand.add("Cairo");
       g.players[0].hand.add("Istanbul");
       g.players[0].hand.add("Moscow");
       g.players[0].hand.add("Baghdad");
-      expect(g.players[0].can_hand_cure(g)).toBe(city.Colors.BLACK);
+      expect(g.players[0].can_hand_cure(g)).toBe(Colors.BLACK);
       g.players[0].move(g, "Miami"); // only cure in research station
       expect(g.players[0].can_hand_cure(g)).toBe(false);
       g.players[0].move(g, "Atlanta");
@@ -1587,20 +1577,20 @@ describe("Player", function() {
       g.players[0].hand.add("Bogota");
       expect(g.players[0].can_hand_cure(g)).toBe(false);
       g.players[0].hand.add("Los Angeles");
-      expect(g.players[0].can_hand_cure(g)).toBe(city.Colors.YELLOW);
+      expect(g.players[0].can_hand_cure(g)).toBe(Colors.YELLOW);
       g.players[0].hand.add("Miami");
-      expect(g.players[0].can_hand_cure(g)).toBe(city.Colors.YELLOW); // 6 cards in hand but doesnt matter
+      expect(g.players[0].can_hand_cure(g)).toBe(Colors.YELLOW); // 6 cards in hand but doesnt matter
     });
   });
 
   describe("#Cure", function() {
     it("Need the cards in hand", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
@@ -1620,11 +1610,11 @@ describe("Player", function() {
   describe("#Cure", function() {
     it("Cure all means game won", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
@@ -1663,26 +1653,26 @@ describe("Player", function() {
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].cure(g, [...g.players[0].hand]);
 
-      expect(g.game_state).toBe(other.GameState.Won);
+      expect(g.game_state).toBe(GameState.Won);
     });
   });
 
   describe("#Cure Disease", function() {
     it("Eradicate after treating last cube", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
-      expect(g.cubes[city.Colors.RED]).toBe(24);
+      expect(g.cubes[Colors.RED]).toBe(24);
       g.players[0].discard([...g.players[0].hand]);
       g.infect_stage(); // infect tokyo
       g.infect_stage(); // infect taipei
-      expect(g.cubes[city.Colors.RED]).toBe(22);
+      expect(g.cubes[Colors.RED]).toBe(22);
 
       g.players[0].hand.add("Tokyo");
       g.players[0].hand.add("Osaka");
@@ -1692,43 +1682,43 @@ describe("Player", function() {
 
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].cure(g, [...g.players[0].hand]);
-      expect(g.cured[city.Colors.RED]).toBe(1);
+      expect(g.cured[Colors.RED]).toBe(1);
 
       g.players[0].move(g, "Chicago");
       g.players[0].move(g, "San Francisco");
       g.players[0].move(g, "Tokyo");
 
       expect(g.players[0].can_treat(g)).toBe(true);
-      g.players[0].treat(g, city.Colors.RED);
-      expect(g.cured[city.Colors.RED]).toBe(1);
-      expect(g.cubes[city.Colors.RED]).toBe(23);
+      g.players[0].treat(g, Colors.RED);
+      expect(g.cured[Colors.RED]).toBe(1);
+      expect(g.cubes[Colors.RED]).toBe(23);
 
       g.players[0].move(g, "Osaka");
       g.players[0].move(g, "Taipei");
 
       expect(g.players[0].can_treat(g)).toBe(true);
-      g.players[0].treat(g, city.Colors.RED);
-      expect(g.cured[city.Colors.RED]).toBe(2);
-      expect(g.cubes[city.Colors.RED]).toBe(24);
+      g.players[0].treat(g, Colors.RED);
+      expect(g.cured[Colors.RED]).toBe(2);
+      expect(g.cubes[Colors.RED]).toBe(24);
     });
   });
 
   describe("#Cure Disease", function() {
     it("#After Discovering a Cure, Treat all when treating", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
-      expect(g.cubes[city.Colors.RED]).toBe(24);
+      expect(g.cubes[Colors.RED]).toBe(24);
       g.players[0].discard([...g.players[0].hand]);
       g.epidemic();
 
-      expect(g.cubes[city.Colors.YELLOW]).toBe(21);
+      expect(g.cubes[Colors.YELLOW]).toBe(21);
 
       g.players[0].hand.add("Miami");
       g.players[0].hand.add("Bogota");
@@ -1738,63 +1728,63 @@ describe("Player", function() {
 
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].cure(g, [...g.players[0].hand]);
-      expect(g.cured[city.Colors.YELLOW]).toBe(1);
+      expect(g.cured[Colors.YELLOW]).toBe(1);
 
       g.players[0].move(g, "Miami");
       g.players[0].move(g, "Bogota");
       g.players[0].move(g, "Sao Paulo");
 
       expect(g.players[0].can_treat(g)).toBe(true);
-      g.players[0].treat(g, city.Colors.YELLOW);
-      expect(g.cured[city.Colors.YELLOW]).toBe(2);
-      expect(g.cubes[city.Colors.YELLOW]).toBe(24);
+      g.players[0].treat(g, Colors.YELLOW);
+      expect(g.cured[Colors.YELLOW]).toBe(2);
+      expect(g.cubes[Colors.YELLOW]).toBe(24);
     });
   });
 
   describe("#Treat Disease", function() {
     it("Can Treat", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
 
       expect(g.players[0].can_treat(g)).toBe(false);
-      expect(g.players[0].can_treat_color(g, city.Colors.RED)).toBe(false);
-      expect(g.players[0].can_treat_color(g, city.Colors.BLUE)).toBe(false);
-      expect(g.players[0].can_treat_color(g, city.Colors.BLACK)).toBe(false);
-      expect(g.players[0].can_treat_color(g, city.Colors.YELLOW)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Colors.RED)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Colors.BLUE)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Colors.BLACK)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Colors.YELLOW)).toBe(false);
 
       g.initialize_board();
       g.players[0].move(g, "Washington");
       g.players[0].move(g, "New York");
 
       expect(g.players[0].can_treat(g)).toBe(true);
-      expect(g.players[0].can_treat_color(g, city.Colors.RED)).toBe(false);
-      expect(g.players[0].can_treat_color(g, city.Colors.BLUE)).toBe(true);
-      expect(g.players[0].can_treat_color(g, city.Colors.BLACK)).toBe(false);
-      expect(g.players[0].can_treat_color(g, city.Colors.YELLOW)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Colors.RED)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Colors.BLUE)).toBe(true);
+      expect(g.players[0].can_treat_color(g, Colors.BLACK)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Colors.YELLOW)).toBe(false);
 
-      expect(g.game_graph["New York"].cubes[city.Colors.BLUE]).toBe(1);
-      expect(g.cubes[city.Colors.BLUE]).toBe(19);
-      g.players[0].treat(g, city.Colors.BLUE);
-      expect(g.game_graph["New York"].cubes[city.Colors.BLUE]).toBe(0);
-      expect(g.cubes[city.Colors.BLUE]).toBe(20);
+      expect(g.game_graph["New York"].cubes[Colors.BLUE]).toBe(1);
+      expect(g.cubes[Colors.BLUE]).toBe(19);
+      g.players[0].treat(g, Colors.BLUE);
+      expect(g.game_graph["New York"].cubes[Colors.BLUE]).toBe(0);
+      expect(g.cubes[Colors.BLUE]).toBe(20);
     });
   });
 
   describe("#Treat Disease", function() {
     it("Medic Treats All", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.Medic, other.Roles.Researcher],
+        [Roles.Medic, Roles.Researcher],
         5,
         seeded
       );
@@ -1804,65 +1794,65 @@ describe("Player", function() {
       g.players[0].move(g, "New York");
       g.players[0].move(g, "London");
       expect(g.players[0].can_treat(g)).toBe(true);
-      expect(g.players[0].can_treat_color(g, city.Colors.BLUE)).toBe(true);
-      expect(g.game_graph["London"].cubes[city.Colors.BLUE]).toBe(3);
-      g.players[0].treat(g, city.Colors.BLUE);
-      expect(g.game_graph["London"].cubes[city.Colors.BLUE]).toBe(0);
+      expect(g.players[0].can_treat_color(g, Colors.BLUE)).toBe(true);
+      expect(g.game_graph["London"].cubes[Colors.BLUE]).toBe(3);
+      g.players[0].treat(g, Colors.BLUE);
+      expect(g.game_graph["London"].cubes[Colors.BLUE]).toBe(0);
 
       g.players[0].move(g, "Jakarta");
       g.players[0].move(g, "Ho Chi Minh City");
       expect(g.players[0].can_treat(g)).toBe(true);
-      expect(g.players[0].can_treat_color(g, city.Colors.RED)).toBe(true);
-      expect(g.game_graph["Ho Chi Minh City"].cubes[city.Colors.RED]).toBe(2);
-      g.players[0].treat(g, city.Colors.RED);
-      expect(g.game_graph["Ho Chi Minh City"].cubes[city.Colors.RED]).toBe(0);
+      expect(g.players[0].can_treat_color(g, Colors.RED)).toBe(true);
+      expect(g.game_graph["Ho Chi Minh City"].cubes[Colors.RED]).toBe(2);
+      g.players[0].treat(g, Colors.RED);
+      expect(g.game_graph["Ho Chi Minh City"].cubes[Colors.RED]).toBe(0);
     });
   });
 
   describe("#Movement", function() {
     it("Medic Treats When Moving If Cure Has been Discovered", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.Medic, other.Roles.Researcher],
+        [Roles.Medic, Roles.Researcher],
         5,
         seeded
       );
 
       g.initialize_board();
-      g.cured[city.Colors.BLUE] = 1;
+      g.cured[Colors.BLUE] = 1;
       g.players[0].move(g, "Washington");
       g.players[0].move(g, "New York");
-      expect(g.game_graph["London"].cubes[city.Colors.BLUE]).toBe(3);
+      expect(g.game_graph["London"].cubes[Colors.BLUE]).toBe(3);
       g.players[0].move(g, "London");
       expect(g.players[0].can_treat(g)).toBe(false);
-      expect(g.players[0].can_treat_color(g, city.Colors.BLUE)).toBe(false);
-      expect(g.game_graph["London"].cubes[city.Colors.BLUE]).toBe(0);
+      expect(g.players[0].can_treat_color(g, Colors.BLUE)).toBe(false);
+      expect(g.game_graph["London"].cubes[Colors.BLUE]).toBe(0);
 
-      g.cured[city.Colors.RED] = 1;
+      g.cured[Colors.RED] = 1;
       g.players[0].move(g, "Jakarta");
-      expect(g.game_graph["Ho Chi Minh City"].cubes[city.Colors.RED]).toBe(2);
+      expect(g.game_graph["Ho Chi Minh City"].cubes[Colors.RED]).toBe(2);
       g.players[0].move(g, "Ho Chi Minh City");
       expect(g.players[0].can_treat(g)).toBe(false);
-      expect(g.players[0].can_treat_color(g, city.Colors.RED)).toBe(false);
-      expect(g.game_graph["Ho Chi Minh City"].cubes[city.Colors.RED]).toBe(0);
+      expect(g.players[0].can_treat_color(g, Colors.RED)).toBe(false);
+      expect(g.game_graph["Ho Chi Minh City"].cubes[Colors.RED]).toBe(0);
     });
   });
 
   describe("#Discard Cards", function() {
     it("Check Validity", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
-      expect(g.players[0].can_discard(new Set())).toBe(false);
+      expect(g.players[0].can_discard([])).toBe(false);
       g.players[0].draw(g);
       g.players[0].draw(g);
       g.players[0].draw(g);
@@ -1886,11 +1876,11 @@ describe("Player", function() {
   describe("#Trade Cards", function() {
     it("Check Validity", function() {
       let seeded = seedrandom("test167!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Scientist],
+        [Roles.ContingencyPlanner, Roles.Scientist],
         5,
         seeded
       );
@@ -1935,11 +1925,11 @@ describe("Player", function() {
   describe("#Trade Cards", function() {
     it("Take From Specific Player", function() {
       let seeded = seedrandom("test167!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Scientist],
+        [Roles.ContingencyPlanner, Roles.Scientist],
         5,
         seeded
       );
@@ -1972,11 +1962,11 @@ describe("Player", function() {
   describe("#Trade Cards", function() {
     it("Always be able to take from Researcher", function() {
       let seeded = seedrandom("test167!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
@@ -2035,17 +2025,17 @@ describe("Player", function() {
   describe("#PlayerJSON", function() {
     it("Sorted Hand", function() {
       let seeded = seedrandom("test!");
-      let g = new game.Game(
-        cities,
+      let g = new Game(
+        Cities,
         2,
         ["test", "test"],
-        [other.Roles.ContingencyPlanner, other.Roles.Researcher],
+        [Roles.ContingencyPlanner, Roles.Researcher],
         5,
         seeded
       );
       g.initialize_board();
-      let p1 = new player.PlayerJSON(g.players[0], g);
-      let p2 = new player.PlayerJSON(g.players[1], g);
+      let p1 = new PlayerJSON(g.players[0], g);
+      let p2 = new PlayerJSON(g.players[1], g);
       expect(p1.hand).toEqual(["Milan", "Jakarta", "Karachi", "Khartoum"]);
       expect(p2.hand).toEqual(["Washington", "Seoul", "Chennai", "Riyadh"]);
     });

@@ -7,6 +7,7 @@ steps:
     args: ["run", "test:cloudbuild"]
   - name: "gcr.io/cloud-builders/gcloud"
     args: ["app", "deploy"]
+    dir: "dist/"
   - name: gcr.io/cloud-builders/gcloud
     entrypoint: "bash"
     args: ["./delete_old_versions.bash"]

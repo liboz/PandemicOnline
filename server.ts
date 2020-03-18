@@ -1,15 +1,18 @@
-const express = require("express");
+import { Game, GameDifficulty, GameMap } from "./game";
+import { Roles } from "./types";
+import { Cities } from "./data/cities";
+import express from "express";
+import cors from "cors";
+import socketIO from "socket.io";
+
 const app = express();
-const socketIO = require("socket.io");
-var cors = require("cors");
 
 const seedrandom = require("seedrandom");
-const cities = require("./data/cities");
-const game = require("./game");
-const other = require("./other");
 
-let games = {};
-let dummy_game = new game.GameMap(cities);
+const types = require("./types");
+
+let games: Record<string, GameObject> = {};
+let dummy_game = new GameMap(Cities);
 
 //console.log(games[0])
 
@@ -43,12 +46,12 @@ io.on("connection", function(socket) {
       players: [],
       game: null,
       available_roles: new Set([
-        other.Roles.Dispatcher,
-        other.Roles.Medic,
-        other.Roles.QuarantineSpecialist,
-        other.Roles.Researcher,
-        other.Roles.Scientist,
-        other.Roles.OperationsExpert
+        Roles.Dispatcher,
+        Roles.Medic,
+        Roles.QuarantineSpecialist,
+        Roles.Researcher,
+        Roles.Scientist,
+        Roles.OperationsExpert
       ]),
       player_roles: []
     };
@@ -72,16 +75,16 @@ io.on("connection", function(socket) {
 
   let isReady = function() {
     return (
-      curr_game().game_state === other.GameState.Ready &&
+      curr_game().game_state === types.GameState.Ready &&
       curr_game().turns_left !== 0
     );
   };
 
-  socket.on("join", function(role, player_name, callback) {
+  socket.on("join", function(role: Roles, player_name: string, callback) {
     // add logic for role is invalid
     if (
       games[match_name].available_roles.has(role) ||
-      (curr_game() && curr_game().game_state !== other.GameState.NotStarted)
+      (curr_game() && curr_game().game_state !== types.GameState.NotStarted)
     ) {
       let player_index = players().findIndex(i => i === player_name); // should lock maybe?
       if (player_index === -1) {
@@ -98,13 +101,13 @@ io.on("connection", function(socket) {
     } else {
       socket.emit(
         "invalid action",
-        `Joining ${match_name} as Player ${player_index} with name ${player_name} in role ${role} is an invalid action`
+        `Joining ${match_name} as Player name ${player_name} in role ${role} is an invalid action`
       );
     }
   });
 
-  socket.on("start game", function(difficulty) {
-    if (!curr_game() || curr_game().game_state === other.GameState.NotStarted) {
+  socket.on("start game", function(difficulty: number) {
+    if (!curr_game() || curr_game().game_state === types.GameState.NotStarted) {
       let num_players = players().length;
       if (num_players > 5) {
         socket.emit("invalid action", `Cannot start game with over 5 players`);
@@ -119,8 +122,8 @@ io.on("connection", function(socket) {
         console.log(
           `start game with ${filtered_players} in room ${match_name}`
         );
-        games[match_name].game = new game.Game(
-          cities,
+        games[match_name].game = new Game(
+          Cities,
           num_players,
           filtered_players,
           filtered_roles,
@@ -129,7 +132,7 @@ io.on("connection", function(socket) {
         );
         curr_game().initialize_board();
         curr_game().log.push(
-          `game initialized at ${game.GameDifficulty[difficulty]} difficulty`
+          `game initialized at ${GameDifficulty[difficulty]} difficulty`
         );
         io.in(match_name).emit("game initialized", curr_game().toJSON());
       }
@@ -515,10 +518,10 @@ io.on("connection", function(socket) {
         curr_game().turns_left = 4;
       }
       if (
-        curr_game().game_state !== other.GameState.Lost &&
-        curr_game().game_state !== other.GameState.Won
+        curr_game().game_state !== types.GameState.Lost &&
+        curr_game().game_state !== types.GameState.Won
       ) {
-        curr_game().game_state = other.GameState.Ready;
+        curr_game().game_state = types.GameState.Ready;
       }
       io.in(match_name).emit("update game state", curr_game().toJSON());
     } else {
@@ -537,6 +540,17 @@ io.on("connection", function(socket) {
   });
 });
 
-function emitRoles(socket, games, match_name) {
+function emitRoles(
+  socket: SocketIO.Socket,
+  games: Record<string, GameObject>,
+  match_name: string
+) {
   socket.emit("roles", [...games[match_name].available_roles]);
+}
+
+interface GameObject {
+  game: Game;
+  available_roles: Set<Roles>;
+  players: string[];
+  player_roles: Roles[];
 }

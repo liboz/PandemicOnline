@@ -11,5 +11,5 @@ s.add(game.game_graph[c].index)
 })
 
         game.game_graph[c] was undefined
-        lost during draw 
+        lost during draw
         appeared before

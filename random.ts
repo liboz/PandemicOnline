@@ -1,4 +1,4 @@
-function shuffle(array, rng) {
+export function shuffle(array: any[], rng: seedrandom.prng) {
   let m = array.length,
     t,
     i;
@@ -14,7 +14,3 @@ function shuffle(array, rng) {
     array[i] = t;
   }
 }
-
-module.exports = {
-  shuffle: shuffle
-};
