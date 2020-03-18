@@ -2,12 +2,12 @@
   "name": "pandemic",
   "version": "1.0.0",
   "description": "Online Pandemic Simulator",
-  "main": "app.mjs",
+  "main": "server.js",
   "scripts": {
     "build": "tsc",
     "test": "jest --watch",
     "test:cloudbuild": "jest",
-    "start": "concurrently \"tsc -w\" \"nodemon dist/app.js\""
+    "start": "concurrently \"tsc -w\" \"nodemon dist/server.js\""
   },
   "author": "",
   "license": "ISC",
