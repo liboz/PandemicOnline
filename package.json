@@ -4,15 +4,17 @@
   "description": "Online Pandemic Simulator",
   "main": "app.mjs",
   "scripts": {
+    "build": "tsc",
     "test": "jest --watch",
     "test:cloudbuild": "jest",
-    "start": "tsc && nodemon dist/app"
+    "start": "concurrently \"tsc -w\" \"nodemon dist/app.js\""
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/seedrandom": "^2.4.28",
     "acorn": ">=5.7.4",
+    "concurrently": "^5.1.0",
     "cors": "^2.8.5",
     "denque": "^1.4.1",
     "express": "^4.17.1",
