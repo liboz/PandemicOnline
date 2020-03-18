@@ -1,0 +1,1 @@
+cp app.yaml dist/

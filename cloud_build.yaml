@@ -5,6 +5,9 @@ steps:
   - name: node:lts
     entrypoint: npm
     args: ["run", "test:cloudbuild"]
+  - name: gcr.io/cloud-builders/gcloud
+    entrypoint: "bash"
+    args: ["./publish.bash"]
   - name: "gcr.io/cloud-builders/gcloud"
     args: ["app", "deploy"]
     dir: "dist/"
