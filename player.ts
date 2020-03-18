@@ -1,6 +1,6 @@
 import { Game } from "./game";
 import { Socket } from "socket.io";
-import { Roles, GameState, PlayerJson, Cubes } from "./types";
+import { Client } from "./types";
 import { ColorsIndex, City } from "./city";
 
 export class Player {
@@ -9,7 +9,7 @@ export class Player {
   constructor(
     public id: number,
     public name: string,
-    public role: Roles,
+    public role: Client.Roles,
     public location = "Atlanta"
   ) {
     this.name = name;
@@ -26,7 +26,7 @@ export class Player {
     final_destination: string,
     socket: NodeJS.EventEmitter = null
   ) {
-    if (this.role !== Roles.Dispatcher) {
+    if (this.role !== Client.Roles.Dispatcher) {
       return false;
     } else {
       return other_player.move(game, final_destination, this.hand, socket);
@@ -106,7 +106,7 @@ export class Player {
 
   canOperationsExpertMove(game: Game) {
     return (
-      this.role === Roles.OperationsExpert &&
+      this.role === Client.Roles.OperationsExpert &&
       game.game_graph[this.location].hasResearchStation &&
       this.hand.size > 0
     );
@@ -118,13 +118,13 @@ export class Player {
     final_destination: string,
     socket: NodeJS.EventEmitter
   ) {
-    if (this.role === Roles.Medic) {
+    if (this.role === Client.Roles.Medic) {
       this.medicMoveTreat(game, socket);
     }
     game_graph[this.location].players.delete(this);
     game_graph[final_destination].players.add(this);
     this.location = final_destination;
-    if (this.role === Roles.Medic) {
+    if (this.role === Client.Roles.Medic) {
       this.medicMoveTreat(game, socket);
     }
   }
@@ -139,7 +139,7 @@ export class Player {
   }
 
   get_valid_final_destinations(game: Game, hand = this.hand) {
-    if (game.game_state === GameState.Ready) {
+    if (game.game_state === Client.GameState.Ready) {
       // note that disptcher can't use operations expert move!
       if (
         this.canCharterFlight(hand) ||
@@ -171,7 +171,7 @@ export class Player {
   get_valid_dispatcher_final_destinations(
     game: Game
   ): Record<string, number[]> {
-    if (game.game_state === GameState.Ready) {
+    if (game.game_state === Client.GameState.Ready) {
       let result: Record<string, number[]> = {};
       for (let player of game.players) {
         if (player !== this) {
@@ -200,12 +200,13 @@ export class Player {
   can_build_research_station(game: Game) {
     return (
       !game.game_graph[this.location].hasResearchStation &&
-      (this.hand.has(this.location) || this.role === Roles.OperationsExpert)
+      (this.hand.has(this.location) ||
+        this.role === Client.Roles.OperationsExpert)
     );
   }
 
   build_research_station(game: Game) {
-    if (this.role !== Roles.OperationsExpert) {
+    if (this.role !== Client.Roles.OperationsExpert) {
       this.hand.delete(this.location);
     }
     game.game_graph[this.location].hasResearchStation = true;
@@ -216,7 +217,7 @@ export class Player {
     if (!game.game_graph[this.location].hasResearchStation) {
       return false;
     } else {
-      let cards_needed = this.role === Roles.Scientist ? 4 : 5;
+      let cards_needed = this.role === Client.Roles.Scientist ? 4 : 5;
       if (
         cards.length === cards_needed &&
         new Set(cards).size === cards_needed
@@ -242,7 +243,7 @@ export class Player {
     if (!game.game_graph[this.location].hasResearchStation) {
       return false;
     } else {
-      let cards: Cubes = {
+      let cards: Client.Cubes = {
         blue: 0,
         red: 0,
         black: 0,
@@ -252,7 +253,7 @@ export class Player {
         cards[game.game_graph[card].color] += 1;
       });
 
-      let cards_needed = this.role === Roles.Scientist ? 4 : 5;
+      let cards_needed = this.role === Client.Roles.Scientist ? 4 : 5;
       let keys = Object.keys(cards);
       for (let i = 0; i < 4; i++) {
         if (game.cured[keys[i]] === 0 && cards[keys[i]] >= cards_needed) {
@@ -288,7 +289,7 @@ export class Player {
   }
 
   treat(game: Game, color: string, io: NodeJS.EventEmitter = null) {
-    if (game.cured[color] === 1 || this.role === Roles.Medic) {
+    if (game.cured[color] === 1 || this.role === Client.Roles.Medic) {
       game.cubes[color] += game.game_graph[this.location].cubes[color];
       game.game_graph[this.location].cubes[color] = 0;
     } else {
@@ -331,7 +332,7 @@ export class Player {
         if (player !== this) {
           return (
             player.hand.has(this.location) ||
-            (player.role === Roles.Researcher && player.hand.size > 0)
+            (player.role === Client.Roles.Researcher && player.hand.size > 0)
           );
         }
       });
@@ -345,7 +346,7 @@ export class Player {
       if (card) {
         return (
           player.hand.has(this.location) ||
-          (player.role === Roles.Researcher && player.hand.has(card))
+          (player.role === Client.Roles.Researcher && player.hand.has(card))
         );
       } else {
         return player.hand.has(this.location);
@@ -359,7 +360,7 @@ export class Player {
     } else {
       return (
         this.hand.has(this.location) ||
-        (this.role === Roles.Researcher && this.hand.size > 0)
+        (this.role === Client.Roles.Researcher && this.hand.size > 0)
       );
     }
   }
@@ -367,7 +368,7 @@ export class Player {
   can_give_card(game: Game, card: string) {
     return (
       this.can_give(game) &&
-      this.role === Roles.Researcher &&
+      this.role === Client.Roles.Researcher &&
       this.hand.has(card)
     );
   }
@@ -391,7 +392,7 @@ export class Player {
   }
 }
 
-export class PlayerJSON implements PlayerJson {
+export class PlayerJSON implements Client.Player {
   name: string;
   role: string;
   hand: string[];

@@ -1,18 +1,7 @@
-import { Roles, Color, Cubes, CityData, CityJson } from "./types";
+import { CityData } from "data/cities";
 import { Game } from "./game";
 import { Player } from "./player";
-
-/*
-export interface City {
-  name: string;
-  color: Color;
-  location: [number, number];
-  cubes: Cubes;
-  hasResearchStation: boolean;
-  players: Set<Player>;
-  index: number;
-  neighbors: City;
-}*/
+import { Client } from "./types";
 
 export const Colors = {
   BLUE: "blue",
@@ -29,7 +18,7 @@ export const ColorsIndex = {
 };
 
 export class City {
-  cubes: Cubes;
+  cubes: Client.Cubes;
   neighbors: Set<City>;
   hasResearchStation: boolean;
   players: Set<Player>;
@@ -37,7 +26,7 @@ export class City {
   constructor(
     public name: string,
     public location: [number, number],
-    public color: Color,
+    public color: Client.Color,
     index: number
   ) {
     this.name = name;
@@ -59,7 +48,7 @@ export class City {
     this.neighbors.add(neighbor);
   }
 
-  infect_condition(game: Game, color: Color, initialization = false) {
+  infect_condition(game: Game, color: Client.Color, initialization = false) {
     if (game.cured[color] === 2) {
       return false;
     } else {
@@ -67,8 +56,9 @@ export class City {
       let players = [...this.players];
       for (let i = 0; i < players.length; i++) {
         if (
-          (game.cured[color] === 1 && players[i].role === Roles.Medic) ||
-          (!initialization && players[i].role === Roles.QuarantineSpecialist)
+          (game.cured[color] === 1 && players[i].role === Client.Roles.Medic) ||
+          (!initialization &&
+            players[i].role === Client.Roles.QuarantineSpecialist)
         ) {
           shouldInfect = false;
           break;
@@ -83,7 +73,7 @@ export class City {
           for (let j = 0; j < neighbor_players.length; j++) {
             if (
               !initialization &&
-              neighbor_players[j].role === Roles.QuarantineSpecialist
+              neighbor_players[j].role === Client.Roles.QuarantineSpecialist
             ) {
               shouldInfect = false;
               break;
@@ -185,11 +175,11 @@ City.toGeoJSON = function (game_graph) {
     return g
 }*/
 
-export class CityJSON implements CityJson {
+export class CityJSON implements Client.City {
   name: string;
-  color: Color;
+  color: Client.Color;
   location: [number, number];
-  cubes: Cubes;
+  cubes: Client.Cubes;
   hasResearchStation: boolean;
   players: number[];
   index: number;

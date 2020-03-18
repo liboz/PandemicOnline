@@ -1,6 +1,6 @@
-import { shuffle } from "./random";
-import { CityData } from "types";
+import { CityData } from "data/cities";
 import { Game } from "game";
+import { shuffle } from "./random";
 
 export class PlayerDeck {
   base_deck: string[];

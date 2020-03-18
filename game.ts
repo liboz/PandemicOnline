@@ -1,12 +1,11 @@
-import { Cubes, CityData, Color, GameJson, PlayerJson } from "./types";
+import { CityData } from "data/cities";
+import seedrandom from "seedrandom";
 import { Socket } from "socket.io";
+import { City, CityJSON } from "./city";
+import { InfectionDeck } from "./infection_deck";
 import { Player, PlayerJSON } from "./player";
 import { PlayerDeck } from "./player_deck";
-import { InfectionDeck } from "./infection_deck";
-import seedrandom from "seedrandom";
-
-import { Roles, GameState } from "./types";
-import { City, CityJSON } from "./city";
+import { Client } from "./types";
 
 export const GameDifficulty: Record<number, string> = {
   4: "Introductory",
@@ -24,11 +23,11 @@ export class Game {
   initial_cards_for_players: string[];
   player_deck: PlayerDeck;
   research_stations: Set<string>;
-  cured: Cubes;
-  cubes: Cubes;
+  cured: Client.Cubes;
+  cubes: Client.Cubes;
   player_index: number;
   turns_left: number;
-  game_state: GameState;
+  game_state: Client.GameState;
   log: string[];
   difficulty: number;
   rng: seedrandom.prng;
@@ -38,7 +37,7 @@ export class Game {
     cities: CityData[],
     num_players: number,
     filtered_players: string[],
-    roles: Roles[],
+    roles: Client.Roles[],
     num_epidemics: number = 4,
     rng = seedrandom()
   ) {
@@ -85,7 +84,7 @@ export class Game {
     };
     this.player_index = 0;
     this.turns_left = 4;
-    this.game_state = GameState.NotStarted;
+    this.game_state = Client.GameState.NotStarted;
     this.log = [];
     this.difficulty = num_epidemics;
   }
@@ -124,7 +123,7 @@ export class Game {
   }
 
   initialize_board() {
-    if (this.game_state === GameState.NotStarted) {
+    if (this.game_state === Client.GameState.NotStarted) {
       for (let i = 2; i >= 0; i--) {
         // do all 3 cube infections, then 2 cube etc
         for (let j = 0; j < 3; j++) {
@@ -136,12 +135,12 @@ export class Game {
           }
         }
       }
-      this.game_state = GameState.Ready;
+      this.game_state = Client.GameState.Ready;
     }
   }
 
   lose_game() {
-    this.game_state = GameState.Lost;
+    this.game_state = Client.GameState.Lost;
   }
 
   lose_game_draw() {
@@ -151,13 +150,13 @@ export class Game {
     );
   }
 
-  lose_game_cubes(color: Color) {
+  lose_game_cubes(color: Client.Color) {
     this.lose_game();
     this.log.push(`Game Lost due to insufficient number of ${color} cubes`);
   }
 
   win_game() {
-    this.game_state = GameState.Won;
+    this.game_state = Client.GameState.Won;
   }
 
   next_player() {
@@ -188,7 +187,7 @@ export class Game {
       io.in(match_name).emit("update game state", this.toJSON());
       for (let player of this.players) {
         if (player.hand.size > player.hand_size_limit) {
-          this.game_state = GameState.DiscardingCard;
+          this.game_state = Client.GameState.DiscardingCard;
           this.must_discard_index = player.id;
           this.log.push(`Player ${player.id} is discarding cards`);
           // Send notification of discard to other players
@@ -209,11 +208,11 @@ export class Game {
     }
 
     io.in(match_name).emit("update game state", this.toJSON());
-    if (this.game_state === GameState.Ready) {
+    if (this.game_state === Client.GameState.Ready) {
       let next_turn = true;
       for (let player of this.players) {
         if (player.hand.size > player.hand_size_limit) {
-          this.game_state = GameState.DiscardingCard;
+          this.game_state = Client.GameState.DiscardingCard;
           this.must_discard_index = player.id;
           this.log.push(`Player ${player.id} is discarding cards`);
           // Send notification of discard to other players
@@ -248,18 +247,18 @@ export class Game {
   }
 }
 
-class GameJSON implements GameJson {
-  game_graph: CityJSON[];
+class GameJSON implements Client.Game {
+  game_graph: Client.City[];
   game_graph_index: { [key: string]: number };
   outbreak_counter: number;
   infection_rate_index: number;
   infection_rate: number[];
   faceup_deck: string[];
-  players: PlayerJson[];
+  players: Client.Player[];
   research_stations: string[];
-  cured: Cubes;
-  cubes: Cubes;
-  game_state: GameState;
+  cured: Client.Cubes;
+  cubes: Client.Cubes;
+  game_state: Client.GameState;
   player_index: number;
   turns_left: number;
   valid_final_destinations: number[];
@@ -301,7 +300,7 @@ class GameJSON implements GameJson {
     this.game_state = game.game_state;
     this.player_index = game.player_index;
     this.turns_left = game.turns_left;
-    if (game.game_state !== GameState.NotStarted) {
+    if (game.game_state !== Client.GameState.NotStarted) {
       this.valid_final_destinations = game.players[
         game.player_index
       ].get_valid_final_destinations(game);
@@ -316,7 +315,7 @@ class GameJSON implements GameJson {
       ].can_build_research_station(game);
       this.can_cure = game.players[game.player_index].can_hand_cure(game);
       this.cards_needed_to_cure =
-        game.players[game.player_index].role === Roles.Scientist ? 4 : 5;
+        game.players[game.player_index].role === Client.Roles.Scientist ? 4 : 5;
       this.can_treat = game.players[game.player_index].can_treat(game);
       this.can_take = game.players[game.player_index].can_take(game);
       this.can_give = game.players[game.player_index].can_give(game);
@@ -324,18 +323,18 @@ class GameJSON implements GameJson {
       this.log = [...game.log];
       this.difficulty = game.difficulty;
     }
-    if (game.game_state === GameState.DiscardingCard) {
+    if (game.game_state === Client.GameState.DiscardingCard) {
       this.must_discard_index = game.must_discard_index;
     }
   }
 }
 
 export class GameMap {
-  game_state: GameState;
-  game_graph: CityJSON[];
+  game_state: Client.GameState;
+  game_graph: Client.City[];
   constructor(cities: CityData[]) {
     let game_graph = City.load(cities);
     this.game_graph = Object.values(game_graph).map(c => new CityJSON(c));
-    this.game_state = GameState.NotStarted;
+    this.game_state = Client.GameState.NotStarted;
   }
 }

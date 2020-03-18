@@ -1,9 +1,9 @@
-import { Game, GameDifficulty, GameMap } from "./game";
-import { Roles } from "./types";
-import { Cities } from "./data/cities";
-import express from "express";
 import cors from "cors";
+import express from "express";
 import socketIO from "socket.io";
+import { Cities } from "./data/cities";
+import { Game, GameDifficulty, GameMap } from "./game";
+import { Client } from "./types";
 
 const app = express();
 
@@ -46,12 +46,12 @@ io.on("connection", function(socket) {
       players: [],
       game: null,
       available_roles: new Set([
-        Roles.Dispatcher,
-        Roles.Medic,
-        Roles.QuarantineSpecialist,
-        Roles.Researcher,
-        Roles.Scientist,
-        Roles.OperationsExpert
+        Client.Roles.Dispatcher,
+        Client.Roles.Medic,
+        Client.Roles.QuarantineSpecialist,
+        Client.Roles.Researcher,
+        Client.Roles.Scientist,
+        Client.Roles.OperationsExpert
       ]),
       player_roles: []
     };
@@ -80,7 +80,11 @@ io.on("connection", function(socket) {
     );
   };
 
-  socket.on("join", function(role: Roles, player_name: string, callback) {
+  socket.on("join", function(
+    role: Client.Roles,
+    player_name: string,
+    callback
+  ) {
     // add logic for role is invalid
     if (
       games[match_name].available_roles.has(role) ||
@@ -550,7 +554,7 @@ function emitRoles(
 
 interface GameObject {
   game: Game;
-  available_roles: Set<Roles>;
+  available_roles: Set<Client.Roles>;
   players: string[];
-  player_roles: Roles[];
+  player_roles: Client.Roles[];
 }

@@ -1,5 +1,5 @@
+import { CityData } from "data/cities";
 import { shuffle } from "./random";
-import { CityData } from "types";
 const Denque = require("denque");
 
 export class InfectionDeck {
