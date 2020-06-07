@@ -22,7 +22,7 @@
     "@types/jquery": "^3.3.31",
     "@types/rx": "^4.1.1",
     "d3": "^5.12.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "rxjs": "~6.5.5",
     "socket.io-client": "^2.3.0",
     "tslib": "^1.10.0",
