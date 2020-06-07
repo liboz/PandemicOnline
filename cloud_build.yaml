@@ -1,7 +1,7 @@
 steps:
   - name: node:lts
     entrypoint: npm
-    args: ["install"]
+    args: ["ci"]
   - name: node:lts
     entrypoint: npm
     args: ["run", "test:cloudbuild"]
