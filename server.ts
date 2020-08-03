@@ -5,6 +5,9 @@ import { Cities } from "./data/cities";
 import { Game, GameDifficulty, GameMap } from "./game";
 import { Client } from "./types";
 import seedrandom from "seedrandom";
+import { SocketIOSocket, ClientWebSocket } from "client_websocket";
+
+const EventName = Client.EventName;
 
 const app = express();
 
@@ -36,7 +39,7 @@ const server = app.listen(8080);
 const io = socketIO(server);
 
 let seeded = seedrandom("test!");
-io.on("connection", function(socket) {
+io.on(EventName.Connection, function(socket) {
   let match_name = socket.handshake.query.match_name;
   if (!games[match_name]) {
     games[match_name] = {
@@ -54,7 +57,8 @@ io.on("connection", function(socket) {
     };
   }
   socket.join(match_name);
-  emitRoles(socket, games, match_name);
+  const clientWebSocket: ClientWebSocket = new SocketIOSocket(io, socket);
+  emitRoles(clientWebSocket, games, match_name);
   console.log(`a user connected to ${match_name}`);
 
   let players = function() {
@@ -77,7 +81,7 @@ io.on("connection", function(socket) {
     );
   };
 
-  socket.on("join", function(
+  clientWebSocket.on(EventName.Join, function(
     role: Client.Roles,
     player_name: string,
     callback
@@ -95,29 +99,32 @@ io.on("connection", function(socket) {
       }
       callback(player_index);
       games[match_name].available_roles.delete(role);
-      emitRoles(socket.to(match_name), games, match_name);
+      emitRoles(clientWebSocket, games, match_name, true);
       console.log(
         `${player_name} joined ${match_name} as Player ${player_index} in role ${role}`
       );
     } else {
-      socket.emit(
-        "invalid action",
+      clientWebSocket.sendMessageToClient(
+        EventName.InvalidAction,
         `Joining ${match_name} as Player name ${player_name} in role ${role} is an invalid action`
       );
     }
   });
 
-  socket.on("start game", function(difficulty: number) {
+  clientWebSocket.on(EventName.StartGame, function(difficulty: number) {
     if (
       !curr_game() ||
       curr_game().game_state === Client.GameState.NotStarted
     ) {
       let num_players = players().length;
       if (num_players > 5) {
-        socket.emit("invalid action", `Cannot start game with over 5 players`);
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
+          `Cannot start game with over 5 players`
+        );
       } else if (num_players < 2) {
-        socket.emit(
-          "invalid action",
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
           `Cannot start game with fewer than 2 players`
         );
       } else {
@@ -138,7 +145,11 @@ io.on("connection", function(socket) {
         curr_game().log.push(
           `game initialized at ${GameDifficulty[difficulty]} difficulty`
         );
-        io.in(match_name).emit("game initialized", curr_game().toJSON());
+        clientWebSocket.sendMessageToAllInRoom(
+          match_name,
+          EventName.GameInitialized,
+          curr_game().toJSON()
+        );
       }
     } else {
       console.log(
@@ -148,7 +159,7 @@ io.on("connection", function(socket) {
       );
     }
   });
-  socket.on("move", function(data, callback) {
+  clientWebSocket.on(EventName.Move, function(data, callback) {
     let log_string = `Player ${curr_game().player_index}: move to ${data}`;
     console.log(log_string);
     if (isReady()) {
@@ -156,20 +167,26 @@ io.on("connection", function(socket) {
       if (curr_player.move(curr_game(), data, curr_player.hand, socket)) {
         callback();
         curr_game().log.push(log_string);
-        socket.emit(`move successful`, curr_game().toJSON());
-        curr_game().use_turn(socket, io, match_name);
+        clientWebSocket.sendMessageToClient(
+          EventName.MoveSuccessful,
+          curr_game().toJSON()
+        );
+        curr_game().use_turn(io, match_name);
       } else {
-        socket.emit(
-          "invalid action",
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
           `${data} is an invalid location to move to`
         );
       }
     } else {
-      socket.emit("invalid action", `Move to ${data} is an invalid action`);
+      clientWebSocket.sendMessageToClient(
+        EventName.InvalidAction,
+        `Move to ${data} is an invalid action`
+      );
     }
   });
 
-  socket.on("direct flight", function(data) {
+  clientWebSocket.on(EventName.DirectFlight, function(data) {
     let log_string = `Player ${
       curr_game().player_index
     }: Direct Flight to ${data}`;
@@ -179,20 +196,26 @@ io.on("connection", function(socket) {
       if (curr_player.canDirectFlight(data)) {
         curr_player.directFlight(curr_game(), data, curr_player.hand, socket);
         curr_game().log.push(log_string);
-        socket.emit(`move choice successful`, curr_game().toJSON());
-        curr_game().use_turn(socket, io, match_name);
+        clientWebSocket.sendMessageToClient(
+          EventName.MoveChoiceSuccesful,
+          curr_game().toJSON()
+        );
+        curr_game().use_turn(io, match_name);
       } else {
-        socket.emit(
-          "invalid action",
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
           `${data} is an invalid location to direct flight to`
         );
       }
     } else {
-      socket.emit("invalid action", `Move to ${data} is an invalid action`);
+      clientWebSocket.sendMessageToClient(
+        EventName.InvalidAction,
+        `Move to ${data} is an invalid action`
+      );
     }
   });
 
-  socket.on("charter flight", function(data) {
+  clientWebSocket.on(EventName.CharterFlight, function(data) {
     let log_string = `Player ${
       curr_game().player_index
     }: Charter Flight to ${data}`;
@@ -202,20 +225,29 @@ io.on("connection", function(socket) {
       if (curr_player.canCharterFlight()) {
         curr_player.charterFlight(curr_game(), data, curr_player.hand, socket);
         curr_game().log.push(log_string);
-        socket.emit(`move choice successful`, curr_game().toJSON());
-        curr_game().use_turn(socket, io, match_name);
+        clientWebSocket.sendMessageToClient(
+          EventName.MoveChoiceSuccesful,
+          curr_game().toJSON()
+        );
+        curr_game().use_turn(io, match_name);
       } else {
-        socket.emit(
-          "invalid action",
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
           `${data} is an invalid location to charter flight to`
         );
       }
     } else {
-      socket.emit("invalid action", `Move to ${data} is an invalid action`);
+      clientWebSocket.sendMessageToClient(
+        EventName.InvalidAction,
+        `Move to ${data} is an invalid action`
+      );
     }
   });
 
-  socket.on("operations expert move", function(final_destination, card) {
+  clientWebSocket.on(EventName.OperationsExpertMove, function(
+    final_destination,
+    card
+  ) {
     let log_string = `Player ${
       curr_game().player_index
     }: Operations Expert Move to ${final_destination} by discarding ${card}`;
@@ -233,23 +265,29 @@ io.on("connection", function(socket) {
           socket
         );
         curr_game().log.push(log_string);
-        socket.emit(`move choice successful`, curr_game().toJSON());
-        curr_game().use_turn(socket, io, match_name);
+        clientWebSocket.sendMessageToClient(
+          EventName.MoveChoiceSuccesful,
+          curr_game().toJSON()
+        );
+        curr_game().use_turn(io, match_name);
       } else {
-        socket.emit(
-          "invalid action",
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
           `Discarding ${card} to move to ${final_destination} is an invalid Operations Expert Move`
         );
       }
     } else {
-      socket.emit(
-        "invalid action",
+      clientWebSocket.sendMessageToClient(
+        EventName.InvalidAction,
         `Discarding ${card} to move to ${final_destination} is an invalid Operations Expert Move`
       );
     }
   });
 
-  socket.on("dispatcher move", function(other_player_index, final_destination) {
+  clientWebSocket.on(EventName.DispatcherMove, function(
+    other_player_index,
+    final_destination
+  ) {
     let log_string = `Player ${
       curr_game().player_index
     }: Dispatcher Move ${other_player_index} to ${final_destination}`;
@@ -270,23 +308,26 @@ io.on("connection", function(socket) {
           socket
         );
         curr_game().log.push(log_string);
-        socket.emit(`move choice successful`, curr_game().toJSON());
-        curr_game().use_turn(socket, io, match_name);
+        clientWebSocket.sendMessageToClient(
+          EventName.MoveChoiceSuccesful,
+          curr_game().toJSON()
+        );
+        curr_game().use_turn(io, match_name);
       } else {
-        socket.emit(
-          "invalid action",
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
           `Moving ${other_player_index} to ${final_destination} is an invalid Dispatcher Move`
         );
       }
     } else {
-      socket.emit(
-        "invalid action",
+      clientWebSocket.sendMessageToClient(
+        EventName.InvalidAction,
         `Moving ${other_player_index} to ${final_destination} is an invalid Dispatcher Move`
       );
     }
   });
 
-  socket.on("build", function() {
+  clientWebSocket.on(EventName.Build, function() {
     let log_string = `Player ${curr_game().player_index}: build on ${
       curr_game().players[curr_game().player_index].location
     }`;
@@ -301,22 +342,28 @@ io.on("connection", function(socket) {
           curr_game()
         );
         curr_game().log.push(log_string);
-        socket.emit(`build successful`, curr_game().toJSON());
-        curr_game().use_turn(socket, io, match_name);
+        clientWebSocket.sendMessageToClient(
+          EventName.BuildSuccesful,
+          curr_game().toJSON()
+        );
+        curr_game().use_turn(io, match_name);
       } else {
-        socket.emit(
-          "invalid action",
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
           `Player ${curr_game().player_index} cannot build on ${
             curr_game().players[curr_game().player_index].location
           } right now`
         );
       }
     } else {
-      socket.emit("invalid action", `Build is an invalid action right now`);
+      clientWebSocket.sendMessageToClient(
+        EventName.InvalidAction,
+        `Build is an invalid action right now`
+      );
     }
   });
 
-  socket.on("treat", function(color, callback) {
+  clientWebSocket.on(EventName.Treat, function(color, callback) {
     let log_string = `Player ${curr_game().player_index}: treat ${color} at ${
       curr_game().players[curr_game().player_index].location
     }`;
@@ -335,19 +382,22 @@ io.on("connection", function(socket) {
         );
         callback();
         curr_game().log.push(log_string);
-        socket.emit(`treat successful`, curr_game().toJSON());
-        curr_game().use_turn(socket, io, match_name);
+        clientWebSocket.sendMessageToClient(
+          EventName.TreatSuccesful,
+          curr_game().toJSON()
+        );
+        curr_game().use_turn(io, match_name);
       } else {
-        socket.emit(
-          "invalid action",
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
           `It is invalid to treat ${color} at ${
             curr_game().players[curr_game().player_index].location
           }`
         );
       }
     } else {
-      socket.emit(
-        "invalid action",
+      clientWebSocket.sendMessageToClient(
+        EventName.InvalidAction,
         `Treat ${color} at ${
           curr_game().players[curr_game().player_index].location
         } is an invalid action`
@@ -355,7 +405,7 @@ io.on("connection", function(socket) {
     }
   });
 
-  socket.on("share", function(player_index, card, callback) {
+  clientWebSocket.on(EventName.Share, function(player_index, card, callback) {
     let log_string = "";
     if (card) {
       //researcher
@@ -387,11 +437,14 @@ io.on("connection", function(socket) {
           );
           callback();
           curr_game().log.push(log_string);
-          socket.emit(`share successful`, curr_game().toJSON());
-          curr_game().use_turn(socket, io, match_name);
+          clientWebSocket.sendMessageToClient(
+            EventName.ShareSuccesful,
+            curr_game().toJSON()
+          );
+          curr_game().use_turn(io, match_name);
         } else {
-          socket.emit(
-            "invalid action",
+          clientWebSocket.sendMessageToClient(
+            EventName.InvalidAction,
             `Share with Player ${player_index} at ${
               curr_game().players[curr_game().player_index].location
             } is an invalid action`
@@ -414,11 +467,14 @@ io.on("connection", function(socket) {
           );
           callback();
           curr_game().log.push(log_string);
-          socket.emit(`research share successful`, curr_game().toJSON());
-          curr_game().use_turn(socket, io, match_name);
+          clientWebSocket.sendMessageToClient(
+            EventName.ResearchShareSuccesful,
+            curr_game().toJSON()
+          );
+          curr_game().use_turn(io, match_name);
         } else {
-          socket.emit(
-            "invalid action",
+          clientWebSocket.sendMessageToClient(
+            EventName.InvalidAction,
             `Share ${card} with Player ${player_index} at ${
               curr_game().players[curr_game().player_index].location
             } is an invalid action`
@@ -427,15 +483,15 @@ io.on("connection", function(socket) {
       }
     } else {
       if (card) {
-        socket.emit(
-          "invalid action",
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
           `Share with Player ${player_index} at ${
             curr_game().players[curr_game().player_index].location
           } the card ${card} is an invalid action`
         );
       } else {
-        socket.emit(
-          "invalid action",
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
           `Share with Player ${player_index} at ${
             curr_game().players[curr_game().player_index].location
           } is an invalid action`
@@ -444,7 +500,7 @@ io.on("connection", function(socket) {
     }
   });
 
-  socket.on("discover", function(cards, callback) {
+  clientWebSocket.on(EventName.Discover, function(cards, callback) {
     let log_string = `Player ${curr_game().player_index}: cure at ${
       curr_game().players[curr_game().player_index].location
     } with ${cards}`;
@@ -461,27 +517,32 @@ io.on("connection", function(socket) {
         curr_game().log.push(log_string);
         let color = curr_game().game_graph[cards[0]].color;
         if (curr_game().cured[color] === 2) {
-          io.in(match_name).emit("eradicated", color);
+          clientWebSocket.sendMessageToAllInRoom(
+            match_name,
+            EventName.Eradicated,
+            color
+          );
         } else {
-          io.in(match_name).emit(
-            `discover successful`,
+          clientWebSocket.sendMessageToAllInRoom(
+            match_name,
+            EventName.DiscoverSuccesful,
             curr_game().toJSON(),
             color
           );
         }
 
-        curr_game().use_turn(socket, io, match_name);
+        curr_game().use_turn(io, match_name);
       } else {
-        socket.emit(
-          "invalid action",
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
           `It is invalid to cure with ${cards} at ${
             curr_game().players[curr_game().player_index].location
           }`
         );
       }
     } else {
-      socket.emit(
-        "invalid action",
+      clientWebSocket.sendMessageToClient(
+        EventName.InvalidAction,
         `It is invalid to cure with ${cards} at ${
           curr_game().players[curr_game().player_index].location
         }`
@@ -489,18 +550,21 @@ io.on("connection", function(socket) {
     }
   });
 
-  socket.on("pass", function() {
+  clientWebSocket.on(EventName.Pass, function() {
     let log_string = `Player ${curr_game().player_index}: pass move`;
     console.log(log_string);
     if (isReady()) {
       curr_game().log.push(log_string);
-      curr_game().pass_turn(socket, io, match_name);
+      curr_game().pass_turn(io, match_name);
     } else {
-      socket.emit("invalid action", `Cannot pass turn right now`);
+      clientWebSocket.sendMessageToClient(
+        EventName.InvalidAction,
+        `Cannot pass turn right now`
+      );
     }
   });
 
-  socket.on("discard", (cards, callback) => {
+  clientWebSocket.on(EventName.Discard, (cards, callback) => {
     let log_string = `Player ${curr_game().player_index} discards ${cards}`;
     console.log(log_string);
     let valid = false;
@@ -527,13 +591,17 @@ io.on("connection", function(socket) {
       ) {
         curr_game().game_state = Client.GameState.Ready;
       }
-      io.in(match_name).emit("update game state", curr_game().toJSON());
+      clientWebSocket.sendMessageToAllInRoom(
+        match_name,
+        EventName.UpdateGameState,
+        curr_game().toJSON()
+      );
     } else {
-      socket.emit(`Discarding ${cards} is invalid`);
+      clientWebSocket.sendMessageToClient(`Discarding ${cards} is invalid`);
     }
   });
 
-  socket.on("disconnect", function() {
+  clientWebSocket.on(EventName.Disconnect, function() {
     console.log(`user disconnected from ${match_name}`);
     if (match_name) {
       let room = io.sockets.adapter.rooms[match_name];
@@ -545,11 +613,20 @@ io.on("connection", function(socket) {
 });
 
 function emitRoles(
-  socket: SocketIO.Socket,
+  socket: ClientWebSocket,
   games: Record<string, GameObject>,
-  match_name: string
+  match_name: string,
+  send_to_all_but_client = false
 ) {
-  socket.emit("roles", [...games[match_name].available_roles]);
+  if (send_to_all_but_client) {
+    socket.sendMessageToAllButClient(match_name, EventName.Roles, [
+      ...games[match_name].available_roles
+    ]);
+  } else {
+    socket.sendMessageToClient(EventName.Roles, [
+      ...games[match_name].available_roles
+    ]);
+  }
 }
 
 interface GameObject {

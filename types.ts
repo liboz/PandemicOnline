@@ -78,4 +78,40 @@ export namespace Client {
     location: string;
     id: number;
   }
+
+  export enum EventName {
+    StartGame = "start game",
+    Move = "move",
+    DirectFlight = "direct flight",
+    CharterFlight = "charter flight",
+    OperationsExpertMove = "operations expert move",
+    DispatcherMove = "dispatcher move",
+    Build = "build",
+    Treat = "treat",
+    Share = "share",
+    Discover = "discover",
+    Pass = "pass",
+    Discard = "discard",
+    Roles = "roles",
+    InvalidAction = "invalid action",
+    GameInitialized = "game initialized",
+    Eradicated = "eradicated",
+    DiscardCards = "discard cards",
+    Epidemic = "epidemic",
+
+    // Success Messages
+    MoveSuccessful = "move successful",
+    MoveChoiceSuccesful = "move choice successful",
+    BuildSuccesful = "build successful",
+    TreatSuccesful = "treat successful",
+    ShareSuccesful = "share successful",
+    ResearchShareSuccesful = "research share successful",
+    UpdateGameState = "update game state",
+    DiscoverSuccesful = "discover successful",
+
+    // defaults
+    Connection = "connection",
+    Join = "join",
+    Disconnect = "disconnect"
+  }
 }

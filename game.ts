@@ -1,11 +1,13 @@
 import { CityData } from "data/cities";
 import seedrandom from "seedrandom";
-import { Socket } from "socket.io";
 import { City, CityJSON } from "./city";
 import { InfectionDeck } from "./infection_deck";
 import { Player, PlayerJSON } from "./player";
 import { PlayerDeck } from "./player_deck";
 import { Client } from "./types";
+import { ClientWebSocket } from "client_websocket";
+
+const EventName = Client.EventName;
 
 export const GameDifficulty: Record<number, string> = {
   4: "Introductory",
@@ -98,12 +100,16 @@ export class Game {
     return true;
   }
 
-  epidemic(io: SocketIO.Server = null, match_name: string = null) {
+  epidemic(clientWebSocket: ClientWebSocket = null, match_name: string = null) {
     this.infection_rate_index += 1;
     let card = this.infection_deck.infect_epidemic();
     this.log.push(`${card} was infected in an epidemic`);
-    if (io) {
-      io.in(match_name).emit("epidemic", card);
+    if (clientWebSocket) {
+      clientWebSocket.sendMessageToAllInRoom(
+        match_name,
+        EventName.Epidemic,
+        card
+      );
     }
     if (!this.game_graph[card].infect_epidemic(this)) {
       this.lose_game();
@@ -179,35 +185,47 @@ export class Game {
     }
   }
 
-  use_turn(socket: Socket, io: SocketIO.Server, match_name: string) {
+  use_turn(clientWebSocket: ClientWebSocket, match_name: string) {
     if (!this.decrement_turn()) {
       // TODO add to separate discard of after share and from drawing in end turn
-      this.turn_end(socket, io, match_name);
+      this.turn_end(clientWebSocket, match_name);
     } else {
-      io.in(match_name).emit("update game state", this.toJSON());
+      clientWebSocket.sendMessageToAllInRoom(
+        match_name,
+        EventName.UpdateGameState,
+        this.toJSON()
+      );
       for (let player of this.players) {
         if (player.hand.size > player.hand_size_limit) {
           this.game_state = Client.GameState.DiscardingCard;
           this.must_discard_index = player.id;
           this.log.push(`Player ${player.id} is discarding cards`);
-          // Send notification of discard to other players
-          io.emit("discard cards", this.must_discard_index);
+          // Send notification of discard to all players
+          clientWebSocket.sendMessageToAllInRoom(
+            match_name,
+            EventName.DiscardCards,
+            this.must_discard_index
+          );
           break;
         }
       }
     }
   }
 
-  turn_end(socket: Socket, io: SocketIO.Server, match_name: string) {
+  turn_end(clientWebSocket: ClientWebSocket, match_name: string) {
     for (let i = 0; i < 2; i++) {
       let card = this.players[this.player_index].draw(this);
       if (card === "Epidemic") {
         this.players[this.player_index].hand.delete(card);
-        this.epidemic(io, match_name);
+        this.epidemic(clientWebSocket, match_name);
       }
     }
 
-    io.in(match_name).emit("update game state", this.toJSON());
+    clientWebSocket.sendMessageToAllInRoom(
+      match_name,
+      EventName.UpdateGameState,
+      this.toJSON()
+    );
     if (this.game_state === Client.GameState.Ready) {
       let next_turn = true;
       for (let player of this.players) {
@@ -215,8 +233,12 @@ export class Game {
           this.game_state = Client.GameState.DiscardingCard;
           this.must_discard_index = player.id;
           this.log.push(`Player ${player.id} is discarding cards`);
-          // Send notification of discard to other players
-          io.emit("discard cards", this.must_discard_index);
+          // Send notification of discard to all players
+          clientWebSocket.sendMessageToAllInRoom(
+            match_name,
+            EventName.DiscardCards,
+            this.must_discard_index
+          );
           next_turn = false;
           break;
         }
@@ -226,19 +248,22 @@ export class Game {
         this.infect_stage();
         this.next_player();
         this.turns_left = 4;
-        io.in(match_name).emit("update game state", this.toJSON());
+        clientWebSocket.sendMessageToAllInRoom(
+          match_name,
+          EventName.UpdateGameState,
+          this.toJSON()
+        );
       }
     }
   }
 
   pass_turn(
-    socket: Socket = null,
-    io: SocketIO.Server = null,
+    clientWebSocket: ClientWebSocket = null,
     match_name: string = null
   ) {
     while (this.decrement_turn()) {}
-    if (socket) {
-      this.turn_end(socket, io, match_name);
+    if (clientWebSocket) {
+      this.turn_end(clientWebSocket, match_name);
     }
   }
 
