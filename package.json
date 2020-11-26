@@ -1,0 +1,49 @@
+{
+  "name": "pandemic",
+  "version": "1.0.0",
+  "description": "Online Pandemic Simulator",
+  "main": "server.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --watch",
+    "test:cloudbuild": "jest",
+    "start": "concurrently \"tsc -w\" \"nodemon dist/server.js\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/seedrandom": "^2.4.28",
+    "acorn": ">=5.7.4",
+    "concurrently": "^5.1.0",
+    "cors": "^2.8.5",
+    "denque": "^1.4.1",
+    "express": "^4.17.1",
+    "seedrandom": "^3.0.5",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.6",
+    "@types/express": "^4.17.3",
+    "@types/jest": "^25.1.4",
+    "@types/node": "^12.12.30",
+    "@types/socket.io": "^2.1.4",
+    "coveralls": "^3.0.6",
+    "husky": "^3.1.0",
+    "jest": "^25.3.0",
+    "minimist": ">=1.2.2",
+    "nodemon": "^2.0.3",
+    "prettier": "1.19.1",
+    "pretty-quick": "^2.0.1",
+    "ts-jest": "^25.3.1",
+    "tslint": "^5.20.1",
+    "typescript": "~3.8.3"
+  },
+  "engines": {
+    "node": "12.x"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  }
+}
