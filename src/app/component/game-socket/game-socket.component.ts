@@ -64,10 +64,6 @@ export class GameSocketComponent implements OnInit {
         this.game = data;
       });
 
-      this.socket.on("move successful", data => {
-        this.game = data;
-      });
-
       this.socket.on("move choice successful", data => {
         this.modalService.destroyEvent();
         this.game = data;
