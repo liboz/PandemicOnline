@@ -1,0 +1,33 @@
+<div>
+  <div style="margin-bottom: 20px">
+    <button *ngIf="canDirect" (click)="onDirectFlight()">
+      Direct Flight To {{ targetLocation }} by discarding {{ targetLocation }}
+    </button>
+    <button *ngIf="canCharter" (click)="onCharterFlight()">
+      Charter Flight To {{ targetLocation }} by discarding {{ currLocation }}
+    </button>
+    <button
+      *ngIf="canOperationsExpertMove"
+      [disabled]="!selectedCard"
+      (click)="onOperationsExpertMove()"
+    >
+      Operations Expert Move To {{ targetLocation }} by discarding
+      {{ selectedCard ? selectedCard : "a card in your hand" }}
+    </button>
+  </div>
+  <div
+    *ngIf="canOperationsExpertMove"
+    style="display: flex; justify-content: center"
+  >
+    <app-player-hand
+      [hand]="hand"
+      [game]="game"
+      (onSelect)="onSelectedCard($event)"
+      [cardLimit]="hand.length - 1"
+    >
+    </app-player-hand>
+  </div>
+  <div>
+    <button (click)="onCancel()">Cancel</button>
+  </div>
+</div>

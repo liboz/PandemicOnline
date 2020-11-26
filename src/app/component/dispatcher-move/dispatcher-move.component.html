@@ -1,0 +1,13 @@
+<div>
+  <div style="margin-bottom: 20px">
+    <button
+      *ngFor="let player of other_players"
+      (click)="dispatcherMoveTargetSelect(player.id)"
+    >
+      Move {{ formatPlayer(player) }}
+    </button>
+  </div>
+  <div>
+    <button (click)="onCancel()">Cancel</button>
+  </div>
+</div>

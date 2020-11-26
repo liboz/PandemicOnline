@@ -87,3 +87,51 @@ dist/
 
 # DynamoDB Local files
 .dynamodb/
+
+
+#firebase
+
+**/.firebaserc
+
+### Firebase Patch ###
+.runtimeconfig.json
+.firebase/
+
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+
+
+# Only exists if Bazel was run
+/bazel-out
+
+
+# profiling files
+chrome-profiler-events*.json
+speed-measure-plugin*.json
+
+
+# System Files
+.DS_Store
+Thumbs.db
