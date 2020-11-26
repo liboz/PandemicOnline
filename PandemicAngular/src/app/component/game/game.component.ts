@@ -5,7 +5,8 @@ import {
   ViewEncapsulation,
   SimpleChanges,
   ErrorHandler,
-  OnChanges
+  OnChanges,
+  Directive
 } from "@angular/core";
 import { ModalService } from "../../service/modal.service";
 import * as d3 from "d3";
@@ -698,6 +699,7 @@ export class GameComponent implements OnInit, OnChanges {
   }
 }
 
+@Directive()
 class ShareCard {
   public static Take = "Take from";
   public static Give = "Give";

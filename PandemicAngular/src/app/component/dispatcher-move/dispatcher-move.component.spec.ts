@@ -1,17 +1,18 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
-import { DispatcherMoveComponent } from './dispatcher-move.component';
+import { DispatcherMoveComponent } from "./dispatcher-move.component";
 
-describe('DispatcherMoveComponent', () => {
+describe("DispatcherMoveComponent", () => {
   let component: DispatcherMoveComponent;
   let fixture: ComponentFixture<DispatcherMoveComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ DispatcherMoveComponent ]
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [DispatcherMoveComponent]
+      }).compileComponents();
     })
-    .compileComponents();
-  }));
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DispatcherMoveComponent);
@@ -19,7 +20,7 @@ describe('DispatcherMoveComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
