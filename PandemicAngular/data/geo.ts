@@ -1,12 +1,14 @@
-{
-  "type": "FeatureCollection",
-  "features": [
+import { GeoJsonTypes } from "geojson";
+
+const geo = {
+  type: "FeatureCollection" as const,
+  features: [
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-67.75, -53.85],
             [-66.45, -54.45],
@@ -37,11 +39,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-58.55, -51.1],
             [-57.75, -51.55],
@@ -58,11 +60,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [70.28, -49.71],
             [68.745, -49.775],
@@ -78,11 +80,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [145.397978143494896, -40.79254851660599],
             [146.364120721623664, -41.137695407883342],
@@ -106,11 +108,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [173.020374790740817, -40.919052422856424],
             [173.24723432850223, -41.331998793300784],
@@ -147,11 +149,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [174.612008905330555, -36.156397393540558],
             [175.336615838927202, -37.20909799575827],
@@ -194,11 +196,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [167.120011428086883, -22.159990736583524],
             [166.740034621444892, -22.399976088146985],
@@ -218,11 +220,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [178.373600000000209, -17.33992],
             [178.718060000000179, -17.62846],
@@ -238,11 +240,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [179.36414266196428, -16.801354076946851],
             [178.725059362997257, -17.012041674368035],
@@ -257,11 +259,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-179.917369384765294, -16.501783135649362],
             [-180.0, -16.55521656663916],
@@ -273,11 +275,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [167.844876743845106, -16.466333103097156],
             [167.515181105822904, -16.59784962327997],
@@ -289,11 +291,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [167.107712437201513, -14.933920179913954],
             [167.270028111030257, -15.740020847234874],
@@ -307,11 +309,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [50.05651085795725, -13.555761407122006],
             [50.217431268114154, -14.758788750876846],
@@ -367,11 +369,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [143.56181115130002, -13.763655694232213],
             [143.922099237238939, -14.548310642152003],
@@ -602,11 +604,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [162.11902469304087, -10.482719008021135],
             [162.398645868172224, -10.826367282762121],
@@ -619,11 +621,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [120.715608758630452, -10.239581394087878],
             [120.295014276206899, -10.258649997603627],
@@ -637,11 +639,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [160.85222863183796, -9.872937106977105],
             [160.462588332357285, -9.895209649294841],
@@ -656,11 +658,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [161.679981724289149, -9.599982191611375],
             [161.529396600590559, -9.784312025596449],
@@ -674,11 +676,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [124.435950148619412, -10.140000909061442],
             [123.579981724136672, -10.359987481327963],
@@ -700,11 +702,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [117.900018345207769, -8.095681247594925],
             [118.260616489740499, -8.362383314653329],
@@ -721,11 +723,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [122.903537225436111, -8.094234307490751],
             [122.756982863456329, -8.649807631060739],
@@ -741,11 +743,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [159.875027297198613, -8.337320244991716],
             [159.917401971677947, -8.538289890174866],
@@ -761,11 +763,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [157.538425734689241, -7.347819919466943],
             [157.339419793933274, -7.404767347852655],
@@ -779,11 +781,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [108.623478631629013, -6.777673841990691],
             [110.539227329553313, -6.877357679881698],
@@ -813,11 +815,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [134.724624465066682, -6.214400730009302],
             [134.210133905168931, -6.895237725454706],
@@ -831,11 +833,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [155.88002566957843, -6.81999684003776],
             [155.599991082988794, -6.919990736522493],
@@ -853,11 +855,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [151.982795851854547, -5.478063246282346],
             [151.459106887008687, -5.560280450058741],
@@ -886,11 +888,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [127.249215122588993, -3.45906503663889],
             [126.874922723498884, -3.79098276124958],
@@ -903,11 +905,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [130.471344028851803, -3.09376433676762],
             [130.834836053592852, -3.858472181822762],
@@ -923,11 +925,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [153.140037876598768, -4.499983412294114],
             [152.827292108368312, -4.766427097190999],
@@ -948,11 +950,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [134.1433679546478, -1.151867364103595],
             [134.422627394753107, -2.769184665542397],
@@ -1026,11 +1028,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [125.240500522971587, 1.419836127117605],
             [124.437035353697439, 0.427881171058957],
@@ -1082,11 +1084,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [128.688248732620735, 1.132385972494006],
             [128.63595218314137, 0.258485826006179],
@@ -1106,11 +1108,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [105.81765506390937, -5.852355645372413],
             [104.710384149191526, -5.873284600450646],
@@ -1152,11 +1154,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [117.875627069165972, 1.827640692548897],
             [118.996747267738186, 0.902219143066048],
@@ -1209,11 +1211,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [126.37681359263749, 8.414706325713254],
             [126.478512811387901, 7.750354112168978],
@@ -1247,11 +1249,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [81.218019647144303, 6.197141424988303],
             [80.348356968104468, 5.968369859232141],
@@ -1268,11 +1270,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-60.935, 10.11],
             [-61.77, 10.0],
@@ -1287,11 +1289,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [123.982437778825869, 10.278778591345713],
             [123.623183221532798, 9.950090643753299],
@@ -1310,11 +1312,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [118.504580926590364, 9.316382554558004],
             [117.174274530100746, 8.367499904814665],
@@ -1330,11 +1332,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [121.883547804859091, 11.89175507247198],
             [122.483821242361529, 11.582187404827508],
@@ -1350,11 +1352,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [125.502551711123516, 12.162694606978249],
             [125.78346479706218, 11.046121934447754],
@@ -1375,11 +1377,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [121.52739383350351, 13.069590155484519],
             [121.262190382981572, 12.205560207564403],
@@ -1392,11 +1394,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [121.321308221523594, 18.504064642810903],
             [121.937601353036456, 18.218552354398469],
@@ -1436,11 +1438,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-65.591003790942892, 18.228034979723873],
             [-65.847163865813656, 17.975905666571805],
@@ -1456,11 +1458,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-76.902561408175615, 17.868237819891675],
             [-77.206341315403478, 17.701116237859793],
@@ -1478,11 +1480,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-72.579672817663635, 19.871500555902344],
             [-71.712361416292936, 19.714455878167314],
@@ -1525,11 +1527,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [110.339187860151497, 18.678395087147578],
             [109.475209588663716, 18.197700913968617],
@@ -1546,11 +1548,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-155.54211, 19.08348],
             [-155.68817, 18.916190000000114],
@@ -1574,11 +1576,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-156.07926, 20.64397],
             [-156.41445, 20.57241],
@@ -1594,11 +1596,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-156.75824, 21.17684],
             [-156.78933, 21.06873],
@@ -1610,11 +1612,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-157.65283, 21.32217],
             [-157.70703, 21.26442],
@@ -1630,11 +1632,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-159.34512, 21.982],
             [-159.46372, 21.88299],
@@ -1648,11 +1650,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-79.679523688460307, 22.765303249598816],
             [-79.281485968732028, 22.399201565027028],
@@ -1701,11 +1703,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-77.534659999999889, 23.75975],
             [-77.78, 23.71],
@@ -1720,11 +1722,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [121.175632358892727, 22.790857245367135],
             [120.747079705896255, 21.970571397382088],
@@ -1740,11 +1742,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-77.82, 26.58],
             [-78.91, 26.42],
@@ -1757,11 +1759,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-77.0, 26.590000000000117],
             [-77.17255, 25.87918],
@@ -1775,11 +1777,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [134.638428176003885, 34.149233710256425],
             [134.766379022358564, 33.80633474378368],
@@ -1798,11 +1800,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [34.576473829900607, 35.671595567358764],
             [33.900804477684261, 35.245755927057587],
@@ -1821,11 +1823,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [23.699980096133089, 35.705004380835618],
             [24.246665073348765, 35.368022365860156],
@@ -1843,11 +1845,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [15.520376010813834, 38.231155096991557],
             [15.160242954171821, 37.44404551853782],
@@ -1865,11 +1867,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [9.210011834356351, 41.209991360024304],
             [9.809975213264977, 40.500008856766101],
@@ -1886,11 +1888,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [140.976387567305295, 37.142074286440163],
             [140.599769728762141, 36.343983466124456],
@@ -1934,11 +1936,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [9.560016310269219, 42.152491970379458],
             [9.229752231491858, 41.380006822264448],
@@ -1952,11 +1954,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [143.910161981379559, 44.174099839853739],
             [144.613426548439662, 43.960882880217497],
@@ -1979,11 +1981,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-63.6645, 46.55001],
             [-62.9393, 46.41587],
@@ -1999,11 +2001,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-61.806305, 49.105060000000122],
             [-62.29318, 49.08717],
@@ -2018,11 +2020,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-123.510001587551173, 48.510010891303409],
             [-124.012890788399588, 48.370846259141501],
@@ -2045,11 +2047,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-56.134035814017039, 50.687009792679305],
             [-56.795881720595276, 49.81230866149096],
@@ -2089,11 +2091,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-132.710007884431207, 54.040009315423447],
             [-132.710008504905716, 54.040009263721345],
@@ -2114,11 +2116,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [143.648007440362818, 50.747600409541604],
             [144.654147577085695, 48.976390692737482],
@@ -2147,11 +2149,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-6.788856573910806, 52.260117906292436],
             [-8.561616583683502, 51.669301255899398],
@@ -2170,11 +2172,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [12.690006137755631, 55.609990953180869],
             [12.089991082414713, 54.800014553438018],
@@ -2187,11 +2189,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-153.006314053336922, 57.115842190165893],
             [-154.005090298458128, 56.734676825581062],
@@ -2207,11 +2209,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-3.005004848635195, 58.635000108466244],
             [-4.073828497728016, 57.553024807355229],
@@ -2262,11 +2264,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-165.579164191733611, 59.90998688418756],
             [-166.192770148767295, 59.754440822989068],
@@ -2280,11 +2282,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-79.26582, 62.158675],
             [-79.65752, 61.63308],
@@ -2299,11 +2301,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-81.898249999999877, 62.7108],
             [-83.06857, 62.159220000000118],
@@ -2317,11 +2319,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-171.731656867539414, 63.78251536727592],
             [-171.114433560245345, 63.59219106714491],
@@ -2340,11 +2342,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 0.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 0.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-85.161307949549951, 65.657284654392896],
             [-84.975763719405876, 65.21751821558891],
@@ -2371,11 +2373,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-14.508695441129134, 66.455892239031385],
             [-14.739637417041536, 65.808748277440372],
@@ -2402,11 +2404,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-75.86588, 67.14886],
             [-76.98687, 67.09873],
@@ -2422,11 +2424,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-175.01425, 66.58435],
             [-174.33983, 66.3355600000001],
@@ -2457,11 +2459,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-95.647681203800431, 69.107690358321776],
             [-96.269521203800593, 68.757040358321746],
@@ -2479,11 +2481,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [180.000000000000142, 70.832199208546683],
             [178.903425000000112, 70.78114],
@@ -2495,11 +2497,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-178.69378, 70.89302],
             [-180.0, 70.832199208546683],
@@ -2514,11 +2516,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-90.547119140624943, 69.497680664062585],
             [-90.551513671874943, 68.475097656250028],
@@ -3457,11 +3459,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-114.16717, 73.12145],
             [-114.66634, 72.65277],
@@ -3513,11 +3515,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-104.5, 73.42],
             [-105.38, 72.76],
@@ -3530,11 +3532,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-76.34, 73.102684989953019],
             [-76.25140380859375, 72.826385498046875],
@@ -3552,11 +3554,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-86.56217851433405, 73.157447007938543],
             [-85.774371304044564, 72.534125881633827],
@@ -3636,11 +3638,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-100.35642, 73.84389],
             [-99.16387, 73.63339],
@@ -3662,11 +3664,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [143.60385, 73.21244],
             [142.08763, 73.20544],
@@ -3681,11 +3683,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-93.196295539100134, 72.771992499473271],
             [-94.269046597047179, 72.024596259235977],
@@ -3703,11 +3705,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-120.46, 71.4],
             [-123.09219, 70.901640000000128],
@@ -3731,11 +3733,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [150.73167, 75.08406],
             [149.575925, 74.68892],
@@ -3749,11 +3751,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-93.612755906940407, 74.979997260224422],
             [-94.15690873897384, 74.592346503386864],
@@ -3768,11 +3770,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [145.086285, 75.562625],
             [144.3, 74.82],
@@ -3788,11 +3790,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-98.5, 76.72],
             [-97.735585, 76.256560000000121],
@@ -3812,11 +3814,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-108.21141, 76.20168],
             [-107.819429999999898, 75.84552],
@@ -3845,11 +3847,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [57.5356925799924, 70.720463975702245],
             [56.944979282463947, 70.632743231886678],
@@ -3882,11 +3884,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-94.684085862999467, 77.097878323058382],
             [-93.573921068073048, 76.776295884906091],
@@ -3921,11 +3923,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 0.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 0.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-116.198586595507351, 77.645286770326209],
             [-116.335813361458491, 76.876961575010654],
@@ -3944,11 +3946,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [106.970275878906278, 76.97430419921875],
             [107.240112304687585, 76.4801025390625],
@@ -5308,11 +5310,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-93.840003017944014, 77.519997260234504],
             [-94.295608283245173, 77.491342678528781],
@@ -5326,11 +5328,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-110.186938035913073, 77.697014879050386],
             [-112.051191169058484, 77.409228827616943],
@@ -5344,11 +5346,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [24.72412, 77.85385],
             [22.49032, 77.44493],
@@ -5363,11 +5365,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-109.6631457182026, 78.60197256134569],
             [-110.881314256618964, 78.406919867659923],
@@ -5381,11 +5383,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-95.830294969449255, 78.056941229963343],
             [-97.309842902398032, 77.850597235821795],
@@ -5401,11 +5403,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 0.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 0.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-100.060191820052239, 78.32475434031582],
             [-99.67093909381353, 77.907544664207506],
@@ -5423,11 +5425,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.5 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.5 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [105.07547, 78.30689],
             [99.43814, 77.921],
@@ -5441,11 +5443,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [18.25183, 79.70175],
             [21.54383, 78.95611],
@@ -5470,11 +5472,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [25.44762535981198, 80.407340399894593],
             [27.407505730913499, 80.056405748200547],
@@ -5493,11 +5495,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 1, "min_zoom": 1.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 1, min_zoom: 1.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [51.136186557831394, 80.54728017854103],
             [49.79368452332082, 80.415427761548216],
@@ -5519,11 +5521,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [99.93976, 78.88094],
             [97.75794, 78.7562],
@@ -5541,11 +5543,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-87.02, 79.66],
             [-85.81435, 79.3369],
@@ -5573,11 +5575,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-68.5, 83.106321516765831],
             [-65.82735, 83.028010000000137],
@@ -5649,11 +5651,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": { "featurecla": "Land", "scalerank": 0, "min_zoom": 0.0 },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: "Feature",
+      properties: { featurecla: "Land", scalerank: 0, min_zoom: 0.0 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
           [
             [-27.10046, 83.51966],
             [-20.84539, 82.72669],
@@ -5792,4 +5794,6 @@
       }
     }
   ]
-}
+};
+
+export default geo;
