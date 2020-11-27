@@ -1,6 +1,7 @@
+<!--
 <div id="main-holder">
   <div id="map-holder">
-    <svg>
+    <svg style="position:fixed; top:0; left:0; height:100%; width:100%">
       <g>
         <rect
           [ngClass]="'background'"
@@ -35,6 +36,7 @@
     </ng-container>
   </div>
 </div>
+<!---
 <div *ngIf="!hasStarted()">
   <button (click)="onStart()">Start Game</button>
   <div *ngFor="let difficulty of difficulties">
@@ -224,3 +226,4 @@
     </div>
   </div>
 </div>
+-->

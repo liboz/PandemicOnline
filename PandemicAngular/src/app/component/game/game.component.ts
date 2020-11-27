@@ -4,14 +4,16 @@ import {
   Input,
   ViewEncapsulation,
   SimpleChanges,
-  ErrorHandler,
   OnChanges,
-  Directive
+  Directive,
+  NgZone,
+  ElementRef
 } from "@angular/core";
 import { ModalService } from "../../service/modal.service";
 import * as d3 from "d3";
 import * as $ from "jquery";
-import geo from "../../../../data/geo.json";
+import * as PIXI from "pixi.js";
+import geo from "../../../../data/geo";
 import { ModalComponent } from "../modal/modal.component";
 import { PlayerComponent } from "../player/player.component";
 import { MoveChoiceSelectorComponent } from "../move-choice-selector/move-choice-selector.component";
@@ -19,6 +21,9 @@ import { Subscription } from "rxjs";
 import { ResearcherShareSelectorComponent } from "../researcher-share-selector/researcher-share-selector.component";
 import { Client } from "data/types";
 import { DispatcherMoveComponent } from "../dispatcher-move/dispatcher-move.component";
+import Link from "../link/link";
+import CityNode from "../node/node";
+import { colorNameToHex } from "src/app/utils";
 
 @Component({
   selector: "app-game",
@@ -36,6 +41,8 @@ export class GameComponent implements OnInit, OnChanges {
   features = geo.features;
   w = 2500;
   h = 1250;
+  pixiApp: PIXI.Application;
+  pixiGraphics: PIXI.Graphics;
 
   zoomed: any;
 
@@ -48,8 +55,8 @@ export class GameComponent implements OnInit, OnChanges {
   minZoom: number;
   maxZoom: number;
 
-  nodes: any;
-  links: any;
+  nodes: CityNode[];
+  links: Link[];
   isMoving: any;
   treatColorChoices: string[] = null;
   shareCardChoices: ShareCard[] = null;
@@ -61,28 +68,25 @@ export class GameComponent implements OnInit, OnChanges {
   difficulties = Object.entries(GameDifficulty);
   selectedDifficulty: number;
 
-  getTextBox(selection) {
-    selection.each(function(d) {
-      d.bbox = this.getBBox();
-    });
-  }
+  projection;
 
-  projection = d3
-    .geoEquirectangular()
-    .center([0, 15]) // set centre to further North as we are cropping more off bottom of map
-    .scale(this.w / (2 * Math.PI)) // scale to fit group width
-    .translate([this.w / 2, this.h / 2]); // ensure centred in group
-
-  path = d3.geoPath().projection(this.projection);
+  path: any;
 
   initialized = false;
   selectedCards: Set<number>;
-  constructor(private modalService: ModalService) {}
+  constructor(
+    private modalService: ModalService,
+    private ngZone: NgZone,
+    private elementRef: ElementRef
+  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
+    // TODO: HANDLE
+    /*
     if (this.initialized) {
       this.createChart();
-    }
+    }*/
+    console.log(changes);
     if (changes.game) {
       if (changes.game.currentValue.game_state === Client.GameState.Lost) {
         this.modalService.destroy();
@@ -97,29 +101,9 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    // changes.prop contains the old and the new value...
-    this.svg = d3
-      .select("#map-holder > svg")
-      // set to the same size as the "map-holder" div
-      .attr("width", $("#map-holder").width())
-      .attr("height", $("#map-holder").height());
-    //Bind data and create one path per GeoJSON feature
-    this.countriesGroup = d3.select("#map-holder > svg > g").attr("id", "map");
-
     // add zoom functionality
-    this.zoomed = function() {
-      let t = d3.event.transform;
-      d3.select("g").attr(
-        "transform",
-        "translate(" + [t.x, t.y] + ")scale(" + t.k + ")"
-      );
-    };
-    this.zoom = d3.zoom().on("zoom", this.zoomed);
-    this.svg.call(this.zoom);
     this.isMoving = false;
-    this.initialized = true;
     this.selectedCards = new Set();
-    this.createChart();
     this.destroySubscription = this.modalService.destroy$.subscribe(() => {
       this.isMoving = false;
       this.modalService.destroy();
@@ -137,76 +121,105 @@ export class GameComponent implements OnInit, OnChanges {
         this.modalService.destroyEvent();
       }
     );
+
+    this.ngZone.runOutsideAngular(() => {
+      this.pixiApp = new PIXI.Application({
+        backgroundColor: 0x2a2c39,
+        resizeTo: window
+      });
+    });
+    this.pixiApp.renderer.autoDensity = true;
+    PIXI.settings.RESOLUTION = 2 * window.devicePixelRatio;
+    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+
+    this.elementRef.nativeElement.appendChild(this.pixiApp.view);
+    this.renderBase();
+    this.renderChanging();
+
+    this.pixiApp.renderer.on("resize", () => {
+      this.renderBase();
+      this.renderChanging();
+    });
+
+    console.log(this.game);
   }
 
-  // zoom to show a bounding box, with optional additional padding as percentage of box size
-  private boxZoom(box, centroid, paddingPerc) {
-    let minXY = box[0];
-    let maxXY = box[1];
-    // find size of map area defined
-    let zoomWidth = Math.abs(minXY[0] - maxXY[0]);
-    let zoomHeight = Math.abs(minXY[1] - maxXY[1]);
-    // find midpoint of map area defined
-    let zoomMidX = centroid[0];
-    let zoomMidY = centroid[1];
-    // increase map area to include padding
-    zoomWidth = zoomWidth * (1 + paddingPerc / 100);
-    zoomHeight = zoomHeight * (1 + paddingPerc / 100);
-    // find scale required for area to fill svg
-    let maxXscale = $("svg").width() / zoomWidth;
-    let maxYscale = $("svg").height() / zoomHeight;
-    let zoomScale = Math.min(maxXscale, maxYscale);
-    // handle some edge cases
-    // limit to max zoom (handles tiny countries)
-    zoomScale = Math.min(zoomScale, this.maxZoom);
-    // limit to min zoom (handles large countries and countries that span the date line)
-    zoomScale = Math.max(zoomScale, this.minZoom);
-    // Find screen pixel equivalent once scaled
-    let offsetX = zoomScale * zoomMidX;
-    let offsetY = zoomScale * zoomMidY;
-    // Find offset to centre, making sure no gap at left or top of holder
-    let dleft = Math.min(0, $("svg").width() / 2 - offsetX);
-    let dtop = Math.min(0, $("svg").height() / 2 - offsetY);
-    // Make sure no gap at bottom or right of holder
-    dleft = Math.max($("svg").width() - this.w * zoomScale, dleft);
-    dtop = Math.max($("svg").height() - this.h * zoomScale, dtop);
-    // set zoom
-    this.svg
-      .transition()
-      .duration(500)
-      .call(
-        this.zoom.transform,
-        d3.zoomIdentity.translate(dleft, dtop).scale(zoomScale)
-      );
+  private renderBase() {
+    this.pixiApp.stage.removeChild(this.pixiGraphics);
+    this.pixiGraphics = new PIXI.Graphics();
+    this.projection = d3
+      .geoEquirectangular()
+      .center([15, 10])
+      .scale(window.innerWidth / 5) // 5.5 gotte empiricaly
+      .translate([window.innerWidth / 2, window.innerHeight / 2]); // ensure centred in group
+    this.path = d3
+      .geoPath()
+      .projection(this.projection)
+      .context(this.pixiGraphics as any);
+
+    // generate features
+    for (const feature of this.features) {
+      this.pixiGraphics.beginFill(0x8c8c8d, 1);
+      this.pixiGraphics.lineStyle(1, 0x2a2c39, 1);
+      this.path(feature);
+      this.pixiGraphics.endFill();
+    }
+
+    // generate links/nodes
+    this.regenerateLinksAndNodes();
+    for (const link of this.links) {
+      this.pixiGraphics.lineStyle(5, 0xe5c869);
+      this.pixiGraphics.moveTo(link.source.x, link.source.y);
+      this.pixiGraphics.lineTo(link.target.x, link.target.y);
+    }
+
+    for (const node of this.nodes) {
+      const color = colorNameToHex(node.color);
+      if (color) {
+        this.pixiGraphics.lineStyle(5, Number(color));
+        this.pixiGraphics.beginFill(Number(color));
+      }
+      this.pixiGraphics.drawCircle(node.x, node.y, 10);
+      if (color) {
+        this.pixiGraphics.endFill();
+      }
+      var text = new PIXI.Text(node.name, {
+        fill: 0xffffff,
+        fontSize: 18,
+        stroke: "black",
+        strokeThickness: 3,
+        align: "center"
+      });
+      text.x = node.x - 30;
+      text.y = node.y - 30;
+      this.pixiGraphics.addChild(text);
+    }
+    this.pixiApp.stage.addChild(this.pixiGraphics);
+    this.pixiApp.stage.addListener;
   }
 
-  initiateZoom() {
-    // Define a "minzoom" whereby the "Countries" is as small possible without leaving white space at top/bottom or sides
-    this.minZoom = Math.max(
-      $("#map-holder").width() / this.w,
-      $("#map-holder").height() / this.h
-    );
-    // set max zoom to a suitable factor of this value
-    this.maxZoom = 20 * this.minZoom;
-    // set extent of zoom to chosen values
-    // set translate extent so that panning can't cause map to move out of viewport
-    this.zoom.scaleExtent([this.minZoom, this.maxZoom]).translateExtent([
-      [0, 0],
-      [this.w, this.h]
-    ]);
-    // define X and Y offset for centre of map to be shown in centre of holder
-    let midX = ($("#map-holder").width() - this.minZoom * this.w) / 2;
-    let midY = ($("#map-holder").height() - this.minZoom * this.h) / 2;
-    // change zoom transform to min zoom and centre offsets
-    this.svg.call(
-      this.zoom.transform,
-      d3.zoomIdentity.translate(midX, midY).scale(this.minZoom)
-    );
+  private renderChanging() {
+    for (const node of this.nodes) {
+      if (node.hasResearchStation) {
+        this.pixiGraphics.lineStyle(3, 0x000000);
+        this.pixiGraphics.beginFill(0xffffff);
+        const baseX = node.x;
+        const baseY = node.y;
+        this.pixiGraphics.drawPolygon([
+          new PIXI.Point(baseX + 10, baseY + 5),
+          new PIXI.Point(baseX, baseY + 20),
+          new PIXI.Point(baseX, baseY + 30),
+          new PIXI.Point(baseX + 20, baseY + 30),
+          new PIXI.Point(baseX + 20, baseY + 20)
+        ]);
+        this.pixiGraphics.endFill();
+      }
+    }
   }
 
-  private createChart(): void {
-    let values: any[] = Object.values(this.game.game_graph);
-    this.nodes = values.map((d: any) => {
+  private regenerateLinksAndNodes(): void {
+    let values = Object.values(this.game.game_graph);
+    this.nodes = values.map(d => {
       return {
         id: d.index,
         x: this.projection(d.location)[0],
@@ -226,7 +239,7 @@ export class GameComponent implements OnInit, OnChanges {
     }
 
     this.links = [];
-    values.forEach((d: any) => {
+    values.forEach(d => {
       d.neighbors.forEach(n => {
         if (d.location[0] * values[n].location[0] < -10000) {
           // these are cross pacific differences
@@ -255,7 +268,6 @@ export class GameComponent implements OnInit, OnChanges {
         }
       });
     });
-    this.initiateZoom();
   }
 
   onSelectedNode(selectedNode: any) {
