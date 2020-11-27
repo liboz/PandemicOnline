@@ -44,8 +44,6 @@ export class GameComponent implements OnInit, OnChanges {
   pixiApp: PIXI.Application;
   pixiGraphics: PIXI.Graphics;
 
-  zoomed: any;
-
   zoom: any;
 
   svg: any;
@@ -68,7 +66,10 @@ export class GameComponent implements OnInit, OnChanges {
   difficulties = Object.entries(GameDifficulty);
   selectedDifficulty: number;
 
-  projection;
+  rootProjection: d3.GeoProjection;
+  projection: d3.GeoProjection;
+
+  yaw: d3.ScaleLinear<number, number, never>;
 
   path: any;
 
@@ -98,6 +99,22 @@ export class GameComponent implements OnInit, OnChanges {
         this.modalService.init(ModalComponent, { lost: false }, {});
       }
     }
+  }
+
+  zoomed(event) {
+    var scale = this.rootProjection.scale();
+    var translate = this.rootProjection.translate();
+    var t = event.transform;
+    var tx = translate[0] - t.invertX(translate[0]);
+    var ty = translate[1] * t.k + t.y;
+
+    this.projection
+      .scale(t.k * scale)
+      .rotate([this.yaw(tx), 0, 0])
+      .translate([translate[0], ty]);
+
+    this.renderBase();
+    this.renderChanging();
   }
 
   ngOnInit() {
@@ -133,10 +150,12 @@ export class GameComponent implements OnInit, OnChanges {
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
     this.elementRef.nativeElement.appendChild(this.pixiApp.view);
+    this.preRender();
     this.renderBase();
     this.renderChanging();
 
     this.pixiApp.renderer.on("resize", () => {
+      this.preRender();
       this.renderBase();
       this.renderChanging();
     });
@@ -144,14 +163,43 @@ export class GameComponent implements OnInit, OnChanges {
     console.log(this.game);
   }
 
-  private renderBase() {
-    this.pixiApp.stage.removeChild(this.pixiGraphics);
-    this.pixiGraphics = new PIXI.Graphics();
+  private preRender() {
+    this.rootProjection = d3
+      .geoEquirectangular()
+      .center([15, 10])
+      .scale(window.innerWidth / 5.5) // 5.5 gotten empiricaly
+      .translate([window.innerWidth / 2, window.innerHeight / 2]); // ensure centred in group
+
     this.projection = d3
       .geoEquirectangular()
       .center([15, 10])
-      .scale(window.innerWidth / 5) // 5.5 gotte empiricaly
-      .translate([window.innerWidth / 2, window.innerHeight / 2]); // ensure centred in group
+      .scale(window.innerWidth / 5.5) // 5.5 gotte empiricaly
+      .translate([window.innerWidth / 2, window.innerHeight / 2]);
+
+    this.yaw = d3
+      .scaleLinear()
+      .domain([0, window.innerWidth])
+      .range([0, 360]);
+
+    var zoom = d3
+      .zoom()
+      .scaleExtent([1, 5])
+      .extent([
+        [0, 0],
+        [window.innerWidth, window.innerHeight]
+      ])
+      .translateExtent([
+        [-Infinity, 0],
+        [Infinity, window.innerHeight]
+      ])
+      .on("zoom", event => this.zoomed(event));
+    d3.select("canvas").call(zoom);
+  }
+
+  private renderBase() {
+    this.pixiApp.stage.removeChild(this.pixiGraphics);
+    this.pixiGraphics = new PIXI.Graphics();
+
     this.path = d3
       .geoPath()
       .projection(this.projection)
