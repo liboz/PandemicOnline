@@ -109,6 +109,9 @@ export namespace Client {
     UpdateGameState = "update game state",
     DiscoverSuccesful = "discover successful",
 
+    // Invalid Message
+    DiscardInvalid = "discard invalid",
+
     // defaults
     Connection = "connection",
     Join = "join",

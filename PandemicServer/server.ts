@@ -5,7 +5,7 @@ import { Cities } from "./data/cities";
 import { Game, GameDifficulty, GameMap } from "./game";
 import { Client } from "./types";
 import seedrandom from "seedrandom";
-import { SocketIOSocket, ClientWebSocket } from "client_websocket";
+import { SocketIOSocket, ClientWebSocket } from "./client_websocket";
 
 const EventName = Client.EventName;
 
@@ -171,7 +171,7 @@ io.on(EventName.Connection, function(socket) {
           EventName.MoveSuccessful,
           curr_game().toJSON()
         );
-        curr_game().use_turn(io, match_name);
+        curr_game().use_turn(clientWebSocket, match_name);
       } else {
         clientWebSocket.sendMessageToClient(
           EventName.InvalidAction,
@@ -200,7 +200,7 @@ io.on(EventName.Connection, function(socket) {
           EventName.MoveChoiceSuccesful,
           curr_game().toJSON()
         );
-        curr_game().use_turn(io, match_name);
+        curr_game().use_turn(clientWebSocket, match_name);
       } else {
         clientWebSocket.sendMessageToClient(
           EventName.InvalidAction,
@@ -229,7 +229,7 @@ io.on(EventName.Connection, function(socket) {
           EventName.MoveChoiceSuccesful,
           curr_game().toJSON()
         );
-        curr_game().use_turn(io, match_name);
+        curr_game().use_turn(clientWebSocket, match_name);
       } else {
         clientWebSocket.sendMessageToClient(
           EventName.InvalidAction,
@@ -269,7 +269,7 @@ io.on(EventName.Connection, function(socket) {
           EventName.MoveChoiceSuccesful,
           curr_game().toJSON()
         );
-        curr_game().use_turn(io, match_name);
+        curr_game().use_turn(clientWebSocket, match_name);
       } else {
         clientWebSocket.sendMessageToClient(
           EventName.InvalidAction,
@@ -312,7 +312,7 @@ io.on(EventName.Connection, function(socket) {
           EventName.MoveChoiceSuccesful,
           curr_game().toJSON()
         );
-        curr_game().use_turn(io, match_name);
+        curr_game().use_turn(clientWebSocket, match_name);
       } else {
         clientWebSocket.sendMessageToClient(
           EventName.InvalidAction,
@@ -346,7 +346,7 @@ io.on(EventName.Connection, function(socket) {
           EventName.BuildSuccesful,
           curr_game().toJSON()
         );
-        curr_game().use_turn(io, match_name);
+        curr_game().use_turn(clientWebSocket, match_name);
       } else {
         clientWebSocket.sendMessageToClient(
           EventName.InvalidAction,
@@ -386,7 +386,7 @@ io.on(EventName.Connection, function(socket) {
           EventName.TreatSuccesful,
           curr_game().toJSON()
         );
-        curr_game().use_turn(io, match_name);
+        curr_game().use_turn(clientWebSocket, match_name);
       } else {
         clientWebSocket.sendMessageToClient(
           EventName.InvalidAction,
@@ -441,7 +441,7 @@ io.on(EventName.Connection, function(socket) {
             EventName.ShareSuccesful,
             curr_game().toJSON()
           );
-          curr_game().use_turn(io, match_name);
+          curr_game().use_turn(clientWebSocket, match_name);
         } else {
           clientWebSocket.sendMessageToClient(
             EventName.InvalidAction,
@@ -471,7 +471,7 @@ io.on(EventName.Connection, function(socket) {
             EventName.ResearchShareSuccesful,
             curr_game().toJSON()
           );
-          curr_game().use_turn(io, match_name);
+          curr_game().use_turn(clientWebSocket, match_name);
         } else {
           clientWebSocket.sendMessageToClient(
             EventName.InvalidAction,
@@ -531,7 +531,7 @@ io.on(EventName.Connection, function(socket) {
           );
         }
 
-        curr_game().use_turn(io, match_name);
+        curr_game().use_turn(clientWebSocket, match_name);
       } else {
         clientWebSocket.sendMessageToClient(
           EventName.InvalidAction,
@@ -555,7 +555,7 @@ io.on(EventName.Connection, function(socket) {
     console.log(log_string);
     if (isReady()) {
       curr_game().log.push(log_string);
-      curr_game().pass_turn(io, match_name);
+      curr_game().pass_turn(clientWebSocket, match_name);
     } else {
       clientWebSocket.sendMessageToClient(
         EventName.InvalidAction,
@@ -597,7 +597,7 @@ io.on(EventName.Connection, function(socket) {
         curr_game().toJSON()
       );
     } else {
-      clientWebSocket.sendMessageToClient(`Discarding ${cards} is invalid`);
+      clientWebSocket.sendMessageToClient(EventName.DiscardInvalid, cards);
     }
   });
 
