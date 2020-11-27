@@ -9,6 +9,7 @@ import { Router } from "@angular/router";
 export class HomeComponent implements OnInit {
   match_name: string = "";
   constructor(private router: Router) {}
+  title = "Pandemic Online";
 
   ngOnInit() {}
 
