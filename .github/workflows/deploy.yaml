@@ -1,0 +1,32 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  firebase-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: "14"
+      - name: Build Common
+        working-directory: ./PandemicCommon
+        run: |
+          npm install
+          npm run build
+      - name: Build Server
+        working-directory: ./PandemicServer
+        run: |
+          npm install
+          npm run test:cloudbuild
+          npm run build
+      - name: Build Client
+        working-directory: ./PandemicAngular
+        run: |
+          npm install
+          ng build
