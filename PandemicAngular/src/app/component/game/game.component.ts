@@ -20,7 +20,12 @@ import { ResearcherShareSelectorComponent } from "../researcher-share-selector/r
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import { DispatcherMoveComponent } from "../dispatcher-move/dispatcher-move.component";
 import Link from "../link/link";
-import CityNode, { getAllSubelements, PIXICityNode } from "../node/node";
+import CityNode, {
+  getAllSubelements,
+  PIXICityNode,
+  renderNode,
+  renderNodeText,
+} from "../node/node";
 import { colorNameToHex } from "src/app/utils";
 import { StartGameComponent } from "src/app/start-game/start-game.component";
 import { playerInfo, maybeGeneratePlayerIcons } from "../player/player";
@@ -169,6 +174,12 @@ export class GameComponent implements OnInit, OnChanges {
         for (const cube of this.nodeGraphics[node.name].cubes) {
           this.pixiGraphics.addChild(cube);
         }
+
+        this.pixiGraphics.removeChild(this.nodeGraphics[node.name].text);
+        this.nodeGraphics[node.name].text.destroy();
+        const text = renderNodeText(node);
+        this.nodeGraphics[node.name].text = text;
+        this.pixiGraphics.addChild(text);
       }
     }, 10);
   }
@@ -252,31 +263,14 @@ export class GameComponent implements OnInit, OnChanges {
 
   private renderChanging() {
     for (const node of this.nodes) {
-      const graphics = new PIXI.Graphics();
-      const color = colorNameToHex(node.color);
-      if (color) {
-        graphics.lineStyle(5, Number(color));
-        graphics.beginFill(Number(color));
-      }
-      graphics.drawCircle(node.x, node.y, 10);
-      if (color) {
-        graphics.endFill();
-      }
+      const nodeGraphics = renderNode(node);
+      this.pixiGraphics.addChild(nodeGraphics);
 
-      this.pixiGraphics.addChild(graphics);
-      var text = new PIXI.Text(node.name, {
-        fill: 0xffffff,
-        fontSize: 18,
-        stroke: "black",
-        strokeThickness: 3,
-        align: "center",
-      });
-      text.x = node.x - 30;
-      text.y = node.y - 30;
+      const text = renderNodeText(node);
       this.nodeGraphics[node.name] = {
         cubes: [],
         players: [],
-        mainNode: graphics,
+        mainNode: nodeGraphics,
         text: text,
       };
       this.pixiGraphics.addChild(text);

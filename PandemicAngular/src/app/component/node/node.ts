@@ -1,5 +1,6 @@
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import * as PIXI from "pixi.js";
+import { colorNameToHex } from "src/app/utils";
 
 export default interface CityNode {
   id: number;
@@ -34,4 +35,31 @@ export function getAllSubelements(node: PIXICityNode): PIXI.Graphics[] {
     }
   }
   return result;
+}
+
+export function renderNode(node: CityNode): PIXI.Graphics {
+  const graphics = new PIXI.Graphics();
+  const color = colorNameToHex(node.color);
+  if (color) {
+    graphics.lineStyle(5, Number(color));
+    graphics.beginFill(Number(color));
+  }
+  graphics.drawCircle(node.x, node.y, 10);
+  if (color) {
+    graphics.endFill();
+  }
+  return graphics;
+}
+
+export function renderNodeText(node: CityNode): PIXI.Text {
+  var text = new PIXI.Text(node.name, {
+    fill: 0xffffff,
+    fontSize: 18,
+    stroke: "black",
+    strokeThickness: 3,
+    align: "center",
+  });
+  text.x = node.x - 30;
+  text.y = node.y - 30;
+  return text;
 }

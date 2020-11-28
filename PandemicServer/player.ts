@@ -130,7 +130,7 @@ export class Player {
   }
 
   medicMoveTreat(game: Game, socket: NodeJS.EventEmitter) {
-    let colors = Object.keys(game.cured);
+    let colors = Object.values(Client.Color);
     colors.forEach((c) => {
       if (game.cured[c] === 1) {
         this.treat(game, c, socket);
@@ -254,7 +254,7 @@ export class Player {
       });
 
       let cards_needed = this.role === Client.Roles.Scientist ? 4 : 5;
-      let keys = Object.keys(cards);
+      let keys = Object.values(Client.Color);
       for (let i = 0; i < 4; i++) {
         if (game.cured[keys[i]] === 0 && cards[keys[i]] >= cards_needed) {
           return keys[i];
@@ -284,11 +284,11 @@ export class Player {
     );
   }
 
-  can_treat_color(game: Game, color: string) {
+  can_treat_color(game: Game, color: Client.Color) {
     return game.game_graph[this.location].cubes[color] > 0;
   }
 
-  treat(game: Game, color: string, io: NodeJS.EventEmitter = null) {
+  treat(game: Game, color: Client.Color, io: NodeJS.EventEmitter = null) {
     if (game.cured[color] === 1 || this.role === Client.Roles.Medic) {
       game.cubes[color] += game.game_graph[this.location].cubes[color];
       game.game_graph[this.location].cubes[color] = 0;
