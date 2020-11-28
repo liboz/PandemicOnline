@@ -1,11 +1,11 @@
 import { CityData } from "data/cities";
-import seedrandom from "seedrandom";
 import { City, CityJSON } from "./city";
 import { InfectionDeck } from "./infection_deck";
 import { Player, PlayerJSON } from "./player";
 import { PlayerDeck } from "./player_deck";
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import { ClientWebSocket } from "client_websocket";
+const seedrandom = require("seedrandom");
 
 const EventName = Client.EventName;
 

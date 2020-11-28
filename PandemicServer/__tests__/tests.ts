@@ -1,12 +1,10 @@
-import "jest";
-
-import seedrandom from "seedrandom";
 import { Cities } from "../data/cities";
 import { Game } from "../game";
 import { InfectionDeck } from "../infection_deck";
 import { PlayerJSON } from "../player";
 import { PlayerDeck } from "../player_deck";
 import { Client } from "pandemiccommon/dist/out-tsc";
+const seedrandom = require("seedrandom");
 
 describe("City", function() {
   describe("#Infect", function() {

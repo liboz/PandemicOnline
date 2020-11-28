@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc",
     "test": "jest --watch",
-    "test:cloudbuild": "node --experimental-specifier-resolution=node ./node_modules/jest/bin/jest.js",
-    "start": "concurrently \"tsc -w\" \"nodemon --experimental-specifier-resolution=node dist/server.js\""
+    "test:cloudbuild": "jest",
+    "start": "concurrently \"tsc -w\" \"nodemon dist/server.js\""
   },
   "author": "",
   "license": "ISC",
@@ -21,11 +21,11 @@
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
-    "@types/seedrandom": "^2.4.28",
     "@types/cors": "^2.8.8",
     "@types/express": "^4.17.9",
     "@types/jest": "^26.0.15",
     "@types/node": "^12.19.7",
+    "@types/seedrandom": "^2.4.28",
     "@types/socket.io": "^2.1.11",
     "coveralls": "^3.1.0",
     "husky": "^4.3.0",
@@ -41,7 +41,6 @@
   "engines": {
     "node": "14.x"
   },
-  "type": "module",
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged"
