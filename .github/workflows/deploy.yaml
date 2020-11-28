@@ -23,10 +23,12 @@ jobs:
         working-directory: ./PandemicServer
         run: |
           npm ci
+          npm run check
           npm run test:cloudbuild
           npm run build
       - name: Build Client
         working-directory: ./PandemicAngular
         run: |
           npm ci
+          npm run check
           npm run build
