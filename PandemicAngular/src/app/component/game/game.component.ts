@@ -161,7 +161,6 @@ export class GameComponent implements OnInit, OnChanges {
     setInterval(() => {
       for (const node of this.nodes) {
         for (const cube of this.nodeGraphics[node.name].cubes) {
-          console.log(cube);
           this.pixiGraphics.removeChild(cube);
           cube.destroy();
         }
