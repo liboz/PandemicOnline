@@ -45,18 +45,12 @@ export class GameComponent implements OnInit, OnChanges {
   pixiApp: PIXI.Application;
   pixiGraphics: PIXI.Graphics;
 
-  zoom: any;
-
-  svg: any;
-
-  countriesGroup: any;
-
   minZoom: number;
   maxZoom: number;
 
   nodes: CityNode[];
   links: Link[];
-  isMoving: any;
+  isMoving: boolean;
   treatColorChoices: string[] = null;
   shareCardChoices: ShareCard[] = null;
   cureColorCards: string[] = null;
@@ -86,6 +80,7 @@ export class GameComponent implements OnInit, OnChanges {
     if (this.initialized) {
       this.createChart();
     }*/
+    this.maybeShowStartDialog();
     console.log(changes);
     if (changes.game) {
       if (changes.game.currentValue.game_state === Client.GameState.Lost) {
@@ -158,8 +153,14 @@ export class GameComponent implements OnInit, OnChanges {
       this.renderBase();
       this.renderChanging();
     });
+  }
 
-    if (this.game.game_state == Client.GameState.NotStarted) {
+  private maybeShowStartDialog() {
+    let currentComponent = this.modalService.currentComponent();
+    if (
+      this.game?.game_state === Client.GameState.NotStarted &&
+      this.player_name !== undefined
+    ) {
       this.modalService.init(
         StartGameComponent,
         {
@@ -167,8 +168,9 @@ export class GameComponent implements OnInit, OnChanges {
         },
         {}
       );
+    } else if (currentComponent === "StartGameComponent") {
+      this.modalService.destroy();
     }
-    console.log(this.game);
   }
 
   private preRender() {
@@ -681,7 +683,7 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   hasStarted() {
-    return this.game && this.game.game_state !== Client.GameState.NotStarted;
+    return this.game?.game_state !== Client.GameState.NotStarted;
   }
 
   mustDiscard() {

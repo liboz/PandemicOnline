@@ -57,7 +57,11 @@ io.on(EventName.Connection, function(socket) {
     };
   }
   socket.join(match_name);
-  const clientWebSocket: ClientWebSocket = new SocketIOSocket(io, socket);
+  const clientWebSocket: ClientWebSocket = new SocketIOSocket(
+    io,
+    socket,
+    match_name
+  );
   emitRoles(clientWebSocket, games, match_name);
   console.log(`a user connected to ${match_name}`);
 
@@ -111,7 +115,10 @@ io.on(EventName.Connection, function(socket) {
     }
   });
 
-  clientWebSocket.on(EventName.StartGame, function(difficulty: number) {
+  clientWebSocket.on(EventName.StartGame, function(
+    difficulty: number,
+    callback
+  ) {
     if (
       !curr_game() ||
       curr_game().game_state === Client.GameState.NotStarted
@@ -128,6 +135,7 @@ io.on(EventName.Connection, function(socket) {
           `Cannot start game with fewer than 2 players`
         );
       } else {
+        callback();
         let filtered_players = players().slice(0, num_players);
         let filtered_roles = player_roles().slice(0, num_players);
         console.log(
@@ -143,10 +151,9 @@ io.on(EventName.Connection, function(socket) {
         );
         curr_game().initialize_board();
         curr_game().log.push(
-          `game initialized at ${Client.GameDifficulty[difficulty]} difficulty`
+          `game initialized at ${Client.GameDifficultyMap[difficulty]} difficulty`
         );
         clientWebSocket.sendMessageToAllInRoom(
-          match_name,
           EventName.GameInitialized,
           curr_game().toJSON()
         );
@@ -517,14 +524,9 @@ io.on(EventName.Connection, function(socket) {
         curr_game().log.push(log_string);
         let color = curr_game().game_graph[cards[0]].color;
         if (curr_game().cured[color] === 2) {
-          clientWebSocket.sendMessageToAllInRoom(
-            match_name,
-            EventName.Eradicated,
-            color
-          );
+          clientWebSocket.sendMessageToAllInRoom(EventName.Eradicated, color);
         } else {
           clientWebSocket.sendMessageToAllInRoom(
-            match_name,
             EventName.DiscoverSuccesful,
             curr_game().toJSON(),
             color
@@ -592,7 +594,6 @@ io.on(EventName.Connection, function(socket) {
         curr_game().game_state = Client.GameState.Ready;
       }
       clientWebSocket.sendMessageToAllInRoom(
-        match_name,
         EventName.UpdateGameState,
         curr_game().toJSON()
       );
@@ -619,7 +620,7 @@ function emitRoles(
   send_to_all_but_client = false
 ) {
   if (send_to_all_but_client) {
-    socket.sendMessageToAllButClient(match_name, EventName.Roles, [
+    socket.sendMessageToAllButClient(EventName.Roles, [
       ...games[match_name].available_roles
     ]);
   } else {

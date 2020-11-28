@@ -5,38 +5,26 @@ type EventName = Client.EventName;
 
 export interface ClientWebSocket {
   sendMessageToClient(eventName: EventName, ...args: any[]): boolean;
-  sendMessageToAllInRoom(
-    gameName: string,
-    eventName: EventName,
-    ...args: any[]
-  ): boolean;
-  sendMessageToAllButClient(
-    gameName: string,
-    eventName: EventName,
-    ...args: any[]
-  ): boolean;
+  sendMessageToAllInRoom(eventName: EventName, ...args: any[]): boolean;
+  sendMessageToAllButClient(eventName: EventName, ...args: any[]): boolean;
   on(event: EventName, listener: (...args: any[]) => void): void;
 }
 
 export class SocketIOSocket implements ClientWebSocket {
-  constructor(private io: socketIO.Server, private socket: Socket) {}
+  constructor(
+    private io: socketIO.Server,
+    private socket: Socket,
+    private gameName: string
+  ) {}
   sendMessageToAllButClient(eventName: EventName, ...args: any[]): boolean {
-    throw new Error("Method not implemented.");
+    return this.socket.broadcast.to(this.gameName).emit(eventName, ...args);
   }
 
-  sendMessageToAllInRoom(
-    gameName: string,
-    eventName: EventName,
-    ...args: any[]
-  ): boolean {
-    return this.io.in(gameName).emit(eventName, ...args);
+  sendMessageToAllInRoom(eventName: EventName, ...args: any[]): boolean {
+    return this.io.in(this.gameName).emit(eventName, ...args);
   }
-  sendMessageToClient(
-    gameName: string,
-    eventName: EventName,
-    ...args: any[]
-  ): boolean {
-    return this.socket.to(gameName).emit(eventName, ...args);
+  sendMessageToClient(eventName: EventName, ...args: any[]): boolean {
+    return this.socket.emit(eventName, ...args);
   }
   on(eventName: EventName, listener: (...args: any[]) => void): void {
     this.socket.on(eventName, listener);

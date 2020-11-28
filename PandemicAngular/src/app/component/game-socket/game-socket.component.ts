@@ -4,7 +4,6 @@ import { ApiService } from "../../service/api.service";
 import { environment } from "../../../environments/environment";
 
 import { ModalService } from "../../service/modal.service";
-import { PlayerInfo } from "../join/join.component";
 
 import { JoinComponent } from "../join/join.component";
 
@@ -41,8 +40,9 @@ export class GameSocketComponent implements OnInit {
       this.socket = io(`${environment.baseUrl}/`, {
         query: `match_name=${this.match_name}`
       });
+      console.log(this.socket);
 
-      this.socket.on("roles", roles => {
+      this.socket.on(Client.EventName.Roles, roles => {
         if (
           this.game.game_state !== Client.GameState.Lost &&
           this.game.game_state != Client.GameState.Won &&
@@ -119,7 +119,7 @@ export class GameSocketComponent implements OnInit {
         this.snackBarService.show(data, "danger");
       });
 
-      this.socket.on("game initialized", data => {
+      this.socket.on(Client.EventName.GameInitialized, (data: Client.Game) => {
         this.game = data;
         console.log(data);
       });

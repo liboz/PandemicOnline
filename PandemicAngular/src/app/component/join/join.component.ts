@@ -33,7 +33,7 @@ export class JoinComponent implements OnInit {
 
   private joinGameInternal() {
     this.socket.emit(
-      "join",
+      Client.EventName.Join,
       this.selected_role,
       this.player_name,
       player_index => {

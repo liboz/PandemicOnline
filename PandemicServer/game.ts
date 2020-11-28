@@ -99,11 +99,7 @@ export class Game {
     let card = this.infection_deck.infect_epidemic();
     this.log.push(`${card} was infected in an epidemic`);
     if (clientWebSocket) {
-      clientWebSocket.sendMessageToAllInRoom(
-        match_name,
-        EventName.Epidemic,
-        card
-      );
+      clientWebSocket.sendMessageToAllInRoom(EventName.Epidemic, card);
     }
     if (!this.game_graph[card].infect_epidemic(this)) {
       this.lose_game();
@@ -185,7 +181,6 @@ export class Game {
       this.turn_end(clientWebSocket, match_name);
     } else {
       clientWebSocket.sendMessageToAllInRoom(
-        match_name,
         EventName.UpdateGameState,
         this.toJSON()
       );
@@ -196,7 +191,6 @@ export class Game {
           this.log.push(`Player ${player.id} is discarding cards`);
           // Send notification of discard to all players
           clientWebSocket.sendMessageToAllInRoom(
-            match_name,
             EventName.DiscardCards,
             this.must_discard_index
           );
@@ -216,7 +210,6 @@ export class Game {
     }
 
     clientWebSocket.sendMessageToAllInRoom(
-      match_name,
       EventName.UpdateGameState,
       this.toJSON()
     );
@@ -229,7 +222,6 @@ export class Game {
           this.log.push(`Player ${player.id} is discarding cards`);
           // Send notification of discard to all players
           clientWebSocket.sendMessageToAllInRoom(
-            match_name,
             EventName.DiscardCards,
             this.must_discard_index
           );
@@ -243,7 +235,6 @@ export class Game {
         this.next_player();
         this.turns_left = 4;
         clientWebSocket.sendMessageToAllInRoom(
-          match_name,
           EventName.UpdateGameState,
           this.toJSON()
         );
