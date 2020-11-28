@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  firebase-deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
