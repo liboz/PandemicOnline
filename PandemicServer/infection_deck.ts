@@ -1,6 +1,6 @@
 import { CityData } from "data/cities";
 import { shuffle } from "./random";
-const Denque = require("denque");
+import Denque from "denque";
 
 export class InfectionDeck {
   facedown_deck: any; // denque doesnt have types (yet?)

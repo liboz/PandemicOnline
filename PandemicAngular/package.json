@@ -22,6 +22,7 @@
     "@types/d3": "^6.2.0",
     "d3": "^6.2.0",
     "jquery": "^3.5.1",
+    "pandemiccommon": "file:../PandemicCommon",
     "pixi.js": "^5.3.3",
     "rxjs": "~6.5.5",
     "socket.io-client": "^2.3.0",

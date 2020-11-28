@@ -1,6 +1,6 @@
 import { Game } from "./game";
 import { Socket } from "socket.io";
-import { Client } from "./types";
+import { Client } from "pandemiccommon/dist/out-tsc/";
 import { ColorsIndex, City } from "./city";
 
 export class Player {

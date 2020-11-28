@@ -7,7 +7,7 @@ import {
   EventEmitter,
   OnChanges
 } from "@angular/core";
-import { Client } from "data/types";
+import { Client } from "pandemiccommon/dist/out-tsc/";
 
 @Component({
   selector: "app-player-hand",

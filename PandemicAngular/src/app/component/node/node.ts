@@ -1,4 +1,4 @@
-import { Client } from "../../../../data/types";
+import { Client } from "pandemiccommon/dist/out-tsc/";
 
 export default interface CityNode {
   id: number;

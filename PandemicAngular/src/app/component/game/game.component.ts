@@ -19,7 +19,7 @@ import { PlayerComponent } from "../player/player.component";
 import { MoveChoiceSelectorComponent } from "../move-choice-selector/move-choice-selector.component";
 import { Subscription } from "rxjs";
 import { ResearcherShareSelectorComponent } from "../researcher-share-selector/researcher-share-selector.component";
-import { Client } from "data/types";
+import { Client } from "pandemiccommon/dist/out-tsc/";
 import { DispatcherMoveComponent } from "../dispatcher-move/dispatcher-move.component";
 import Link from "../link/link";
 import CityNode from "../node/node";

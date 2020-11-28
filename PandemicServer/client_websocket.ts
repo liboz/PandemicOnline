@@ -1,5 +1,5 @@
 import socketIO, { Socket } from "socket.io";
-import { Client } from "types";
+import { Client } from "pandemiccommon/dist/out-tsc";
 
 type EventName = Client.EventName;
 

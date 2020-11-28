@@ -6,7 +6,7 @@ import { environment } from "../../environments/environment";
 import { catchError, retry } from "rxjs/operators";
 import { Observable, throwError } from "rxjs";
 
-import { Client } from "../../../data/types";
+import { Client } from "pandemiccommon/dist/out-tsc/";
 
 @Injectable({
   providedIn: "root"

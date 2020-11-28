@@ -1,4 +1,4 @@
-import { Client } from "../types";
+import { Client } from "pandemiccommon/dist/out-tsc";
 
 export interface CityData {
   name: string;

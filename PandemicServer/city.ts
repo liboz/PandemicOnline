@@ -1,14 +1,7 @@
 import { CityData } from "data/cities";
 import { Game } from "./game";
 import { Player } from "./player";
-import { Client } from "./types";
-
-export const Colors = {
-  BLUE: "blue",
-  RED: "red",
-  BLACK: "black",
-  YELLOW: "yellow"
-};
+import { Client } from "pandemiccommon/dist/out-tsc/";
 
 export const ColorsIndex = {
   blue: 0,

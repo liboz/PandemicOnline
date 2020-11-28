@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { ModalService } from "src/app/service/modal.service";
-import { Client } from "data/types";
+import { Client } from "pandemiccommon/dist/out-tsc/";
 import { formatPlayer } from "src/app/utils";
 
 @Component({

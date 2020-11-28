@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "es2020",
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

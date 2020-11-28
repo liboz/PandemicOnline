@@ -12,7 +12,7 @@ import io from "socket.io-client";
 import { Subscription } from "rxjs";
 import { SnackbarService } from "src/app/service/snackbar.service";
 
-import { Client } from "../../../../data/types";
+import { Client } from "pandemiccommon/dist/out-tsc/";
 
 @Component({
   selector: "app-game-socket",
