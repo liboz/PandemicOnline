@@ -28,7 +28,7 @@ export namespace Client {
     must_discard_index: number;
   }
 
-  export interface Cubes extends Record<string, number> {
+  export interface Cubes extends Record<Color, number> {
     blue: number;
     red: number;
     black: number;
@@ -50,7 +50,7 @@ export namespace Client {
     Black = "black",
     Blue = "blue",
     Red = "red",
-    Yellow = "yellow"
+    Yellow = "yellow",
   }
 
   export enum Roles {
@@ -60,7 +60,7 @@ export namespace Client {
     OperationsExpert = "Operations Expert",
     QuarantineSpecialist = "Quarantine Specialist",
     Researcher = "Researcher",
-    Scientist = "Scientist"
+    Scientist = "Scientist",
   }
 
   export enum GameState {
@@ -68,7 +68,7 @@ export namespace Client {
     Ready = 1,
     DiscardingCard = 2,
     Won = 3,
-    Lost = 4
+    Lost = 4,
   }
 
   export interface Player {
@@ -115,7 +115,7 @@ export namespace Client {
     // defaults
     Connection = "connection",
     Join = "join",
-    Disconnect = "disconnect"
+    Disconnect = "disconnect",
   }
 
   export type GameDifficulty = "Introductory" | "Standard" | "Heroic";
@@ -123,6 +123,6 @@ export namespace Client {
   export const GameDifficultyMap: Record<number, GameDifficulty> = {
     4: "Introductory",
     5: "Standard",
-    6: "Heroic"
+    6: "Heroic",
   };
 }

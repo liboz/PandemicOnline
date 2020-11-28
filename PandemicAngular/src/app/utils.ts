@@ -149,8 +149,8 @@ const colors = {
 };
 
 export function colorNameToHex(color: string) {
-  if (typeof colors[color.toLowerCase()] != "undefined") {
-    const rawColor = colors[color.toLowerCase()];
+  const rawColor = colors[color.toLowerCase()];
+  if (typeof rawColor != "undefined") {
     return "0x" + rawColor.slice(1);
   }
   return false;

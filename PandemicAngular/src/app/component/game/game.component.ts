@@ -14,16 +14,17 @@ import * as d3 from "d3";
 import * as PIXI from "pixi.js";
 import geo from "../../../../data/geo";
 import { ModalComponent } from "../modal/modal.component";
-import { PlayerComponent } from "../player/player.component";
 import { MoveChoiceSelectorComponent } from "../move-choice-selector/move-choice-selector.component";
 import { Subscription } from "rxjs";
 import { ResearcherShareSelectorComponent } from "../researcher-share-selector/researcher-share-selector.component";
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import { DispatcherMoveComponent } from "../dispatcher-move/dispatcher-move.component";
 import Link from "../link/link";
-import CityNode from "../node/node";
+import CityNode, { getAllSubelements, PIXICityNode } from "../node/node";
 import { colorNameToHex } from "src/app/utils";
 import { StartGameComponent } from "src/app/start-game/start-game.component";
+import { playerInfo, maybeGeneratePlayerIcons } from "../player/player";
+import { maybeGenerateCubes } from "../disease-cube/diseaseCube";
 
 @Component({
   selector: "app-game",
@@ -48,6 +49,7 @@ export class GameComponent implements OnInit, OnChanges {
   maxZoom: number;
 
   nodes: CityNode[];
+  nodeGraphics: Record<string, PIXICityNode> = {};
   links: Link[];
   isMoving: boolean;
   treatColorChoices: string[] = null;
@@ -63,7 +65,7 @@ export class GameComponent implements OnInit, OnChanges {
 
   yaw: d3.ScaleLinear<number, number, never>;
 
-  path: any;
+  path: any; // use any to avoid some typing issues
 
   initialized = false;
   selectedCards: Set<number>;
@@ -111,7 +113,6 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    // add zoom functionality
     this.isMoving = false;
     this.selectedCards = new Set();
     this.destroySubscription = this.modalService.destroy$.subscribe(() => {
@@ -152,6 +153,25 @@ export class GameComponent implements OnInit, OnChanges {
       this.renderBase();
       this.renderChanging();
     });
+
+    this.loopCubes();
+  }
+
+  loopCubes() {
+    setInterval(() => {
+      for (const node of this.nodes) {
+        for (const cube of this.nodeGraphics[node.name].cubes) {
+          console.log(cube);
+          this.pixiGraphics.removeChild(cube);
+          cube.destroy();
+        }
+        const cubes = maybeGenerateCubes(node);
+        this.nodeGraphics[node.name].cubes = cubes;
+        for (const cube of this.nodeGraphics[node.name].cubes) {
+          this.pixiGraphics.addChild(cube);
+        }
+      }
+    }, 10);
   }
 
   private maybeShowStartDialog() {
@@ -227,16 +247,24 @@ export class GameComponent implements OnInit, OnChanges {
       this.pixiGraphics.lineTo(link.target.x, link.target.y);
     }
 
+    this.pixiApp.stage.addChild(this.pixiGraphics);
+    this.pixiApp.stage.addListener;
+  }
+
+  private renderChanging() {
     for (const node of this.nodes) {
+      const graphics = new PIXI.Graphics();
       const color = colorNameToHex(node.color);
       if (color) {
-        this.pixiGraphics.lineStyle(5, Number(color));
-        this.pixiGraphics.beginFill(Number(color));
+        graphics.lineStyle(5, Number(color));
+        graphics.beginFill(Number(color));
       }
-      this.pixiGraphics.drawCircle(node.x, node.y, 10);
+      graphics.drawCircle(node.x, node.y, 10);
       if (color) {
-        this.pixiGraphics.endFill();
+        graphics.endFill();
       }
+
+      this.pixiGraphics.addChild(graphics);
       var text = new PIXI.Text(node.name, {
         fill: 0xffffff,
         fontSize: 18,
@@ -246,27 +274,41 @@ export class GameComponent implements OnInit, OnChanges {
       });
       text.x = node.x - 30;
       text.y = node.y - 30;
+      this.nodeGraphics[node.name] = {
+        cubes: [],
+        players: [],
+        mainNode: graphics,
+        text: text,
+      };
       this.pixiGraphics.addChild(text);
     }
-    this.pixiApp.stage.addChild(this.pixiGraphics);
-    this.pixiApp.stage.addListener;
-  }
 
-  private renderChanging() {
     for (const node of this.nodes) {
       if (node.hasResearchStation) {
-        this.pixiGraphics.lineStyle(3, 0x000000);
-        this.pixiGraphics.beginFill(0xffffff);
+        const graphics = new PIXI.Graphics();
+        graphics.lineStyle(3, 0x000000);
+        graphics.beginFill(0xffffff);
         const baseX = node.x;
         const baseY = node.y;
-        this.pixiGraphics.drawPolygon([
+        graphics.drawPolygon([
           new PIXI.Point(baseX + 10, baseY + 5),
           new PIXI.Point(baseX, baseY + 20),
           new PIXI.Point(baseX, baseY + 30),
           new PIXI.Point(baseX + 20, baseY + 30),
           new PIXI.Point(baseX + 20, baseY + 20),
         ]);
-        this.pixiGraphics.endFill();
+        graphics.endFill();
+        this.nodeGraphics[node.name].researchStation = graphics;
+      }
+      const playerIcons = maybeGeneratePlayerIcons(node);
+      this.nodeGraphics[node.name].players = playerIcons;
+      const cubes = maybeGenerateCubes(node);
+      this.nodeGraphics[node.name].cubes = cubes;
+    }
+
+    for (const graphics of Object.values(this.nodeGraphics)) {
+      for (const graphic of getAllSubelements(graphics)) {
+        this.pixiGraphics.addChild(graphic);
       }
     }
   }
@@ -752,7 +794,7 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   bgColor(id: number) {
-    return PlayerComponent.playerInfo[id];
+    return playerInfo[id];
   }
 
   ngOnDestroy() {
