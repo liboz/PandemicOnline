@@ -24,6 +24,7 @@ import { DispatcherMoveComponent } from "../dispatcher-move/dispatcher-move.comp
 import Link from "../link/link";
 import CityNode from "../node/node";
 import { colorNameToHex } from "src/app/utils";
+import { StartGameComponent } from "src/app/start-game/start-game.component";
 
 @Component({
   selector: "app-game",
@@ -63,8 +64,6 @@ export class GameComponent implements OnInit, OnChanges {
   clearShareCardsSubscription: Subscription;
   dispatcherMoveSubscription: Subscription;
   dispatcherMoveOtherPlayer: number;
-  difficulties = Object.entries(GameDifficulty);
-  selectedDifficulty: number;
 
   rootProjection: d3.GeoProjection;
   projection: d3.GeoProjection;
@@ -160,6 +159,15 @@ export class GameComponent implements OnInit, OnChanges {
       this.renderChanging();
     });
 
+    if (this.game.game_state == Client.GameState.NotStarted) {
+      this.modalService.init(
+        StartGameComponent,
+        {
+          socket: this.socket
+        },
+        {}
+      );
+    }
     console.log(this.game);
   }
 
@@ -378,12 +386,6 @@ export class GameComponent implements OnInit, OnChanges {
   onSelectedCard(cardIndex: number) {
     if (!this.selectedCards.delete(cardIndex)) {
       this.selectedCards.add(cardIndex);
-    }
-  }
-
-  onStart() {
-    if (this.selectedDifficulty) {
-      this.socket.emit("start game", this.selectedDifficulty);
     }
   }
 
@@ -777,9 +779,3 @@ class ShareCard {
 
   ngOnInit() {}
 }
-
-const GameDifficulty = {
-  Introductory: 4,
-  Standard: 5,
-  Heroic: 6
-};

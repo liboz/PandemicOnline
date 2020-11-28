@@ -2,7 +2,7 @@ import cors from "cors";
 import express from "express";
 import socketIO from "socket.io";
 import { Cities } from "./data/cities";
-import { Game, GameDifficulty, GameMap } from "./game";
+import { Game, GameMap } from "./game";
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import seedrandom from "seedrandom";
 import { SocketIOSocket, ClientWebSocket } from "./client_websocket";
@@ -143,7 +143,7 @@ io.on(EventName.Connection, function(socket) {
         );
         curr_game().initialize_board();
         curr_game().log.push(
-          `game initialized at ${GameDifficulty[difficulty]} difficulty`
+          `game initialized at ${Client.GameDifficulty[difficulty]} difficulty`
         );
         clientWebSocket.sendMessageToAllInRoom(
           match_name,

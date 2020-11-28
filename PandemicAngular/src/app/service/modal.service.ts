@@ -3,6 +3,7 @@ import { DomService } from "./dom.service";
 
 import { Subject } from "rxjs";
 import { PlayerInfo } from "../component/join/join.component";
+import { Client } from "pandemiccommon/dist/out-tsc";
 
 @Injectable()
 export class ModalService {
@@ -63,5 +64,11 @@ export class ModalService {
   dispatcherMoveTarget$ = this.dispatcherMoveTargetSource.asObservable();
   dispatcherMoveTarget(target_player_id: number) {
     this.dispatcherMoveTargetSource.next(target_player_id);
+  }
+
+  private startSource = new Subject<Client.GameDifficulty>();
+  start$ = this.startSource.asObservable();
+  startAt(difficultyInfo: Client.GameDifficulty) {
+    this.startSource.next(difficultyInfo);
   }
 }

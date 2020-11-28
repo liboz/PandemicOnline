@@ -23,7 +23,8 @@ import { MoveChoiceSelectorComponent } from "./component/move-choice-selector/mo
 import { ResearcherShareSelectorComponent } from "./component/researcher-share-selector/researcher-share-selector.component";
 import { SnackbarComponent } from "./component/snackbar/snackbar.component";
 import { SnackbarService } from "./service/snackbar.service";
-import { DispatcherMoveComponent } from './component/dispatcher-move/dispatcher-move.component';
+import { DispatcherMoveComponent } from "./component/dispatcher-move/dispatcher-move.component";
+import { StartGameComponent } from "./start-game/start-game.component";
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { DispatcherMoveComponent } from './component/dispatcher-move/dispatcher-
     MoveChoiceSelectorComponent,
     ResearcherShareSelectorComponent,
     SnackbarComponent,
-    DispatcherMoveComponent
+    DispatcherMoveComponent,
+    StartGameComponent
   ],
   imports: [
     BrowserModule,

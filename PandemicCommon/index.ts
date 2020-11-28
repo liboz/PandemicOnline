@@ -117,4 +117,12 @@ export namespace Client {
     Join = "join",
     Disconnect = "disconnect"
   }
+
+  export type GameDifficulty = "Introductory" | "Standard" | "Heroic";
+
+  export const GameDifficultyMap: Record<number, GameDifficulty> = {
+    4: "Introductory",
+    5: "Standard",
+    6: "Heroic"
+  };
 }

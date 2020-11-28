@@ -9,12 +9,6 @@ import { ClientWebSocket } from "client_websocket";
 
 const EventName = Client.EventName;
 
-export const GameDifficulty: Record<number, string> = {
-  4: "Introductory",
-  5: "Standard",
-  6: "Heroic"
-};
-
 export class Game {
   game_graph: Record<string, City>;
   outbreak_counter: number;
