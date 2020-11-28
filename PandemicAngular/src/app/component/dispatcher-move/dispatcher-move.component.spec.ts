@@ -9,7 +9,7 @@ describe("DispatcherMoveComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [DispatcherMoveComponent]
+        declarations: [DispatcherMoveComponent],
       }).compileComponents();
     })
   );

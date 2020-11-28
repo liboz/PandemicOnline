@@ -5,14 +5,14 @@ import {
   SimpleChanges,
   Output,
   EventEmitter,
-  OnChanges
+  OnChanges,
 } from "@angular/core";
 import { Client } from "pandemiccommon/dist/out-tsc/";
 
 @Component({
   selector: "app-player-hand",
   templateUrl: "./player-hand.component.html",
-  styleUrls: ["./player-hand.component.styl"]
+  styleUrls: ["./player-hand.component.styl"],
 })
 export class PlayerHandComponent implements OnInit, OnChanges {
   @Input() hand: string[] = [];
@@ -30,18 +30,18 @@ export class PlayerHandComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.hand) {
-      this.selected = this.hand.map(i => false);
+      this.selected = this.hand.map((i) => false);
     }
   }
 
   ngOnInit() {
-    this.selected = this.hand.map(i => false);
+    this.selected = this.hand.map((i) => false);
   }
 
   handleClick(i: number) {
     if (this.onSelect.observers.length > 0) {
       let count = 0;
-      this.selected.forEach(i => {
+      this.selected.forEach((i) => {
         if (i) {
           count += 1;
         }

@@ -9,7 +9,7 @@ describe("GameSocketComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [GameSocketComponent]
+        declarations: [GameSocketComponent],
       }).compileComponents();
     })
   );

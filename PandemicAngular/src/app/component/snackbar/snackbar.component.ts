@@ -12,16 +12,16 @@ import { transition, trigger, style, animate } from "@angular/animations";
       transition(":enter", [
         style({
           bottom: "-100px",
-          transform: "translate(-50%, 0%) scale(0.3)"
+          transform: "translate(-50%, 0%) scale(0.3)",
         }),
         animate(
           "150ms cubic-bezier(0, 0, 0.2, 1)",
           style({
             transform: "translate(-50%, 0%) scale(1)",
             opacity: 1,
-            bottom: "20px"
+            bottom: "20px",
           })
-        )
+        ),
       ]),
       transition(":leave", [
         animate(
@@ -29,12 +29,12 @@ import { transition, trigger, style, animate } from "@angular/animations";
           style({
             transform: "translate(-50%, 0%) scale(0.3)",
             opacity: 0,
-            bottom: "-100px"
+            bottom: "-100px",
           })
-        )
-      ])
-    ])
-  ]
+        ),
+      ]),
+    ]),
+  ],
 })
 export class SnackbarComponent implements OnInit {
   show = () => this.items.length > 0;
@@ -44,7 +44,7 @@ export class SnackbarComponent implements OnInit {
 
   ngOnInit() {
     this.snackbarSubscription = this.snackbarService.snackbarState.subscribe(
-      state => {
+      (state) => {
         let snackbar = new SnackBarItem(state.message, state.type);
         this.items.push(snackbar);
         console.log(this.items);

@@ -8,14 +8,14 @@ const routes: Routes = [
   {
     path: "",
     redirectTo: "/home",
-    pathMatch: "full"
+    pathMatch: "full",
   },
   { path: "game/:match_name", component: GameSocketComponent },
-  { path: "**", component: HomeComponent }
+  { path: "**", component: HomeComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { relativeLinkResolution: "legacy" })],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class AppRoutingModule {}

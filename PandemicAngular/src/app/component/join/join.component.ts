@@ -6,7 +6,7 @@ import { formatPlayer } from "../../utils";
 @Component({
   selector: "app-join",
   templateUrl: "./join.component.html",
-  styleUrls: ["./join.component.styl"]
+  styleUrls: ["./join.component.styl"],
 })
 export class JoinComponent implements OnInit {
   @Input() game: Client.Game;
@@ -36,7 +36,7 @@ export class JoinComponent implements OnInit {
       Client.EventName.Join,
       this.selected_role,
       this.player_name,
-      player_index => {
+      (player_index) => {
         console.log(
           `${this.player_name} joined as ${this.selected_role} successfully`
         );

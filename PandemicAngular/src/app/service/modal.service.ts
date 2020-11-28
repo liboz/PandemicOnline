@@ -15,7 +15,7 @@ export class ModalService {
   init(component: any, inputs: object, outputs: object) {
     let componentConfig = {
       inputs: inputs,
-      outputs: outputs
+      outputs: outputs,
     };
     this.domService.appendComponentTo(
       this.modalElementId,
@@ -33,7 +33,7 @@ export class ModalService {
   updateConfig(inputs: object, outputs: object) {
     let componentConfig = {
       inputs: inputs,
-      outputs: outputs
+      outputs: outputs,
     };
     this.domService.reattachConfig(componentConfig);
   }

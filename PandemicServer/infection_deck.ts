@@ -8,7 +8,7 @@ export class InfectionDeck {
 
   constructor(cities: CityData[], public rng: seedrandom.prng) {
     this.rng = rng;
-    this.facedown_deck = cities.map(city => city.name);
+    this.facedown_deck = cities.map((city) => city.name);
     this.shuffle(this.facedown_deck);
     this.facedown_deck = new Denque(this.facedown_deck);
     this.faceup_deck = [];
@@ -32,7 +32,7 @@ export class InfectionDeck {
 
   intensify() {
     this.shuffle(this.faceup_deck);
-    this.faceup_deck.forEach(card => {
+    this.faceup_deck.forEach((card) => {
       this.facedown_deck.push(card);
     });
     this.faceup_deck = [];

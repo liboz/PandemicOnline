@@ -7,7 +7,9 @@
     "build": "tsc",
     "test": "jest --watch",
     "test:cloudbuild": "jest",
-    "start": "concurrently \"tsc -w\" \"nodemon dist/server.js\""
+    "start": "concurrently \"tsc -w\" \"nodemon dist/server.js\"",
+    "fix": "prettier --write \"**/*.ts\"",
+    "check": "prettier --check \"**/*.ts\""
   },
   "author": "",
   "license": "ISC",

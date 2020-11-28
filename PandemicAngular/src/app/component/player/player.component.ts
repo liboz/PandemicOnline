@@ -3,7 +3,7 @@ import { Component, OnInit, Input } from "@angular/core";
 @Component({
   selector: "[app-player]",
   templateUrl: "./player.component.html",
-  styleUrls: ["./player.component.styl"]
+  styleUrls: ["./player.component.styl"],
 })
 export class PlayerComponent implements OnInit {
   @Input("app-player") playerIndex: number;
@@ -13,7 +13,7 @@ export class PlayerComponent implements OnInit {
     0: "#42d4f4",
     1: "#911eb4",
     2: "#800000",
-    3: "#f58231"
+    3: "#f58231",
   };
 
   playerColor: string;

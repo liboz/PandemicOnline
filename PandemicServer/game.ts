@@ -47,7 +47,7 @@ export class Game {
     for (let i = 0; i < num_players; i++) {
       this.players.push(new Player(i, filtered_players[i], roles[i]));
     }
-    this.players.forEach(player => {
+    this.players.forEach((player) => {
       this.game_graph[player.location].players.add(player);
     });
     this.initial_cards_for_players = [];
@@ -70,13 +70,13 @@ export class Game {
       blue: 0,
       red: 0,
       black: 0,
-      yellow: 0
+      yellow: 0,
     };
     this.cubes = {
       blue: 24,
       red: 24,
       black: 24,
-      yellow: 24
+      yellow: 24,
     };
     this.player_index = 0;
     this.turns_left = 4;
@@ -288,8 +288,10 @@ class GameJSON implements Client.Game {
     if (game === null) {
       return null;
     }
-    this.game_graph = Object.values(game.game_graph).map(c => new CityJSON(c));
-    this.game_graph_index = this.game_graph.reduce(function(
+    this.game_graph = Object.values(game.game_graph).map(
+      (c) => new CityJSON(c)
+    );
+    this.game_graph_index = this.game_graph.reduce(function (
       map: Record<string, number>,
       city,
       index
@@ -302,7 +304,7 @@ class GameJSON implements Client.Game {
     this.infection_rate_index = game.infection_rate_index;
     this.infection_rate = [2, 2, 2, 3, 3, 4, 4];
     this.faceup_deck = game.infection_deck.faceup_deck;
-    this.players = game.players.map(p => new PlayerJSON(p, game));
+    this.players = game.players.map((p) => new PlayerJSON(p, game));
 
     this.research_stations = [...game.research_stations];
     this.cured = game.cured;
@@ -344,7 +346,7 @@ export class GameMap {
   game_graph: Client.City[];
   constructor(cities: CityData[]) {
     let game_graph = City.load(cities);
-    this.game_graph = Object.values(game_graph).map(c => new CityJSON(c));
+    this.game_graph = Object.values(game_graph).map((c) => new CityJSON(c));
     this.game_state = Client.GameState.NotStarted;
   }
 }

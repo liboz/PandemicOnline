@@ -9,7 +9,7 @@ import { Observable, throwError } from "rxjs";
 import { Client } from "pandemiccommon/dist/out-tsc/";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class ApiService {
   constructor(private http: HttpClient) {}

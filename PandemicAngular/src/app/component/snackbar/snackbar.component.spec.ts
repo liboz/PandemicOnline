@@ -9,7 +9,7 @@ describe("SnackbarComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [SnackbarComponent]
+        declarations: [SnackbarComponent],
       }).compileComponents();
     })
   );

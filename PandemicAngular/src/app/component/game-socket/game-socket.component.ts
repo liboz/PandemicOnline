@@ -16,7 +16,7 @@ import { Client } from "pandemiccommon/dist/out-tsc/";
 @Component({
   selector: "app-game-socket",
   templateUrl: "./game-socket.component.html",
-  styleUrls: ["./game-socket.component.styl"]
+  styleUrls: ["./game-socket.component.styl"],
 })
 export class GameSocketComponent implements OnInit {
   constructor(
@@ -35,14 +35,14 @@ export class GameSocketComponent implements OnInit {
   ngOnInit() {
     this.match_name = this.route.snapshot.paramMap.get("match_name");
 
-    this.api.getGames(this.match_name).subscribe(result => {
+    this.api.getGames(this.match_name).subscribe((result) => {
       this.game = result;
       this.socket = io(`${environment.baseUrl}/`, {
-        query: `match_name=${this.match_name}`
+        query: `match_name=${this.match_name}`,
       });
       console.log(this.socket);
 
-      this.socket.on(Client.EventName.Roles, roles => {
+      this.socket.on(Client.EventName.Roles, (roles) => {
         if (
           this.game.game_state !== Client.GameState.Lost &&
           this.game.game_state != Client.GameState.Won &&
@@ -60,24 +60,24 @@ export class GameSocketComponent implements OnInit {
         }
       });
 
-      this.socket.on("move successful", data => {
+      this.socket.on("move successful", (data) => {
         this.game = data;
       });
 
-      this.socket.on("move choice successful", data => {
+      this.socket.on("move choice successful", (data) => {
         this.modalService.destroyEvent();
         this.game = data;
       });
 
-      this.socket.on("research share successful", data => {
+      this.socket.on("research share successful", (data) => {
         this.game = data;
       });
 
-      this.socket.on("build successful", data => {
+      this.socket.on("build successful", (data) => {
         this.game = data;
       });
 
-      this.socket.on("treat successful", data => {
+      this.socket.on("treat successful", (data) => {
         this.game = data;
       });
 
@@ -86,15 +86,15 @@ export class GameSocketComponent implements OnInit {
         this.game = data;
       });
 
-      this.socket.on("eradicated", color => {
+      this.socket.on("eradicated", (color) => {
         this.snackBarService.show(`${color} was eradicated`);
       });
 
-      this.socket.on("update game state", data => {
+      this.socket.on("update game state", (data) => {
         this.game = data;
       });
 
-      this.socket.on("discard cards", data => {
+      this.socket.on("discard cards", (data) => {
         this.game.game_state = Client.GameState.DiscardingCard;
         this.game.must_discard_index = data;
         if (this.game.must_discard_index === this.player_index) {
@@ -111,11 +111,11 @@ export class GameSocketComponent implements OnInit {
         );
       });
 
-      this.socket.on("epidemic", data => {
+      this.socket.on("epidemic", (data) => {
         this.snackBarService.show(`${data} infected by Epidemic`, "danger");
       });
 
-      this.socket.on("invalid action", data => {
+      this.socket.on("invalid action", (data) => {
         this.snackBarService.show(data, "danger");
       });
 
@@ -125,7 +125,7 @@ export class GameSocketComponent implements OnInit {
       });
     });
 
-    this.subscription = this.modalService.join$.subscribe(playerInfo => {
+    this.subscription = this.modalService.join$.subscribe((playerInfo) => {
       this.player_name = playerInfo.player_name;
       this.player_index = playerInfo.player_index;
       this.modalService.destroy();

@@ -9,7 +9,7 @@ describe("DiseaseCubeComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [DiseaseCubeComponent]
+        declarations: [DiseaseCubeComponent],
       }).compileComponents();
     })
   );

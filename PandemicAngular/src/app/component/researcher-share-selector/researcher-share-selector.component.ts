@@ -5,7 +5,7 @@ import { Client } from "pandemiccommon/dist/out-tsc/";
 @Component({
   selector: "app-researcher-share-selector",
   templateUrl: "./researcher-share-selector.component.html",
-  styleUrls: ["./researcher-share-selector.component.styl"]
+  styleUrls: ["./researcher-share-selector.component.styl"],
 })
 export class ResearcherShareSelectorComponent implements OnInit {
   @Input() hand: string[];

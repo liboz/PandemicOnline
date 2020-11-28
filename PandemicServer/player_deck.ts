@@ -15,7 +15,7 @@ export class PlayerDeck {
   ) {
     this.rng = rng;
     this.num_epidemics = num_epidemics;
-    this.base_deck = [...cities.map(city => city.name), ...events];
+    this.base_deck = [...cities.map((city) => city.name), ...events];
     this.shuffle(this.base_deck);
     if (game !== null) {
       let num_cards = 0;
@@ -31,7 +31,7 @@ export class PlayerDeck {
 
     this.partitions = this.partition_deck();
     this.shuffle(this.partitions);
-    this.partitions.forEach(p => {
+    this.partitions.forEach((p) => {
       p.push("Epidemic");
       this.shuffle(p);
     });

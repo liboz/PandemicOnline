@@ -7,11 +7,10 @@ import {
   OnChanges,
   Directive,
   NgZone,
-  ElementRef
+  ElementRef,
 } from "@angular/core";
 import { ModalService } from "../../service/modal.service";
 import * as d3 from "d3";
-import * as $ from "jquery";
 import * as PIXI from "pixi.js";
 import geo from "../../../../data/geo";
 import { ModalComponent } from "../modal/modal.component";
@@ -30,7 +29,7 @@ import { StartGameComponent } from "src/app/start-game/start-game.component";
   selector: "app-game",
   templateUrl: "./game.component.html",
   styleUrls: ["./game.component.styl"],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class GameComponent implements OnInit, OnChanges {
   objectKeys = Object.keys;
@@ -127,7 +126,7 @@ export class GameComponent implements OnInit, OnChanges {
       }
     );
     this.dispatcherMoveSubscription = this.modalService.dispatcherMoveTarget$.subscribe(
-      player_index => {
+      (player_index) => {
         this.dispatcherMoveOtherPlayer = player_index;
         this.modalService.destroyEvent();
       }
@@ -136,7 +135,7 @@ export class GameComponent implements OnInit, OnChanges {
     this.ngZone.runOutsideAngular(() => {
       this.pixiApp = new PIXI.Application({
         backgroundColor: 0x2a2c39,
-        resizeTo: window
+        resizeTo: window,
       });
     });
     this.pixiApp.renderer.autoDensity = true;
@@ -164,7 +163,7 @@ export class GameComponent implements OnInit, OnChanges {
       this.modalService.init(
         StartGameComponent,
         {
-          socket: this.socket
+          socket: this.socket,
         },
         {}
       );
@@ -186,23 +185,20 @@ export class GameComponent implements OnInit, OnChanges {
       .scale(window.innerWidth / 5.5) // 5.5 gotte empiricaly
       .translate([window.innerWidth / 2, window.innerHeight / 2]);
 
-    this.yaw = d3
-      .scaleLinear()
-      .domain([0, window.innerWidth])
-      .range([0, 360]);
+    this.yaw = d3.scaleLinear().domain([0, window.innerWidth]).range([0, 360]);
 
     var zoom = d3
       .zoom()
       .scaleExtent([1, 5])
       .extent([
         [0, 0],
-        [window.innerWidth, window.innerHeight]
+        [window.innerWidth, window.innerHeight],
       ])
       .translateExtent([
         [-Infinity, 0],
-        [Infinity, window.innerHeight]
+        [Infinity, window.innerHeight],
       ])
-      .on("zoom", event => this.zoomed(event));
+      .on("zoom", (event) => this.zoomed(event));
     d3.select("canvas").call(zoom);
   }
 
@@ -246,7 +242,7 @@ export class GameComponent implements OnInit, OnChanges {
         fontSize: 18,
         stroke: "black",
         strokeThickness: 3,
-        align: "center"
+        align: "center",
       });
       text.x = node.x - 30;
       text.y = node.y - 30;
@@ -268,7 +264,7 @@ export class GameComponent implements OnInit, OnChanges {
           new PIXI.Point(baseX, baseY + 20),
           new PIXI.Point(baseX, baseY + 30),
           new PIXI.Point(baseX + 20, baseY + 30),
-          new PIXI.Point(baseX + 20, baseY + 20)
+          new PIXI.Point(baseX + 20, baseY + 20),
         ]);
         this.pixiGraphics.endFill();
       }
@@ -277,7 +273,7 @@ export class GameComponent implements OnInit, OnChanges {
 
   private regenerateLinksAndNodes(): void {
     let values = Object.values(this.game.game_graph);
-    this.nodes = values.map(d => {
+    this.nodes = values.map((d) => {
       return {
         id: d.index,
         x: this.projection(d.location)[0],
@@ -286,19 +282,19 @@ export class GameComponent implements OnInit, OnChanges {
         name: d.name,
         cubes: d.cubes,
         hasResearchStation: d.hasResearchStation,
-        players: d.players
+        players: d.players,
       };
     });
 
     if (this.game.valid_final_destinations) {
-      this.game.valid_final_destinations.forEach(c => {
+      this.game.valid_final_destinations.forEach((c) => {
         this.nodes[c].isValidDestination = true;
       });
     }
 
     this.links = [];
-    values.forEach(d => {
-      d.neighbors.forEach(n => {
+    values.forEach((d) => {
+      d.neighbors.forEach((n) => {
         if (d.location[0] * values[n].location[0] < -10000) {
           // these are cross pacific differences
           let left_diff = Math.min(this.nodes[d.index].x, this.nodes[n].x);
@@ -310,18 +306,21 @@ export class GameComponent implements OnInit, OnChanges {
           if (d.location[0] < 0) {
             this.links.push({
               source: this.nodes[d.index],
-              target: { x: 0, y: this.nodes[d.index].y - slope * left_diff }
+              target: { x: 0, y: this.nodes[d.index].y - slope * left_diff },
             }); // western hemisphere
           } else {
             this.links.push({
               source: this.nodes[d.index],
-              target: { x: 3000, y: this.nodes[d.index].y - slope * right_diff }
+              target: {
+                x: 3000,
+                y: this.nodes[d.index].y - slope * right_diff,
+              },
             }); // eastern hemisphere
           }
         } else {
           this.links.push({
             source: this.nodes[d.index],
-            target: this.nodes[n]
+            target: this.nodes[n],
           });
         }
       });
@@ -367,7 +366,7 @@ export class GameComponent implements OnInit, OnChanges {
               canCharter: choices[1],
               canOperationsExpertMove: choices[2],
               currLocation: curr_city.name,
-              targetLocation: target_city.name
+              targetLocation: target_city.name,
             },
             {}
           );
@@ -406,7 +405,7 @@ export class GameComponent implements OnInit, OnChanges {
       let location = this.game.players[this.game.player_index].location;
       let cubes = this.game.game_graph[this.game.game_graph_index[location]]
         .cubes;
-      let cubes_on = Object.keys(cubes).filter(i => cubes[i] > 0);
+      let cubes_on = Object.keys(cubes).filter((i) => cubes[i] > 0);
       if (cubes_on.length === 1) {
         this.treat(cubes_on[0]);
       } else {
@@ -436,14 +435,14 @@ export class GameComponent implements OnInit, OnChanges {
         this.game.game_graph_index[location]
       ].players;
       let other_players_ids = location_players.filter(
-        i => i !== this.game.player_index
+        (i) => i !== this.game.player_index
       );
-      let other_players = other_players_ids.map(i => this.game.players[i]);
+      let other_players = other_players_ids.map((i) => this.game.players[i]);
 
       // non researcher case
       if (
         curr_player.role !== Client.Roles.Researcher &&
-        other_players.every(i => i.role !== Client.Roles.Researcher)
+        other_players.every((i) => i.role !== Client.Roles.Researcher)
       ) {
         // only 2 players
         if (location_players.length === 2) {
@@ -451,14 +450,14 @@ export class GameComponent implements OnInit, OnChanges {
           this.share(other_player);
         } else if (this.game.can_take) {
           // since there is no researcher, there is only 1 possible take option
-          let other_player = other_players_ids.filter(i =>
+          let other_player = other_players_ids.filter((i) =>
             this.game.players[i].hand.includes(location)
           );
           this.share(other_player);
         } else {
           // we can potentially give to every other player on the same node
           this.shareCardChoices = other_players_ids.map(
-            i =>
+            (i) =>
               new ShareCard(
                 ShareCard.Give,
                 i,
@@ -483,7 +482,7 @@ export class GameComponent implements OnInit, OnChanges {
                     other_player,
                     this.game.players[this.game.player_index].location,
                     () => this.share(other_player)
-                  )
+                  ),
                 ];
                 this.shareCardChoices.push(
                   new ShareCard(ShareCard.Give, other_player, null, () =>
@@ -510,7 +509,7 @@ export class GameComponent implements OnInit, OnChanges {
               );
             } else {
               let researcher = other_players.filter(
-                i => i.role === Client.Roles.Researcher
+                (i) => i.role === Client.Roles.Researcher
               )[0];
               this.shareCardChoices = [
                 new ShareCard(
@@ -518,7 +517,7 @@ export class GameComponent implements OnInit, OnChanges {
                   other_player,
                   this.game.players[this.game.player_index].location,
                   () => this.share(other_player)
-                )
+                ),
               ];
               this.shareCardChoices.push(
                 new ShareCard(ShareCard.Take, other_player, null, () =>
@@ -534,7 +533,7 @@ export class GameComponent implements OnInit, OnChanges {
         } else if (this.game.can_take) {
           // since there are multiple players, we can potentially take from 1 other player + a researcher
 
-          let other_player = other_players_ids.filter(i =>
+          let other_player = other_players_ids.filter((i) =>
             this.game.players[i].hand.includes(location)
           );
           console.log(other_player);
@@ -556,11 +555,11 @@ export class GameComponent implements OnInit, OnChanges {
                   other_player[0],
                   this.game.players[this.game.player_index].location,
                   () => this.share(other_player)
-                )
+                ),
               ];
               //  if that researcher is us, the action needs to be a give
               if (curr_player.role === Client.Roles.Researcher) {
-                other_players_ids.forEach(id => {
+                other_players_ids.forEach((id) => {
                   this.shareCardChoices.push(
                     new ShareCard(ShareCard.Give, id, null, () =>
                       this.shareResearcher(curr_player, id, curr_player.id)
@@ -570,7 +569,7 @@ export class GameComponent implements OnInit, OnChanges {
               } else {
                 // otherwise, we can also take from the researcher
                 let researcher = other_players.filter(
-                  i => i.role === Client.Roles.Researcher
+                  (i) => i.role === Client.Roles.Researcher
                 )[0];
                 this.shareCardChoices.push(
                   new ShareCard(ShareCard.Take, researcher.id, null, () =>
@@ -586,7 +585,7 @@ export class GameComponent implements OnInit, OnChanges {
           } else {
             // the one player is non-existent, just a researcher
             let researcher = other_players.filter(
-              i => i.role === Client.Roles.Researcher
+              (i) => i.role === Client.Roles.Researcher
             )[0];
             if (curr_player.role === Client.Roles.Researcher) {
               this.shareResearcher(curr_player, researcher.id, curr_player.id);
@@ -597,7 +596,7 @@ export class GameComponent implements OnInit, OnChanges {
         } else {
           // we are giving to another player.
           // since we should always be able to take from a researcher, this only happens when we are the researcher, so we researcher share
-          this.shareCardChoices = other_players_ids.map(id => {
+          this.shareCardChoices = other_players_ids.map((id) => {
             return new ShareCard(ShareCard.Give, id, null, () =>
               this.shareResearcher(curr_player, id, curr_player.id)
             );
@@ -616,7 +615,7 @@ export class GameComponent implements OnInit, OnChanges {
           game: this.game,
           socket: this.socket,
           target_player_index: target_player_index,
-          curr_player_index: curr_player_index
+          curr_player_index: curr_player_index,
         },
         {}
       );
@@ -634,15 +633,15 @@ export class GameComponent implements OnInit, OnChanges {
   onDiscover() {
     if (this.cureColorCards) {
       let selected = new Set(
-        [...this.selectedCards].map(i => this.cureColorCards[i])
+        [...this.selectedCards].map((i) => this.cureColorCards[i])
       );
-      let cureColorCards = this.cureColorCards.filter(i => !selected.has(i));
+      let cureColorCards = this.cureColorCards.filter((i) => !selected.has(i));
       this.selectedCards = new Set();
       this.discover(cureColorCards);
     } else {
       let player = this.game.players[this.game.player_index];
       let cureColorCards = player.hand.filter(
-        card =>
+        (card) =>
           this.game.game_graph[this.game.game_graph_index[card]].color ===
           this.game.can_cure
       );
@@ -705,7 +704,7 @@ export class GameComponent implements OnInit, OnChanges {
     this.socket.emit(
       "discard",
       [...this.selectedCards].map(
-        i => this.game.players[this.game.must_discard_index].hand[i]
+        (i) => this.game.players[this.game.must_discard_index].hand[i]
       ),
       () => {
         this.selectedCards = new Set();
@@ -724,13 +723,13 @@ export class GameComponent implements OnInit, OnChanges {
       this.dispatcherMoveOtherPlayer = null;
     } else {
       const other_players = this.game.players.filter(
-        i => i.id !== this.game.player_index
+        (i) => i.id !== this.game.player_index
       );
       if (other_players.length > 1) {
         this.modalService.init(
           DispatcherMoveComponent,
           {
-            other_players: other_players
+            other_players: other_players,
           },
           {}
         );

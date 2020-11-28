@@ -6,7 +6,7 @@ import { ModalService } from "../service/modal.service";
 @Component({
   selector: "app-start-game",
   templateUrl: "./start-game.component.html",
-  styleUrls: ["./start-game.component.styl"]
+  styleUrls: ["./start-game.component.styl"],
 })
 export class StartGameComponent implements OnInit {
   @Input() socket: SocketIOClient.Socket;

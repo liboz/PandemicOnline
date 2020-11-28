@@ -5,7 +5,7 @@ import { Client } from "pandemiccommon/dist/out-tsc/";
 @Component({
   selector: "app-move-choice-selector",
   templateUrl: "./move-choice-selector.component.html",
-  styleUrls: ["./move-choice-selector.component.styl"]
+  styleUrls: ["./move-choice-selector.component.styl"],
 })
 export class MoveChoiceSelectorComponent implements OnInit {
   @Input() game: Client.Game;

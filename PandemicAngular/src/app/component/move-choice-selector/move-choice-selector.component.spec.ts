@@ -9,7 +9,7 @@ describe("MoveChoiceSelectorComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [MoveChoiceSelectorComponent]
+        declarations: [MoveChoiceSelectorComponent],
       }).compileComponents();
     })
   );

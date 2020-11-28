@@ -3,7 +3,7 @@ import {
   Injector,
   ComponentFactoryResolver,
   EmbeddedViewRef,
-  ApplicationRef
+  ApplicationRef,
 } from "@angular/core";
 
 @Injectable()

@@ -9,7 +9,7 @@ describe("ResearcherShareSelectorComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [ResearcherShareSelectorComponent]
+        declarations: [ResearcherShareSelectorComponent],
       }).compileComponents();
     })
   );

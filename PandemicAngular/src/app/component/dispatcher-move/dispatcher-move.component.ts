@@ -6,7 +6,7 @@ import { formatPlayer } from "src/app/utils";
 @Component({
   selector: "app-dispatcher-move",
   templateUrl: "./dispatcher-move.component.html",
-  styleUrls: ["./dispatcher-move.component.styl"]
+  styleUrls: ["./dispatcher-move.component.styl"],
 })
 export class DispatcherMoveComponent implements OnInit {
   constructor(private modalService: ModalService) {}

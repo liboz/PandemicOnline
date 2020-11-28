@@ -7,7 +7,7 @@ export const ColorsIndex = {
   blue: 0,
   red: 1,
   black: 2,
-  yellow: 3
+  yellow: 3,
 };
 
 export class City {
@@ -29,7 +29,7 @@ export class City {
       blue: 0,
       red: 0,
       black: 0,
-      yellow: 0
+      yellow: 0,
     };
     this.neighbors = new Set();
     this.hasResearchStation = name === "Atlanta" ? true : false;
@@ -98,7 +98,7 @@ export class City {
         visited.add(this);
         let end = game.outbreak();
         game.log.push(`Outbreak at ${this.name}`);
-        this.neighbors.forEach(neighbor => {
+        this.neighbors.forEach((neighbor) => {
           if (!visited.has(neighbor)) {
             end = neighbor.infect(game, color, visited, initialization) && end; //want to always infect first
           }
@@ -136,8 +136,8 @@ export class City {
       );
     });
 
-    cities.forEach(data => {
-      data.adjacent.forEach(neighbor => {
+    cities.forEach((data) => {
+      data.adjacent.forEach((neighbor) => {
         game_graph[data.name].add_neighbor(game_graph[neighbor]);
       });
     });
@@ -183,8 +183,8 @@ export class CityJSON implements Client.City {
     this.location = city.location;
     this.cubes = city.cubes;
     this.hasResearchStation = city.hasResearchStation;
-    this.players = [...city.players].map(p => p.id);
+    this.players = [...city.players].map((p) => p.id);
     this.index = city.index;
-    this.neighbors = [...city.neighbors].map(i => i.index);
+    this.neighbors = [...city.neighbors].map((i) => i.index);
   }
 }

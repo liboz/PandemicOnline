@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class SnackbarService {
   private snackbarSubject = new Subject<any>();
@@ -14,7 +14,7 @@ export class SnackbarService {
     this.snackbarSubject.next({
       show: true,
       message,
-      type
+      type,
     });
   }
 }

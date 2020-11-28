@@ -131,7 +131,7 @@ export class Player {
 
   medicMoveTreat(game: Game, socket: NodeJS.EventEmitter) {
     let colors = Object.keys(game.cured);
-    colors.forEach(c => {
+    colors.forEach((c) => {
       if (game.cured[c] === 1) {
         this.treat(game, c, socket);
       }
@@ -146,17 +146,17 @@ export class Player {
         (hand === this.hand && this.canOperationsExpertMove(game))
       ) {
         //go everywhere!!!
-        return Object.values(game.game_graph).map(i => i.index);
+        return Object.values(game.game_graph).map((i) => i.index);
       } else {
         let s = new Set(
-          [...game.game_graph[this.location].neighbors].map(i => i.index)
+          [...game.game_graph[this.location].neighbors].map((i) => i.index)
         );
 
-        hand.forEach(c => {
+        hand.forEach((c) => {
           s.add(game.game_graph[c].index);
         });
         if (game.game_graph[this.location].hasResearchStation) {
-          game.research_stations.forEach(c => {
+          game.research_stations.forEach((c) => {
             s.add(game.game_graph[c].index);
           });
         }
@@ -227,7 +227,7 @@ export class Player {
           return false;
         } else {
           let count = 0;
-          cards.forEach(card => {
+          cards.forEach((card) => {
             if (this.hand.has(card) && game.game_graph[card].color === color) {
               count += 1;
             }
@@ -247,9 +247,9 @@ export class Player {
         blue: 0,
         red: 0,
         black: 0,
-        yellow: 0
+        yellow: 0,
       };
-      this.hand.forEach(card => {
+      this.hand.forEach((card) => {
         cards[game.game_graph[card].color] += 1;
       });
 
@@ -266,11 +266,11 @@ export class Player {
 
   cure(game: Game, cards: string[]) {
     let color = game.game_graph[cards[0]].color;
-    cards.forEach(card => {
+    cards.forEach((card) => {
       this.hand.delete(card);
     });
     game.cured[color] = game.cubes[color] !== 24 ? 1 : 2;
-    if (Object.values(game.cured).every(c => c > 0)) {
+    if (Object.values(game.cured).every((c) => c > 0)) {
       game.win_game();
     }
   }
@@ -310,15 +310,15 @@ export class Player {
       return (
         this.hand.size - cards.length == this.hand_size_limit &&
         new Set(cards).size === cards.length &&
-        cards.every(c => this.hand.has(c))
+        cards.every((c) => this.hand.has(c))
       );
     }
     return false;
   }
 
   discard(cards: string[]) {
-    if (cards.every(c => this.hand.has(c))) {
-      cards.forEach(c => this.hand.delete(c));
+    if (cards.every((c) => this.hand.has(c))) {
+      cards.forEach((c) => this.hand.delete(c));
       return true;
     }
     return false;
@@ -328,7 +328,7 @@ export class Player {
     if (game.game_graph[this.location].players.size <= 1) {
       return false;
     } else {
-      return [...game.game_graph[this.location].players].some(player => {
+      return [...game.game_graph[this.location].players].some((player) => {
         if (player !== this) {
           return (
             player.hand.has(this.location) ||

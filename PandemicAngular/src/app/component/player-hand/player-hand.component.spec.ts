@@ -9,7 +9,7 @@ describe("PlayerHandComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [PlayerHandComponent]
+        declarations: [PlayerHandComponent],
       }).compileComponents();
     })
   );

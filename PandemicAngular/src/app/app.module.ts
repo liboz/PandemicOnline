@@ -43,16 +43,16 @@ import { StartGameComponent } from "./start-game/start-game.component";
     ResearcherShareSelectorComponent,
     SnackbarComponent,
     DispatcherMoveComponent,
-    StartGameComponent
+    StartGameComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
   ],
   providers: [ModalService, DomService, SnackbarService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

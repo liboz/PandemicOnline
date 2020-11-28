@@ -39,7 +39,7 @@ const server = app.listen(8080);
 const io = socketIO(server);
 
 let seeded = seedrandom("test!");
-io.on(EventName.Connection, function(socket) {
+io.on(EventName.Connection, function (socket) {
   let match_name = socket.handshake.query.match_name;
   if (!games[match_name]) {
     games[match_name] = {
@@ -51,9 +51,9 @@ io.on(EventName.Connection, function(socket) {
         Client.Roles.QuarantineSpecialist,
         Client.Roles.Researcher,
         Client.Roles.Scientist,
-        Client.Roles.OperationsExpert
+        Client.Roles.OperationsExpert,
       ]),
-      player_roles: []
+      player_roles: [],
     };
   }
   socket.join(match_name);
@@ -65,108 +65,107 @@ io.on(EventName.Connection, function(socket) {
   emitRoles(clientWebSocket, games, match_name);
   console.log(`a user connected to ${match_name}`);
 
-  let players = function() {
+  let players = function () {
     return games[match_name].players;
   };
-  let curr_game = function() {
+  let curr_game = function () {
     // can this happen if no players have joined?
     return games[match_name].game;
   };
 
-  let player_roles = function() {
+  let player_roles = function () {
     // can this happen if no players have joined?
     return games[match_name].player_roles;
   };
 
-  let isReady = function() {
+  let isReady = function () {
     return (
       curr_game().game_state === Client.GameState.Ready &&
       curr_game().turns_left !== 0
     );
   };
 
-  clientWebSocket.on(EventName.Join, function(
-    role: Client.Roles,
-    player_name: string,
-    callback
-  ) {
-    // add logic for role is invalid
-    if (
-      games[match_name].available_roles.has(role) ||
-      (curr_game() && curr_game().game_state !== Client.GameState.NotStarted)
-    ) {
-      let player_index = players().findIndex(i => i === player_name); // should lock maybe?
-      if (player_index === -1) {
-        player_index = players().length;
-        players().push(player_name);
-        player_roles().push(role);
-      }
-      callback(player_index);
-      games[match_name].available_roles.delete(role);
-      emitRoles(clientWebSocket, games, match_name, true);
-      console.log(
-        `${player_name} joined ${match_name} as Player ${player_index} in role ${role}`
-      );
-    } else {
-      clientWebSocket.sendMessageToClient(
-        EventName.InvalidAction,
-        `Joining ${match_name} as Player name ${player_name} in role ${role} is an invalid action`
-      );
-    }
-  });
-
-  clientWebSocket.on(EventName.StartGame, function(
-    difficulty: number,
-    callback
-  ) {
-    if (
-      !curr_game() ||
-      curr_game().game_state === Client.GameState.NotStarted
-    ) {
-      let num_players = players().length;
-      if (num_players > 5) {
-        clientWebSocket.sendMessageToClient(
-          EventName.InvalidAction,
-          `Cannot start game with over 5 players`
-        );
-      } else if (num_players < 2) {
-        clientWebSocket.sendMessageToClient(
-          EventName.InvalidAction,
-          `Cannot start game with fewer than 2 players`
+  clientWebSocket.on(
+    EventName.Join,
+    function (role: Client.Roles, player_name: string, callback) {
+      // add logic for role is invalid
+      if (
+        games[match_name].available_roles.has(role) ||
+        (curr_game() && curr_game().game_state !== Client.GameState.NotStarted)
+      ) {
+        let player_index = players().findIndex((i) => i === player_name); // should lock maybe?
+        if (player_index === -1) {
+          player_index = players().length;
+          players().push(player_name);
+          player_roles().push(role);
+        }
+        callback(player_index);
+        games[match_name].available_roles.delete(role);
+        emitRoles(clientWebSocket, games, match_name, true);
+        console.log(
+          `${player_name} joined ${match_name} as Player ${player_index} in role ${role}`
         );
       } else {
-        callback();
-        let filtered_players = players().slice(0, num_players);
-        let filtered_roles = player_roles().slice(0, num_players);
-        console.log(
-          `start game with ${filtered_players} in room ${match_name}`
-        );
-        games[match_name].game = new Game(
-          Cities,
-          num_players,
-          filtered_players,
-          filtered_roles,
-          difficulty,
-          seeded
-        );
-        curr_game().initialize_board();
-        curr_game().log.push(
-          `game initialized at ${Client.GameDifficultyMap[difficulty]} difficulty`
-        );
-        clientWebSocket.sendMessageToAllInRoom(
-          EventName.GameInitialized,
-          curr_game().toJSON()
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
+          `Joining ${match_name} as Player name ${player_name} in role ${role} is an invalid action`
         );
       }
-    } else {
-      console.log(
-        `Game ${match_name} has already started and has current game state: ${
-          curr_game().game_state
-        }`
-      );
     }
-  });
-  clientWebSocket.on(EventName.Move, function(data, callback) {
+  );
+
+  clientWebSocket.on(
+    EventName.StartGame,
+    function (difficulty: number, callback) {
+      if (
+        !curr_game() ||
+        curr_game().game_state === Client.GameState.NotStarted
+      ) {
+        let num_players = players().length;
+        if (num_players > 5) {
+          clientWebSocket.sendMessageToClient(
+            EventName.InvalidAction,
+            `Cannot start game with over 5 players`
+          );
+        } else if (num_players < 2) {
+          clientWebSocket.sendMessageToClient(
+            EventName.InvalidAction,
+            `Cannot start game with fewer than 2 players`
+          );
+        } else {
+          callback();
+          let filtered_players = players().slice(0, num_players);
+          let filtered_roles = player_roles().slice(0, num_players);
+          console.log(
+            `start game with ${filtered_players} in room ${match_name}`
+          );
+          games[match_name].game = new Game(
+            Cities,
+            num_players,
+            filtered_players,
+            filtered_roles,
+            difficulty,
+            seeded
+          );
+          curr_game().initialize_board();
+          curr_game().log.push(
+            `game initialized at ${Client.GameDifficultyMap[difficulty]} difficulty`
+          );
+          clientWebSocket.sendMessageToAllInRoom(
+            EventName.GameInitialized,
+            curr_game().toJSON()
+          );
+        }
+      } else {
+        console.log(
+          `Game ${match_name} has already started and has current game state: ${
+            curr_game().game_state
+          }`
+        );
+      }
+    }
+  );
+  clientWebSocket.on(EventName.Move, function (data, callback) {
     let log_string = `Player ${curr_game().player_index}: move to ${data}`;
     console.log(log_string);
     if (isReady()) {
@@ -193,7 +192,7 @@ io.on(EventName.Connection, function(socket) {
     }
   });
 
-  clientWebSocket.on(EventName.DirectFlight, function(data) {
+  clientWebSocket.on(EventName.DirectFlight, function (data) {
     let log_string = `Player ${
       curr_game().player_index
     }: Direct Flight to ${data}`;
@@ -222,7 +221,7 @@ io.on(EventName.Connection, function(socket) {
     }
   });
 
-  clientWebSocket.on(EventName.CharterFlight, function(data) {
+  clientWebSocket.on(EventName.CharterFlight, function (data) {
     let log_string = `Player ${
       curr_game().player_index
     }: Charter Flight to ${data}`;
@@ -251,90 +250,90 @@ io.on(EventName.Connection, function(socket) {
     }
   });
 
-  clientWebSocket.on(EventName.OperationsExpertMove, function(
-    final_destination,
-    card
-  ) {
-    let log_string = `Player ${
-      curr_game().player_index
-    }: Operations Expert Move to ${final_destination} by discarding ${card}`;
-    console.log(log_string);
-    if (isReady()) {
-      if (
-        curr_game().players[
-          curr_game().player_index
-        ].canOperationsExpertMoveWithCard(curr_game(), card)
-      ) {
-        curr_game().players[curr_game().player_index].operationsExpertMove(
-          curr_game(),
-          final_destination,
-          card,
-          socket
-        );
-        curr_game().log.push(log_string);
-        clientWebSocket.sendMessageToClient(
-          EventName.MoveChoiceSuccesful,
-          curr_game().toJSON()
-        );
-        curr_game().use_turn(clientWebSocket, match_name);
+  clientWebSocket.on(
+    EventName.OperationsExpertMove,
+    function (final_destination, card) {
+      let log_string = `Player ${
+        curr_game().player_index
+      }: Operations Expert Move to ${final_destination} by discarding ${card}`;
+      console.log(log_string);
+      if (isReady()) {
+        if (
+          curr_game().players[
+            curr_game().player_index
+          ].canOperationsExpertMoveWithCard(curr_game(), card)
+        ) {
+          curr_game().players[curr_game().player_index].operationsExpertMove(
+            curr_game(),
+            final_destination,
+            card,
+            socket
+          );
+          curr_game().log.push(log_string);
+          clientWebSocket.sendMessageToClient(
+            EventName.MoveChoiceSuccesful,
+            curr_game().toJSON()
+          );
+          curr_game().use_turn(clientWebSocket, match_name);
+        } else {
+          clientWebSocket.sendMessageToClient(
+            EventName.InvalidAction,
+            `Discarding ${card} to move to ${final_destination} is an invalid Operations Expert Move`
+          );
+        }
       } else {
         clientWebSocket.sendMessageToClient(
           EventName.InvalidAction,
           `Discarding ${card} to move to ${final_destination} is an invalid Operations Expert Move`
         );
       }
-    } else {
-      clientWebSocket.sendMessageToClient(
-        EventName.InvalidAction,
-        `Discarding ${card} to move to ${final_destination} is an invalid Operations Expert Move`
-      );
     }
-  });
+  );
 
-  clientWebSocket.on(EventName.DispatcherMove, function(
-    other_player_index,
-    final_destination
-  ) {
-    let log_string = `Player ${
-      curr_game().player_index
-    }: Dispatcher Move ${other_player_index} to ${final_destination}`;
-    console.log(log_string);
-    if (isReady()) {
-      let curr_player = curr_game().players[curr_game().player_index];
-      let valid_dispatcher_final_destinations = new Set(
-        curr_player.get_valid_dispatcher_final_destinations(curr_game())[
-          other_player_index
-        ]
-      );
+  clientWebSocket.on(
+    EventName.DispatcherMove,
+    function (other_player_index, final_destination) {
+      let log_string = `Player ${
+        curr_game().player_index
+      }: Dispatcher Move ${other_player_index} to ${final_destination}`;
+      console.log(log_string);
+      if (isReady()) {
+        let curr_player = curr_game().players[curr_game().player_index];
+        let valid_dispatcher_final_destinations = new Set(
+          curr_player.get_valid_dispatcher_final_destinations(curr_game())[
+            other_player_index
+          ]
+        );
 
-      if (valid_dispatcher_final_destinations.has(final_destination)) {
-        curr_player.dispatcher_move(
-          curr_game(),
-          curr_game().players[other_player_index],
-          final_destination,
-          socket
-        );
-        curr_game().log.push(log_string);
-        clientWebSocket.sendMessageToClient(
-          EventName.MoveChoiceSuccesful,
-          curr_game().toJSON()
-        );
-        curr_game().use_turn(clientWebSocket, match_name);
+        if (valid_dispatcher_final_destinations.has(final_destination)) {
+          curr_player.dispatcher_move(
+            curr_game(),
+            curr_game().players[other_player_index],
+            final_destination,
+            socket
+          );
+          curr_game().log.push(log_string);
+          clientWebSocket.sendMessageToClient(
+            EventName.MoveChoiceSuccesful,
+            curr_game().toJSON()
+          );
+          curr_game().use_turn(clientWebSocket, match_name);
+        } else {
+          clientWebSocket.sendMessageToClient(
+            EventName.InvalidAction,
+            `Moving ${other_player_index} to ${final_destination} is an invalid Dispatcher Move`
+          );
+        }
       } else {
         clientWebSocket.sendMessageToClient(
           EventName.InvalidAction,
           `Moving ${other_player_index} to ${final_destination} is an invalid Dispatcher Move`
         );
       }
-    } else {
-      clientWebSocket.sendMessageToClient(
-        EventName.InvalidAction,
-        `Moving ${other_player_index} to ${final_destination} is an invalid Dispatcher Move`
-      );
     }
-  });
+  );
 
-  clientWebSocket.on(EventName.Build, function() {
+  clientWebSocket.on(EventName.Build, function () {
     let log_string = `Player ${curr_game().player_index}: build on ${
       curr_game().players[curr_game().player_index].location
     }`;
@@ -370,7 +369,7 @@ io.on(EventName.Connection, function(socket) {
     }
   });
 
-  clientWebSocket.on(EventName.Treat, function(color, callback) {
+  clientWebSocket.on(EventName.Treat, function (color, callback) {
     let log_string = `Player ${curr_game().player_index}: treat ${color} at ${
       curr_game().players[curr_game().player_index].location
     }`;
@@ -412,7 +411,7 @@ io.on(EventName.Connection, function(socket) {
     }
   });
 
-  clientWebSocket.on(EventName.Share, function(player_index, card, callback) {
+  clientWebSocket.on(EventName.Share, function (player_index, card, callback) {
     let log_string = "";
     if (card) {
       //researcher
@@ -507,7 +506,7 @@ io.on(EventName.Connection, function(socket) {
     }
   });
 
-  clientWebSocket.on(EventName.Discover, function(cards, callback) {
+  clientWebSocket.on(EventName.Discover, function (cards, callback) {
     let log_string = `Player ${curr_game().player_index}: cure at ${
       curr_game().players[curr_game().player_index].location
     } with ${cards}`;
@@ -552,7 +551,7 @@ io.on(EventName.Connection, function(socket) {
     }
   });
 
-  clientWebSocket.on(EventName.Pass, function() {
+  clientWebSocket.on(EventName.Pass, function () {
     let log_string = `Player ${curr_game().player_index}: pass move`;
     console.log(log_string);
     if (isReady()) {
@@ -602,7 +601,7 @@ io.on(EventName.Connection, function(socket) {
     }
   });
 
-  clientWebSocket.on(EventName.Disconnect, function() {
+  clientWebSocket.on(EventName.Disconnect, function () {
     console.log(`user disconnected from ${match_name}`);
     if (match_name) {
       let room = io.sockets.adapter.rooms[match_name];
@@ -621,11 +620,11 @@ function emitRoles(
 ) {
   if (send_to_all_but_client) {
     socket.sendMessageToAllButClient(EventName.Roles, [
-      ...games[match_name].available_roles
+      ...games[match_name].available_roles,
     ]);
   } else {
     socket.sendMessageToClient(EventName.Roles, [
-      ...games[match_name].available_roles
+      ...games[match_name].available_roles,
     ]);
   }
 }
