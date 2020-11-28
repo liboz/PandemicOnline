@@ -17,16 +17,16 @@ jobs:
       - name: Build Common
         working-directory: ./PandemicCommon
         run: |
-          npm install
+          npm ci
           npm run build
       - name: Build Server
         working-directory: ./PandemicServer
         run: |
-          npm install
+          npm ci
           npm run test:cloudbuild
           npm run build
       - name: Build Client
         working-directory: ./PandemicAngular
         run: |
-          npm install
+          npm ci
           ng build

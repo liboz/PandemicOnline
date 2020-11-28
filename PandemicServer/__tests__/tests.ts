@@ -1,11 +1,12 @@
+import "jest";
+
 import seedrandom from "seedrandom";
-import { Colors } from "../city";
 import { Cities } from "../data/cities";
 import { Game } from "../game";
 import { InfectionDeck } from "../infection_deck";
 import { PlayerJSON } from "../player";
 import { PlayerDeck } from "../player_deck";
-import { Client } from "../types";
+import { Client } from "pandemiccommon/dist/out-tsc";
 
 describe("City", function() {
   describe("#Infect", function() {
@@ -19,10 +20,10 @@ describe("City", function() {
       let chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 3; i++) {
         expect(chennai.infect(g)).toBe(true);
-        expect(chennai.cubes[Colors.BLUE]).toBe(0);
-        expect(chennai.cubes[Colors.RED]).toBe(0);
-        expect(chennai.cubes[Colors.BLACK]).toBe(i + 1);
-        expect(chennai.cubes[Colors.YELLOW]).toBe(0);
+        expect(chennai.cubes[Client.Color.Blue]).toBe(0);
+        expect(chennai.cubes[Client.Color.Red]).toBe(0);
+        expect(chennai.cubes[Client.Color.Black]).toBe(i + 1);
+        expect(chennai.cubes[Client.Color.Yellow]).toBe(0);
       }
     });
   });
@@ -37,22 +38,22 @@ describe("City", function() {
       );
 
       let atlanta = g.game_graph["Atlanta"];
-      expect(atlanta.cubes[Colors.BLUE]).toBe(0);
+      expect(atlanta.cubes[Client.Color.Blue]).toBe(0);
       expect(atlanta.infect(g)).toBe(true);
-      expect(atlanta.cubes[Colors.BLUE]).toBe(1);
+      expect(atlanta.cubes[Client.Color.Blue]).toBe(1);
 
-      g.cured[Colors.BLUE] = 1;
+      g.cured[Client.Color.Blue] = 1;
 
       expect(g.players[0].move(g, "Washington")).toBe(true);
       let washington = g.game_graph["Washington"];
-      expect(washington.cubes[Colors.BLUE]).toBe(0);
+      expect(washington.cubes[Client.Color.Blue]).toBe(0);
       expect(washington.infect(g)).toBe(true);
-      expect(washington.cubes[Colors.BLUE]).toBe(0);
+      expect(washington.cubes[Client.Color.Blue]).toBe(0);
 
-      g.cured[Colors.BLUE] = 1; // washington triggers eradicate
-      expect(atlanta.cubes[Colors.BLUE]).toBe(0);
+      g.cured[Client.Color.Blue] = 1; // washington triggers eradicate
+      expect(atlanta.cubes[Client.Color.Blue]).toBe(0);
       expect(atlanta.infect(g)).toBe(true);
-      expect(atlanta.cubes[Colors.BLUE]).toBe(1);
+      expect(atlanta.cubes[Client.Color.Blue]).toBe(1);
     });
   });
 
@@ -69,29 +70,29 @@ describe("City", function() {
       );
 
       let atlanta = g.game_graph["Atlanta"];
-      expect(atlanta.cubes[Colors.BLUE]).toBe(0);
+      expect(atlanta.cubes[Client.Color.Blue]).toBe(0);
       expect(atlanta.infect(g)).toBe(true);
-      expect(atlanta.cubes[Colors.BLUE]).toBe(0);
+      expect(atlanta.cubes[Client.Color.Blue]).toBe(0);
 
       let washington = g.game_graph["Washington"];
-      expect(washington.cubes[Colors.BLUE]).toBe(0);
+      expect(washington.cubes[Client.Color.Blue]).toBe(0);
       expect(washington.infect(g)).toBe(true);
-      expect(washington.cubes[Colors.BLUE]).toBe(0);
+      expect(washington.cubes[Client.Color.Blue]).toBe(0);
 
       let chicago = g.game_graph["Chicago"];
-      expect(chicago.cubes[Colors.BLUE]).toBe(0);
+      expect(chicago.cubes[Client.Color.Blue]).toBe(0);
       expect(chicago.infect(g)).toBe(true);
-      expect(chicago.cubes[Colors.BLUE]).toBe(0);
+      expect(chicago.cubes[Client.Color.Blue]).toBe(0);
 
       g.players[0].move(g, "Miami");
       //g.players[0].move(g, 'Bogota')
       let saopaulo = g.game_graph["Sao Paulo"];
       g.epidemic(); // Sao Paulo
-      expect(saopaulo.cubes[Colors.YELLOW]).toBe(3);
+      expect(saopaulo.cubes[Client.Color.Yellow]).toBe(3);
 
       g.infect_stage(); // Sao Paulo
       let bogota = g.game_graph["Bogota"];
-      expect(bogota.cubes[Colors.YELLOW]).toBe(0);
+      expect(bogota.cubes[Client.Color.Yellow]).toBe(0);
     });
   });
 
@@ -137,13 +138,13 @@ describe("City", function() {
         [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
       let chennai = g.game_graph["Chennai"];
-      g.cured[Colors.BLACK] = 2;
+      g.cured[Client.Color.Black] = 2;
       for (let i = 0; i < 3; i++) {
         expect(chennai.infect(g)).toBe(true);
-        expect(chennai.cubes[Colors.BLUE]).toBe(0);
-        expect(chennai.cubes[Colors.RED]).toBe(0);
-        expect(chennai.cubes[Colors.BLACK]).toBe(0);
-        expect(chennai.cubes[Colors.YELLOW]).toBe(0);
+        expect(chennai.cubes[Client.Color.Blue]).toBe(0);
+        expect(chennai.cubes[Client.Color.Red]).toBe(0);
+        expect(chennai.cubes[Client.Color.Black]).toBe(0);
+        expect(chennai.cubes[Client.Color.Yellow]).toBe(0);
       }
     });
   });
@@ -160,10 +161,10 @@ describe("City", function() {
 
       for (let i = 0; i < 3; i++) {
         chennai.infect_epidemic(g);
-        expect(chennai.cubes[Colors.BLUE]).toBe(0);
-        expect(chennai.cubes[Colors.RED]).toBe(0);
-        expect(chennai.cubes[Colors.BLACK]).toBe(3);
-        expect(chennai.cubes[Colors.YELLOW]).toBe(0);
+        expect(chennai.cubes[Client.Color.Blue]).toBe(0);
+        expect(chennai.cubes[Client.Color.Red]).toBe(0);
+        expect(chennai.cubes[Client.Color.Black]).toBe(3);
+        expect(chennai.cubes[Client.Color.Yellow]).toBe(0);
       }
     });
   });
@@ -182,10 +183,10 @@ describe("City", function() {
       }
       expect(chennai.cubes["black"]).toBe(3);
       chennai.neighbors.forEach(neighbor => {
-        expect(neighbor.cubes[Colors.BLUE]).toBe(0);
-        expect(neighbor.cubes[Colors.RED]).toBe(0);
-        expect(neighbor.cubes[Colors.BLACK]).toBe(1);
-        expect(neighbor.cubes[Colors.YELLOW]).toBe(0);
+        expect(neighbor.cubes[Client.Color.Blue]).toBe(0);
+        expect(neighbor.cubes[Client.Color.Red]).toBe(0);
+        expect(neighbor.cubes[Client.Color.Black]).toBe(1);
+        expect(neighbor.cubes[Client.Color.Yellow]).toBe(0);
       });
 
       let bangkok = g.game_graph["Bangkok"];
@@ -193,37 +194,37 @@ describe("City", function() {
         bangkok.infect(g);
       }
       bangkok.neighbors.forEach(neighbor => {
-        expect(neighbor.cubes[Colors.RED]).toBe(1);
+        expect(neighbor.cubes[Client.Color.Red]).toBe(1);
       });
 
       let kolkata = g.game_graph["Kolkata"];
-      expect(kolkata.cubes[Colors.RED]).toBe(1);
+      expect(kolkata.cubes[Client.Color.Red]).toBe(1);
       expect(kolkata.cubes["black"]).toBe(1);
       for (let i = 0; i < 3; i++) {
         kolkata.infect(g);
       }
 
-      expect(kolkata.cubes[Colors.RED]).toBe(1);
-      expect(kolkata.cubes[Colors.BLACK]).toBe(3);
+      expect(kolkata.cubes[Client.Color.Red]).toBe(1);
+      expect(kolkata.cubes[Client.Color.Black]).toBe(3);
 
       chennai.neighbors.forEach(neighbor => {
         if (neighbor === kolkata || kolkata.neighbors.has(neighbor)) {
-          expect(neighbor.cubes[Colors.BLACK]).toBe(3);
+          expect(neighbor.cubes[Client.Color.Black]).toBe(3);
         } else {
-          expect(neighbor.cubes[Colors.BLACK]).toBe(2);
+          expect(neighbor.cubes[Client.Color.Black]).toBe(2);
         }
       });
 
       kolkata.neighbors.forEach(neighbor => {
         if (neighbor === chennai || chennai.neighbors.has(neighbor)) {
-          expect(neighbor.cubes[Colors.BLACK]).toBe(3);
+          expect(neighbor.cubes[Client.Color.Black]).toBe(3);
         } else {
-          expect(neighbor.cubes[Colors.BLACK]).toBe(1);
+          expect(neighbor.cubes[Client.Color.Black]).toBe(1);
         }
       });
 
       bangkok.neighbors.forEach(neighbor => {
-        expect(neighbor.cubes[Colors.RED]).toBe(1);
+        expect(neighbor.cubes[Client.Color.Red]).toBe(1);
       });
     });
   });
@@ -697,18 +698,18 @@ describe("Game", function() {
         seeded
       );
       expect(g.infection_rate_index).toBe(0);
-      expect(g.game_graph["Sao Paulo"].cubes[Colors.YELLOW]).toBe(0);
-      expect(g.game_graph["Buenos Aires"].cubes[Colors.YELLOW]).toBe(0);
+      expect(g.game_graph["Sao Paulo"].cubes[Client.Color.Yellow]).toBe(0);
+      expect(g.game_graph["Buenos Aires"].cubes[Client.Color.Yellow]).toBe(0);
       expect(g.infection_deck.facedown_deck.peekFront()).toBe("Sao Paulo");
       g.epidemic();
       expect(g.infection_rate_index).toBe(1);
-      expect(g.game_graph["Sao Paulo"].cubes[Colors.YELLOW]).toBe(3);
-      expect(g.game_graph["Buenos Aires"].cubes[Colors.YELLOW]).toBe(0);
+      expect(g.game_graph["Sao Paulo"].cubes[Client.Color.Yellow]).toBe(3);
+      expect(g.game_graph["Buenos Aires"].cubes[Client.Color.Yellow]).toBe(0);
       expect(g.infection_deck.facedown_deck.peekBack()).toBe("Sao Paulo");
       g.epidemic();
       expect(g.infection_rate_index).toBe(2);
-      expect(g.game_graph["Sao Paulo"].cubes[Colors.YELLOW]).toBe(3);
-      expect(g.game_graph["Buenos Aires"].cubes[Colors.YELLOW]).toBe(3);
+      expect(g.game_graph["Sao Paulo"].cubes[Client.Color.Yellow]).toBe(3);
+      expect(g.game_graph["Buenos Aires"].cubes[Client.Color.Yellow]).toBe(3);
       expect(g.infection_deck.facedown_deck.peekAt(-2)).toBe("Sao Paulo");
       expect(g.infection_deck.facedown_deck.peekBack()).toBe("Buenos Aires");
     });
@@ -725,10 +726,10 @@ describe("Game", function() {
         5,
         seeded
       );
-      g.cured[Colors.YELLOW] = 2;
+      g.cured[Client.Color.Yellow] = 2;
       g.epidemic();
       expect(g.infection_rate_index).toBe(1);
-      expect(g.game_graph["Sao Paulo"].cubes[Colors.YELLOW]).toBe(0);
+      expect(g.game_graph["Sao Paulo"].cubes[Client.Color.Yellow]).toBe(0);
     });
   });
 
@@ -781,10 +782,10 @@ describe("Game", function() {
         5,
         seeded
       );
-      g.cured[Colors.RED] = 2; //eradicate all the diseases so we dont have to deal with outbreak counter
-      g.cured[Colors.BLACK] = 2;
-      g.cured[Colors.BLUE] = 2;
-      g.cured[Colors.YELLOW] = 2;
+      g.cured[Client.Color.Red] = 2; //eradicate all the diseases so we dont have to deal with outbreak counter
+      g.cured[Client.Color.Black] = 2;
+      g.cured[Client.Color.Blue] = 2;
+      g.cured[Client.Color.Yellow] = 2;
       for (let i = 0; i < 6; i++) {
         g.infect_stage();
         expect(g.infection_deck.faceup_deck.length).toBe(g.infection_rate[i]);
@@ -872,9 +873,9 @@ describe("Game", function() {
       bogota.infect(g);
       miami.infect(g);
       expect(g.game_state).toBe(Client.GameState.NotStarted);
-      expect(g.cubes[Colors.YELLOW]).toBe(2);
+      expect(g.cubes[Client.Color.Yellow]).toBe(2);
       g.epidemic(); // lagos
-      expect(g.cubes[Colors.YELLOW]).toBe(-1);
+      expect(g.cubes[Client.Color.Yellow]).toBe(-1);
       expect(g.game_state).toBe(Client.GameState.Lost);
     });
   });
@@ -1446,7 +1447,7 @@ describe("Player", function() {
       g.players[0].build_research_station(g);
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].cure(g, [...g.players[0].hand]);
-      expect(g.cured[Colors.BLACK]).toBe(2);
+      expect(g.cured[Client.Color.Black]).toBe(2);
 
       g.players[0].hand.add("Algiers"); // cant cure already cured
       g.players[0].hand.add("Cairo");
@@ -1480,13 +1481,13 @@ describe("Player", function() {
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].hand.add("Miami");
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(false); // submitted too many cards
-      expect(g.players[0].can_hand_cure(g)).toBe(Colors.BLACK);
+      expect(g.players[0].can_hand_cure(g)).toBe(Client.Color.Black);
       g.players[0].move(g, "Miami");
       expect(g.players[0].can_build_research_station(g)).toBe(true);
       g.players[0].build_research_station(g);
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].cure(g, [...g.players[0].hand]);
-      expect(g.cured[Colors.BLACK]).toBe(2);
+      expect(g.cured[Client.Color.Black]).toBe(2);
 
       g.players[0].hand.add("Algiers"); // cant cure already cured
       g.players[0].hand.add("Cairo");
@@ -1518,7 +1519,7 @@ describe("Player", function() {
       g.players[0].hand.add("Hong Kong");
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].cure(g, [...g.players[0].hand]);
-      expect(g.cured[Colors.RED]).toBe(1);
+      expect(g.cured[Client.Color.Red]).toBe(1);
 
       g.players[0].hand.add("Algiers");
       g.players[0].hand.add("Cairo");
@@ -1556,16 +1557,16 @@ describe("Player", function() {
       g.players[0].hand.add("Beijing");
       g.players[0].hand.add("Seoul");
       g.players[0].hand.add("Hong Kong");
-      expect(g.players[0].can_hand_cure(g)).toBe(Colors.RED);
+      expect(g.players[0].can_hand_cure(g)).toBe(Client.Color.Red);
       g.players[0].cure(g, [...g.players[0].hand]);
-      expect(g.cured[Colors.RED]).toBe(1);
+      expect(g.cured[Client.Color.Red]).toBe(1);
 
       g.players[0].hand.add("Algiers");
       g.players[0].hand.add("Cairo");
       g.players[0].hand.add("Istanbul");
       g.players[0].hand.add("Moscow");
       g.players[0].hand.add("Baghdad");
-      expect(g.players[0].can_hand_cure(g)).toBe(Colors.BLACK);
+      expect(g.players[0].can_hand_cure(g)).toBe(Client.Color.Black);
       g.players[0].move(g, "Miami"); // only cure in research station
       expect(g.players[0].can_hand_cure(g)).toBe(false);
       g.players[0].move(g, "Atlanta");
@@ -1585,9 +1586,9 @@ describe("Player", function() {
       g.players[0].hand.add("Bogota");
       expect(g.players[0].can_hand_cure(g)).toBe(false);
       g.players[0].hand.add("Los Angeles");
-      expect(g.players[0].can_hand_cure(g)).toBe(Colors.YELLOW);
+      expect(g.players[0].can_hand_cure(g)).toBe(Client.Color.Yellow);
       g.players[0].hand.add("Miami");
-      expect(g.players[0].can_hand_cure(g)).toBe(Colors.YELLOW); // 6 cards in hand but doesnt matter
+      expect(g.players[0].can_hand_cure(g)).toBe(Client.Color.Yellow); // 6 cards in hand but doesnt matter
     });
   });
 
@@ -1676,11 +1677,11 @@ describe("Player", function() {
         5,
         seeded
       );
-      expect(g.cubes[Colors.RED]).toBe(24);
+      expect(g.cubes[Client.Color.Red]).toBe(24);
       g.players[0].discard([...g.players[0].hand]);
       g.infect_stage(); // infect tokyo
       g.infect_stage(); // infect taipei
-      expect(g.cubes[Colors.RED]).toBe(22);
+      expect(g.cubes[Client.Color.Red]).toBe(22);
 
       g.players[0].hand.add("Tokyo");
       g.players[0].hand.add("Osaka");
@@ -1690,24 +1691,24 @@ describe("Player", function() {
 
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].cure(g, [...g.players[0].hand]);
-      expect(g.cured[Colors.RED]).toBe(1);
+      expect(g.cured[Client.Color.Red]).toBe(1);
 
       g.players[0].move(g, "Chicago");
       g.players[0].move(g, "San Francisco");
       g.players[0].move(g, "Tokyo");
 
       expect(g.players[0].can_treat(g)).toBe(true);
-      g.players[0].treat(g, Colors.RED);
-      expect(g.cured[Colors.RED]).toBe(1);
-      expect(g.cubes[Colors.RED]).toBe(23);
+      g.players[0].treat(g, Client.Color.Red);
+      expect(g.cured[Client.Color.Red]).toBe(1);
+      expect(g.cubes[Client.Color.Red]).toBe(23);
 
       g.players[0].move(g, "Osaka");
       g.players[0].move(g, "Taipei");
 
       expect(g.players[0].can_treat(g)).toBe(true);
-      g.players[0].treat(g, Colors.RED);
-      expect(g.cured[Colors.RED]).toBe(2);
-      expect(g.cubes[Colors.RED]).toBe(24);
+      g.players[0].treat(g, Client.Color.Red);
+      expect(g.cured[Client.Color.Red]).toBe(2);
+      expect(g.cubes[Client.Color.Red]).toBe(24);
     });
   });
 
@@ -1722,11 +1723,11 @@ describe("Player", function() {
         5,
         seeded
       );
-      expect(g.cubes[Colors.RED]).toBe(24);
+      expect(g.cubes[Client.Color.Red]).toBe(24);
       g.players[0].discard([...g.players[0].hand]);
       g.epidemic();
 
-      expect(g.cubes[Colors.YELLOW]).toBe(21);
+      expect(g.cubes[Client.Color.Yellow]).toBe(21);
 
       g.players[0].hand.add("Miami");
       g.players[0].hand.add("Bogota");
@@ -1736,16 +1737,16 @@ describe("Player", function() {
 
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].cure(g, [...g.players[0].hand]);
-      expect(g.cured[Colors.YELLOW]).toBe(1);
+      expect(g.cured[Client.Color.Yellow]).toBe(1);
 
       g.players[0].move(g, "Miami");
       g.players[0].move(g, "Bogota");
       g.players[0].move(g, "Sao Paulo");
 
       expect(g.players[0].can_treat(g)).toBe(true);
-      g.players[0].treat(g, Colors.YELLOW);
-      expect(g.cured[Colors.YELLOW]).toBe(2);
-      expect(g.cubes[Colors.YELLOW]).toBe(24);
+      g.players[0].treat(g, Client.Color.Yellow);
+      expect(g.cured[Client.Color.Yellow]).toBe(2);
+      expect(g.cubes[Client.Color.Yellow]).toBe(24);
     });
   });
 
@@ -1762,26 +1763,26 @@ describe("Player", function() {
       );
 
       expect(g.players[0].can_treat(g)).toBe(false);
-      expect(g.players[0].can_treat_color(g, Colors.RED)).toBe(false);
-      expect(g.players[0].can_treat_color(g, Colors.BLUE)).toBe(false);
-      expect(g.players[0].can_treat_color(g, Colors.BLACK)).toBe(false);
-      expect(g.players[0].can_treat_color(g, Colors.YELLOW)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Client.Color.Red)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Client.Color.Blue)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Client.Color.Black)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Client.Color.Yellow)).toBe(false);
 
       g.initialize_board();
       g.players[0].move(g, "Washington");
       g.players[0].move(g, "New York");
 
       expect(g.players[0].can_treat(g)).toBe(true);
-      expect(g.players[0].can_treat_color(g, Colors.RED)).toBe(false);
-      expect(g.players[0].can_treat_color(g, Colors.BLUE)).toBe(true);
-      expect(g.players[0].can_treat_color(g, Colors.BLACK)).toBe(false);
-      expect(g.players[0].can_treat_color(g, Colors.YELLOW)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Client.Color.Red)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Client.Color.Blue)).toBe(true);
+      expect(g.players[0].can_treat_color(g, Client.Color.Black)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Client.Color.Yellow)).toBe(false);
 
-      expect(g.game_graph["New York"].cubes[Colors.BLUE]).toBe(1);
-      expect(g.cubes[Colors.BLUE]).toBe(19);
-      g.players[0].treat(g, Colors.BLUE);
-      expect(g.game_graph["New York"].cubes[Colors.BLUE]).toBe(0);
-      expect(g.cubes[Colors.BLUE]).toBe(20);
+      expect(g.game_graph["New York"].cubes[Client.Color.Blue]).toBe(1);
+      expect(g.cubes[Client.Color.Blue]).toBe(19);
+      g.players[0].treat(g, Client.Color.Blue);
+      expect(g.game_graph["New York"].cubes[Client.Color.Blue]).toBe(0);
+      expect(g.cubes[Client.Color.Blue]).toBe(20);
     });
   });
 
@@ -1802,18 +1803,18 @@ describe("Player", function() {
       g.players[0].move(g, "New York");
       g.players[0].move(g, "London");
       expect(g.players[0].can_treat(g)).toBe(true);
-      expect(g.players[0].can_treat_color(g, Colors.BLUE)).toBe(true);
-      expect(g.game_graph["London"].cubes[Colors.BLUE]).toBe(3);
-      g.players[0].treat(g, Colors.BLUE);
-      expect(g.game_graph["London"].cubes[Colors.BLUE]).toBe(0);
+      expect(g.players[0].can_treat_color(g, Client.Color.Blue)).toBe(true);
+      expect(g.game_graph["London"].cubes[Client.Color.Blue]).toBe(3);
+      g.players[0].treat(g, Client.Color.Blue);
+      expect(g.game_graph["London"].cubes[Client.Color.Blue]).toBe(0);
 
       g.players[0].move(g, "Jakarta");
       g.players[0].move(g, "Ho Chi Minh City");
       expect(g.players[0].can_treat(g)).toBe(true);
-      expect(g.players[0].can_treat_color(g, Colors.RED)).toBe(true);
-      expect(g.game_graph["Ho Chi Minh City"].cubes[Colors.RED]).toBe(2);
-      g.players[0].treat(g, Colors.RED);
-      expect(g.game_graph["Ho Chi Minh City"].cubes[Colors.RED]).toBe(0);
+      expect(g.players[0].can_treat_color(g, Client.Color.Red)).toBe(true);
+      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(2);
+      g.players[0].treat(g, Client.Color.Red);
+      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(0);
     });
   });
 
@@ -1830,22 +1831,22 @@ describe("Player", function() {
       );
 
       g.initialize_board();
-      g.cured[Colors.BLUE] = 1;
+      g.cured[Client.Color.Blue] = 1;
       g.players[0].move(g, "Washington");
       g.players[0].move(g, "New York");
-      expect(g.game_graph["London"].cubes[Colors.BLUE]).toBe(3);
+      expect(g.game_graph["London"].cubes[Client.Color.Blue]).toBe(3);
       g.players[0].move(g, "London");
       expect(g.players[0].can_treat(g)).toBe(false);
-      expect(g.players[0].can_treat_color(g, Colors.BLUE)).toBe(false);
-      expect(g.game_graph["London"].cubes[Colors.BLUE]).toBe(0);
+      expect(g.players[0].can_treat_color(g, Client.Color.Blue)).toBe(false);
+      expect(g.game_graph["London"].cubes[Client.Color.Blue]).toBe(0);
 
-      g.cured[Colors.RED] = 1;
+      g.cured[Client.Color.Red] = 1;
       g.players[0].move(g, "Jakarta");
-      expect(g.game_graph["Ho Chi Minh City"].cubes[Colors.RED]).toBe(2);
+      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(2);
       g.players[0].move(g, "Ho Chi Minh City");
       expect(g.players[0].can_treat(g)).toBe(false);
-      expect(g.players[0].can_treat_color(g, Colors.RED)).toBe(false);
-      expect(g.game_graph["Ho Chi Minh City"].cubes[Colors.RED]).toBe(0);
+      expect(g.players[0].can_treat_color(g, Client.Color.Red)).toBe(false);
+      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(0);
     });
   });
 
