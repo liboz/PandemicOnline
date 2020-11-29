@@ -26,10 +26,11 @@ import CityNode, {
   renderNode,
   renderNodeText,
 } from "../node/node";
-import { colorNameToHex } from "src/app/utils";
 import { StartGameComponent } from "src/app/start-game/start-game.component";
 import { playerInfo, maybeGeneratePlayerIcons } from "../player/player";
 import { maybeGenerateCubes } from "../disease-cube/diseaseCube";
+import { renderBottomBar } from "../bottom-bar/bottom-bar";
+import { D3ZoomEvent } from "d3";
 
 @Component({
   selector: "app-game",
@@ -45,9 +46,11 @@ export class GameComponent implements OnInit, OnChanges {
   @Input() player_index: number;
 
   features = geo.features;
-  w = 2500;
-  h = 1250;
+  w = 1920;
+  h = 629;
   pixiApp: PIXI.Application;
+  bottomBarCanvas: PIXI.Application;
+
   pixiGraphics: PIXI.Graphics;
 
   minZoom: number;
@@ -101,20 +104,25 @@ export class GameComponent implements OnInit, OnChanges {
     }
   }
 
-  zoomed(event) {
+  zoomed(event: D3ZoomEvent<any, any>) {
     var scale = this.rootProjection.scale();
     var translate = this.rootProjection.translate();
-    var t = event.transform;
-    var tx = translate[0] - t.invertX(translate[0]);
-    var ty = translate[1] * t.k + t.y;
+    var transform = event.transform;
+    var tx = translate[0] - transform.invertX(translate[0]);
+    var ty = translate[1] * transform.k + transform.y;
 
     this.projection
-      .scale(t.k * scale)
+      .scale(transform.k * scale)
       .rotate([this.yaw(tx), 0, 0])
       .translate([translate[0], ty]);
 
     this.renderBase();
     this.renderChanging();
+    renderBottomBar(this.game, this.bottomBarCanvas);
+  }
+
+  invertX(x, eventX) {
+    return x - eventX;
   }
 
   ngOnInit() {
@@ -142,28 +150,47 @@ export class GameComponent implements OnInit, OnChanges {
       this.pixiApp = new PIXI.Application({
         backgroundColor: 0x2a2c39,
         resizeTo: window,
+        antialias: true,
       });
+
+      const topBar = document.getElementById("topBar");
+      const bottomBar = document.getElementById("bottomBar");
+      this.bottomBarCanvas = new PIXI.Application({
+        backgroundColor: 0x2a2c39,
+        resizeTo: bottomBar,
+        antialias: true,
+      });
+
+      /* Investigate perf of this
       const ticker = PIXI.Ticker.shared;
       ticker.autoStart = false;
       ticker.stop();
+      */
     });
     this.pixiApp.renderer.autoDensity = true;
+    this.bottomBarCanvas.renderer.autoDensity = true;
     PIXI.settings.RESOLUTION = 2 * window.devicePixelRatio;
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
     this.elementRef.nativeElement.appendChild(this.pixiApp.view);
+    this.pixiApp.view.id = "main-app";
+    this.pixiApp.view.style.position = "absolute";
+    this.pixiApp.view.style.zIndex = "0";
+    this.elementRef.nativeElement.appendChild(this.bottomBarCanvas.view);
+    this.bottomBarCanvas.view.style.position = "absolute";
+    this.bottomBarCanvas.view.style.zIndex = "1";
+    this.bottomBarCanvas.view.style.bottom = "0";
+
     this.preRender();
     this.renderBase();
     this.renderChanging();
+    renderBottomBar(this.game, this.bottomBarCanvas);
 
     this.pixiApp.renderer.on("resize", () => {
       this.preRender();
       this.renderBase();
       this.renderChanging();
-    });
-
-    this.ngZone.runOutsideAngular(() => {
-      this.loopCubes();
+      renderBottomBar(this.game, this.bottomBarCanvas);
     });
   }
 
@@ -223,7 +250,7 @@ export class GameComponent implements OnInit, OnChanges {
         [Infinity, window.innerHeight],
       ])
       .on("zoom", (event) => this.zoomed(event));
-    d3.select("canvas").call(zoom);
+    d3.select("#main-app").call(zoom);
   }
 
   private renderBase() {
@@ -253,7 +280,6 @@ export class GameComponent implements OnInit, OnChanges {
     }
 
     this.pixiApp.stage.addChild(this.pixiGraphics);
-    this.pixiApp.stage.addListener;
   }
 
   private renderChanging() {
@@ -297,6 +323,8 @@ export class GameComponent implements OnInit, OnChanges {
         this.pixiGraphics.addChild(graphic);
       }
     }
+
+    this.loopCubes();
   }
 
   private regenerateLinksAndNodes(): void {
