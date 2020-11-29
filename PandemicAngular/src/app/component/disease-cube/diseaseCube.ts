@@ -1,4 +1,3 @@
-import { Component, OnInit, Input } from "@angular/core";
 import { Client } from "pandemiccommon/dist/out-tsc";
 import * as PIXI from "pixi.js";
 import { colorNameToHex } from "src/app/utils";
@@ -17,18 +16,17 @@ function flattenCubeMap(cubes: Client.Cubes): Client.Color[] {
   return result;
 }
 
-export function maybeGenerateCubes(node: CityNode): PIXI.Graphics[] {
+export function maybeGenerateCubes(node: CityNode): PIXI.Container {
   const rotationStep = (2 * Math.PI * (Date.now() % 1440)) / 1440;
   const cubes = node.cubes;
-  let count = Number(
-    Object.values(cubes).reduce((a: number, b: number) => a + b, 0)
-  );
-  const result: PIXI.Graphics[] = [];
+  const container = new PIXI.Container();
+  container.x = node.x;
+  container.y = node.y;
   const flattenedCubeMap = flattenCubeMap(cubes);
   const totalCubes = flattenedCubeMap.length;
 
-  const baseX = node.x;
-  const baseY = node.y;
+  const baseX = 0;
+  const baseY = 0;
 
   flattenedCubeMap.forEach((cube, index) => {
     const radians = (2 * Math.PI * index) / totalCubes;
@@ -47,8 +45,8 @@ export function maybeGenerateCubes(node: CityNode): PIXI.Graphics[] {
     if (color) {
       graphics.endFill();
     }
-    result.push(graphics);
+    container.addChild(graphics);
   });
 
-  return result;
+  return container;
 }

@@ -10,7 +10,6 @@ import { HttpClientModule } from "@angular/common/http";
 import { GameComponent } from "./component/game/game.component";
 import { NodeComponent } from "./component/node/node.component";
 import { LinkComponent } from "./component/link/link.component";
-import { DiseaseCubeComponent } from "./component/disease-cube/disease-cube.component";
 import { PlayerHandComponent } from "./component/player-hand/player-hand.component";
 import { ModalComponent } from "./component/modal/modal.component";
 import { ModalService } from "./service/modal.service";
@@ -31,7 +30,6 @@ import { StartGameComponent } from "./start-game/start-game.component";
     GameComponent,
     NodeComponent,
     LinkComponent,
-    DiseaseCubeComponent,
     PlayerHandComponent,
     ModalComponent,
     HomeComponent,

@@ -143,6 +143,9 @@ export class GameComponent implements OnInit, OnChanges {
         backgroundColor: 0x2a2c39,
         resizeTo: window,
       });
+      const ticker = PIXI.Ticker.shared;
+      ticker.autoStart = false;
+      ticker.stop();
     });
     this.pixiApp.renderer.autoDensity = true;
     PIXI.settings.RESOLUTION = 2 * window.devicePixelRatio;
@@ -159,29 +162,20 @@ export class GameComponent implements OnInit, OnChanges {
       this.renderChanging();
     });
 
-    this.loopCubes();
+    this.ngZone.runOutsideAngular(() => {
+      this.loopCubes();
+    });
   }
 
   loopCubes() {
-    setInterval(() => {
-      for (const node of this.nodes) {
-        for (const cube of this.nodeGraphics[node.name].cubes) {
-          this.pixiGraphics.removeChild(cube);
-          cube.destroy();
-        }
-        const cubes = maybeGenerateCubes(node);
-        this.nodeGraphics[node.name].cubes = cubes;
-        for (const cube of this.nodeGraphics[node.name].cubes) {
-          this.pixiGraphics.addChild(cube);
-        }
-
-        this.pixiGraphics.removeChild(this.nodeGraphics[node.name].text);
-        this.nodeGraphics[node.name].text.destroy();
-        const text = renderNodeText(node);
-        this.nodeGraphics[node.name].text = text;
-        this.pixiGraphics.addChild(text);
-      }
-    }, 10);
+    for (const node of this.nodes) {
+      const container = this.nodeGraphics[node.name].cubes;
+      this.pixiApp.ticker.add((delta) => {
+        // rotate the container!
+        // use delta to create frame-independent transform
+        container.rotation -= 0.03 * delta;
+      });
+    }
   }
 
   private maybeShowStartDialog() {
@@ -235,6 +229,7 @@ export class GameComponent implements OnInit, OnChanges {
   private renderBase() {
     this.pixiApp.stage.removeChild(this.pixiGraphics);
     this.pixiGraphics = new PIXI.Graphics();
+    this.pixiGraphics.sortableChildren = true;
 
     this.path = d3
       .geoPath()
@@ -268,15 +263,13 @@ export class GameComponent implements OnInit, OnChanges {
 
       const text = renderNodeText(node);
       this.nodeGraphics[node.name] = {
-        cubes: [],
         players: [],
         mainNode: nodeGraphics,
         text: text,
       };
+      text.zIndex = 10; // show text above cubes
       this.pixiGraphics.addChild(text);
-    }
 
-    for (const node of this.nodes) {
       if (node.hasResearchStation) {
         const graphics = new PIXI.Graphics();
         graphics.lineStyle(3, 0x000000);

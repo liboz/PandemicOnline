@@ -16,7 +16,7 @@ export default interface CityNode {
 
 export interface PIXICityNode {
   researchStation?: PIXI.Graphics;
-  cubes: PIXI.Graphics[];
+  cubes?: PIXI.Container;
   players: PIXI.Graphics[];
   mainNode: PIXI.Graphics;
   text: PIXI.Text;
