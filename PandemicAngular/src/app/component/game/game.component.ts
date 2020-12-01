@@ -47,7 +47,7 @@ export class GameComponent implements OnInit, OnChanges {
 
   features = geo.features;
   w = 1920;
-  h = 629;
+  h = 960;
   pixiApp: PIXI.Application;
   bottomBarCanvas: PIXI.Application;
 
@@ -119,10 +119,6 @@ export class GameComponent implements OnInit, OnChanges {
     this.renderBase();
     this.renderChanging();
     renderBottomBar(this.game, this.bottomBarCanvas);
-  }
-
-  invertX(x, eventX) {
-    return x - eventX;
   }
 
   ngOnInit() {
@@ -237,24 +233,11 @@ export class GameComponent implements OnInit, OnChanges {
       .translate([window.innerWidth / 2, window.innerHeight / 2]);
 
     this.yaw = d3.scaleLinear().domain([0, window.innerWidth]).range([0, 360]);
-
-    var zoom = d3
-      .zoom()
-      .scaleExtent([1, 5])
-      .extent([
-        [0, 0],
-        [window.innerWidth, window.innerHeight],
-      ])
-      .translateExtent([
-        [-Infinity, 0],
-        [Infinity, window.innerHeight],
-      ])
-      .on("zoom", (event) => this.zoomed(event));
-    d3.select("#main-app").call(zoom);
   }
 
   private renderBase() {
     this.pixiApp.stage.removeChild(this.pixiGraphics);
+    this.pixiGraphics?.destroy();
     this.pixiGraphics = new PIXI.Graphics();
     this.pixiGraphics.sortableChildren = true;
 
