@@ -28,8 +28,8 @@ import CityNode, {
 } from "../node/node";
 import { StartGameComponent } from "src/app/start-game/start-game.component";
 import { playerInfo, maybeGeneratePlayerIcons } from "../player/player";
-import { maybeGenerateCubes } from "../disease-cube/diseaseCube";
-import { renderBottomBar } from "../bottom-bar/bottom-bar";
+import { maybeGenerateCubes } from "../disease-cube/disease-cube";
+import { renderBottomBar, width } from "../bottom-bar/bottom-bar";
 import { D3ZoomEvent } from "d3";
 
 @Component({
@@ -46,12 +46,10 @@ export class GameComponent implements OnInit, OnChanges {
   @Input() player_index: number;
 
   features = geo.features;
-  w = 1920;
-  h = 960;
   pixiApp: PIXI.Application;
-  bottomBarCanvas: PIXI.Application;
 
   pixiGraphics: PIXI.Graphics;
+  bottomBar: PIXI.Graphics;
 
   minZoom: number;
   maxZoom: number;
@@ -118,7 +116,9 @@ export class GameComponent implements OnInit, OnChanges {
 
     this.renderBase();
     this.renderChanging();
-    renderBottomBar(this.game, this.bottomBarCanvas);
+    this.pixiApp.stage.removeChild(this.bottomBar);
+    this.bottomBar = renderBottomBar(this.game, this.player_index);
+    this.pixiApp.stage.addChild(this.bottomBar);
   }
 
   ngOnInit() {
@@ -149,14 +149,6 @@ export class GameComponent implements OnInit, OnChanges {
         antialias: true,
       });
 
-      const topBar = document.getElementById("topBar");
-      const bottomBar = document.getElementById("bottomBar");
-      this.bottomBarCanvas = new PIXI.Application({
-        backgroundColor: 0x2a2c39,
-        resizeTo: bottomBar,
-        antialias: true,
-      });
-
       /* Investigate perf of this
       const ticker = PIXI.Ticker.shared;
       ticker.autoStart = false;
@@ -164,7 +156,6 @@ export class GameComponent implements OnInit, OnChanges {
       */
     });
     this.pixiApp.renderer.autoDensity = true;
-    this.bottomBarCanvas.renderer.autoDensity = true;
     PIXI.settings.RESOLUTION = 2 * window.devicePixelRatio;
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
@@ -172,21 +163,21 @@ export class GameComponent implements OnInit, OnChanges {
     this.pixiApp.view.id = "main-app";
     this.pixiApp.view.style.position = "absolute";
     this.pixiApp.view.style.zIndex = "0";
-    this.elementRef.nativeElement.appendChild(this.bottomBarCanvas.view);
-    this.bottomBarCanvas.view.style.position = "absolute";
-    this.bottomBarCanvas.view.style.zIndex = "1";
-    this.bottomBarCanvas.view.style.bottom = "0";
 
     this.preRender();
     this.renderBase();
     this.renderChanging();
-    renderBottomBar(this.game, this.bottomBarCanvas);
+    this.pixiApp.stage.removeChild(this.bottomBar);
+    this.bottomBar = renderBottomBar(this.game, this.player_index);
+    this.pixiApp.stage.addChild(this.bottomBar);
 
     this.pixiApp.renderer.on("resize", () => {
       this.preRender();
       this.renderBase();
       this.renderChanging();
-      renderBottomBar(this.game, this.bottomBarCanvas);
+      this.pixiApp.stage.removeChild(this.bottomBar);
+      this.bottomBar = renderBottomBar(this.game, this.player_index);
+      this.pixiApp.stage.addChild(this.bottomBar);
     });
   }
 
@@ -338,7 +329,7 @@ export class GameComponent implements OnInit, OnChanges {
           // these are cross pacific differences
           let left_diff = Math.min(this.nodes[d.index].x, this.nodes[n].x);
           let right_diff =
-            this.w - Math.max(this.nodes[d.index].x, this.nodes[n].x);
+            width - Math.max(this.nodes[d.index].x, this.nodes[n].x);
           let slope =
             (this.nodes[d.index].y - this.nodes[n].y) /
             (left_diff + right_diff);
@@ -718,10 +709,6 @@ export class GameComponent implements OnInit, OnChanges {
 
   onPass() {
     this.socket.emit("pass");
-  }
-
-  hasStarted() {
-    return this.game?.game_state !== Client.GameState.NotStarted;
   }
 
   mustDiscard() {
