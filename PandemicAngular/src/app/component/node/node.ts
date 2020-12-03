@@ -19,13 +19,18 @@ export interface PIXICityNode {
   cubes?: PIXI.Container;
   players: PIXI.Graphics[];
   mainNode: PIXI.Graphics;
+  container: PIXI.Container;
   text: PIXI.Text;
 }
 
 export function getAllSubelements(node: PIXICityNode): PIXI.Graphics[] {
   const result: PIXI.Graphics[] = [];
   for (const attribute in node) {
-    if (attribute !== "mainNode" && attribute != "text") {
+    if (
+      attribute !== "mainNode" &&
+      attribute != "text" &&
+      attribute != "container"
+    ) {
       const value = node[attribute];
       if (Array.isArray(value)) {
         result.push(...value);
@@ -37,13 +42,14 @@ export function getAllSubelements(node: PIXICityNode): PIXI.Graphics[] {
   return result;
 }
 
-export function renderNode(node: CityNode): PIXI.Graphics {
+export function renderNode(node: CityNode, isMoving: boolean): PIXI.Graphics {
   const graphics = new PIXI.Graphics();
   const color = colorNameToHex(node.color);
   if (color) {
     graphics.lineStyle(5, Number(color));
     graphics.beginFill(Number(color));
   }
+  graphics.alpha = isMoving && !node.isValidDestination ? 0.1 : 1.0;
   graphics.drawCircle(node.x, node.y, 10);
   if (color) {
     graphics.endFill();

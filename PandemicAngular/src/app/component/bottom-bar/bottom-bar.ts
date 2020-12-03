@@ -97,7 +97,8 @@ function generateHand(
 
 export function renderBottomBar(
   game: Client.Game,
-  player_index: number
+  player_index: number,
+  onMove: () => void
 ): PIXI.Graphics | undefined {
   if (hasStarted(game)) {
     const graphics = new PIXI.Graphics();
@@ -106,12 +107,14 @@ export function renderBottomBar(
     graphics.addChild(renderHandArea(game));
 
     const button1 = new Button({
-      label: "Play",
-      x: width / 2,
+      label: "Move",
+      x: width * 0.4,
       y: barBaseHeight,
       width: 200,
-      height: 100,
-      onTap: () => console.log("Play"),
+      height: 75,
+      onTap: () => {
+        onMove();
+      },
     });
     graphics.addChild(button1);
     return graphics;

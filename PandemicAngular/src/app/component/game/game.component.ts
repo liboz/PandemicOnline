@@ -117,11 +117,13 @@ export class GameComponent implements OnInit, OnChanges {
     this.renderBase();
     this.renderChanging();
     this.pixiApp.stage.removeChild(this.bottomBar);
-    this.bottomBar = renderBottomBar(this.game, this.player_index);
+    this.bottomBar = renderBottomBar(this.game, this.player_index, this.onMove);
     this.pixiApp.stage.addChild(this.bottomBar);
   }
 
   ngOnInit() {
+    this.onMove = this.onMove.bind(this);
+
     this.isMoving = false;
     this.selectedCards = new Set();
     this.destroySubscription = this.modalService.destroy$.subscribe(() => {
@@ -168,7 +170,7 @@ export class GameComponent implements OnInit, OnChanges {
     this.renderBase();
     this.renderChanging();
     this.pixiApp.stage.removeChild(this.bottomBar);
-    this.bottomBar = renderBottomBar(this.game, this.player_index);
+    this.bottomBar = renderBottomBar(this.game, this.player_index, this.onMove);
     this.pixiApp.stage.addChild(this.bottomBar);
 
     this.pixiApp.renderer.on("resize", () => {
@@ -176,7 +178,11 @@ export class GameComponent implements OnInit, OnChanges {
       this.renderBase();
       this.renderChanging();
       this.pixiApp.stage.removeChild(this.bottomBar);
-      this.bottomBar = renderBottomBar(this.game, this.player_index);
+      this.bottomBar = renderBottomBar(
+        this.game,
+        this.player_index,
+        this.onMove
+      );
       this.pixiApp.stage.addChild(this.bottomBar);
     });
   }
@@ -256,19 +262,41 @@ export class GameComponent implements OnInit, OnChanges {
     this.pixiApp.stage.addChild(this.pixiGraphics);
   }
 
+  private renderOnlyNode() {
+    for (const node of this.nodes) {
+      if (this.nodeGraphics[node.name]) {
+        this.nodeGraphics[node.name].container.removeChild(
+          this.nodeGraphics[node.name].mainNode
+        );
+      }
+      const nodeGraphics = renderNode(node, this.isMoving);
+      this.nodeGraphics[node.name].mainNode = nodeGraphics;
+      if (this.nodeGraphics[node.name]) {
+        this.nodeGraphics[node.name].container.addChild(nodeGraphics);
+      }
+    }
+  }
+
   private renderChanging() {
     for (const node of this.nodes) {
-      const nodeGraphics = renderNode(node);
-      this.pixiGraphics.addChild(nodeGraphics);
+      if (this.nodeGraphics[node.name]) {
+        this.pixiGraphics.removeChild(this.nodeGraphics[node.name].container);
+      }
+      const container = new PIXI.Container();
+      container.sortableChildren = true;
+      const nodeGraphics = renderNode(node, this.isMoving);
+      this.pixiGraphics.addChild(container);
+      container.addChild(nodeGraphics);
 
       const text = renderNodeText(node);
       this.nodeGraphics[node.name] = {
         players: [],
         mainNode: nodeGraphics,
-        text: text,
+        container,
+        text,
       };
       text.zIndex = 10; // show text above cubes
-      this.pixiGraphics.addChild(text);
+      container.addChild(text);
 
       if (node.hasResearchStation) {
         const graphics = new PIXI.Graphics();
@@ -294,7 +322,7 @@ export class GameComponent implements OnInit, OnChanges {
 
     for (const graphics of Object.values(this.nodeGraphics)) {
       for (const graphic of getAllSubelements(graphics)) {
-        this.pixiGraphics.addChild(graphic);
+        graphics.container.addChild(graphic);
       }
     }
 
@@ -422,6 +450,7 @@ export class GameComponent implements OnInit, OnChanges {
 
   onMove() {
     this.isMoving = !this.isMoving;
+    this.renderOnlyNode();
   }
 
   onBuild() {
