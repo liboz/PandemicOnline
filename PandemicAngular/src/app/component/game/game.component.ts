@@ -81,6 +81,19 @@ export class GameComponent implements OnInit, OnChanges {
     private elementRef: ElementRef
   ) {}
 
+  renderBottomBarFull() {
+    this.pixiApp.stage.removeChild(this.bottomBar);
+    this.bottomBar = renderBottomBar(
+      this.game,
+      this.player_index,
+      this.onMove,
+      this.isMoving,
+      this.game.player_index !== this.player_index ||
+        (this.cannotDoPrimaryAction() && !this.isMoving)
+    );
+    this.pixiApp.stage.addChild(this.bottomBar);
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     // TODO: HANDLE
     /*
@@ -116,9 +129,7 @@ export class GameComponent implements OnInit, OnChanges {
 
     this.renderBase();
     this.renderChanging();
-    this.pixiApp.stage.removeChild(this.bottomBar);
-    this.bottomBar = renderBottomBar(this.game, this.player_index, this.onMove);
-    this.pixiApp.stage.addChild(this.bottomBar);
+    this.renderBottomBarFull();
   }
 
   ngOnInit() {
@@ -169,21 +180,13 @@ export class GameComponent implements OnInit, OnChanges {
     this.preRender();
     this.renderBase();
     this.renderChanging();
-    this.pixiApp.stage.removeChild(this.bottomBar);
-    this.bottomBar = renderBottomBar(this.game, this.player_index, this.onMove);
-    this.pixiApp.stage.addChild(this.bottomBar);
+    this.renderBottomBarFull();
 
     this.pixiApp.renderer.on("resize", () => {
       this.preRender();
       this.renderBase();
       this.renderChanging();
-      this.pixiApp.stage.removeChild(this.bottomBar);
-      this.bottomBar = renderBottomBar(
-        this.game,
-        this.player_index,
-        this.onMove
-      );
-      this.pixiApp.stage.addChild(this.bottomBar);
+      this.renderBottomBarFull();
     });
   }
 
@@ -451,6 +454,7 @@ export class GameComponent implements OnInit, OnChanges {
   onMove() {
     this.isMoving = !this.isMoving;
     this.renderOnlyNode();
+    this.renderBottomBarFull();
   }
 
   onBuild() {
@@ -795,6 +799,15 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   cannotDoPrimaryAction() {
+    console.log(
+      this.isMoving,
+      this.treatColorChoices,
+      this.shareCardChoices,
+      this.cureColorCards,
+      this.dispatcherMoveOtherPlayer,
+      this.game.turns_left,
+      this.game.game_state
+    );
     return (
       this.isMoving ||
       this.treatColorChoices ||

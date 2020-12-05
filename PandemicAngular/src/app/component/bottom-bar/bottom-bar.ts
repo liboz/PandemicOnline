@@ -98,7 +98,9 @@ function generateHand(
 export function renderBottomBar(
   game: Client.Game,
   player_index: number,
-  onMove: () => void
+  onMove: () => void,
+  isMoving: boolean,
+  moveButtonDisabled: boolean
 ): PIXI.Graphics | undefined {
   if (hasStarted(game)) {
     const graphics = new PIXI.Graphics();
@@ -106,17 +108,18 @@ export function renderBottomBar(
 
     graphics.addChild(renderHandArea(game));
 
-    const button1 = new Button({
-      label: "Move",
+    const moveButton = new Button({
+      label: isMoving ? "Cancel" : "Move",
       x: width * 0.4,
       y: barBaseHeight,
       width: 200,
       height: 75,
+      disabled: moveButtonDisabled,
       onTap: () => {
         onMove();
       },
     });
-    graphics.addChild(button1);
+    graphics.addChild(moveButton);
     return graphics;
   }
 }
