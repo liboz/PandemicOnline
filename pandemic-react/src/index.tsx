@@ -3,10 +3,12 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import AppRouter from "./AppRouter";
+import ModalService from "./modal/Modal";
 
 ReactDOM.render(
   <React.StrictMode>
     <AppRouter></AppRouter>
+    <ModalService></ModalService>
   </React.StrictMode>,
   document.getElementById("root")
 );
