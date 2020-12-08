@@ -1,8 +1,9 @@
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import * as PIXI from "pixi.js";
+import { CustomPIXIComponent } from "react-pixi-fiber";
 import { colorNameToHex } from "../utils";
 
-export default interface CityNode {
+export interface CityNodeData {
   id: number;
   x: number;
   y: number;
@@ -44,7 +45,10 @@ export function getAllSubelements(node: PIXICityNode): PIXI.Graphics[] {
 }
 */
 
-export function renderNode(node: CityNode, isMoving: boolean): PIXI.Graphics {
+export function renderNode(
+  node: CityNodeData,
+  isMoving: boolean
+): PIXI.Graphics {
   const graphics = new PIXI.Graphics();
   const color = colorNameToHex(node.color);
   if (color) {
@@ -59,7 +63,7 @@ export function renderNode(node: CityNode, isMoving: boolean): PIXI.Graphics {
   return graphics;
 }
 
-export function renderNodeText(node: CityNode): PIXI.Text {
+export function renderNodeText(node: CityNodeData): PIXI.Text {
   var text = new PIXI.Text(node.name, {
     fill: 0xffffff,
     fontSize: 18,
@@ -71,3 +75,36 @@ export function renderNodeText(node: CityNode): PIXI.Text {
   text.y = node.y - 30;
   return text;
 }
+
+interface CityNodeProps {
+  node: CityNodeData;
+  isMoving: boolean;
+}
+
+const TYPE = "CityNodes";
+export const behavior = {
+  customDisplayObject: (props: CityNodeProps) => new PIXI.Graphics(),
+  customApplyProps: function (
+    instance: PIXI.Graphics,
+    oldProps: CityNodeProps,
+    newProps: CityNodeProps
+  ) {
+    const { node, isMoving } = newProps;
+    if (
+      oldProps?.node?.isValidDestination !== node.isValidDestination ||
+      oldProps.isMoving !== newProps.isMoving
+    ) {
+      const color = colorNameToHex(node.color);
+      if (color) {
+        instance.lineStyle(5, Number(color));
+        instance.beginFill(Number(color));
+      }
+      instance.alpha = isMoving && !node.isValidDestination ? 0.1 : 1.0;
+      instance.drawCircle(node.x, node.y, 10);
+      if (color) {
+        instance.endFill();
+      }
+    }
+  },
+};
+export default CustomPIXIComponent(behavior, TYPE);

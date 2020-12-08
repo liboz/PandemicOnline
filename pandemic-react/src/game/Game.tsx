@@ -8,11 +8,12 @@ import {
 } from "../modal/Modal";
 import { Subscription } from "rxjs";
 import * as PIXI from "pixi.js";
-import { Stage } from "react-pixi-fiber";
+import { Container, Stage, Text } from "react-pixi-fiber";
 import * as d3 from "d3";
-import CityNode, { PIXICityNode } from "../node/node";
+import CityNode, { CityNodeData, PIXICityNode } from "../node/CityNode";
 import Link from "../link/link";
 import GeoBackground from "./GeoBackground";
+import ResearchStation from "../node/ResearchStation";
 
 export const width = 1920;
 export const height = 960;
@@ -30,7 +31,7 @@ interface GameComponentState {
   shareCardChoices: ShareCard[] | null;
   dispatcherMoveOtherPlayer?: number;
   links?: Link[];
-  nodes?: CityNode[];
+  nodes?: CityNodeData[];
 }
 
 class GameComponent extends React.Component<
@@ -39,7 +40,6 @@ class GameComponent extends React.Component<
 > {
   pixiApp!: PIXI.Application;
 
-  nodeGraphics: Record<string, PIXICityNode> = {};
   treatColorChoices: string[] | null = null;
   cureColorCards: string[] | null = null;
   destroySubscription?: Subscription;
@@ -90,10 +90,11 @@ class GameComponent extends React.Component<
     this.pixiApp.view.style.position = "absolute";
     this.pixiApp.view.style.zIndex = "0";
 
-    this.preRender();
-
     this.pixiApp.renderer.on("resize", () => {
+      /*
       this.preRender();
+      this.regenerateLinksAndNodes();
+      */
     });
 
     this.elementRef.current!.appendChild(this.pixiApp.view);
@@ -115,7 +116,8 @@ class GameComponent extends React.Component<
   }
 
   componentDidUpdate(prevProps: GameComponentProps) {
-    if (this.props.game !== prevProps.game) {
+    if (prevProps.game === undefined) {
+      this.preRender();
       const result = this.regenerateLinksAndNodes();
       if (result) {
         const [nodes, links] = result;
@@ -140,7 +142,7 @@ class GameComponent extends React.Component<
     this.yaw = d3.scaleLinear().domain([0, window.innerWidth]).range([0, 360]);
   }
 
-  private regenerateLinksAndNodes(): [CityNode[], Link[]] | undefined {
+  private regenerateLinksAndNodes(): [CityNodeData[], Link[]] | undefined {
     const { game } = this.props;
     if (game) {
       let values = Object.values(game.game_graph);
@@ -154,7 +156,7 @@ class GameComponent extends React.Component<
           cubes: d.cubes,
           hasResearchStation: d.hasResearchStation,
           players: d.players,
-        } as CityNode;
+        } as CityNodeData;
       });
 
       if (game?.valid_final_destinations) {
@@ -200,15 +202,67 @@ class GameComponent extends React.Component<
     return;
   }
 
+  /*
+  if (node.hasResearchStation) {
+        const graphics = new PIXI.Graphics();
+        graphics.lineStyle(3, 0x000000);
+        graphics.beginFill(0xffffff);
+        const baseX = node.x;
+        const baseY = node.y;
+        graphics.drawPolygon([
+          new PIXI.Point(baseX + 10, baseY + 5),
+          new PIXI.Point(baseX, baseY + 20),
+          new PIXI.Point(baseX, baseY + 30),
+          new PIXI.Point(baseX + 20, baseY + 30),
+          new PIXI.Point(baseX + 20, baseY + 20),
+        ]);
+        graphics.endFill();
+        this.nodeGraphics[node.name].researchStation = graphics;
+      }
+      const playerIcons = maybeGeneratePlayerIcons(node);
+      this.nodeGraphics[node.name].players = playerIcons;
+      const cubes = maybeGenerateCubes(node);
+      this.nodeGraphics[node.name].cubes = cubes;
+  */
+
   render() {
+    console.log(this.state.nodes);
     return (
       <div ref={this.elementRef}>
         {this.props.game && this.state.links && (
           <Stage app={this.pixiApp}>
-            <GeoBackground
-              projection={this.projection}
-              links={this.state.links}
-            />
+            <Container>
+              <GeoBackground
+                projection={this.projection}
+                links={this.state.links}
+              />
+              {this.state.nodes?.map((node) => {
+                return (
+                  <Container sortableChildren={true}>
+                    <CityNode
+                      node={node}
+                      isMoving={this.state.isMoving}
+                    ></CityNode>
+                    <Text
+                      zIndex={10}
+                      style={{
+                        fill: 0xffffff,
+                        fontSize: 18,
+                        stroke: "black",
+                        strokeThickness: 3,
+                        align: "center",
+                      }}
+                      text={node.name}
+                      x={node.x - 30}
+                      y={node.y - 30}
+                    ></Text>
+                    {node.hasResearchStation && (
+                      <ResearchStation node={node}></ResearchStation>
+                    )}
+                  </Container>
+                );
+              })}
+            </Container>
           </Stage>
         )}
       </div>
