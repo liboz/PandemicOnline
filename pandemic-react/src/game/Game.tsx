@@ -14,6 +14,9 @@ import CityNode, { CityNodeData, PIXICityNode } from "../node/CityNode";
 import Link from "../link/link";
 import GeoBackground from "./GeoBackground";
 import ResearchStation from "../node/ResearchStation";
+import Player from "../player/Player";
+import Cubes from "../cubes/Cubes";
+import CubeContainer from "../cubes/CubeContainer";
 
 export const width = 1920;
 export const height = 960;
@@ -202,29 +205,6 @@ class GameComponent extends React.Component<
     return;
   }
 
-  /*
-  if (node.hasResearchStation) {
-        const graphics = new PIXI.Graphics();
-        graphics.lineStyle(3, 0x000000);
-        graphics.beginFill(0xffffff);
-        const baseX = node.x;
-        const baseY = node.y;
-        graphics.drawPolygon([
-          new PIXI.Point(baseX + 10, baseY + 5),
-          new PIXI.Point(baseX, baseY + 20),
-          new PIXI.Point(baseX, baseY + 30),
-          new PIXI.Point(baseX + 20, baseY + 30),
-          new PIXI.Point(baseX + 20, baseY + 20),
-        ]);
-        graphics.endFill();
-        this.nodeGraphics[node.name].researchStation = graphics;
-      }
-      const playerIcons = maybeGeneratePlayerIcons(node);
-      this.nodeGraphics[node.name].players = playerIcons;
-      const cubes = maybeGenerateCubes(node);
-      this.nodeGraphics[node.name].cubes = cubes;
-  */
-
   render() {
     console.log(this.state.nodes);
     return (
@@ -259,6 +239,8 @@ class GameComponent extends React.Component<
                     {node.hasResearchStation && (
                       <ResearchStation node={node}></ResearchStation>
                     )}
+                    <CubeContainer node={node}></CubeContainer>
+                    <Player node={node}></Player>
                   </Container>
                 );
               })}
