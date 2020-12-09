@@ -1,7 +1,7 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
 import { joinAs } from "../modal/Modal";
-import { formatPlayer } from "../utils";
+import { formatPlayer, hasStarted } from "../utils";
 
 interface JoinComponentProps {
   game: Client.Game;
@@ -23,11 +23,6 @@ export class JoinComponent extends React.Component<
     super(props);
     this.state = { playerName: "", selectedRole: "" };
     this.joinGame = this.joinGame.bind(this);
-  }
-
-  hasStarted() {
-    const { game } = this.props;
-    return game && game.game_state !== Client.GameState.NotStarted;
   }
 
   notEnded() {
@@ -75,7 +70,7 @@ export class JoinComponent extends React.Component<
   render() {
     const { game, roles } = this.props;
 
-    if (this.hasStarted() && this.notEnded()) {
+    if (hasStarted(game) && this.notEnded()) {
       return (
         <>
           Join Game as:{" "}
@@ -90,7 +85,7 @@ export class JoinComponent extends React.Component<
           })}
         </>
       );
-    } else if (!this.hasStarted()) {
+    } else if (!hasStarted(game)) {
       return (
         <>
           <div>

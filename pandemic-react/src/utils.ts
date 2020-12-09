@@ -155,3 +155,7 @@ export function colorNameToHex(color: string) {
   }
   return false;
 }
+
+export function hasStarted(game: Client.Game) {
+  return game?.game_state !== Client.GameState.NotStarted;
+}

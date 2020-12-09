@@ -17,9 +17,11 @@ import ResearchStation from "../node/ResearchStation";
 import Player from "../player/Player";
 import Cubes from "../cubes/Cubes";
 import CubeContainer from "../cubes/CubeContainer";
+import BottomBar from "../bottom-bar/BottomBar";
 
 export const width = 1920;
 export const height = 960;
+export const barBaseHeight = height - 100;
 
 interface GameComponentProps {
   game?: Client.Game;
@@ -245,6 +247,10 @@ class GameComponent extends React.Component<
                 );
               })}
             </Container>
+            <BottomBar
+              game={this.props.game}
+              player_index={this.props.player_index}
+            ></BottomBar>
           </Stage>
         )}
       </div>
@@ -387,36 +393,6 @@ export class GameComponent1 {
 
   
 
-  private renderBase() {
-    this.pixiApp.stage.removeChild(this.pixiGraphics);
-    this.pixiGraphics?.destroy();
-    this.pixiGraphics = new PIXI.Graphics();
-    this.pixiGraphics.sortableChildren = true;
-
-    this.path = d3
-      .geoPath()
-      .projection(this.projection)
-      .context(this.pixiGraphics as any);
-
-    // generate features
-    for (const feature of this.features) {
-      this.pixiGraphics.beginFill(0x8c8c8d, 1);
-      this.pixiGraphics.lineStyle(1, 0x2a2c39, 1);
-      this.path(feature);
-      this.pixiGraphics.endFill();
-    }
-
-    // generate links/nodes
-    this.regenerateLinksAndNodes();
-    for (const link of this.links) {
-      this.pixiGraphics.lineStyle(5, 0xe5c869);
-      this.pixiGraphics.moveTo(link.source.x, link.source.y);
-      this.pixiGraphics.lineTo(link.target.x, link.target.y);
-    }
-
-    this.pixiApp.stage.addChild(this.pixiGraphics);
-  }
-
   private renderOnlyNode() {
     for (const node of this.nodes) {
       if (this.nodeGraphics[node.name]) {
@@ -432,113 +408,6 @@ export class GameComponent1 {
     }
   }
 
-  private renderChanging() {
-    for (const node of this.nodes) {
-      if (this.nodeGraphics[node.name]) {
-        this.pixiGraphics.removeChild(this.nodeGraphics[node.name].container);
-      }
-      const container = new PIXI.Container();
-      container.sortableChildren = true;
-      const nodeGraphics = renderNode(node, this.isMoving);
-      this.pixiGraphics.addChild(container);
-      container.addChild(nodeGraphics);
-
-      const text = renderNodeText(node);
-      this.nodeGraphics[node.name] = {
-        players: [],
-        mainNode: nodeGraphics,
-        container,
-        text,
-      };
-      text.zIndex = 10; // show text above cubes
-      container.addChild(text);
-
-      if (node.hasResearchStation) {
-        const graphics = new PIXI.Graphics();
-        graphics.lineStyle(3, 0x000000);
-        graphics.beginFill(0xffffff);
-        const baseX = node.x;
-        const baseY = node.y;
-        graphics.drawPolygon([
-          new PIXI.Point(baseX + 10, baseY + 5),
-          new PIXI.Point(baseX, baseY + 20),
-          new PIXI.Point(baseX, baseY + 30),
-          new PIXI.Point(baseX + 20, baseY + 30),
-          new PIXI.Point(baseX + 20, baseY + 20),
-        ]);
-        graphics.endFill();
-        this.nodeGraphics[node.name].researchStation = graphics;
-      }
-      const playerIcons = maybeGeneratePlayerIcons(node);
-      this.nodeGraphics[node.name].players = playerIcons;
-      const cubes = maybeGenerateCubes(node);
-      this.nodeGraphics[node.name].cubes = cubes;
-    }
-
-    for (const graphics of Object.values(this.nodeGraphics)) {
-      for (const graphic of getAllSubelements(graphics)) {
-        graphics.container.addChild(graphic);
-      }
-    }
-
-    this.loopCubes();
-  }
-
-  private regenerateLinksAndNodes(): void {
-    let values = Object.values(this.game.game_graph);
-    this.nodes = values.map((d) => {
-      return {
-        id: d.index,
-        x: this.projection(d.location)[0],
-        y: this.projection(d.location)[1],
-        color: d.color,
-        name: d.name,
-        cubes: d.cubes,
-        hasResearchStation: d.hasResearchStation,
-        players: d.players,
-      };
-    });
-
-    if (this.game.valid_final_destinations) {
-      this.game.valid_final_destinations.forEach((c) => {
-        this.nodes[c].isValidDestination = true;
-      });
-    }
-
-    this.links = [];
-    values.forEach((d) => {
-      d.neighbors.forEach((n) => {
-        if (d.location[0] * values[n].location[0] < -10000) {
-          // these are cross pacific differences
-          let left_diff = Math.min(this.nodes[d.index].x, this.nodes[n].x);
-          let right_diff =
-            width - Math.max(this.nodes[d.index].x, this.nodes[n].x);
-          let slope =
-            (this.nodes[d.index].y - this.nodes[n].y) /
-            (left_diff + right_diff);
-          if (d.location[0] < 0) {
-            this.links.push({
-              source: this.nodes[d.index],
-              target: { x: 0, y: this.nodes[d.index].y - slope * left_diff },
-            }); // western hemisphere
-          } else {
-            this.links.push({
-              source: this.nodes[d.index],
-              target: {
-                x: 3000,
-                y: this.nodes[d.index].y - slope * right_diff,
-              },
-            }); // eastern hemisphere
-          }
-        } else {
-          this.links.push({
-            source: this.nodes[d.index],
-            target: this.nodes[n],
-          });
-        }
-      });
-    });
-  }
 
   onSelectedNode(selectedNode: any) {
     if (this.isMoving && selectedNode.isValidDestination) {

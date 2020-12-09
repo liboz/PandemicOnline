@@ -1,4 +1,3 @@
-import { Client } from "pandemiccommon/dist/out-tsc";
 import * as PIXI from "pixi.js";
 import React from "react";
 import {
@@ -8,7 +7,6 @@ import {
   withApp,
 } from "react-pixi-fiber";
 import { CityNodeData } from "../node/CityNode";
-import { colorNameToHex } from "../utils";
 import Cubes from "./Cubes";
 
 interface CubeProps {
