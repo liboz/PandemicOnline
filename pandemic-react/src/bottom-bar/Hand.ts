@@ -28,7 +28,12 @@ function generateHand(
     const hexColor = Number(colorNameToHex(color));
     graphics.beginFill(hexColor);
     graphics.lineStyle(2, 0xffffff, 0.3);
-    graphics.drawRect(10, baseY + 2.5, 10, 10);
+    graphics.drawRect(
+      index >= 4 ? widthAllowed / 2 + 10 : 10,
+      baseY + 2.5,
+      10,
+      10
+    );
     graphics.endFill();
     const cityName = new PIXI.Text(card, { fontSize: 15 });
     cityName.x = index >= 4 ? widthAllowed / 2 + 25 : 25;
