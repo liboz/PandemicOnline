@@ -55,6 +55,8 @@ export const behavior = {
   ) {
     const { game, containerY } = newProps;
     if (oldProps.game?.players != game?.players) {
+      instance.clear();
+      instance.removeChildren();
       instance.beginFill(0x3e494b);
       instance.lineStyle(4, 0x0, 0.3);
       instance.drawRect(0, 0, width / 6, barBaseHeight);
