@@ -19,7 +19,6 @@ export const behavior = {
     oldProps: GeoBackgroundProps,
     newProps: GeoBackgroundProps
   ) {
-    console.log(oldProps, newProps);
     const { projection, links } = newProps;
     const path: any = d3
       .geoPath()

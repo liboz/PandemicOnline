@@ -83,7 +83,20 @@ interface CityNodeProps {
 
 const TYPE = "CityNodes";
 export const behavior = {
-  customDisplayObject: (props: CityNodeProps) => new PIXI.Graphics(),
+  customDisplayObject: (props: CityNodeProps) => {
+    const instance = new PIXI.Graphics();
+    const { node } = props;
+    const color = colorNameToHex(node.color);
+    if (color) {
+      instance.lineStyle(5, Number(color));
+      instance.beginFill(Number(color));
+    }
+    instance.drawCircle(node.x, node.y, 10);
+    if (color) {
+      instance.endFill();
+    }
+    return instance;
+  },
   customApplyProps: function (
     instance: PIXI.Graphics,
     oldProps: CityNodeProps,
@@ -94,16 +107,7 @@ export const behavior = {
       oldProps?.node?.isValidDestination !== node.isValidDestination ||
       oldProps.isMoving !== newProps.isMoving
     ) {
-      const color = colorNameToHex(node.color);
-      if (color) {
-        instance.lineStyle(5, Number(color));
-        instance.beginFill(Number(color));
-      }
       instance.alpha = isMoving && !node.isValidDestination ? 0.1 : 1.0;
-      instance.drawCircle(node.x, node.y, 10);
-      if (color) {
-        instance.endFill();
-      }
     }
   },
 };

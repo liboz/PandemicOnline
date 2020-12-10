@@ -31,6 +31,7 @@ export const behavior = {
   ) {
     const { node } = newProps;
     if (oldProps.node?.cubes !== node.cubes) {
+      instance.clear();
       const rotationStep = (2 * Math.PI * (Date.now() % 1440)) / 1440;
       const cubes = node.cubes;
       const flattenedCubeMap = flattenCubeMap(cubes);

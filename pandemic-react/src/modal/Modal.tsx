@@ -62,6 +62,9 @@ export default class ModalService extends React.Component<
       visible: false,
     };
     this.destroy = this.destroy.bind(this);
+  }
+
+  componentDidMount() {
     component$.subscribe((newComponent) => {
       this.setState({ component: newComponent(this.destroy), visible: true });
     });

@@ -23,6 +23,7 @@ export const behavior = {
   ) {
     const { node } = newProps;
     if (oldProps.node?.players !== node.players) {
+      instance.clear();
       const intervalSize = 28 / (node.players.length + 1);
 
       node?.players.forEach((playerIndex, index) => {

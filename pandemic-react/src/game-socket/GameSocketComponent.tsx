@@ -167,6 +167,7 @@ class GameSocketComponent extends React.Component<
 
   render() {
     const { game, socket, player_index, player_name } = this.state;
+    console.log(game);
     return (
       <Game
         game={game}

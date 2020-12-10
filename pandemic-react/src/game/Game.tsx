@@ -5,6 +5,7 @@ import {
   destroy$,
   destroyEvent,
   dispatcherMoveTarget$,
+  nextComponent,
 } from "../modal/Modal";
 import { Subscription } from "rxjs";
 import * as PIXI from "pixi.js";
@@ -18,6 +19,7 @@ import Player from "../player/Player";
 import Cubes from "../cubes/Cubes";
 import CubeContainer from "../cubes/CubeContainer";
 import BottomBar from "../bottom-bar/BottomBar";
+import { MoveChoiceSelectorComponent } from "../move-choice-selector/MoveChoiceSelectorComponent";
 
 export const width = 1920;
 export const height = 960;
@@ -30,11 +32,13 @@ interface GameComponentProps {
   player_index?: number;
 }
 
-interface GameComponentState {
+export interface GameComponentState {
   isMoving: boolean;
   selectedCards: Set<number>;
   shareCardChoices: ShareCard[] | null;
   dispatcherMoveOtherPlayer?: number;
+  cureColorCards: string[] | null;
+  treatColorChoices: string[] | null;
   links?: Link[];
   nodes?: CityNodeData[];
 }
@@ -44,9 +48,6 @@ class GameComponent extends React.Component<
   GameComponentState
 > {
   pixiApp!: PIXI.Application;
-
-  treatColorChoices: string[] | null = null;
-  cureColorCards: string[] | null = null;
   destroySubscription?: Subscription;
   clearShareCardsSubscription?: Subscription;
   dispatcherMoveSubscription?: Subscription;
@@ -68,11 +69,11 @@ class GameComponent extends React.Component<
       isMoving: false,
       selectedCards: new Set(),
       shareCardChoices: null,
+      cureColorCards: null,
+      treatColorChoices: null,
     };
-
-    console.log(window);
-
     this.elementRef = React.createRef<HTMLDivElement>();
+    this.onMove = this.onMove.bind(this);
   }
 
   componentDidMount() {
@@ -121,14 +122,23 @@ class GameComponent extends React.Component<
   }
 
   componentDidUpdate(prevProps: GameComponentProps) {
+    const { game } = this.props;
     if (prevProps.game === undefined) {
       this.preRender();
-      const result = this.regenerateLinksAndNodes();
-      if (result) {
-        const [nodes, links] = result;
-        this.setState({ nodes, links });
+      const nodes = this.regenerateNodes();
+      const links = this.regenerateLinks(nodes);
+      this.setState({ nodes, links });
+    } else {
+      if (prevProps.game?.game_graph !== game?.game_graph) {
+        const nodes = this.regenerateNodes();
+        this.setState({ nodes });
       }
     }
+  }
+
+  onMove() {
+    const { isMoving } = this.state;
+    this.setState({ isMoving: !isMoving });
   }
 
   private preRender() {
@@ -147,7 +157,7 @@ class GameComponent extends React.Component<
     this.yaw = d3.scaleLinear().domain([0, window.innerWidth]).range([0, 360]);
   }
 
-  private regenerateLinksAndNodes(): [CityNodeData[], Link[]] | undefined {
+  private regenerateNodes(): CityNodeData[] | undefined {
     const { game } = this.props;
     if (game) {
       let values = Object.values(game.game_graph);
@@ -169,6 +179,15 @@ class GameComponent extends React.Component<
           nodes[c].isValidDestination = true;
         });
       }
+      return nodes;
+    }
+    return;
+  }
+
+  private regenerateLinks(nodes?: CityNodeData[]): Link[] | undefined {
+    const { game } = this.props;
+    if (game && nodes) {
+      let values = Object.values(game.game_graph);
 
       const links: Link[] = [];
       values.forEach((d) => {
@@ -202,13 +221,70 @@ class GameComponent extends React.Component<
         });
       });
 
-      return [nodes, links];
+      return links;
     }
     return;
   }
 
+  onSelectedNode(selectedNode: CityNodeData) {
+    const { isMoving } = this.state;
+    const { game, socket } = this.props;
+    if (game && socket && isMoving && selectedNode.isValidDestination) {
+      let curr_player = game.players[game.player_index];
+      let curr_city =
+        game.game_graph[game.game_graph_index[curr_player.location]];
+      let target_city =
+        game.game_graph[game.game_graph_index[selectedNode.name]];
+      let neighbors = curr_city.neighbors;
+      if (
+        neighbors.includes(selectedNode.id) ||
+        (curr_city.hasResearchStation && target_city.hasResearchStation)
+      ) {
+        this.moveEmit(selectedNode);
+        this.setState({ isMoving: false });
+      } else {
+        // choice 1 = direct, choice 2 = charter, choice 3 = operations expert
+        let choices = [false, false, false];
+        if (curr_player.hand.includes(selectedNode.name)) {
+          choices[0] = true;
+        }
+        if (game.can_charter_flight) {
+          choices[1] = true;
+        }
+        if (game.can_operations_expert_move) {
+          choices[2] = true;
+        }
+        if (choices[2] || choices.reduce((a, b) => (b ? a + 1 : a), 0) > 1) {
+          nextComponent((destroy: () => void) => {
+            const props = {
+              destroy,
+              game: game,
+              hand: curr_player.hand,
+              socket: socket,
+              canDirect: choices[0],
+              canCharter: choices[1],
+              canOperationsExpertMove: choices[2],
+              currLocation: curr_city.name,
+              targetLocation: target_city.name,
+            };
+            return React.createElement(MoveChoiceSelectorComponent, props);
+          });
+        } else {
+          this.moveEmit(selectedNode);
+          this.setState({ isMoving: false });
+        }
+      }
+    }
+  }
+
+  moveEmit(selectedNode: CityNodeData) {
+    const { socket } = this.props;
+    socket?.emit(Client.EventName.Move, selectedNode.name, () => {
+      console.log(`move to ${selectedNode.name} success callbacked`);
+    });
+  }
+
   render() {
-    console.log(this.state.nodes);
     return (
       <div ref={this.elementRef}>
         {this.props.game && this.state.links && (
@@ -221,10 +297,16 @@ class GameComponent extends React.Component<
               {this.state.nodes?.map((node) => {
                 return (
                   <Container sortableChildren={true}>
-                    <CityNode
-                      node={node}
-                      isMoving={this.state.isMoving}
-                    ></CityNode>
+                    <Container
+                      interactive={true}
+                      pointerdown={() => this.onSelectedNode(node)}
+                    >
+                      <CityNode
+                        node={node}
+                        isMoving={this.state.isMoving}
+                      ></CityNode>
+                    </Container>
+
                     <Text
                       zIndex={10}
                       style={{
@@ -248,6 +330,8 @@ class GameComponent extends React.Component<
               })}
             </Container>
             <BottomBar
+              state={this.state}
+              onMove={this.onMove}
               game={this.props.game}
               player_index={this.props.player_index}
             ></BottomBar>
@@ -408,63 +492,6 @@ export class GameComponent1 {
     }
   }
 
-
-  onSelectedNode(selectedNode: any) {
-    if (this.isMoving && selectedNode.isValidDestination) {
-      let curr_player = this.game.players[this.game.player_index];
-      let curr_city = this.game.game_graph[
-        this.game.game_graph_index[curr_player.location]
-      ];
-      let target_city = this.game.game_graph[
-        this.game.game_graph_index[selectedNode.name]
-      ];
-      let neighbors = curr_city.neighbors;
-      if (
-        neighbors.includes(selectedNode.id) ||
-        (curr_city.hasResearchStation && target_city.hasResearchStation)
-      ) {
-        this.moveEmit(selectedNode);
-        this.isMoving = false;
-      } else {
-        // choice 1 = direct, choice 2 = charter, choice 3 = operations expert
-        let choices = [false, false, false];
-        if (curr_player.hand.includes(selectedNode.name)) {
-          choices[0] = true;
-        }
-        if (this.game.can_charter_flight) {
-          choices[1] = true;
-        }
-        if (this.game.can_operations_expert_move) {
-          choices[2] = true;
-        }
-        if (choices[2] || choices.reduce((a, b) => (b ? a + 1 : a), 0) > 1) {
-          this.modalService.init(
-            MoveChoiceSelectorComponent,
-            {
-              game: this.game,
-              hand: curr_player.hand,
-              socket: this.socket,
-              canDirect: choices[0],
-              canCharter: choices[1],
-              canOperationsExpertMove: choices[2],
-              currLocation: curr_city.name,
-              targetLocation: target_city.name,
-            },
-            {}
-          );
-        } else {
-          this.moveEmit(selectedNode);
-          this.isMoving = false;
-        }
-      }
-    }
-  }
-
-  moveEmit(selectedNode) {
-    this.socket.emit("move", selectedNode.name, () => {
-      console.log(`move to ${selectedNode.name} success callbacked`);
-    });
-  }
 
   onSelectedCard(cardIndex: number) {
     if (!this.selectedCards.delete(cardIndex)) {
