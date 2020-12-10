@@ -26,17 +26,14 @@ function generateHand(
     const baseY = infoTextFontSizeWithPadding + heightPerCard * (index % 4);
     const color = game.game_graph[game.game_graph_index[card]].color;
     const hexColor = Number(colorNameToHex(color));
+
+    const baseX = index >= 4 ? widthAllowed / 2 : 0;
     graphics.beginFill(hexColor);
     graphics.lineStyle(2, 0xffffff, 0.3);
-    graphics.drawRect(
-      index >= 4 ? widthAllowed / 2 + 10 : 10,
-      baseY + 2.5,
-      10,
-      10
-    );
+    graphics.drawRect(baseX + 10, baseY + 2.5, 10, 10);
     graphics.endFill();
     const cityName = new PIXI.Text(card, { fontSize: 15 });
-    cityName.x = index >= 4 ? widthAllowed / 2 + 25 : 25;
+    cityName.x = baseX + 25;
     cityName.y = baseY;
     container.addChild(cityName);
     container.addChild(graphics);
