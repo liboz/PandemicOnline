@@ -15,9 +15,9 @@ const behavior = {
       oldProps.x !== x ||
       oldProps.y !== y ||
       oldProps.width !== width ||
-      oldProps.height !== height ||
-      oldProps.disabled !== disabled
+      oldProps.height !== height
     ) {
+      instance.clear();
       instance.beginFill(0x7a6f64);
       instance.lineStyle(4, 0x0, 0.3);
       instance.drawRoundedRect(x, y, width, height, 30);

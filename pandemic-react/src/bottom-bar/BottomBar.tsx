@@ -23,14 +23,18 @@ interface BottomBarProps {
   player_index?: number;
   state: GameComponentState;
   onMove: () => void;
+  onBuild: () => void;
 }
 
 const BottomBar: FC<BottomBarProps> = (props) => {
-  const { game, player_index, state, onMove } = props;
+  const { game, player_index, state, onMove, onBuild } = props;
   const { isMoving } = state;
   const moveButtonDisabled =
     game.player_index !== player_index ||
     (cannotDoPrimaryAction(state, game) && !isMoving);
+
+  const buildButtonDisabled =
+    !game.can_build_research_station || cannotDoPrimaryAction(state, game);
 
   const infoTextRaw =
     game.players &&
@@ -42,6 +46,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
 
   const actionsLeftTextRaw = `Actions Left: ${game.turns_left}`;
   const handContainerY = (barBaseHeight * 2) / 3;
+  const buttonWidth = 100;
   return (
     <Container>
       <Container x={0} y={handContainerY}>
@@ -55,12 +60,25 @@ const BottomBar: FC<BottomBarProps> = (props) => {
         label={isMoving ? "Cancel" : "Move"}
         x={width * 0.4}
         y={barBaseHeight}
-        width={200}
+        width={buttonWidth}
         height={75}
         disabled={moveButtonDisabled}
         onTap={() => {
           if (!moveButtonDisabled) {
             onMove();
+          }
+        }}
+      ></Button>
+      <Button
+        label={"Build"}
+        x={width * 0.4 + buttonWidth}
+        y={barBaseHeight}
+        width={buttonWidth}
+        height={75}
+        disabled={buildButtonDisabled}
+        onTap={() => {
+          if (!buildButtonDisabled) {
+            onBuild();
           }
         }}
       ></Button>

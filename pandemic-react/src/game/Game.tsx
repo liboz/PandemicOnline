@@ -74,6 +74,7 @@ class GameComponent extends React.Component<
     };
     this.elementRef = React.createRef<HTMLDivElement>();
     this.onMove = this.onMove.bind(this);
+    this.onBuild = this.onBuild.bind(this);
   }
 
   componentDidMount() {
@@ -121,6 +122,13 @@ class GameComponent extends React.Component<
     );
   }
 
+  componentWillUnmount() {
+    // prevent memory leak when component destroyed
+    this.destroySubscription?.unsubscribe();
+    this.dispatcherMoveSubscription?.unsubscribe();
+    this.clearShareCardsSubscription?.unsubscribe();
+  }
+
   componentDidUpdate(prevProps: GameComponentProps) {
     const { game } = this.props;
     if (prevProps.game === undefined) {
@@ -139,6 +147,11 @@ class GameComponent extends React.Component<
   onMove() {
     const { isMoving } = this.state;
     this.setState({ isMoving: !isMoving });
+  }
+
+  onBuild() {
+    const { socket } = this.props;
+    socket?.emit(Client.EventName.Build);
   }
 
   private preRender() {
@@ -332,6 +345,7 @@ class GameComponent extends React.Component<
             <BottomBar
               state={this.state}
               onMove={this.onMove}
+              onBuild={this.onBuild}
               game={this.props.game}
               player_index={this.props.player_index}
             ></BottomBar>
@@ -446,17 +460,6 @@ export class GameComponent1 {
     });
   }
 
-  loopCubes() {
-    for (const node of this.nodes) {
-      const container = this.nodeGraphics[node.name].cubes;
-      this.pixiApp.ticker.add((delta) => {
-        // rotate the container!
-        // use delta to create frame-independent transform
-        container.rotation -= 0.03 * delta;
-      });
-    }
-  }
-
   private maybeShowStartDialog() {
     let currentComponent = this.modalService.currentComponent();
     if (
@@ -475,34 +478,11 @@ export class GameComponent1 {
     }
   }
 
-  
-
-  private renderOnlyNode() {
-    for (const node of this.nodes) {
-      if (this.nodeGraphics[node.name]) {
-        this.nodeGraphics[node.name].container.removeChild(
-          this.nodeGraphics[node.name].mainNode
-        );
-      }
-      const nodeGraphics = renderNode(node, this.isMoving);
-      this.nodeGraphics[node.name].mainNode = nodeGraphics;
-      if (this.nodeGraphics[node.name]) {
-        this.nodeGraphics[node.name].container.addChild(nodeGraphics);
-      }
-    }
-  }
-
 
   onSelectedCard(cardIndex: number) {
     if (!this.selectedCards.delete(cardIndex)) {
       this.selectedCards.add(cardIndex);
     }
-  }
-
-  onMove() {
-    this.isMoving = !this.isMoving;
-    this.renderOnlyNode();
-    this.renderBottomBarFull();
   }
 
   onBuild() {
@@ -867,15 +847,6 @@ export class GameComponent1 {
     );
   }
 
-  bgColor(id: number) {
-    return playerInfo[id];
-  }
-
-  ngOnDestroy() {
-    // prevent memory leak when component destroyed
-    this.destroySubscription.unsubscribe();
-    this.clearShareCardsSubscription.unsubscribe();
-  }
 }*/
 
 class ShareCard {

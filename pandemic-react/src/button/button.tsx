@@ -20,7 +20,7 @@ const Button: FC<ButtonProps> = (props) => {
       <ButtonBackground {...props}></ButtonBackground>
       <Text
         text={label}
-        x={x + width / 3}
+        x={x + width / 5}
         y={y + height / 3}
         style={{ file: disabled ? 0x696969 : 0x000000 }}
       ></Text>
