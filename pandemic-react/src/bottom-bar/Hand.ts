@@ -3,6 +3,7 @@ import * as PIXI from "pixi.js";
 import { CustomPIXIComponent } from "react-pixi-fiber";
 import { barBaseHeight, height, width } from "../game/Game";
 import { CityNodeData } from "../node/CityNode";
+import { playerInfo } from "../player/Player";
 import { colorNameToHex, hasStarted } from "../utils";
 
 function generateHand(
@@ -15,13 +16,19 @@ function generateHand(
   const infoTextFontSizeWithPadding = infoTextFontSize + 5;
 
   const container = new PIXI.Container();
+  const graphics = new PIXI.Graphics();
+  graphics.beginFill(playerInfo[player.id]);
+  graphics.lineStyle(4, 0x0, 0.3);
+  graphics.drawRect(0, 0, width / 6, barBaseHeight);
+  graphics.endFill();
+  container.addChild(graphics);
+
   const infoTextRaw = `Player ${player.id} (${player.name}) - ${player.role}`;
   const infoText = new PIXI.Text(infoTextRaw, { fontSize: infoTextFontSize });
   container.addChild(infoText);
   const heightLeft = heightAllowed - infoTextFontSizeWithPadding;
   const heightPerCard = heightLeft / 4;
 
-  const graphics = new PIXI.Graphics();
   player.hand.forEach((card, index) => {
     const baseY = infoTextFontSizeWithPadding + heightPerCard * (index % 4);
     const color = game.game_graph[game.game_graph_index[card]].color;
@@ -36,7 +43,6 @@ function generateHand(
     cityName.x = baseX + 25;
     cityName.y = baseY;
     container.addChild(cityName);
-    container.addChild(graphics);
   });
 
   return container;
