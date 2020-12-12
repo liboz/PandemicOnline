@@ -37,7 +37,6 @@ export const behavior = {
       oldProps.node.cubes.yellow !== node.cubes.yellow ||
       oldProps.node.cubes.red !== node.cubes.red
     ) {
-      console.log(oldProps.node?.cubes, node?.cubes);
       instance.clear();
       const rotationStep = (2 * Math.PI * (Date.now() % 1440)) / 1440;
       const cubes = node.cubes;
