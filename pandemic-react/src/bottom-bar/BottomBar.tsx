@@ -7,7 +7,8 @@ import Button, {
   baseButtonWidth,
   ButtonProps,
 } from "../button/button";
-import { barBaseHeight, GameComponentState, width } from "../game/Game";
+import { barBaseHeight, width } from "../game/Game";
+import { GameComponentState } from "../game/withGameState";
 import Hand from "./Hand";
 
 function cannotDoPrimaryAction(state: GameComponentState, game: Client.Game) {
@@ -98,6 +99,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
   const widthAdjusters = [0, 1, 2, 4]; // some elements are not same size so need to adjust
   const buttons = buttonProps.map((props, index) => (
     <Button
+      key={props.label + index}
       x={width * 0.4 + baseButtonWidth * widthAdjusters[index]}
       {...props}
     ></Button>

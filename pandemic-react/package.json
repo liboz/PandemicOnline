@@ -12,6 +12,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.6",
+    "@types/react-test-renderer": "^17.0.0",
     "@types/socket.io-client": "^1.4.34",
     "cross-env": "^7.0.3",
     "d3": "^6.3.0",
@@ -31,7 +32,9 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "husky": "^4.3.4",
     "prettier": "^2.2.1",
-    "pretty-quick": "^3.1.0"
+    "pretty-quick": "^3.1.0",
+    "react-test-renderer": "^17.0.1",
+    "ts-jest": "^26.4.4"
   },
   "scripts": {
     "start": "react-scripts start",

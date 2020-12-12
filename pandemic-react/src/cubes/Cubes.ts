@@ -1,6 +1,6 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import * as PIXI from "pixi.js";
-import { CustomPIXIComponent, withApp } from "react-pixi-fiber";
+import { CustomPIXIComponent } from "react-pixi-fiber";
 import { CityNodeData } from "../node/CityNode";
 import { colorNameToHex } from "../utils";
 
