@@ -1,28 +1,15 @@
-import React from "react";
-import renderer from "react-test-renderer";
-import { Socket } from "socket.io-client";
-import { mocked } from "ts-jest/utils";
-import { MockComponentWithState } from "../testUtil";
-import { GameGraphicsProps } from "./Game";
-import {
-  GameComponentProps,
-  GameComponentState,
-  GameStateInterface,
-} from "./withGameState";
+import { setupGameState } from "../testUtil";
+import { Client } from "pandemiccommon/dist/out-tsc";
 
 describe("Game", () => {
   test("onShare works", () => {
-    const mockSocket = mocked(Socket, true);
-    const component = renderer.create(
-      <MockComponentWithState
-        //game={{}}
-        socket={mockSocket}
-        player_index={0}
-        player_name={"test1"}
-      ></MockComponentWithState>
-    );
-    const instance = component.getInstance();
-    expect(instance).toBeTruthy();
-    const instanceFull = (instance as any) as GameStateInterface;
+    const { mockSocket, instance } = setupGameState();
+    instance.onShare();
+    expect(mockSocket.emit.mock.calls).toHaveLength(1);
+    const call = mockSocket.emit.mock.calls[0];
+    expect(call).toHaveLength(4);
+    expect(call[0]).toBe(Client.EventName.Share);
+    expect(call[1]).toBe(1); // other player is id 1
+    expect(call[2]).toBeNull();
   });
 });

@@ -388,7 +388,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
       if (game && socket) {
         let location = game.players[game.player_index].location;
         this.setState({ shareCardChoices: null });
-        socket.emit("share", other_player_id, null, () => {
+        socket.emit(Client.EventName.Share, other_player_id, null, () => {
           console.log(
             `share with ${other_player_id} at ${location} callbacked`
           );
