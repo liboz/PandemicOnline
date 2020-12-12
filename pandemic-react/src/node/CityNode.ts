@@ -15,36 +15,6 @@ export interface CityNodeData {
   isValidDestination?: boolean;
 }
 
-export interface PIXICityNode {
-  researchStation?: PIXI.Graphics;
-  cubes?: PIXI.Container;
-  players: PIXI.Graphics[];
-  mainNode: PIXI.Graphics;
-  container: PIXI.Container;
-  text: PIXI.Text;
-}
-
-/*
-export function getAllSubelements(node: PIXICityNode): PIXI.Graphics[] {
-  const result: PIXI.Graphics[] = [];
-  for (const attribute in node) {
-    if (
-      attribute !== "mainNode" &&
-      attribute != "text" &&
-      attribute != "container"
-    ) {
-      const value = node[attribute];
-      if (Array.isArray(value)) {
-        result.push(...value);
-      } else {
-        result.push(value);
-      }
-    }
-  }
-  return result;
-}
-*/
-
 export function renderNode(
   node: CityNodeData,
   isMoving: boolean

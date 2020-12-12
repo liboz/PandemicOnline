@@ -11,12 +11,11 @@ import { Subscription } from "rxjs";
 import * as PIXI from "pixi.js";
 import { Container, Stage, Text } from "react-pixi-fiber";
 import * as d3 from "d3";
-import CityNode, { CityNodeData, PIXICityNode } from "../node/CityNode";
+import CityNode, { CityNodeData } from "../node/CityNode";
 import Link from "../link/link";
 import GeoBackground from "./GeoBackground";
 import ResearchStation from "../node/ResearchStation";
 import Player from "../player/Player";
-import Cubes from "../cubes/Cubes";
 import CubeContainer from "../cubes/CubeContainer";
 import BottomBar from "../bottom-bar/BottomBar";
 import { MoveChoiceSelectorComponent } from "../move-choice-selector/MoveChoiceSelectorComponent";
@@ -75,6 +74,7 @@ class GameComponent extends React.Component<
     this.elementRef = React.createRef<HTMLDivElement>();
     this.onMove = this.onMove.bind(this);
     this.onBuild = this.onBuild.bind(this);
+    this.onTreat = this.onTreat.bind(this);
   }
 
   componentDidMount() {
@@ -96,13 +96,6 @@ class GameComponent extends React.Component<
     this.pixiApp.view.id = "main-app";
     this.pixiApp.view.style.position = "absolute";
     this.pixiApp.view.style.zIndex = "0";
-
-    this.pixiApp.renderer.on("resize", () => {
-      /*
-      this.preRender();
-      this.regenerateLinksAndNodes();
-      */
-    });
 
     this.elementRef.current!.appendChild(this.pixiApp.view);
 
@@ -132,6 +125,7 @@ class GameComponent extends React.Component<
   componentDidUpdate(prevProps: GameComponentProps) {
     const { game } = this.props;
     if (prevProps.game === undefined) {
+      this.pixiApp.resizeTo = window;
       this.preRender();
       const nodes = this.regenerateNodes();
       const links = this.regenerateLinks(nodes);
@@ -152,6 +146,38 @@ class GameComponent extends React.Component<
   onBuild() {
     const { socket } = this.props;
     socket?.emit(Client.EventName.Build);
+  }
+
+  onTreat() {
+    const { game } = this.props;
+    if (this.state.treatColorChoices) {
+      this.setState({ treatColorChoices: null });
+    } else {
+      if (game) {
+        let location = game?.players[game?.player_index].location;
+        let cubes = game?.game_graph[game?.game_graph_index[location]].cubes;
+        let cubes_on = Object.keys(cubes)
+          .map((i) => i as Client.Color)
+          .filter((i) => cubes[i] > 0);
+        if (cubes_on.length === 1) {
+          this.treat(cubes_on[0]);
+        } else {
+          this.setState({ treatColorChoices: cubes_on });
+        }
+      }
+    }
+  }
+
+  treat(color: Client.Color) {
+    const { game, socket } = this.props;
+    this.setState({ treatColorChoices: null });
+    socket?.emit("treat", color, () => {
+      console.log(
+        `treat ${color} at ${
+          game?.players[game.player_index].location
+        } callbacked`
+      );
+    });
   }
 
   private preRender() {
@@ -311,6 +337,7 @@ class GameComponent extends React.Component<
                 return (
                   <Container sortableChildren={true}>
                     <Container
+                      key={"container" + node.id}
                       interactive={true}
                       pointerdown={() => this.onSelectedNode(node)}
                     >
@@ -346,6 +373,7 @@ class GameComponent extends React.Component<
               state={this.state}
               onMove={this.onMove}
               onBuild={this.onBuild}
+              onTreat={this.onTreat}
               game={this.props.game}
               player_index={this.props.player_index}
             ></BottomBar>
@@ -483,37 +511,6 @@ export class GameComponent1 {
     if (!this.selectedCards.delete(cardIndex)) {
       this.selectedCards.add(cardIndex);
     }
-  }
-
-  onBuild() {
-    this.socket.emit("build");
-  }
-
-  onTreat() {
-    if (this.treatColorChoices) {
-      this.treatColorChoices = null;
-    } else {
-      let location = this.game.players[this.game.player_index].location;
-      let cubes = this.game.game_graph[this.game.game_graph_index[location]]
-        .cubes;
-      let cubes_on = Object.keys(cubes).filter((i) => cubes[i] > 0);
-      if (cubes_on.length === 1) {
-        this.treat(cubes_on[0]);
-      } else {
-        this.treatColorChoices = cubes_on;
-      }
-    }
-  }
-
-  treat(color) {
-    this.treatColorChoices = null;
-    this.socket.emit("treat", color, () => {
-      console.log(
-        `treat ${color} at ${
-          this.game.players[this.game.player_index].location
-        } callbacked`
-      );
-    });
   }
 
   onShare() {

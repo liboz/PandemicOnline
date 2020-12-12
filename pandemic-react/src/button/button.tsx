@@ -3,6 +3,9 @@ import { FC } from "react";
 import { Container, CustomPIXIComponent, Text } from "react-pixi-fiber";
 import ButtonBackground from "./ButtonBackground";
 
+export const baseButtonHeight = 75;
+export const baseButtonWidth = 100;
+
 export interface ButtonProps {
   x: number;
   y: number;
@@ -20,8 +23,8 @@ const Button: FC<ButtonProps> = (props) => {
       <ButtonBackground {...props}></ButtonBackground>
       <Text
         text={label}
-        x={x + width / 5}
-        y={y + height / 3}
+        x={x + baseButtonWidth / 5}
+        y={y + baseButtonHeight / 3}
         style={{ file: disabled ? 0x696969 : 0x000000 }}
       ></Text>
     </Container>

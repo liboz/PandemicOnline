@@ -2,7 +2,11 @@ import { Client } from "pandemiccommon/dist/out-tsc";
 import * as PIXI from "pixi.js";
 import React, { FC } from "react";
 import { Container, Text } from "react-pixi-fiber";
-import Button from "../button/button";
+import Button, {
+  baseButtonHeight,
+  baseButtonWidth,
+  ButtonProps,
+} from "../button/button";
 import { barBaseHeight, GameComponentState, width } from "../game/Game";
 import Hand from "./Hand";
 
@@ -24,17 +28,22 @@ interface BottomBarProps {
   state: GameComponentState;
   onMove: () => void;
   onBuild: () => void;
+  onTreat: () => void;
 }
 
 const BottomBar: FC<BottomBarProps> = (props) => {
-  const { game, player_index, state, onMove, onBuild } = props;
-  const { isMoving } = state;
-  const moveButtonDisabled =
-    game.player_index !== player_index ||
-    (cannotDoPrimaryAction(state, game) && !isMoving);
+  const { game, player_index, state, onMove, onBuild, onTreat } = props;
+  const { isMoving, treatColorChoices } = state;
+
+  const isCurrentPlayer = game.player_index === player_index;
+  const moveButtonDisabled = cannotDoPrimaryAction(state, game) && !isMoving;
 
   const buildButtonDisabled =
     !game.can_build_research_station || cannotDoPrimaryAction(state, game);
+
+  const treatButtonDisabled =
+    !game.can_treat ||
+    (cannotDoPrimaryAction(state, game) && !treatColorChoices);
 
   const infoTextRaw =
     game.players &&
@@ -46,7 +55,54 @@ const BottomBar: FC<BottomBarProps> = (props) => {
 
   const actionsLeftTextRaw = `Actions Left: ${game.turns_left}`;
   const handContainerY = (barBaseHeight * 2) / 3;
-  const buttonWidth = 100;
+
+  const buttonProps: Omit<ButtonProps, "x">[] = [
+    {
+      label: isMoving ? "Cancel" : "Move",
+      y: barBaseHeight,
+      width: baseButtonWidth,
+      height: baseButtonHeight,
+      disabled: !isCurrentPlayer || moveButtonDisabled,
+      onTap: () => {
+        if (!moveButtonDisabled) {
+          onMove();
+        }
+      },
+    },
+    {
+      label: "Build",
+      y: barBaseHeight,
+      width: baseButtonWidth,
+      height: baseButtonHeight,
+      disabled: !isCurrentPlayer || buildButtonDisabled,
+      onTap: () => {
+        if (!buildButtonDisabled) {
+          onBuild();
+        }
+      },
+    },
+    {
+      label: treatColorChoices ? "Cancel" : "Treat Disease",
+      y: barBaseHeight,
+      width: baseButtonWidth * 2,
+      height: baseButtonHeight,
+      disabled: !isCurrentPlayer || treatButtonDisabled,
+      onTap: () => {
+        if (!treatButtonDisabled) {
+          onTreat();
+        }
+      },
+    },
+  ];
+
+  const widthAdjusters = [0, 1, 2, 4]; // some elements are not same size so need to adjust
+  const buttons = buttonProps.map((props, index) => (
+    <Button
+      x={width * 0.4 + baseButtonWidth * widthAdjusters[index]}
+      {...props}
+    ></Button>
+  ));
+
   return (
     <Container>
       <Container x={0} y={handContainerY}>
@@ -56,32 +112,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
         <Text text={infoTextRaw} style={{ fontSize: 20 }}></Text>
         <Text text={actionsLeftTextRaw} style={{ fontSize: 20 }} y={50}></Text>
       </Container>
-      <Button
-        label={isMoving ? "Cancel" : "Move"}
-        x={width * 0.4}
-        y={barBaseHeight}
-        width={buttonWidth}
-        height={75}
-        disabled={moveButtonDisabled}
-        onTap={() => {
-          if (!moveButtonDisabled) {
-            onMove();
-          }
-        }}
-      ></Button>
-      <Button
-        label={"Build"}
-        x={width * 0.4 + buttonWidth}
-        y={barBaseHeight}
-        width={buttonWidth}
-        height={75}
-        disabled={buildButtonDisabled}
-        onTap={() => {
-          if (!buildButtonDisabled) {
-            onBuild();
-          }
-        }}
-      ></Button>
+      {buttons}
     </Container>
   );
 };
