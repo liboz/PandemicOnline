@@ -820,7 +820,7 @@ export class GameComponent1 {
 
 }*/
 
-class ShareCard {
+export class ShareCard {
   public static Take = "Take from";
   public static Give = "Give";
 
