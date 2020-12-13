@@ -1,6 +1,5 @@
-import * as PIXI from "pixi.js";
 import { FC } from "react";
-import { Container, CustomPIXIComponent, Text } from "react-pixi-fiber";
+import { Container, Text } from "react-pixi-fiber";
 import ButtonBackground from "./ButtonBackground";
 
 export const baseButtonHeight = 75;

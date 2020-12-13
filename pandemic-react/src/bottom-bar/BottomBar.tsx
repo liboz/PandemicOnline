@@ -1,5 +1,4 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
-import * as PIXI from "pixi.js";
 import React, { FC } from "react";
 import { Container, Text } from "react-pixi-fiber";
 import Button, {
