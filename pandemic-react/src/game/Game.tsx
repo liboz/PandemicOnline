@@ -25,6 +25,7 @@ export interface GameGraphicsProps {
   onMove: () => void;
   onBuild: () => void;
   onTreat: () => void;
+  onShare: () => void;
 }
 
 class GameGraphics extends React.Component<GameGraphicsProps> {
@@ -117,6 +118,7 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
               onMove={this.props.onMove}
               onBuild={this.props.onBuild}
               onTreat={this.props.onTreat}
+              onShare={this.props.onShare}
               game={this.props.game}
               player_index={this.props.player_index}
             ></BottomBar>

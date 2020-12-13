@@ -29,11 +29,20 @@ interface BottomBarProps {
   onMove: () => void;
   onBuild: () => void;
   onTreat: () => void;
+  onShare: () => void;
 }
 
 const BottomBar: FC<BottomBarProps> = (props) => {
-  const { game, player_index, state, onMove, onBuild, onTreat } = props;
-  const { isMoving, treatColorChoices } = state;
+  const {
+    game,
+    player_index,
+    state,
+    onMove,
+    onBuild,
+    onTreat,
+    onShare,
+  } = props;
+  const { isMoving, treatColorChoices, shareCardChoices } = state;
 
   const isCurrentPlayer = game.player_index === player_index;
   const moveButtonDisabled = cannotDoPrimaryAction(state, game) && !isMoving;
@@ -44,6 +53,10 @@ const BottomBar: FC<BottomBarProps> = (props) => {
   const treatButtonDisabled =
     !game.can_treat ||
     (cannotDoPrimaryAction(state, game) && !treatColorChoices);
+
+  const shareButtonDisabled =
+    (!game.can_give && !game.can_take) ||
+    (cannotDoPrimaryAction(state, game) && !shareCardChoices);
 
   const infoTextRaw =
     game.players &&
@@ -90,6 +103,18 @@ const BottomBar: FC<BottomBarProps> = (props) => {
       onTap: () => {
         if (!treatButtonDisabled) {
           onTreat();
+        }
+      },
+    },
+    {
+      label: shareCardChoices ? "Cancel" : "Share Knowledge",
+      y: barBaseHeight,
+      width: baseButtonWidth * 2,
+      height: baseButtonHeight,
+      disabled: !isCurrentPlayer || shareButtonDisabled,
+      onTap: () => {
+        if (!shareButtonDisabled) {
+          onShare();
         }
       },
     },

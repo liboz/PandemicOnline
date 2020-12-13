@@ -12,6 +12,7 @@ import * as d3 from "d3";
 import { CityNodeData } from "../node/CityNode";
 import Link from "../link/link";
 import { MoveChoiceSelectorComponent } from "../move-choice-selector/MoveChoiceSelectorComponent";
+import { ShareReseacherComponent } from "../share/ShareResearcherComponent";
 
 export const width = 1920;
 export const height = 960;
@@ -72,6 +73,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.onMove = this.onMove.bind(this);
       this.onBuild = this.onBuild.bind(this);
       this.onTreat = this.onTreat.bind(this);
+      this.onShare = this.onShare.bind(this);
+      this.onSelectedNode = this.onSelectedNode.bind(this);
     }
 
     componentDidMount() {
@@ -238,6 +241,11 @@ function withGameState(WrappedComponent: typeof React.Component) {
                 }
               }
             } else {
+              console.log(
+                "here!",
+                curr_player.hand.length === 0 ||
+                  !curr_player.hand.includes(location)
+              );
               if (
                 curr_player.hand.length === 0 ||
                 !curr_player.hand.includes(location)
@@ -365,19 +373,17 @@ function withGameState(WrappedComponent: typeof React.Component) {
       const { game, socket } = this.props;
       if (game && socket) {
         if (researcher.hand.length > 0) {
-          /*
-          this.modalService.init(
-            ResearcherShareSelectorComponent,
-            {
-              hand: researcher.hand,
+          nextComponent((destroy: () => void) => {
+            const props = {
+              destroy,
               game: game,
+              hand: researcher.hand,
               socket: socket,
               target_player_index: target_player_index,
               curr_player_index: curr_player_index,
-            },
-            {}
-          );
-          */
+            };
+            return React.createElement(ShareReseacherComponent, props);
+          });
         }
       }
     }
@@ -556,6 +562,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
           onMove={this.onMove}
           onBuild={this.onBuild}
           onTreat={this.treat}
+          onShare={this.onShare}
         ></WrappedComponent>
       );
     }
