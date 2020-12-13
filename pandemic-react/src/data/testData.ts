@@ -576,6 +576,13 @@ export const testGame = ({
       location: "Bogota",
       id: 2,
     },
+    {
+      name: "p3",
+      role: "Scientist",
+      hand: ["Washington"],
+      location: "Bogota",
+      id: 3,
+    },
   ],
   research_stations: ["Atlanta"],
   cured: { blue: 0, red: 0, black: 0, yellow: 0 },

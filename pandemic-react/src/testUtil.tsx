@@ -2,20 +2,20 @@ import React from "react";
 import renderer from "react-test-renderer";
 import { mock, MockProxy } from "jest-mock-extended";
 import { Socket } from "socket.io-client";
-import { testGame } from "./data/testData";
 import { GameStateInterface } from "./game/withGameState";
 import { MockComponentWithState } from "./mockComponentWithState";
+import { Client } from "pandemiccommon/dist/out-tsc";
 
 interface TestGameState {
   instance: GameStateInterface;
   mockSocket: MockProxy<SocketIOClient.Socket> & SocketIOClient.Socket;
 }
 
-export function setupGameState(): TestGameState {
+export function setupGameState(gameState: Client.Game): TestGameState {
   const mockSocket = mock<typeof Socket>();
   const component = renderer.create(
     <MockComponentWithState
-      game={testGame}
+      game={gameState}
       socket={mockSocket}
       player_index={0}
       player_name={"test1"}

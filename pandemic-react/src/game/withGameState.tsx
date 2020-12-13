@@ -279,7 +279,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
             let other_player = other_players_ids.filter((i) =>
               game.players[i].hand.includes(location)
             );
-            console.log(other_player);
             if (other_player.length > 0) {
               if (
                 game.players[other_player[0]].role === Client.Roles.Researcher
