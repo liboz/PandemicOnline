@@ -1,5 +1,5 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
-import React, { CElement, Component, ReactElement, ReactNode } from "react";
+import React, { CElement, ReactNode } from "react";
 
 import { Subject } from "rxjs";
 

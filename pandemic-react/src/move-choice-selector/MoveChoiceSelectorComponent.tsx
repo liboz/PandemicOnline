@@ -1,13 +1,5 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
-import { joinAs } from "../modal/Modal";
-import { formatPlayer, hasStarted } from "../utils";
-
-/*
-  
-  <div>
-    <button (click)="onCancel()">Cancel</button>
-  </div>*/
 
 interface MoveChoiceSelectorProps {
   game: Client.Game;
@@ -60,7 +52,6 @@ export class MoveChoiceSelectorComponent extends React.Component<
 
   render() {
     const {
-      game,
       canDirect,
       canCharter,
       canOperationsExpertMove,

@@ -2,9 +2,8 @@ import { Client } from "pandemiccommon/dist/out-tsc";
 import * as PIXI from "pixi.js";
 import { CustomPIXIComponent } from "react-pixi-fiber";
 import { barBaseHeight, height, width } from "../game/Game";
-import { CityNodeData } from "../node/CityNode";
 import { playerInfo } from "../player/Player";
-import { colorNameToHex, hasStarted } from "../utils";
+import { colorNameToHex } from "../utils";
 
 function generateHand(
   player: Client.Player,
@@ -62,7 +61,7 @@ export const behavior = {
     newProps: BottomBarProps
   ) {
     const { game, containerY } = newProps;
-    if (oldProps.game?.players != game?.players) {
+    if (oldProps.game?.players !== game?.players) {
       instance.clear();
       instance.removeChildren();
       instance.beginFill(0x3e494b);

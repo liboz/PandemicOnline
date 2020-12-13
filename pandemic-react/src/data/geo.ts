@@ -1,7 +1,7 @@
 import { GeoJsonTypes } from "geojson";
 
 const geo = {
-  type: "FeatureCollection" as const,
+  type: "FeatureCollection" as GeoJsonTypes,
   features: [
     {
       type: "Feature",
