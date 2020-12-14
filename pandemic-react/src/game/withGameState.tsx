@@ -241,11 +241,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
                 }
               }
             } else {
-              console.log(
-                "here!",
-                curr_player.hand.length === 0 ||
-                  !curr_player.hand.includes(location)
-              );
               if (
                 curr_player.hand.length === 0 ||
                 !curr_player.hand.includes(location)

@@ -54,7 +54,6 @@ export class ShareReseacherComponent extends React.Component<
   render() {
     const { game, hand } = this.props;
     const { selectedCard } = this.state;
-    console.log(hand);
 
     return (
       <>

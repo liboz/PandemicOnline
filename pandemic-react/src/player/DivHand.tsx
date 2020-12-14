@@ -55,13 +55,13 @@ const DivHandComponent: FC<DivHandInterface> = (props: DivHandInterface) => {
   }, [hand]);
 
   const items = result(hand, selected);
-  console.log(items);
 
   return (
     <div id="hand">
       {items.map((item, index) => {
         return (
           <div
+            key={"wapper" + item.card + index}
             className={itemClassName(item)}
             onClick={() =>
               handleClick(index, cardLimit, hand, selected, onClick)

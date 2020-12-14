@@ -3,6 +3,7 @@ import { Client } from "pandemiccommon/dist/out-tsc";
 import { testGame } from "../data/testData";
 import rfdc from "rfdc";
 import { ShareCard } from "./withGameState";
+import { ShareReseacherComponent } from "../share/ShareResearcherComponent";
 const clone = rfdc();
 
 describe("Game", () => {
@@ -58,5 +59,61 @@ describe("Game", () => {
       ].sort()
     );
     expect(mockSocket.emit.mock.calls).toHaveLength(0);
+  });
+
+  test("onShare works with 1 researcher and having the location card", () => {
+    const modifiedTestData = clone(testGame);
+    modifiedTestData.game_graph[
+      modifiedTestData.game_graph_index["Lima"]
+    ].players = [0, 2];
+    modifiedTestData.players[1].location = "Beijing";
+    modifiedTestData.players[2].location = "Lima";
+    const { mockSocket, instance } = setupGameState(modifiedTestData);
+    instance.onShare();
+    expect(instance.state.shareCardChoices).toBeTruthy();
+    expect(
+      instance.state.shareCardChoices
+        ?.map((choice) => {
+          const { onClick, ...rest } = choice;
+          return rest;
+        })
+        .sort()
+    ).toStrictEqual(
+      [
+        { action: ShareCard.Give, location: "Lima", player_id: 2 },
+        { action: ShareCard.Take, location: null, player_id: 2 },
+      ].sort()
+    );
+    expect(mockSocket.emit.mock.calls).toHaveLength(0);
+  });
+
+  test("onShare works with 1 researcher", () => {
+    const modifiedTestData = clone(testGame);
+    modifiedTestData.game_graph[
+      modifiedTestData.game_graph_index["Lima"]
+    ].players = [0, 2];
+    modifiedTestData.players[1].location = "Beijing";
+    modifiedTestData.players[2].location = "Lima";
+    modifiedTestData.players[0].hand = [
+      "New York",
+      "St Petersburg",
+      "Jakarta",
+      "Shanghai",
+      "Taipei",
+      "Riyadh",
+      "Kinshasa",
+    ];
+    const { mockSocket, instance, root } = setupGameState(modifiedTestData);
+    instance.onShare();
+    const shareResearcherComponent = root.findAllByType(
+      ShareReseacherComponent
+    );
+    expect(shareResearcherComponent).toHaveLength(1);
+    const shareResearcherComponentFull = (shareResearcherComponent[0] as any) as ShareReseacherComponent;
+    expect(shareResearcherComponentFull.props.hand).toBe(
+      modifiedTestData.players[2].hand
+    );
+    expect(shareResearcherComponentFull.props.curr_player_index).toBe(0);
+    expect(shareResearcherComponentFull.props.target_player_index).toBe(2);
   });
 });
