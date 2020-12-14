@@ -75,6 +75,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.onTreat = this.onTreat.bind(this);
       this.onShare = this.onShare.bind(this);
       this.onSelectedNode = this.onSelectedNode.bind(this);
+      this.share = this.share.bind(this);
+      this.shareResearcher = this.shareResearcher.bind(this);
     }
 
     componentDidMount() {
@@ -331,7 +333,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
                 }
               }
             } else {
-              // the one player is non-existent, just a researcher
+              // the one player is non-existent, just a researcher. we must have the card in question
               let researcher = other_players.filter(
                 (i) => i.role === Client.Roles.Researcher
               )[0];
@@ -342,10 +344,31 @@ function withGameState(WrappedComponent: typeof React.Component) {
                   curr_player.id
                 );
               } else {
-                this.shareResearcher(researcher, researcher.id, curr_player.id);
+                const baseChoices = other_players.map(
+                  (other_player) =>
+                    new ShareCard(
+                      ShareCard.Give,
+                      other_player.id,
+                      game.players[game.player_index].location,
+                      () => this.share(other_player.id)
+                    )
+                );
+                baseChoices.push(
+                  new ShareCard(ShareCard.Take, researcher.id, null, () =>
+                    this.shareResearcher(
+                      researcher,
+                      researcher.id,
+                      curr_player.id
+                    )
+                  )
+                );
+                this.setState({
+                  shareCardChoices: baseChoices,
+                });
               }
             }
           } else {
+            console.log("maybe just a researcher here too");
             // we are giving to another player.
             // since we should always be able to take from a researcher, this only happens when we are the researcher, so we researcher share
             this.setState({

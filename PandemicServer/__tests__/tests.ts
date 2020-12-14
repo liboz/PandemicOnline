@@ -2027,6 +2027,42 @@ describe("Player", function () {
       expect(g.players[0].can_take(g)).toBe(false);
       expect(g.players[1].can_give(g)).toBe(false);
     });
+
+    it("Always be able to take from Researcher and give away when standing on the same city", function () {
+      let seeded = seedrandom("test167!");
+      let g = new Game(
+        Cities,
+        2,
+        ["test", "test"],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
+        5,
+        seeded
+      );
+      expect(g.players[0].can_take(g)).toBe(true);
+      expect(g.players[0].can_take_from_player(g.players[1], "Tokyo")).toBe(
+        false
+      );
+      expect(g.players[0].can_take_from_player(g.players[1], "Algiers")).toBe(
+        true
+      );
+      g.players[0].move(g, "Washington");
+      g.players[0].move(g, "New York");
+      g.players[0].move(g, "London");
+      g.players[0].move(g, "Madrid");
+
+      g.players[1].move(g, "Washington");
+      g.players[1].move(g, "New York");
+      g.players[1].move(g, "London");
+      g.players[1].move(g, "Madrid");
+      expect(g.players[0].can_take(g)).toBe(true);
+      expect(g.players[0].can_give(g)).toBe(true);
+      expect(g.players[0].can_take_from_player(g.players[1], "Tokyo")).toBe(
+        false
+      );
+      expect(g.players[0].can_take_from_player(g.players[1], "Algiers")).toBe(
+        true
+      );
+    });
   });
 
   describe("#PlayerJSON", function () {
