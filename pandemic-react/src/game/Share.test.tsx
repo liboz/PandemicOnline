@@ -247,4 +247,98 @@ describe("Game", () => {
     );
     expect(mockSocket.emit.mock.calls).toHaveLength(0);
   });
+
+  test("onShare works with 3 players with 1 researcher, 1 non-research with the location card", () => {
+    const modifiedTestData = clone(testGame);
+    modifiedTestData.game_graph[
+      modifiedTestData.game_graph_index["Lima"]
+    ].players = [0, 1, 2];
+    modifiedTestData.players[2].location = "Lima";
+    modifiedTestData.players[0].hand = modifiedTestData.players[0].hand.filter(
+      (card) => card !== "Lima"
+    );
+    modifiedTestData.players[1].hand.push("Lima");
+    modifiedTestData.can_take = true;
+
+    const { mockSocket, instance, root } = setupGameState(modifiedTestData);
+    instance.onShare();
+    expect(instance.state.shareCardChoices).toBeTruthy();
+    expect(
+      instance.state.shareCardChoices
+        ?.map((choice) => {
+          const { onClick, ...rest } = choice;
+          return rest;
+        })
+        .sort()
+    ).toStrictEqual(
+      [
+        { action: ShareCard.Take, location: "Lima", player_id: 1 },
+        { action: ShareCard.Take, location: null, player_id: 2 },
+      ].sort()
+    );
+    expect(mockSocket.emit.mock.calls).toHaveLength(0);
+  });
+
+  test("onShare works with 3 players where active player is researcher, 1 non-research with the location card", () => {
+    const modifiedTestData = clone(testGame);
+    modifiedTestData.game_graph[
+      modifiedTestData.game_graph_index["Lima"]
+    ].players = [0, 1, 2];
+    modifiedTestData.players[2].location = "Lima";
+    modifiedTestData.players[0].hand = modifiedTestData.players[0].hand.filter(
+      (card) => card !== "Lima"
+    );
+    modifiedTestData.players[1].hand.push("Lima");
+    modifiedTestData.player_index = 2;
+    modifiedTestData.can_take = true;
+
+    const { mockSocket, instance, root } = setupGameState(modifiedTestData);
+    instance.onShare();
+    expect(instance.state.shareCardChoices).toBeTruthy();
+    expect(
+      instance.state.shareCardChoices
+        ?.map((choice) => {
+          const { onClick, ...rest } = choice;
+          return rest;
+        })
+        .sort()
+    ).toStrictEqual(
+      [
+        { action: ShareCard.Take, location: "Lima", player_id: 1 },
+        { action: ShareCard.Give, location: null, player_id: 0 },
+        { action: ShareCard.Give, location: null, player_id: 1 },
+      ].sort()
+    );
+    expect(mockSocket.emit.mock.calls).toHaveLength(0);
+  });
+
+  test("onShare works with 3 players where active player is researcher", () => {
+    const modifiedTestData = clone(testGame);
+    modifiedTestData.game_graph[
+      modifiedTestData.game_graph_index["Lima"]
+    ].players = [0, 1, 2];
+    modifiedTestData.players[2].location = "Lima";
+    modifiedTestData.players[0].hand = modifiedTestData.players[0].hand.filter(
+      (card) => card !== "Lima"
+    );
+    modifiedTestData.player_index = 2;
+
+    const { mockSocket, instance, root } = setupGameState(modifiedTestData);
+    instance.onShare();
+    expect(instance.state.shareCardChoices).toBeTruthy();
+    expect(
+      instance.state.shareCardChoices
+        ?.map((choice) => {
+          const { onClick, ...rest } = choice;
+          return rest;
+        })
+        .sort()
+    ).toStrictEqual(
+      [
+        { action: ShareCard.Give, location: null, player_id: 0 },
+        { action: ShareCard.Give, location: null, player_id: 1 },
+      ].sort()
+    );
+    expect(mockSocket.emit.mock.calls).toHaveLength(0);
+  });
 });

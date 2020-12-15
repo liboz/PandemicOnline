@@ -368,7 +368,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
               }
             }
           } else {
-            console.log("maybe just a researcher here too");
             // we are giving to another player.
             // since we should always be able to take from a researcher, this only happens when we are the researcher, so we researcher share
             this.setState({
