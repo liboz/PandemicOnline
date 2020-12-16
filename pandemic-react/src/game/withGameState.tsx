@@ -13,6 +13,7 @@ import { CityNodeData } from "../node/CityNode";
 import Link from "../link/link";
 import { MoveChoiceSelectorComponent } from "../move-choice-selector/MoveChoiceSelectorComponent";
 import { ShareResearcherComponent } from "../share/ShareResearcherComponent";
+import { ShareChoicesComponent } from "../share/ShareChoicesComponent";
 
 export const width = 1920;
 export const height = 960;
@@ -77,6 +78,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.onSelectedNode = this.onSelectedNode.bind(this);
       this.share = this.share.bind(this);
       this.shareResearcher = this.shareResearcher.bind(this);
+      this.resetShare = this.resetShare.bind(this);
     }
 
     componentDidMount() {
@@ -160,11 +162,19 @@ function withGameState(WrappedComponent: typeof React.Component) {
       });
     }
 
+    resetShare() {
+      const { shareCardChoices } = this.state;
+      if (shareCardChoices) {
+        this.setState({ shareCardChoices: null });
+      }
+    }
+
     onShare() {
       const { game } = this.props;
       const { shareCardChoices } = this.state;
       if (shareCardChoices) {
         this.setState({ shareCardChoices: null });
+        destroyEvent();
       } else if (game) {
         const curr_player = game.players[game.player_index];
         const location = curr_player.location;
@@ -199,13 +209,22 @@ function withGameState(WrappedComponent: typeof React.Component) {
               curr_player.id
             );
           } else {
+            const choices = other_players_ids.map(
+              (i) =>
+                new ShareCard(ShareCard.Give, i, null, () =>
+                  this.shareResearcher(curr_player, i, curr_player.id)
+                )
+            );
+            nextComponent((destroy: () => void) => {
+              const props = {
+                resetShare: this.resetShare,
+                destroy,
+                shareCardChoices: choices,
+              };
+              return React.createElement(ShareChoicesComponent, props);
+            });
             this.setState({
-              shareCardChoices: other_players_ids.map(
-                (i) =>
-                  new ShareCard(ShareCard.Give, i, null, () =>
-                    this.shareResearcher(curr_player, i, curr_player.id)
-                  )
-              ),
+              shareCardChoices: choices,
             });
           }
         } else if (isCurrPlayerResearcher && !doesCurrPlayerHaveLocationCard) {
@@ -274,22 +293,31 @@ function withGameState(WrappedComponent: typeof React.Component) {
           maybePlayerWithLocationCard.length === 1 &&
           maybeResearcher.length === 1
         ) {
+          const choices = [
+            new ShareCard(
+              ShareCard.Take,
+              maybePlayerWithLocationCard[0].id,
+              game.players[game.player_index].location,
+              () => this.share(maybePlayerWithLocationCard[0].id)
+            ),
+            new ShareCard(ShareCard.Take, maybeResearcher[0].id, null, () =>
+              this.shareResearcher(
+                maybeResearcher[0],
+                maybeResearcher[0].id,
+                curr_player.id
+              )
+            ),
+          ];
+          nextComponent((destroy: () => void) => {
+            const props = {
+              resetShare: this.resetShare,
+              destroy,
+              shareCardChoices: choices,
+            };
+            return React.createElement(ShareChoicesComponent, props);
+          });
           this.setState({
-            shareCardChoices: [
-              new ShareCard(
-                ShareCard.Take,
-                maybePlayerWithLocationCard[0].id,
-                game.players[game.player_index].location,
-                () => this.share(maybePlayerWithLocationCard[0].id)
-              ),
-              new ShareCard(ShareCard.Take, maybeResearcher[0].id, null, () =>
-                this.shareResearcher(
-                  maybeResearcher[0],
-                  maybeResearcher[0].id,
-                  curr_player.id
-                )
-              ),
-            ],
+            shareCardChoices: choices,
           });
         }
       }
@@ -305,28 +333,58 @@ function withGameState(WrappedComponent: typeof React.Component) {
         if (maybeResearcher.length === 0) {
           this.share(other_players_ids[0]);
         } else {
+          const choices = [
+            new ShareCard(
+              ShareCard.Give,
+              other_players_ids[0],
+              game.players[game.player_index].location,
+              () => this.share(other_players_ids[0])
+            ),
+            new ShareCard(ShareCard.Take, maybeResearcher[0].id, null, () =>
+              this.shareResearcher(
+                maybeResearcher[0],
+                maybeResearcher[0].id,
+                curr_player.id
+              )
+            ),
+          ];
+          nextComponent((destroy: () => void) => {
+            const props = {
+              resetShare: this.resetShare,
+              destroy,
+              shareCardChoices: choices,
+            };
+            return React.createElement(ShareChoicesComponent, props);
+          });
           this.setState({
-            shareCardChoices: [
-              new ShareCard(
-                ShareCard.Give,
-                other_players_ids[0],
-                game.players[game.player_index].location,
-                () => this.share(other_players_ids[0])
-              ),
-              new ShareCard(ShareCard.Take, maybeResearcher[0].id, null, () =>
-                this.shareResearcher(
-                  maybeResearcher[0],
-                  maybeResearcher[0].id,
-                  curr_player.id
-                )
-              ),
-            ],
+            shareCardChoices: choices,
           });
         }
       } else {
         if (maybeResearcher.length === 0) {
+          const choices = other_players_ids.map(
+            (i) =>
+              new ShareCard(
+                ShareCard.Give,
+                i,
+                game.players[game.player_index].location,
+                () => this.share(i)
+              )
+          );
+          nextComponent((destroy: () => void) => {
+            const props = {
+              resetShare: this.resetShare,
+              destroy,
+              shareCardChoices: choices,
+            };
+            return React.createElement(ShareChoicesComponent, props);
+          });
           this.setState({
-            shareCardChoices: other_players_ids.map(
+            shareCardChoices: choices,
+          });
+        } else {
+          const choices = [
+            ...other_players_ids.map(
               (i) =>
                 new ShareCard(
                   ShareCard.Give,
@@ -335,27 +393,24 @@ function withGameState(WrappedComponent: typeof React.Component) {
                   () => this.share(i)
                 )
             ),
+            new ShareCard(ShareCard.Take, maybeResearcher[0].id, null, () =>
+              this.shareResearcher(
+                maybeResearcher[0],
+                maybeResearcher[0].id,
+                curr_player.id
+              )
+            ),
+          ];
+          nextComponent((destroy: () => void) => {
+            const props = {
+              resetShare: this.resetShare,
+              destroy,
+              shareCardChoices: choices,
+            };
+            return React.createElement(ShareChoicesComponent, props);
           });
-        } else {
           this.setState({
-            shareCardChoices: [
-              ...other_players_ids.map(
-                (i) =>
-                  new ShareCard(
-                    ShareCard.Give,
-                    i,
-                    game.players[game.player_index].location,
-                    () => this.share(i)
-                  )
-              ),
-              new ShareCard(ShareCard.Take, maybeResearcher[0].id, null, () =>
-                this.shareResearcher(
-                  maybeResearcher[0],
-                  maybeResearcher[0].id,
-                  curr_player.id
-                )
-              ),
-            ],
+            shareCardChoices: choices,
           });
         }
       }
@@ -377,55 +432,77 @@ function withGameState(WrappedComponent: typeof React.Component) {
             curr_player.id
           );
         } else {
-          this.setState({
-            shareCardChoices: [
-              new ShareCard(
-                ShareCard.Take,
+          const choices = [
+            new ShareCard(
+              ShareCard.Take,
+              other_players_ids[0],
+              game.players[game.player_index].location,
+              () => this.share(other_players_ids[0])
+            ),
+            new ShareCard(ShareCard.Give, other_players_ids[0], null, () =>
+              this.shareResearcher(
+                curr_player,
                 other_players_ids[0],
-                game.players[game.player_index].location,
-                () =>
-                  this.shareResearcher(
-                    curr_player,
-                    other_players_ids[0],
-                    curr_player.id
-                  )
-              ),
-              new ShareCard(ShareCard.Give, other_players_ids[0], null, () =>
-                this.shareResearcher(
-                  curr_player,
-                  other_players_ids[0],
-                  curr_player.id
-                )
-              ),
-            ],
+                curr_player.id
+              )
+            ),
+          ];
+          nextComponent((destroy: () => void) => {
+            const props = {
+              resetShare: this.resetShare,
+              destroy,
+              shareCardChoices: choices,
+            };
+            return React.createElement(ShareChoicesComponent, props);
+          });
+          this.setState({
+            shareCardChoices: choices,
           });
         }
       } else {
         if (maybePlayerWithLocationCard.length === 0) {
+          const choices = other_players_ids.map(
+            (i) =>
+              new ShareCard(ShareCard.Give, i, null, () =>
+                this.shareResearcher(curr_player, i, curr_player.id)
+              )
+          );
+          nextComponent((destroy: () => void) => {
+            const props = {
+              resetShare: this.resetShare,
+              destroy,
+              shareCardChoices: choices,
+            };
+            return React.createElement(ShareChoicesComponent, props);
+          });
           this.setState({
-            shareCardChoices: other_players_ids.map(
+            shareCardChoices: choices,
+          });
+        } else {
+          const choices = [
+            new ShareCard(
+              ShareCard.Take,
+              maybePlayerWithLocationCard[0].id,
+              game.players[game.player_index].location,
+              () => this.share(maybePlayerWithLocationCard[0].id)
+            ),
+            ...other_players_ids.map(
               (i) =>
                 new ShareCard(ShareCard.Give, i, null, () =>
                   this.shareResearcher(curr_player, i, curr_player.id)
                 )
             ),
+          ];
+          nextComponent((destroy: () => void) => {
+            const props = {
+              resetShare: this.resetShare,
+              destroy,
+              shareCardChoices: choices,
+            };
+            return React.createElement(ShareChoicesComponent, props);
           });
-        } else {
           this.setState({
-            shareCardChoices: [
-              new ShareCard(
-                ShareCard.Take,
-                maybePlayerWithLocationCard[0].id,
-                game.players[game.player_index].location,
-                () => this.share(maybePlayerWithLocationCard[0].id)
-              ),
-              ...other_players_ids.map(
-                (i) =>
-                  new ShareCard(ShareCard.Give, i, null, () =>
-                    this.shareResearcher(curr_player, i, curr_player.id)
-                  )
-              ),
-            ],
+            shareCardChoices: choices,
           });
         }
       }
@@ -442,6 +519,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
           nextComponent((destroy: () => void) => {
             const props = {
               destroy,
+              resetShare: this.resetShare,
               game: game,
               hand: researcher.hand,
               socket: socket,

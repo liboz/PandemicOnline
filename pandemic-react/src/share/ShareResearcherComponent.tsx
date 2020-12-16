@@ -3,7 +3,8 @@ import React from "react";
 import { clearShare } from "../modal/Modal";
 import DivHand from "../player/DivHand";
 
-interface MoveChoiceSelectorProps {
+interface ShareResearcherProps {
+  resetShare: () => void;
   game: Client.Game;
   hand: string[];
   socket: SocketIOClient.Socket;
@@ -12,19 +13,20 @@ interface MoveChoiceSelectorProps {
   destroy: () => void;
 }
 
-interface MoveChoiceSelectorState {
+interface ShareResearcherState {
   selectedCard: string;
 }
 
 export class ShareResearcherComponent extends React.Component<
-  MoveChoiceSelectorProps,
-  MoveChoiceSelectorState
+  ShareResearcherProps,
+  ShareResearcherState
 > {
-  constructor(props: MoveChoiceSelectorProps) {
+  constructor(props: ShareResearcherProps) {
     super(props);
     this.state = { selectedCard: "" };
     this.onSelectedCard = this.onSelectedCard.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.onCancel = this.onCancel.bind(this);
   }
 
   onSelectedCard(cardIndex: number) {
@@ -33,7 +35,8 @@ export class ShareResearcherComponent extends React.Component<
   }
 
   onCancel() {
-    const { destroy } = this.props;
+    const { resetShare, destroy } = this.props;
+    resetShare();
     destroy();
   }
 

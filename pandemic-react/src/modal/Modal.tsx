@@ -1,5 +1,5 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
-import React, { CElement, ReactNode } from "react";
+import React, { CElement, ReactElement, ReactNode } from "react";
 
 import { Subject } from "rxjs";
 
@@ -47,7 +47,7 @@ export const startAt = (difficultyInfo: Client.GameDifficulty) => {
 };
 
 interface ModalServiceState {
-  component: ReactNode;
+  component: ReactElement | null;
   visible: boolean;
 }
 
@@ -81,7 +81,9 @@ export default class ModalService extends React.Component<
   }
 
   currentComponent() {
-    //return this.domService.getCurrentComponentName();
+    if (this.state.component && typeof this.state.component.type !== "string") {
+      return this.state.component.type.name;
+    }
   }
 
   render() {
