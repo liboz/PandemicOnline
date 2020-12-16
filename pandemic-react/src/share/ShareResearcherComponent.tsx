@@ -16,7 +16,7 @@ interface MoveChoiceSelectorState {
   selectedCard: string;
 }
 
-export class ShareReseacherComponent extends React.Component<
+export class ShareResearcherComponent extends React.Component<
   MoveChoiceSelectorProps,
   MoveChoiceSelectorState
 > {

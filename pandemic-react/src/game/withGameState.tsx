@@ -12,7 +12,7 @@ import * as d3 from "d3";
 import { CityNodeData } from "../node/CityNode";
 import Link from "../link/link";
 import { MoveChoiceSelectorComponent } from "../move-choice-selector/MoveChoiceSelectorComponent";
-import { ShareReseacherComponent } from "../share/ShareResearcherComponent";
+import { ShareResearcherComponent } from "../share/ShareResearcherComponent";
 
 export const width = 1920;
 export const height = 960;
@@ -166,34 +166,180 @@ function withGameState(WrappedComponent: typeof React.Component) {
       if (shareCardChoices) {
         this.setState({ shareCardChoices: null });
       } else if (game) {
-        let curr_player = game.players[game.player_index];
-        let location = curr_player.location;
-        let location_players =
+        const curr_player = game.players[game.player_index];
+        const location = curr_player.location;
+        const location_players =
           game.game_graph[game.game_graph_index[location]].players;
-        let other_players_ids = location_players.filter(
+        const other_players_ids = location_players.filter(
           (i) => i !== game.player_index
         );
-        let other_players = other_players_ids.map((i) => game.players[i]);
 
-        // non researcher case
-        if (
-          curr_player.role !== Client.Roles.Researcher &&
-          other_players.every((i) => i.role !== Client.Roles.Researcher)
-        ) {
-          // only 2 players
-          if (location_players.length === 2) {
-            let other_player = other_players_ids[0];
-            this.share(other_player);
-          } else if (game.can_take) {
-            // since there is no researcher, there is only 1 possible take option
-            let other_player = other_players_ids.filter((i) =>
-              game.players[i].hand.includes(location)
-            )[0];
-            this.share(other_player);
+        const maybePlayerWithLocationCard = game.players.filter(
+          (player) =>
+            player.location === location && player.hand.includes(location)
+        );
+
+        const maybeResearcher = game.players.filter(
+          (player) =>
+            player.location === location &&
+            player.role === Client.Roles.Researcher
+        );
+
+        const isCurrPlayerResearcher =
+          maybeResearcher?.[0]?.id === curr_player.id;
+
+        const doesCurrPlayerHaveLocationCard =
+          maybePlayerWithLocationCard?.[0]?.id === curr_player.id;
+
+        if (isCurrPlayerResearcher && doesCurrPlayerHaveLocationCard) {
+          if (other_players_ids.length == 1) {
+            this.shareResearcher(
+              curr_player,
+              other_players_ids[0],
+              curr_player.id
+            );
           } else {
-            // we can potentially give to every other player on the same node
             this.setState({
               shareCardChoices: other_players_ids.map(
+                (i) =>
+                  new ShareCard(ShareCard.Give, i, null, () =>
+                    this.shareResearcher(curr_player, i, curr_player.id)
+                  )
+              ),
+            });
+          }
+        } else if (isCurrPlayerResearcher && !doesCurrPlayerHaveLocationCard) {
+          this.currPlayerResearchAndNoLocationCard(
+            game,
+            other_players_ids,
+            curr_player,
+            maybePlayerWithLocationCard
+          );
+        } else if (!isCurrPlayerResearcher && doesCurrPlayerHaveLocationCard) {
+          this.currPlayerLocationCardNotResearcher(
+            game,
+            other_players_ids,
+            curr_player,
+            maybeResearcher
+          );
+        } else {
+          this.currPlayerNotLocationCardNotResearcher(
+            game,
+            other_players_ids,
+            curr_player,
+            maybePlayerWithLocationCard,
+            maybeResearcher
+          );
+        }
+      }
+    }
+
+    currPlayerNotLocationCardNotResearcher(
+      game: Client.Game,
+      other_players_ids: number[],
+      curr_player: Client.Player,
+      maybePlayerWithLocationCard: Client.Player[],
+      maybeResearcher: Client.Player[]
+    ) {
+      if (other_players_ids.length == 1) {
+        if (maybeResearcher.length === 0) {
+          this.share(other_players_ids[0]);
+        } else {
+          this.shareResearcher(
+            game.players[other_players_ids[0]],
+            other_players_ids[0],
+            curr_player.id
+          );
+        }
+      } else {
+        if (
+          maybePlayerWithLocationCard.length === 1 &&
+          maybeResearcher.length === 1 &&
+          maybePlayerWithLocationCard[0].id === maybeResearcher[0].id
+        ) {
+          this.shareResearcher(
+            maybeResearcher[0],
+            maybeResearcher[0].id,
+            curr_player.id
+          );
+        } else if (maybeResearcher.length === 0) {
+          this.share(maybePlayerWithLocationCard[0].id);
+        } else if (maybePlayerWithLocationCard.length === 0) {
+          this.shareResearcher(
+            maybeResearcher[0],
+            maybeResearcher[0].id,
+            curr_player.id
+          );
+        } else if (
+          maybePlayerWithLocationCard.length === 1 &&
+          maybeResearcher.length === 1
+        ) {
+          this.setState({
+            shareCardChoices: [
+              new ShareCard(
+                ShareCard.Take,
+                maybePlayerWithLocationCard[0].id,
+                game.players[game.player_index].location,
+                () => this.share(maybePlayerWithLocationCard[0].id)
+              ),
+              new ShareCard(ShareCard.Take, maybeResearcher[0].id, null, () =>
+                this.shareResearcher(
+                  maybeResearcher[0],
+                  maybeResearcher[0].id,
+                  curr_player.id
+                )
+              ),
+            ],
+          });
+        }
+      }
+    }
+
+    currPlayerLocationCardNotResearcher(
+      game: Client.Game,
+      other_players_ids: number[],
+      curr_player: Client.Player,
+      maybeResearcher: Client.Player[]
+    ) {
+      if (other_players_ids.length == 1) {
+        if (maybeResearcher.length === 0) {
+          this.share(other_players_ids[0]);
+        } else {
+          this.setState({
+            shareCardChoices: [
+              new ShareCard(
+                ShareCard.Give,
+                other_players_ids[0],
+                game.players[game.player_index].location,
+                () => this.share(other_players_ids[0])
+              ),
+              new ShareCard(ShareCard.Take, maybeResearcher[0].id, null, () =>
+                this.shareResearcher(
+                  maybeResearcher[0],
+                  maybeResearcher[0].id,
+                  curr_player.id
+                )
+              ),
+            ],
+          });
+        }
+      } else {
+        if (maybeResearcher.length === 0) {
+          this.setState({
+            shareCardChoices: other_players_ids.map(
+              (i) =>
+                new ShareCard(
+                  ShareCard.Give,
+                  i,
+                  game.players[game.player_index].location,
+                  () => this.share(i)
+                )
+            ),
+          });
+        } else {
+          this.setState({
+            shareCardChoices: [
+              ...other_players_ids.map(
                 (i) =>
                   new ShareCard(
                     ShareCard.Give,
@@ -202,182 +348,85 @@ function withGameState(WrappedComponent: typeof React.Component) {
                     () => this.share(i)
                   )
               ),
-            });
-          }
+              new ShareCard(ShareCard.Take, maybeResearcher[0].id, null, () =>
+                this.shareResearcher(
+                  maybeResearcher[0],
+                  maybeResearcher[0].id,
+                  curr_player.id
+                )
+              ),
+            ],
+          });
+        }
+      }
+    }
+
+    currPlayerResearchAndNoLocationCard(
+      game: Client.Game,
+      other_players_ids: number[],
+      curr_player: Client.Player,
+      maybePlayerWithLocationCard: Client.Player[]
+    ) {
+      if (other_players_ids.length == 1) {
+        if (curr_player.hand.length === 0) {
+          this.share(other_players_ids[0]);
+        } else if (maybePlayerWithLocationCard.length === 0) {
+          this.shareResearcher(
+            curr_player,
+            other_players_ids[0],
+            curr_player.id
+          );
         } else {
-          // researcher
-          if (location_players.length === 2) {
-            // just need to figure out who is the researcher and who isn't
-            let other_player = other_players_ids[0];
-            if (curr_player.role === Client.Roles.Researcher) {
-              if (curr_player.hand.length === 0) {
-                this.share(other_player);
-              } else {
-                if (game.players[other_player].hand.includes(location)) {
-                  const baseChoices = [
-                    new ShareCard(
-                      ShareCard.Take,
-                      other_player,
-                      game.players[game.player_index].location,
-                      () => this.share(other_player)
-                    ),
-                  ];
-                  baseChoices.push(
-                    new ShareCard(ShareCard.Give, other_player, null, () =>
-                      this.shareResearcher(
-                        curr_player,
-                        other_player,
-                        curr_player.id
-                      )
-                    )
-                  );
-                  this.setState({
-                    shareCardChoices: baseChoices,
-                  });
-                } else {
+          this.setState({
+            shareCardChoices: [
+              new ShareCard(
+                ShareCard.Take,
+                other_players_ids[0],
+                game.players[game.player_index].location,
+                () =>
                   this.shareResearcher(
                     curr_player,
-                    other_player,
+                    other_players_ids[0],
                     curr_player.id
-                  );
-                }
-              }
-            } else {
-              if (
-                curr_player.hand.length === 0 ||
-                !curr_player.hand.includes(location)
-              ) {
-                this.shareResearcher(
-                  game.players[other_player],
-                  other_player,
-                  curr_player.id
-                );
-              } else {
-                let researcher = other_players.filter(
-                  (i) => i.role === Client.Roles.Researcher
-                )[0];
-                const baseChoices = [
-                  new ShareCard(
-                    ShareCard.Give,
-                    other_player,
-                    game.players[game.player_index].location,
-                    () => this.share(other_player)
-                  ),
-                ];
-                baseChoices.push(
-                  new ShareCard(ShareCard.Take, other_player, null, () =>
-                    this.shareResearcher(
-                      researcher,
-                      researcher.id,
-                      curr_player.id
-                    )
                   )
-                );
-                this.setState({
-                  shareCardChoices: baseChoices,
-                });
-              }
-            }
-          } else if (game.can_take) {
-            // since there are multiple players, we can potentially take from 1 other player + a researcher
-
-            let other_player = other_players_ids.filter((i) =>
-              game.players[i].hand.includes(location)
-            );
-            if (other_player.length > 0) {
-              if (
-                game.players[other_player[0]].role === Client.Roles.Researcher
-              ) {
-                // That one player we can take from is a researcher, in which case we just do researcher take
-                this.shareResearcher(
-                  game.players[other_player[0]],
-                  other_player[0],
-                  curr_player.id
-                );
-              } else {
-                const baseChoices = [
-                  new ShareCard(
-                    ShareCard.Take,
-                    other_player[0],
-                    game.players[game.player_index].location,
-                    () => this.share(other_player[0])
-                  ),
-                ];
-                //  if that researcher is us, the action needs to be a give
-                if (curr_player.role === Client.Roles.Researcher) {
-                  other_players_ids.forEach((id) => {
-                    baseChoices.push(
-                      new ShareCard(ShareCard.Give, id, null, () =>
-                        this.shareResearcher(curr_player, id, curr_player.id)
-                      )
-                    );
-                    this.setState({ shareCardChoices: baseChoices });
-                  });
-                } else {
-                  // otherwise, we can also take from the researcher
-                  let researcher = other_players.filter(
-                    (i) => i.role === Client.Roles.Researcher
-                  )[0];
-                  baseChoices.push(
-                    new ShareCard(ShareCard.Take, researcher.id, null, () =>
-                      this.shareResearcher(
-                        researcher,
-                        researcher.id,
-                        game.player_index
-                      )
-                    )
-                  );
-                  this.setState({
-                    shareCardChoices: baseChoices,
-                  });
-                }
-              }
-            } else {
-              // the one player is non-existent, just a researcher. we must have the card in question
-              let researcher = other_players.filter(
-                (i) => i.role === Client.Roles.Researcher
-              )[0];
-              if (curr_player.role === Client.Roles.Researcher) {
+              ),
+              new ShareCard(ShareCard.Give, other_players_ids[0], null, () =>
                 this.shareResearcher(
                   curr_player,
-                  researcher.id,
+                  other_players_ids[0],
                   curr_player.id
-                );
-              } else {
-                const baseChoices = other_players.map(
-                  (other_player) =>
-                    new ShareCard(
-                      ShareCard.Give,
-                      other_player.id,
-                      game.players[game.player_index].location,
-                      () => this.share(other_player.id)
-                    )
-                );
-                baseChoices.push(
-                  new ShareCard(ShareCard.Take, researcher.id, null, () =>
-                    this.shareResearcher(
-                      researcher,
-                      researcher.id,
-                      curr_player.id
-                    )
+                )
+              ),
+            ],
+          });
+        }
+      } else {
+        if (maybePlayerWithLocationCard.length === 0) {
+          this.setState({
+            shareCardChoices: other_players_ids.map(
+              (i) =>
+                new ShareCard(ShareCard.Give, i, null, () =>
+                  this.shareResearcher(curr_player, i, curr_player.id)
+                )
+            ),
+          });
+        } else {
+          this.setState({
+            shareCardChoices: [
+              new ShareCard(
+                ShareCard.Take,
+                maybePlayerWithLocationCard[0].id,
+                game.players[game.player_index].location,
+                () => this.share(maybePlayerWithLocationCard[0].id)
+              ),
+              ...other_players_ids.map(
+                (i) =>
+                  new ShareCard(ShareCard.Give, i, null, () =>
+                    this.shareResearcher(curr_player, i, curr_player.id)
                   )
-                );
-                this.setState({
-                  shareCardChoices: baseChoices,
-                });
-              }
-            }
-          } else {
-            // we are giving to another player.
-            // since we should always be able to take from a researcher, this only happens when we are the researcher, so we researcher share
-            this.setState({
-              shareCardChoices: other_players_ids.map((id) => {
-                return new ShareCard(ShareCard.Give, id, null, () =>
-                  this.shareResearcher(curr_player, id, curr_player.id)
-                );
-              }),
-            });
-          }
+              ),
+            ],
+          });
         }
       }
     }
@@ -399,7 +448,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
               target_player_index: target_player_index,
               curr_player_index: curr_player_index,
             };
-            return React.createElement(ShareReseacherComponent, props);
+            return React.createElement(ShareResearcherComponent, props);
           });
         }
       }
