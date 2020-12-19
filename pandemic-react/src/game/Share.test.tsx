@@ -2,7 +2,7 @@ import { setupGameState } from "../testUtil";
 import { Client } from "pandemiccommon/dist/out-tsc";
 import { testGame } from "../data/testData";
 import rfdc from "rfdc";
-import { ShareCard } from "./withGameState";
+import { GameStateInterface, ShareCard } from "./withGameState";
 import { ShareResearcherComponent } from "../share/ShareResearcherComponent";
 import DivHandComponent from "../player/DivHand";
 import { ReactTestInstance } from "react-test-renderer";
@@ -71,6 +71,7 @@ interface ShareChoiceInfo {
   root: ReactTestInstance;
   mockSocket: MockProxy<SocketIOClient.Socket> & SocketIOClient.Socket;
   modifiedTestData: Client.Game;
+  instance: GameStateInterface;
 }
 
 describe("Game", () => {
@@ -131,6 +132,20 @@ describe("Game", () => {
     expect(shareChoicesComponent).toHaveLength(1);
     checkChoice(shareChoicesComponent, "Give Player 3 the Lima card");
     checkSockets(mockSocket, 3); // other player is id 3
+  });
+
+  test("onShare works with 1 researcher and active player having the location card, choose cancel", () => {
+    const {
+      root,
+      modifiedTestData,
+      mockSocket,
+      instance,
+    } = onShare2Players_Researcher_currPlayerLocationCard_Base();
+    const shareChoicesComponent = root.findAllByType(ShareChoicesComponent);
+    expect(shareChoicesComponent).toHaveLength(1);
+    checkChoice(shareChoicesComponent, "Cancel");
+    expect(mockSocket.emit.mock.calls).toHaveLength(0);
+    expect(instance.state.shareCardChoices).toBeNull();
   });
 
   test("onShare works with 1 researcher and active player having the location card, choose give location card", () => {
@@ -328,6 +343,32 @@ describe("Game", () => {
       mockSocket,
       0
     );
+  });
+
+  test("onShare works with 1 researcher when researcher is active player and other player has the location card, choose share researcher, then cancel", () => {
+    const {
+      root,
+      modifiedTestData,
+      mockSocket,
+      instance,
+    } = onShare2Players_currPlayerResearcher_noLocationCard_Base();
+    const shareChoicesComponent = root.findAllByType(ShareChoicesComponent);
+    expect(shareChoicesComponent).toHaveLength(1);
+    checkChoice(shareChoicesComponent, "Give Player 0");
+
+    const shareResearcherComponent = root.findAllByType(
+      ShareResearcherComponent
+    );
+    expect(shareResearcherComponent).toHaveLength(1);
+    const cancelButton = shareResearcherComponent[0].find((node) => {
+      return (
+        node.type === "button" &&
+        node.children.filter((c) => c.toString().includes("Cancel")).length > 0
+      );
+    });
+    cancelButton.props["onClick"]();
+    expect(mockSocket.emit.mock.calls).toHaveLength(0);
+    expect(instance.state.shareCardChoices).toBeNull();
   });
 
   test("onShare works with 3 players with 1 researcher who has the location card", () => {
@@ -616,7 +657,7 @@ function onShare3Players_Researcher_nonResearcherLocationCard_Base(): ShareChoic
     ].sort()
   );
   expect(mockSocket.emit.mock.calls).toHaveLength(0);
-  return { root, mockSocket, modifiedTestData };
+  return { root, mockSocket, modifiedTestData, instance };
 }
 
 function onShare3Players_currPlayerResearcher_nonResearcherLocationCard_Base(): ShareChoiceInfo {
@@ -650,7 +691,7 @@ function onShare3Players_currPlayerResearcher_nonResearcherLocationCard_Base(): 
     ].sort()
   );
   expect(mockSocket.emit.mock.calls).toHaveLength(0);
-  return { root, mockSocket, modifiedTestData };
+  return { root, mockSocket, modifiedTestData, instance };
 }
 
 function onShare3Players_Researcher_currPlayerLocationCard_Base(): ShareChoiceInfo {
@@ -679,7 +720,7 @@ function onShare3Players_Researcher_currPlayerLocationCard_Base(): ShareChoiceIn
     ].sort()
   );
   expect(mockSocket.emit.mock.calls).toHaveLength(0);
-  return { root, mockSocket, modifiedTestData };
+  return { root, mockSocket, modifiedTestData, instance };
 }
 
 function onShare2Players_Researcher_currPlayerLocationCard_Base(): ShareChoiceInfo {
@@ -706,7 +747,7 @@ function onShare2Players_Researcher_currPlayerLocationCard_Base(): ShareChoiceIn
     ].sort()
   );
   expect(mockSocket.emit.mock.calls).toHaveLength(0);
-  return { root, mockSocket, modifiedTestData };
+  return { root, mockSocket, modifiedTestData, instance };
 }
 
 function onShare2Players_currPlayerResearcher_noLocationCard_Base(): ShareChoiceInfo {
@@ -734,5 +775,5 @@ function onShare2Players_currPlayerResearcher_noLocationCard_Base(): ShareChoice
     ].sort()
   );
   expect(mockSocket.emit.mock.calls).toHaveLength(0);
-  return { root, mockSocket, modifiedTestData };
+  return { root, mockSocket, modifiedTestData, instance };
 }
