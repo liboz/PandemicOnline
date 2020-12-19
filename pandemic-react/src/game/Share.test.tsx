@@ -110,7 +110,7 @@ describe("Game", () => {
       modifiedTestData.game_graph_index["Lima"]
     ].players = [0, 1, 3];
     modifiedTestData.players[3].location = "Lima";
-    const { mockSocket, instance } = setupGameState(modifiedTestData);
+    const { mockSocket, instance, root } = setupGameState(modifiedTestData);
     instance.onShare();
     expect(instance.state.shareCardChoices).toBeTruthy();
     expect(
@@ -127,32 +127,44 @@ describe("Game", () => {
       ].sort()
     );
     expect(mockSocket.emit.mock.calls).toHaveLength(0);
+    const shareChoicesComponent = root.findAllByType(ShareChoicesComponent);
+    expect(shareChoicesComponent).toHaveLength(1);
+    checkChoice(shareChoicesComponent, "Give Player 3 the Lima card");
+    checkSockets(mockSocket, 3); // other player is id 3
   });
 
-  test("onShare works with 1 researcher and having the location card", () => {
-    const modifiedTestData = clone(testGame);
-    modifiedTestData.game_graph[
-      modifiedTestData.game_graph_index["Lima"]
-    ].players = [0, 2];
-    modifiedTestData.players[1].location = "Beijing";
-    modifiedTestData.players[2].location = "Lima";
-    const { mockSocket, instance } = setupGameState(modifiedTestData);
-    instance.onShare();
-    expect(instance.state.shareCardChoices).toBeTruthy();
-    expect(
-      instance.state.shareCardChoices
-        ?.map((choice) => {
-          const { onClick, ...rest } = choice;
-          return rest;
-        })
-        .sort()
-    ).toStrictEqual(
-      [
-        { action: ShareCard.Give, location: "Lima", player_id: 2 },
-        { action: ShareCard.Take, location: null, player_id: 2 },
-      ].sort()
+  test("onShare works with 1 researcher and active player having the location card, choose give location card", () => {
+    const {
+      root,
+      modifiedTestData,
+      mockSocket,
+    } = onShare2Players_Researcher_currPlayerLocationCard_Base();
+    const shareChoicesComponent = root.findAllByType(ShareChoicesComponent);
+    expect(shareChoicesComponent).toHaveLength(1);
+    checkChoice(shareChoicesComponent, "Give Player 2 the Lima card");
+    checkSockets(mockSocket, 2); // other player is id 2
+  });
+
+  test("onShare works with 1 researcher and active player having the location card, choose take from researcher", () => {
+    const {
+      root,
+      modifiedTestData,
+      mockSocket,
+    } = onShare2Players_Researcher_currPlayerLocationCard_Base();
+    const shareChoicesComponent = root.findAllByType(ShareChoicesComponent);
+    expect(shareChoicesComponent).toHaveLength(1);
+    checkChoice(shareChoicesComponent, "Take from Player 2");
+
+    const shareResearcherComponent = root.findAllByType(
+      ShareResearcherComponent
     );
-    expect(mockSocket.emit.mock.calls).toHaveLength(0);
+    expect(shareResearcherComponent).toHaveLength(1);
+    checkShareResearcher(
+      shareResearcherComponent,
+      modifiedTestData,
+      mockSocket,
+      2
+    );
   });
 
   test("onShare works with 1 researcher", () => {
@@ -283,31 +295,39 @@ describe("Game", () => {
     checkSockets(mockSocket, 0); // other player is id 0
   });
 
-  test("onShare works with 1 researcher when researcher is active player and other player has the location card", () => {
-    const modifiedTestData = clone(testGame);
-    modifiedTestData.game_graph[
-      modifiedTestData.game_graph_index["Lima"]
-    ].players = [0, 2];
-    modifiedTestData.players[1].location = "Beijing";
-    modifiedTestData.players[2].location = "Lima";
-    modifiedTestData.player_index = 2;
-    const { mockSocket, instance, root } = setupGameState(modifiedTestData);
-    instance.onShare();
-    expect(instance.state.shareCardChoices).toBeTruthy();
-    expect(
-      instance.state.shareCardChoices
-        ?.map((choice) => {
-          const { onClick, ...rest } = choice;
-          return rest;
-        })
-        .sort()
-    ).toStrictEqual(
-      [
-        { action: ShareCard.Take, location: "Lima", player_id: 0 },
-        { action: ShareCard.Give, location: null, player_id: 0 },
-      ].sort()
+  //todo
+  test("onShare works with 1 researcher when researcher is active player and other player has the location card, choose take location card", () => {
+    const {
+      root,
+      modifiedTestData,
+      mockSocket,
+    } = onShare2Players_currPlayerResearcher_noLocationCard_Base();
+    const shareChoicesComponent = root.findAllByType(ShareChoicesComponent);
+    expect(shareChoicesComponent).toHaveLength(1);
+    checkChoice(shareChoicesComponent, "Take from Player 0 the Lima card");
+    checkSockets(mockSocket, 0); // other player is id 0
+  });
+
+  test("onShare works with 1 researcher when researcher is active player and other player has the location card, choose share researcher", () => {
+    const {
+      root,
+      modifiedTestData,
+      mockSocket,
+    } = onShare2Players_currPlayerResearcher_noLocationCard_Base();
+    const shareChoicesComponent = root.findAllByType(ShareChoicesComponent);
+    expect(shareChoicesComponent).toHaveLength(1);
+    checkChoice(shareChoicesComponent, "Give Player 0");
+
+    const shareResearcherComponent = root.findAllByType(
+      ShareResearcherComponent
     );
-    expect(mockSocket.emit.mock.calls).toHaveLength(0);
+    expect(shareResearcherComponent).toHaveLength(1);
+    checkShareResearcher(
+      shareResearcherComponent,
+      modifiedTestData,
+      mockSocket,
+      0
+    );
   });
 
   test("onShare works with 3 players with 1 researcher who has the location card", () => {
@@ -343,32 +363,38 @@ describe("Game", () => {
     );
   });
 
-  test("onShare works with 3 players with 1 researcher", () => {
-    const modifiedTestData = clone(testGame);
-    modifiedTestData.game_graph[
-      modifiedTestData.game_graph_index["Lima"]
-    ].players = [0, 1, 2];
-    modifiedTestData.players[2].location = "Lima";
-    modifiedTestData.can_take = true;
+  test("onShare works with 3 players with 1 researcher, choose give location card", () => {
+    const {
+      root,
+      modifiedTestData,
+      mockSocket,
+    } = onShare3Players_Researcher_currPlayerLocationCard_Base();
+    const shareChoicesComponent = root.findAllByType(ShareChoicesComponent);
+    expect(shareChoicesComponent).toHaveLength(1);
+    checkChoice(shareChoicesComponent, "Give Player 1 the Lima card");
+    checkSockets(mockSocket, 1); // other player is id 1
+  });
 
-    const { mockSocket, instance, root } = setupGameState(modifiedTestData);
-    instance.onShare();
-    expect(instance.state.shareCardChoices).toBeTruthy();
-    expect(
-      instance.state.shareCardChoices
-        ?.map((choice) => {
-          const { onClick, ...rest } = choice;
-          return rest;
-        })
-        .sort()
-    ).toStrictEqual(
-      [
-        { action: ShareCard.Give, location: "Lima", player_id: 1 },
-        { action: ShareCard.Give, location: "Lima", player_id: 2 },
-        { action: ShareCard.Take, location: null, player_id: 2 },
-      ].sort()
+  test("onShare works with 3 players with 1 researcher, choose take from researcher", () => {
+    const {
+      root,
+      modifiedTestData,
+      mockSocket,
+    } = onShare3Players_Researcher_currPlayerLocationCard_Base();
+    const shareChoicesComponent = root.findAllByType(ShareChoicesComponent);
+    expect(shareChoicesComponent).toHaveLength(1);
+    checkChoice(shareChoicesComponent, "Take from Player 2");
+
+    const shareResearcherComponent = root.findAllByType(
+      ShareResearcherComponent
     );
-    expect(mockSocket.emit.mock.calls).toHaveLength(0);
+    expect(shareResearcherComponent).toHaveLength(1);
+    checkShareResearcher(
+      shareResearcherComponent,
+      modifiedTestData,
+      mockSocket,
+      2
+    );
   });
 
   test("onShare works with 3 players with 1 researcher no location card", () => {
@@ -408,7 +434,7 @@ describe("Game", () => {
       root,
       modifiedTestData,
       mockSocket,
-    } = onShare3Players_1Researcher_nonResearcherLocationCard_Base();
+    } = onShare3Players_Researcher_nonResearcherLocationCard_Base();
     const shareChoicesComponent = root.findAllByType(ShareChoicesComponent);
     expect(shareChoicesComponent).toHaveLength(1);
     checkChoice(shareChoicesComponent, "Take from Player 1 the Lima card");
@@ -420,7 +446,7 @@ describe("Game", () => {
       root,
       modifiedTestData,
       mockSocket,
-    } = onShare3Players_1Researcher_nonResearcherLocationCard_Base();
+    } = onShare3Players_Researcher_nonResearcherLocationCard_Base();
     const shareChoicesComponent = root.findAllByType(ShareChoicesComponent);
     expect(shareChoicesComponent).toHaveLength(1);
     checkChoice(shareChoicesComponent, "Take from Player 2");
@@ -561,7 +587,7 @@ describe("Game", () => {
   });
 });
 
-function onShare3Players_1Researcher_nonResearcherLocationCard_Base(): ShareChoiceInfo {
+function onShare3Players_Researcher_nonResearcherLocationCard_Base(): ShareChoiceInfo {
   const modifiedTestData = clone(testGame);
   modifiedTestData.game_graph[
     modifiedTestData.game_graph_index["Lima"]
@@ -621,6 +647,90 @@ function onShare3Players_currPlayerResearcher_nonResearcherLocationCard_Base(): 
       { action: ShareCard.Take, location: "Lima", player_id: 1 },
       { action: ShareCard.Give, location: null, player_id: 0 },
       { action: ShareCard.Give, location: null, player_id: 1 },
+    ].sort()
+  );
+  expect(mockSocket.emit.mock.calls).toHaveLength(0);
+  return { root, mockSocket, modifiedTestData };
+}
+
+function onShare3Players_Researcher_currPlayerLocationCard_Base(): ShareChoiceInfo {
+  const modifiedTestData = clone(testGame);
+  modifiedTestData.game_graph[
+    modifiedTestData.game_graph_index["Lima"]
+  ].players = [0, 1, 2];
+  modifiedTestData.players[2].location = "Lima";
+  modifiedTestData.can_take = true;
+
+  const { mockSocket, instance, root } = setupGameState(modifiedTestData);
+  instance.onShare();
+  expect(instance.state.shareCardChoices).toBeTruthy();
+  expect(
+    instance.state.shareCardChoices
+      ?.map((choice) => {
+        const { onClick, ...rest } = choice;
+        return rest;
+      })
+      .sort()
+  ).toStrictEqual(
+    [
+      { action: ShareCard.Give, location: "Lima", player_id: 1 },
+      { action: ShareCard.Give, location: "Lima", player_id: 2 },
+      { action: ShareCard.Take, location: null, player_id: 2 },
+    ].sort()
+  );
+  expect(mockSocket.emit.mock.calls).toHaveLength(0);
+  return { root, mockSocket, modifiedTestData };
+}
+
+function onShare2Players_Researcher_currPlayerLocationCard_Base(): ShareChoiceInfo {
+  const modifiedTestData = clone(testGame);
+  modifiedTestData.game_graph[
+    modifiedTestData.game_graph_index["Lima"]
+  ].players = [0, 2];
+  modifiedTestData.players[1].location = "Beijing";
+  modifiedTestData.players[2].location = "Lima";
+  const { mockSocket, instance, root } = setupGameState(modifiedTestData);
+  instance.onShare();
+  expect(instance.state.shareCardChoices).toBeTruthy();
+  expect(
+    instance.state.shareCardChoices
+      ?.map((choice) => {
+        const { onClick, ...rest } = choice;
+        return rest;
+      })
+      .sort()
+  ).toStrictEqual(
+    [
+      { action: ShareCard.Give, location: "Lima", player_id: 2 },
+      { action: ShareCard.Take, location: null, player_id: 2 },
+    ].sort()
+  );
+  expect(mockSocket.emit.mock.calls).toHaveLength(0);
+  return { root, mockSocket, modifiedTestData };
+}
+
+function onShare2Players_currPlayerResearcher_noLocationCard_Base(): ShareChoiceInfo {
+  const modifiedTestData = clone(testGame);
+  modifiedTestData.game_graph[
+    modifiedTestData.game_graph_index["Lima"]
+  ].players = [0, 2];
+  modifiedTestData.players[1].location = "Beijing";
+  modifiedTestData.players[2].location = "Lima";
+  modifiedTestData.player_index = 2;
+  const { mockSocket, instance, root } = setupGameState(modifiedTestData);
+  instance.onShare();
+  expect(instance.state.shareCardChoices).toBeTruthy();
+  expect(
+    instance.state.shareCardChoices
+      ?.map((choice) => {
+        const { onClick, ...rest } = choice;
+        return rest;
+      })
+      .sort()
+  ).toStrictEqual(
+    [
+      { action: ShareCard.Take, location: "Lima", player_id: 0 },
+      { action: ShareCard.Give, location: null, player_id: 0 },
     ].sort()
   );
   expect(mockSocket.emit.mock.calls).toHaveLength(0);
