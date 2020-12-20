@@ -6,9 +6,7 @@ import { Subject } from "rxjs";
 import "./Modal.css";
 import { PlayerInfo } from "../join/Join";
 
-export type componentSourceType = (
-  destroy: () => void
-) => CElement<any, any> | null;
+export type componentSourceType = (destroy: () => void) => CElement<any, any>;
 
 const componentSource = new Subject<componentSourceType>();
 export const component$ = componentSource.asObservable();
@@ -47,8 +45,7 @@ export const startAt = (difficultyInfo: Client.GameDifficulty) => {
 };
 
 interface ModalServiceState {
-  component: ReactElement | null;
-  visible: boolean;
+  components: ReactElement[];
 }
 
 export default class ModalService extends React.Component<
@@ -58,15 +55,18 @@ export default class ModalService extends React.Component<
   constructor(props: any) {
     super(props);
     this.state = {
-      component: null,
-      visible: false,
+      components: [],
     };
     this.destroy = this.destroy.bind(this);
   }
 
   componentDidMount() {
     component$.subscribe((newComponent) => {
-      this.setState({ component: newComponent(this.destroy), visible: true });
+      this.setState((state) => {
+        return {
+          components: [...state.components, newComponent(this.destroy)],
+        };
+      });
     });
 
     destroy$.subscribe(() => {
@@ -77,12 +77,21 @@ export default class ModalService extends React.Component<
   private modalElementId = "modal-container";
 
   destroy() {
-    this.setState({ component: null, visible: false });
+    this.setState((state) => {
+      const newComponents = [...state.components];
+      newComponents.shift();
+      return {
+        components: newComponents,
+      };
+    });
   }
 
   currentComponent() {
-    if (this.state.component && typeof this.state.component.type !== "string") {
-      return this.state.component.type.name;
+    if (
+      this.state.components &&
+      typeof this.state.components[0].type !== "string"
+    ) {
+      return this.state.components[0].type.name;
     }
   }
 
@@ -90,9 +99,9 @@ export default class ModalService extends React.Component<
     return (
       <div
         id={this.modalElementId}
-        className={this.state.visible ? "show" : "hidden"}
+        className={this.state.components.length > 0 ? "show" : "hidden"}
       >
-        {this.state.component}
+        {this.state.components.length > 0 && this.state.components[0]}
       </div>
     );
   }

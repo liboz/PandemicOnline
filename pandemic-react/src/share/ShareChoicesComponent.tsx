@@ -36,11 +36,7 @@ export class ShareChoicesComponent extends React.Component<ShareChoicesProps> {
               <button
                 key={choice.action + choice.location + choice.player_id}
                 onClick={() => {
-                  if (choice.location) {
-                    this.handleClick(choice.onClick);
-                  } else {
-                    choice.onClick();
-                  }
+                  this.handleClick(choice.onClick);
                 }}
               >
                 {choice.action} Player {choice.player_id}

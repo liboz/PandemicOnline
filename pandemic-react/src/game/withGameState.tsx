@@ -14,6 +14,7 @@ import Link from "../link/link";
 import { MoveChoiceSelectorComponent } from "../move-choice-selector/MoveChoiceSelectorComponent";
 import { ShareResearcherComponent } from "../share/ShareResearcherComponent";
 import { ShareChoicesComponent } from "../share/ShareChoicesComponent";
+import { DiscardCardsComponent } from "../discard/DiscardCardsComponent";
 
 export const width = 1920;
 export const height = 960;
@@ -112,17 +113,49 @@ function withGameState(WrappedComponent: typeof React.Component) {
         const nodes = this.regenerateNodes();
         const links = this.regenerateLinks(nodes);
         this.setState({ nodes, links });
+        this.maybeShowDiscardComponent();
       } else {
         if (prevProps.game?.game_graph !== game?.game_graph) {
           const nodes = this.regenerateNodes();
           this.setState({ nodes });
         }
+
+        if (
+          prevProps.game.must_discard_index !== game?.must_discard_index ||
+          prevProps.player_index !== game.player_index ||
+          prevProps.game.game_state !== game.game_state
+        ) {
+          this.maybeShowDiscardComponent();
+        }
+      }
+    }
+
+    maybeShowDiscardComponent() {
+      const { game, player_index, socket } = this.props;
+      if (
+        socket &&
+        game &&
+        player_index !== undefined &&
+        game.must_discard_index === player_index &&
+        game.game_state === Client.GameState.DiscardingCard
+      ) {
+        nextComponent((destroy: () => void) => {
+          const props = {
+            game: game,
+            socket: socket,
+            destroy,
+          };
+          return React.createElement(DiscardCardsComponent, props);
+        });
       }
     }
 
     onMove() {
-      const { isMoving } = this.state;
-      this.setState({ isMoving: !isMoving });
+      this.setState((state) => {
+        return {
+          isMoving: !state.isMoving,
+        };
+      });
     }
 
     onBuild() {
@@ -202,7 +235,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
           maybePlayerWithLocationCard?.[0]?.id === curr_player.id;
 
         if (isCurrPlayerResearcher && doesCurrPlayerHaveLocationCard) {
-          if (other_players_ids.length == 1) {
+          if (other_players_ids.length === 1) {
             this.shareResearcher(
               curr_player,
               other_players_ids[0],
@@ -260,7 +293,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
       maybePlayerWithLocationCard: Client.Player[],
       maybeResearcher: Client.Player[]
     ) {
-      if (other_players_ids.length == 1) {
+      if (other_players_ids.length === 1) {
         if (maybeResearcher.length === 0) {
           this.share(other_players_ids[0]);
         } else {
@@ -329,7 +362,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
       curr_player: Client.Player,
       maybeResearcher: Client.Player[]
     ) {
-      if (other_players_ids.length == 1) {
+      if (other_players_ids.length === 1) {
         if (maybeResearcher.length === 0) {
           this.share(other_players_ids[0]);
         } else {
@@ -422,7 +455,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
       curr_player: Client.Player,
       maybePlayerWithLocationCard: Client.Player[]
     ) {
-      if (other_players_ids.length == 1) {
+      if (other_players_ids.length === 1) {
         if (curr_player.hand.length === 0) {
           this.share(other_players_ids[0]);
         } else if (maybePlayerWithLocationCard.length === 0) {
@@ -894,32 +927,6 @@ export class GameComponent1 {
     this.socket.emit("pass");
   }
 
-  mustDiscard() {
-    return (
-      this.game.must_discard_index === this.player_index &&
-      this.game.game_state === Client.GameState.DiscardingCard
-    );
-  }
-
-  discardEnough() {
-    return (
-      this.game.players[this.game.must_discard_index].hand.length -
-        this.selectedCards.size ===
-      7
-    );
-  }
-
-  discardSelectedCards() {
-    this.socket.emit(
-      "discard",
-      [...this.selectedCards].map(
-        (i) => this.game.players[this.game.must_discard_index].hand[i]
-      ),
-      () => {
-        this.selectedCards = new Set();
-      }
-    );
-  }
 
   isDispatcher() {
     return (
