@@ -15,6 +15,7 @@ import { MoveChoiceSelectorComponent } from "../move-choice-selector/MoveChoiceS
 import { ShareResearcherComponent } from "../share/ShareResearcherComponent";
 import { ShareChoicesComponent } from "../share/ShareChoicesComponent";
 import { DiscardCardsComponent } from "../discard/DiscardCardsComponent";
+import { DiscoverComponent } from "../discover/DiscoverComponent";
 
 export const width = 1920;
 export const height = 960;
@@ -76,10 +77,13 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.onBuild = this.onBuild.bind(this);
       this.onTreat = this.onTreat.bind(this);
       this.onShare = this.onShare.bind(this);
+      this.onDiscover = this.onDiscover.bind(this);
       this.onSelectedNode = this.onSelectedNode.bind(this);
       this.share = this.share.bind(this);
       this.shareResearcher = this.shareResearcher.bind(this);
       this.resetShare = this.resetShare.bind(this);
+      this.discover = this.discover.bind(this);
+      this.cancelDiscover = this.cancelDiscover.bind(this);
     }
 
     componentDidMount() {
@@ -578,6 +582,53 @@ function withGameState(WrappedComponent: typeof React.Component) {
       }
     }
 
+    onDiscover() {
+      const { game } = this.props;
+      const { cureColorCards } = this.state;
+      if (cureColorCards) {
+        this.setState({ cureColorCards: null });
+      } else if (game) {
+        let player = game.players[game.player_index];
+        let cureColorCards = player.hand.filter(
+          (card) =>
+            game.game_graph[game.game_graph_index[card]].color === game.can_cure
+        );
+        if (cureColorCards.length === game.cards_needed_to_cure) {
+          this.discover(cureColorCards);
+        } else {
+          this.setState({ cureColorCards: cureColorCards });
+          nextComponent((destroy: () => void) => {
+            const props = {
+              destroy,
+              cancelDiscover: this.cancelDiscover,
+              game,
+              cureColorCards,
+              discover: this.discover,
+            };
+            return React.createElement(DiscoverComponent, props);
+          });
+        }
+      }
+    }
+
+    discover(cards: string[]) {
+      const { socket, game } = this.props;
+      if (socket && game) {
+        this.setState({ cureColorCards: null });
+        socket.emit(Client.EventName.Discover, cards, () => {
+          console.log(
+            `discover with ${cards} at ${
+              game.players[game.player_index].location
+            } callbacked`
+          );
+        });
+      }
+    }
+
+    cancelDiscover() {
+      this.setState({ cureColorCards: null });
+    }
+
     private preRender() {
       this.rootProjection = d3
         .geoEquirectangular()
@@ -740,6 +791,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
           onBuild={this.onBuild}
           onTreat={this.treat}
           onShare={this.onShare}
+          onDiscover={this.onDiscover}
         ></WrappedComponent>
       );
     }
@@ -873,47 +925,6 @@ export class GameComponent1 {
     if (!this.selectedCards.delete(cardIndex)) {
       this.selectedCards.add(cardIndex);
     }
-  }
-
-
-  onDiscover() {
-    if (this.cureColorCards) {
-      let selected = new Set(
-        [...this.selectedCards].map((i) => this.cureColorCards[i])
-      );
-      let cureColorCards = this.cureColorCards.filter((i) => !selected.has(i));
-      this.selectedCards = new Set();
-      this.discover(cureColorCards);
-    } else {
-      let player = this.game.players[this.game.player_index];
-      let cureColorCards = player.hand.filter(
-        (card) =>
-          this.game.game_graph[this.game.game_graph_index[card]].color ===
-          this.game.can_cure
-      );
-      if (cureColorCards.length === this.game.cards_needed_to_cure) {
-        this.discover(cureColorCards);
-      } else {
-        this.cureColorCards = cureColorCards;
-      }
-    }
-  }
-
-  discover(cards) {
-    this.cureColorCards = null;
-    this.socket.emit("discover", cards, () => {
-      this.selectedCards = new Set();
-      console.log(
-        `discover with ${cards} at ${
-          this.game.players[this.game.player_index].location
-        } callbacked`
-      );
-    });
-  }
-
-  cancelDiscover() {
-    this.cureColorCards = null;
-    this.selectedCards = new Set();
   }
 
   canPass() {

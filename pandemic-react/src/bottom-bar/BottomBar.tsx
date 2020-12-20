@@ -30,6 +30,7 @@ interface BottomBarProps {
   onBuild: () => void;
   onTreat: () => void;
   onShare: () => void;
+  onDiscover: () => void;
 }
 
 const BottomBar: FC<BottomBarProps> = (props) => {
@@ -41,8 +42,14 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     onBuild,
     onTreat,
     onShare,
+    onDiscover,
   } = props;
-  const { isMoving, treatColorChoices, shareCardChoices } = state;
+  const {
+    isMoving,
+    treatColorChoices,
+    shareCardChoices,
+    cureColorCards,
+  } = state;
 
   const isCurrentPlayer = game.player_index === player_index;
   const moveButtonDisabled = cannotDoPrimaryAction(state, game) && !isMoving;
@@ -57,6 +64,9 @@ const BottomBar: FC<BottomBarProps> = (props) => {
   const shareButtonDisabled =
     (!game.can_give && !game.can_take) ||
     (cannotDoPrimaryAction(state, game) && !shareCardChoices);
+
+  const discoverButtonDisabled =
+    !game.can_cure || (cannotDoPrimaryAction(state, game) && !cureColorCards);
 
   const infoTextRaw =
     game.players &&
@@ -109,7 +119,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     {
       label: shareCardChoices ? "Cancel" : "Share Knowledge",
       y: barBaseHeight,
-      width: baseButtonWidth * 2,
+      width: baseButtonWidth * 2.5,
       height: baseButtonHeight,
       disabled: !isCurrentPlayer || shareButtonDisabled,
       onTap: () => {
@@ -118,9 +128,21 @@ const BottomBar: FC<BottomBarProps> = (props) => {
         }
       },
     },
+    {
+      label: cureColorCards ? "Cancel" : "Discover",
+      y: barBaseHeight,
+      width: baseButtonWidth * 1.5,
+      height: baseButtonHeight,
+      disabled: !isCurrentPlayer || discoverButtonDisabled,
+      onTap: () => {
+        if (!discoverButtonDisabled) {
+          onDiscover();
+        }
+      },
+    },
   ];
 
-  const widthAdjusters = [0, 1, 2, 4]; // some elements are not same size so need to adjust
+  const widthAdjusters = [0, 1, 2, 4, 6.5, 8]; // some elements are not same size so need to adjust
   const buttons = buttonProps.map((props, index) => (
     <Button
       key={props.label + index}

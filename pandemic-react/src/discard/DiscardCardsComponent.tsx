@@ -51,7 +51,7 @@ export class DiscardCardsComponent extends React.Component<
     const { selectedCards } = this.state;
 
     socket.emit(
-      "discard",
+      Client.EventName.Discard,
       [...selectedCards].map(
         (i) => game.players[game.must_discard_index].hand[i]
       ),

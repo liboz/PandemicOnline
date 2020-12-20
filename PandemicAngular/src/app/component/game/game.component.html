@@ -94,16 +94,8 @@
           Pass Turn
         </button>
       </ng-container>
-      <button
-        *ngIf="mustDiscard()"
-        [disabled]="!mustDiscard() || !discardEnough()"
-        (click)="discardSelectedCards()"
-      >
-        Discard Selected
-      </button>
     </div>
 
-    <div *ngIf="mustDiscard()">YOU MUST DISCARD TO 7 CARDS</div>
     <div *ngIf="treatColorChoices">
       <div *ngFor="let cube of treatColorChoices">
         <button (click)="treat(cube)">Treat {{ cube }}</button>
