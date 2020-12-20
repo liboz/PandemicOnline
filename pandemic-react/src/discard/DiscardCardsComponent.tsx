@@ -61,7 +61,7 @@ export class DiscardCardsComponent extends React.Component<
 
   render() {
     const { game } = this.props;
-    const hand = game.players[game.player_index].hand;
+    const hand = game.players[game.must_discard_index].hand;
     return (
       <div>
         <div>YOU MUST DISCARD TO 7 CARDS</div>
