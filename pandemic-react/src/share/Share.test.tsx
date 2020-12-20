@@ -1,13 +1,13 @@
 import { setupGameState } from "../testUtil";
 import { Client } from "pandemiccommon/dist/out-tsc";
-import { testGame } from "../data/testData";
+import { testGame } from "../data/shareTestData";
 import rfdc from "rfdc";
-import { GameStateInterface, ShareCard } from "./withGameState";
-import { ShareResearcherComponent } from "../share/ShareResearcherComponent";
+import { GameStateInterface, ShareCard } from "../game/withGameState";
+import { ShareResearcherComponent } from "./ShareResearcherComponent";
 import DivHandComponent from "../player/DivHand";
 import { ReactTestInstance } from "react-test-renderer";
 import { MockProxy } from "jest-mock-extended";
-import { ShareChoicesComponent } from "../share/ShareChoicesComponent";
+import { ShareChoicesComponent } from "./ShareChoicesComponent";
 const clone = rfdc();
 
 function checkShareResearcher(
@@ -74,7 +74,7 @@ interface ShareChoiceInfo {
   instance: GameStateInterface;
 }
 
-describe("Game", () => {
+describe("Share", () => {
   test("onShare works with two non-researchers", () => {
     const { mockSocket, instance } = setupGameState(testGame);
     instance.onShare();
