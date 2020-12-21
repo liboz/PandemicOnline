@@ -2,7 +2,12 @@ import React from "react";
 import io from "socket.io-client";
 import { APPCONFIG } from "../config";
 import { Client } from "pandemiccommon/dist/out-tsc/";
-import { destroyEvent, join$, nextComponent } from "../modal/Modal";
+import {
+  clearComponent,
+  destroyEvent,
+  join$,
+  nextComponent,
+} from "../modal/Modal";
 import { JoinComponent } from "../join/Join";
 import { Subscription } from "rxjs";
 import { withRouter } from "react-router";
@@ -59,6 +64,7 @@ class GameSocketComponent extends React.Component<
                 this.modalService.updateConfig(config, {});
               }
               */
+              clearComponent();
               nextComponent((destroy: () => void) => {
                 const props = {
                   destroy,
@@ -109,16 +115,28 @@ class GameSocketComponent extends React.Component<
         });
 
         socket.on(Client.EventName.UpdateGameState, (data: Client.Game) => {
-          this.setState({ game: data });
+          console.log("game state updated", data);
+          this.setState((state) => {
+            console.log(state.game?.log.length, data.log.length);
+            return { game: data };
+          });
         });
 
-        socket.on(Client.EventName.DiscardCards, (data: any) => {
-          if (this.state.game) {
-            this.state.game.game_state = Client.GameState.DiscardingCard;
-            this.state.game.must_discard_index = data;
-            if (
-              this.state.game.must_discard_index === this.state.player_index
-            ) {
+        socket.on(Client.EventName.DiscardCards, (data: number) => {
+          const { game } = this.state;
+          if (game) {
+            const newLog = [...game.log];
+            newLog.push(`Player ${data} is discarding cards`);
+            const updatedGame = {
+              ...game,
+              game_state: Client.GameState.DiscardingCard,
+              must_discard_index: data,
+              log: newLog,
+            };
+            this.setState({
+              game: updatedGame,
+            });
+            if (updatedGame.must_discard_index === this.state.player_index) {
               /*
               this.snackBarService.show(
                 `You need to discard some cards`,
@@ -131,10 +149,6 @@ class GameSocketComponent extends React.Component<
                 "danger"
               );*/
             }
-
-            this.state.game.log.push(
-              `Player ${this.state.game.must_discard_index} is discarding cards`
-            );
           }
         });
 

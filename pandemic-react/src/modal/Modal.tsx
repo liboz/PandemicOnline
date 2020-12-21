@@ -6,13 +6,16 @@ import { Subject } from "rxjs";
 import "./Modal.css";
 import { PlayerInfo } from "../join/Join";
 
-export type componentSourceType = (destroy: () => void) => CElement<any, any>;
+export type componentSourceType =
+  | ((destroy: () => void) => CElement<any, any>)
+  | "clear";
 
 const componentSource = new Subject<componentSourceType>();
 export const component$ = componentSource.asObservable();
 export const nextComponent = (componentGenerator: componentSourceType) => {
   componentSource.next(componentGenerator);
 };
+export const clearComponent = () => componentSource.next("clear");
 
 const joinSource = new Subject<PlayerInfo>();
 export const join$ = joinSource.asObservable();
@@ -62,11 +65,15 @@ export default class ModalService extends React.Component<
 
   componentDidMount() {
     component$.subscribe((newComponent) => {
-      this.setState((state) => {
-        return {
-          components: [...state.components, newComponent(this.destroy)],
-        };
-      });
+      if (newComponent === "clear") {
+        this.setState({ components: [] });
+      } else {
+        this.setState((state) => {
+          return {
+            components: [...state.components, newComponent(this.destroy)],
+          };
+        });
+      }
     });
 
     destroy$.subscribe(() => {
