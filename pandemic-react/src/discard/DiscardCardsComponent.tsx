@@ -1,5 +1,6 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
+import { SelectedCardsComponent } from "../common/SelectedCardsComponent";
 import DivHand from "../player/DivHand";
 
 interface DiscardCardsProps {
@@ -8,33 +9,10 @@ interface DiscardCardsProps {
   destroy: () => void;
 }
 
-interface DiscardCardsState {
-  selectedCards: Set<number>;
-}
-
-export class DiscardCardsComponent extends React.Component<
-  DiscardCardsProps,
-  DiscardCardsState
-> {
+export class DiscardCardsComponent extends SelectedCardsComponent<DiscardCardsProps> {
   constructor(props: DiscardCardsProps) {
     super(props);
-    this.state = {
-      selectedCards: new Set(),
-    };
-    this.onSelectedCard = this.onSelectedCard.bind(this);
     this.discardSelectedCards = this.discardSelectedCards.bind(this);
-  }
-
-  onSelectedCard(cardIndex: number) {
-    const { selectedCards } = this.state;
-    const newSelectedCards = new Set(selectedCards);
-
-    if (selectedCards.has(cardIndex)) {
-      newSelectedCards.delete(cardIndex);
-    } else {
-      newSelectedCards.add(cardIndex);
-    }
-    this.setState({ selectedCards: newSelectedCards });
   }
 
   discardEnough() {
