@@ -44,6 +44,7 @@ export interface GameStateInterface
   onMove(): void;
   onTreat(): void;
   onShare(): void;
+  onDiscover(): void;
   onSelectedNode(selectedNode: CityNodeData): void;
 }
 
@@ -625,6 +626,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
               game.players[game.player_index].location
             } callbacked`
           );
+          destroyEvent();
         });
       }
     }
