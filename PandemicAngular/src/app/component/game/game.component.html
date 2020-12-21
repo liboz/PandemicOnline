@@ -96,23 +96,7 @@
       </ng-container>
     </div>
 
-    <div *ngIf="treatColorChoices">
-      <div *ngFor="let cube of treatColorChoices">
-        <button (click)="treat(cube)">Treat {{ cube }}</button>
-      </div>
-    </div>
-    <div *ngIf="shareCardChoices">
-      <div *ngFor="let choice of shareCardChoices">
-        <button (click)="choice.onClick()">
-          {{ choice.action }} Player {{ choice.player_id }}
-          {{
-            choice.location
-              ? "the " + choice.location + " card"
-              : "(Researcher Ability)"
-          }}
-        </button>
-      </div>
-    </div>
+
     <br />
     <div *ngIf="player_name">
       <div

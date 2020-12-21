@@ -16,6 +16,7 @@ import { ShareResearcherComponent } from "../share/ShareResearcherComponent";
 import { ShareChoicesComponent } from "../share/ShareChoicesComponent";
 import { DiscardCardsComponent } from "../discard/DiscardCardsComponent";
 import { DiscoverComponent } from "../discover/DiscoverComponent";
+import { TreatComponent } from "../treat/TreatComponent";
 
 export const width = 1920;
 export const height = 960;
@@ -84,6 +85,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.onShare = this.onShare.bind(this);
       this.onDiscover = this.onDiscover.bind(this);
       this.onSelectedNode = this.onSelectedNode.bind(this);
+      this.treat = this.treat.bind(this);
+      this.resetTreat = this.resetTreat.bind(this);
       this.share = this.share.bind(this);
       this.shareResearcher = this.shareResearcher.bind(this);
       this.resetShare = this.resetShare.bind(this);
@@ -186,6 +189,15 @@ function withGameState(WrappedComponent: typeof React.Component) {
           if (cubes_on.length === 1) {
             this.treat(cubes_on[0]);
           } else {
+            nextComponent((destroy: () => void) => {
+              const props = {
+                resetTreat: this.resetTreat,
+                treat: this.treat,
+                destroy,
+                treatColorChoices: cubes_on,
+              };
+              return React.createElement(TreatComponent, props);
+            });
             this.setState({ treatColorChoices: cubes_on });
           }
         }
@@ -202,6 +214,13 @@ function withGameState(WrappedComponent: typeof React.Component) {
           } callbacked`
         );
       });
+    }
+
+    resetTreat() {
+      const { treatColorChoices } = this.state;
+      if (treatColorChoices) {
+        this.setState({ treatColorChoices: null });
+      }
     }
 
     resetShare() {
@@ -923,13 +942,6 @@ export class GameComponent1 {
       );
     } else if (currentComponent === "StartGameComponent") {
       this.modalService.destroy();
-    }
-  }
-
-
-  onSelectedCard(cardIndex: number) {
-    if (!this.selectedCards.delete(cardIndex)) {
-      this.selectedCards.add(cardIndex);
     }
   }
 
