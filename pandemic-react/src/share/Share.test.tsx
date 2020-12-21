@@ -1,4 +1,4 @@
-import { setupGameState } from "../testUtil";
+import { clickDivHand, setupGameState } from "../testUtil";
 import { Client } from "pandemiccommon/dist/out-tsc";
 import { testGame } from "../data/shareTestData";
 import rfdc from "rfdc";
@@ -16,23 +16,11 @@ function checkShareResearcher(
   mockSocket: MockProxy<SocketIOClient.Socket> & SocketIOClient.Socket,
   otherId: number
 ) {
-  const submitButton = shareResearcherComponent[0].find((node) => {
-    return (
-      node.type === "button" &&
-      node.children.filter((c) => c.toString().includes("Trade")).length > 0
-    );
-  });
-  expect(submitButton.props["disabled"]).toBeTruthy();
-  const divHand = shareResearcherComponent[0].findAllByType(DivHandComponent);
-  expect(divHand).toHaveLength(1);
-  const cards = divHand[0].findAll(
-    (node) =>
-      node.type === "div" && node.props["className"]?.includes("card-wrapper")
+  clickDivHand(
+    shareResearcherComponent,
+    modifiedTestData.players[2].hand.length,
+    "Trade"
   );
-  expect(cards).toHaveLength(modifiedTestData.players[2].hand.length);
-  cards[0].props["onClick"]();
-  expect(submitButton.props["disabled"]).toBeFalsy();
-  submitButton.props["onClick"]();
 
   checkSockets(mockSocket, otherId, modifiedTestData.players[2].hand[0]);
 }

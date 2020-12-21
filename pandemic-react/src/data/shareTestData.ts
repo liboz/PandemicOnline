@@ -587,7 +587,7 @@ export const testGame = ({
   research_stations: ["Atlanta"],
   cured: { blue: 0, red: 0, black: 0, yellow: 0 },
   cubes: { blue: 23, red: 17, black: 6, yellow: 24 },
-  game_state: 2,
+  game_state: 1,
   player_index: 0,
   turns_left: 1,
   valid_final_destinations: [],

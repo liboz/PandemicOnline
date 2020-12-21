@@ -47,6 +47,16 @@ export interface GameStateInterface
   onSelectedNode(selectedNode: CityNodeData): void;
 }
 
+export function initialState(): GameComponentState {
+  return {
+    isMoving: false,
+    selectedCards: new Set(),
+    shareCardChoices: null,
+    cureColorCards: null,
+    treatColorChoices: null,
+  };
+}
+
 function withGameState(WrappedComponent: typeof React.Component) {
   // ...and returns another component...
   return class
@@ -66,13 +76,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
     constructor(props: GameComponentProps) {
       super(props);
 
-      this.state = {
-        isMoving: false,
-        selectedCards: new Set(),
-        shareCardChoices: null,
-        cureColorCards: null,
-        treatColorChoices: null,
-      };
+      this.state = initialState();
       this.onMove = this.onMove.bind(this);
       this.onBuild = this.onBuild.bind(this);
       this.onTreat = this.onTreat.bind(this);
