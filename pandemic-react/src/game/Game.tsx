@@ -40,6 +40,9 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
   }
 
   componentDidMount() {
+    if (this.pixiApp) {
+      this.pixiApp.destroy();
+    }
     this.pixiApp = new PIXI.Application({
       backgroundColor: 0x2a2c39,
       resizeTo: window,

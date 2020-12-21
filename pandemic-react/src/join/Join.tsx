@@ -37,6 +37,7 @@ export class JoinComponent extends React.Component<
     const { socket, destroy } = this.props;
     const { selectedRole, playerName } = this.state;
 
+    destroy();
     socket.emit(
       Client.EventName.Join,
       selectedRole,
@@ -44,7 +45,6 @@ export class JoinComponent extends React.Component<
       (player_index: number) => {
         console.log(`${playerName} joined as ${selectedRole} successfully`);
         joinAs(new PlayerInfo(playerName, player_index));
-        destroy();
       }
     );
   }

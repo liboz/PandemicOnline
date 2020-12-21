@@ -105,12 +105,16 @@ export default class ModalService extends React.Component<
     });
   }
 
-  currentComponent() {
+  currentComponents() {
     if (
       this.state.components.length > 0 &&
       typeof this.state.components[0].type !== "string"
     ) {
-      return this.state.components[0].type.name;
+      return this.state.components.map((component) => {
+        if (typeof component.type !== "string") {
+          return component.type.name;
+        }
+      });
     }
   }
 

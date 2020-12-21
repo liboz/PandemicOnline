@@ -21,6 +21,7 @@ import { DiscardCardsComponent } from "../discard/DiscardCardsComponent";
 import { DiscoverComponent } from "../discover/DiscoverComponent";
 import { TreatComponent } from "../treat/TreatComponent";
 import { WinLossComponent } from "./WinLossComponent";
+import { StartGameComponent } from "../start-game/StartGameComponent";
 
 export const width = 1920;
 export const height = 960;
@@ -137,7 +138,14 @@ function withGameState(WrappedComponent: typeof React.Component) {
         this.showWinLossComponent(true);
       } else if (game?.game_state === Client.GameState.Won) {
         this.showWinLossComponent(false);
+      } else if (
+        game?.game_state === Client.GameState.NotStarted &&
+        this.props.player_name !== undefined &&
+        this.props.socket
+      ) {
+        this.showStartGameComponent();
       }
+
       if (prevProps.game === undefined) {
         this.preRender();
         const nodes = this.regenerateNodes();
@@ -157,6 +165,20 @@ function withGameState(WrappedComponent: typeof React.Component) {
         ) {
           this.maybeShowDiscardComponent();
         }
+      }
+    }
+
+    showStartGameComponent() {
+      const { socket } = this.props;
+      if (socket) {
+        clearComponent();
+        nextComponent((destroy: () => void) => {
+          const props = {
+            socket: socket,
+            destroy,
+          };
+          return React.createElement(StartGameComponent, props);
+        });
       }
     }
 
@@ -925,24 +947,6 @@ export class GameComponent1 {
       this.renderChanging();
       this.renderBottomBarFull();
     });
-  }
-
-  private maybeShowStartDialog() {
-    let currentComponent = this.modalService.currentComponent();
-    if (
-      this.game?.game_state === Client.GameState.NotStarted &&
-      this.player_name !== undefined
-    ) {
-      this.modalService.init(
-        StartGameComponent,
-        {
-          socket: this.socket,
-        },
-        {}
-      );
-    } else if (currentComponent === "StartGameComponent") {
-      this.modalService.destroy();
-    }
   }
 
   canPass() {
