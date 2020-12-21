@@ -1,7 +1,10 @@
 import React from "react";
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import {
+  clearComponent,
+  clearDiscover$,
   clearShare$,
+  clearTreat$,
   destroy$,
   destroyEvent,
   dispatcherMoveTarget$,
@@ -17,6 +20,7 @@ import { ShareChoicesComponent } from "../share/ShareChoicesComponent";
 import { DiscardCardsComponent } from "../discard/DiscardCardsComponent";
 import { DiscoverComponent } from "../discover/DiscoverComponent";
 import { TreatComponent } from "../treat/TreatComponent";
+import { WinLossComponent } from "./WinLossComponent";
 
 export const width = 1920;
 export const height = 960;
@@ -67,6 +71,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
     destroySubscription?: Subscription;
     clearShareCardsSubscription?: Subscription;
     dispatcherMoveSubscription?: Subscription;
+    clearTreatSubscription?: Subscription;
+    clearDiscoverSubscription?: Subscription;
 
     rootProjection!: d3.GeoProjection;
     projection!: d3.GeoProjection;
@@ -86,19 +92,15 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.onDiscover = this.onDiscover.bind(this);
       this.onSelectedNode = this.onSelectedNode.bind(this);
       this.treat = this.treat.bind(this);
-      this.resetTreat = this.resetTreat.bind(this);
       this.share = this.share.bind(this);
       this.shareResearcher = this.shareResearcher.bind(this);
-      this.resetShare = this.resetShare.bind(this);
       this.discover = this.discover.bind(this);
-      this.cancelDiscover = this.cancelDiscover.bind(this);
     }
 
     componentDidMount() {
       this.destroySubscription = destroy$.subscribe(() => {
         this.setState({ isMoving: false });
       });
-
       this.clearShareCardsSubscription = clearShare$.subscribe(() => {
         this.setState({ shareCardChoices: null });
         destroyEvent();
@@ -109,6 +111,15 @@ function withGameState(WrappedComponent: typeof React.Component) {
           destroyEvent();
         }
       );
+      this.clearTreatSubscription = clearTreat$.subscribe(() => {
+        this.setState({ treatColorChoices: null });
+        destroyEvent();
+      });
+
+      this.clearDiscoverSubscription = clearDiscover$.subscribe(() => {
+        this.setState({ cureColorCards: null });
+        destroyEvent();
+      });
     }
 
     componentWillUnmount() {
@@ -116,10 +127,17 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.destroySubscription?.unsubscribe();
       this.dispatcherMoveSubscription?.unsubscribe();
       this.clearShareCardsSubscription?.unsubscribe();
+      this.clearTreatSubscription?.unsubscribe();
+      this.clearDiscoverSubscription?.unsubscribe();
     }
 
     componentDidUpdate(prevProps: GameComponentProps) {
       const { game } = this.props;
+      if (game?.game_state === Client.GameState.Lost) {
+        this.showWinLossComponent(true);
+      } else if (game?.game_state === Client.GameState.Won) {
+        this.showWinLossComponent(false);
+      }
       if (prevProps.game === undefined) {
         this.preRender();
         const nodes = this.regenerateNodes();
@@ -140,6 +158,17 @@ function withGameState(WrappedComponent: typeof React.Component) {
           this.maybeShowDiscardComponent();
         }
       }
+    }
+
+    showWinLossComponent(lost: boolean) {
+      clearComponent();
+      nextComponent((destroy: () => void) => {
+        const props = {
+          lost,
+          destroy,
+        };
+        return React.createElement(WinLossComponent, props);
+      });
     }
 
     maybeShowDiscardComponent() {
@@ -191,7 +220,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
           } else {
             nextComponent((destroy: () => void) => {
               const props = {
-                resetTreat: this.resetTreat,
                 treat: this.treat,
                 destroy,
                 treatColorChoices: cubes_on,
@@ -214,20 +242,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
           } callbacked`
         );
       });
-    }
-
-    resetTreat() {
-      const { treatColorChoices } = this.state;
-      if (treatColorChoices) {
-        this.setState({ treatColorChoices: null });
-      }
-    }
-
-    resetShare() {
-      const { shareCardChoices } = this.state;
-      if (shareCardChoices) {
-        this.setState({ shareCardChoices: null });
-      }
     }
 
     onShare() {
@@ -278,7 +292,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
             );
             nextComponent((destroy: () => void) => {
               const props = {
-                resetShare: this.resetShare,
                 destroy,
                 shareCardChoices: choices,
               };
@@ -371,7 +384,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
           ];
           nextComponent((destroy: () => void) => {
             const props = {
-              resetShare: this.resetShare,
               destroy,
               shareCardChoices: choices,
             };
@@ -411,7 +423,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
           ];
           nextComponent((destroy: () => void) => {
             const props = {
-              resetShare: this.resetShare,
               destroy,
               shareCardChoices: choices,
             };
@@ -434,7 +445,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
           );
           nextComponent((destroy: () => void) => {
             const props = {
-              resetShare: this.resetShare,
               destroy,
               shareCardChoices: choices,
             };
@@ -464,7 +474,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
           ];
           nextComponent((destroy: () => void) => {
             const props = {
-              resetShare: this.resetShare,
               destroy,
               shareCardChoices: choices,
             };
@@ -510,7 +519,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
           ];
           nextComponent((destroy: () => void) => {
             const props = {
-              resetShare: this.resetShare,
               destroy,
               shareCardChoices: choices,
             };
@@ -530,7 +538,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
           );
           nextComponent((destroy: () => void) => {
             const props = {
-              resetShare: this.resetShare,
               destroy,
               shareCardChoices: choices,
             };
@@ -556,7 +563,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
           ];
           nextComponent((destroy: () => void) => {
             const props = {
-              resetShare: this.resetShare,
               destroy,
               shareCardChoices: choices,
             };
@@ -580,7 +586,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
           nextComponent((destroy: () => void) => {
             const props = {
               destroy,
-              resetShare: this.resetShare,
               game: game,
               hand: researcher.hand,
               socket: socket,
@@ -624,7 +629,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
           nextComponent((destroy: () => void) => {
             const props = {
               destroy,
-              cancelDiscover: this.cancelDiscover,
               game,
               cureColorCards,
               discover: this.discover,
@@ -648,10 +652,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
           destroyEvent();
         });
       }
-    }
-
-    cancelDiscover() {
-      this.setState({ cureColorCards: null });
     }
 
     private preRender() {

@@ -4,7 +4,6 @@ import { clearShare } from "../modal/Modal";
 import DivHand from "../player/DivHand";
 
 interface ShareResearcherProps {
-  resetShare: () => void;
   game: Client.Game;
   hand: string[];
   socket: SocketIOClient.Socket;
@@ -35,9 +34,7 @@ export class ShareResearcherComponent extends React.Component<
   }
 
   onCancel() {
-    const { resetShare, destroy } = this.props;
-    resetShare();
-    destroy();
+    clearShare();
   }
 
   onSubmit() {

@@ -47,6 +47,18 @@ export const startAt = (difficultyInfo: Client.GameDifficulty) => {
   startSource.next(difficultyInfo);
 };
 
+const clearTreatSource = new Subject<void>();
+export const clearTreat$ = clearTreatSource.asObservable();
+export const clearTreat = () => {
+  clearTreatSource.next();
+};
+
+const clearDiscoverSource = new Subject<void>();
+export const clearDiscover$ = clearDiscoverSource.asObservable();
+export const clearDiscover = () => {
+  clearDiscoverSource.next();
+};
+
 interface ModalServiceState {
   components: ReactElement[];
 }

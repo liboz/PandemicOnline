@@ -1,8 +1,8 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
+import { clearTreat } from "../modal/Modal";
 
 interface TreatComponentProps {
-  resetTreat: () => void;
   treat: (cube: Client.Color) => void;
   treatColorChoices: Client.Color[];
   destroy: () => void;
@@ -21,9 +21,7 @@ export class TreatComponent extends React.Component<TreatComponentProps> {
   }
 
   onCancel() {
-    const { resetTreat, destroy } = this.props;
-    resetTreat();
-    destroy();
+    clearTreat();
   }
 
   render() {
