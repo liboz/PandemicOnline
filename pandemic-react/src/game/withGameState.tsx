@@ -793,7 +793,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
           onSelectedNode={this.onSelectedNode}
           onMove={this.onMove}
           onBuild={this.onBuild}
-          onTreat={this.treat}
+          onTreat={this.onTreat}
           onShare={this.onShare}
           onDiscover={this.onDiscover}
         ></WrappedComponent>
