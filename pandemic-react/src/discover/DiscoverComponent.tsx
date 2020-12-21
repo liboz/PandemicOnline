@@ -24,6 +24,7 @@ export class DiscoverComponent extends React.Component<
       selectedCards: new Set(),
     };
     this.onSelectedCard = this.onSelectedCard.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   onSelectedCard(cardIndex: number) {
@@ -73,7 +74,7 @@ export class DiscoverComponent extends React.Component<
           onClick={this.onSelectedCard}
         ></DivHand>
         <button disabled={!this.chooseEnough()} onClick={this.handleClick}>
-          Discard Selected
+          Do not use Selected for Discover
         </button>
         <button onClick={this.onCancel}>Cancel</button>
       </div>

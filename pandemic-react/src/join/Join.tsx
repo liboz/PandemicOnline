@@ -98,6 +98,7 @@ export class JoinComponent extends React.Component<
             return (
               <div key={role}>
                 <input
+                  name="role"
                   type="radio"
                   onChange={(e) => this.setState({ selectedRole: role })}
                 />

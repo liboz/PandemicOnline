@@ -14,14 +14,17 @@ interface TestGameState {
   mockSocket: MockProxy<SocketIOClient.Socket> & SocketIOClient.Socket;
 }
 
-export function setupGameState(gameState: Client.Game): TestGameState {
+export function setupGameState(
+  gameState: Client.Game,
+  player_index = 0
+): TestGameState {
   const mockSocket = mock<typeof Socket>();
   const component = renderer.create(
     <>
       <MockComponentWithState
         game={gameState}
         socket={mockSocket}
-        player_index={0}
+        player_index={player_index}
         player_name={"test1"}
       ></MockComponentWithState>
       <ModalService></ModalService>
