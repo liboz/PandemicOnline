@@ -91,6 +91,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.onTreat = this.onTreat.bind(this);
       this.onShare = this.onShare.bind(this);
       this.onDiscover = this.onDiscover.bind(this);
+      this.onPass = this.onPass.bind(this);
       this.onSelectedNode = this.onSelectedNode.bind(this);
       this.treat = this.treat.bind(this);
       this.share = this.share.bind(this);
@@ -676,6 +677,13 @@ function withGameState(WrappedComponent: typeof React.Component) {
       }
     }
 
+    onPass() {
+      const { socket } = this.props;
+      if (socket) {
+        socket.emit(Client.EventName.Pass);
+      }
+    }
+
     private preRender() {
       this.rootProjection = d3
         .geoEquirectangular()
@@ -839,6 +847,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
           onTreat={this.onTreat}
           onShare={this.onShare}
           onDiscover={this.onDiscover}
+          onPass={this.onPass}
         ></WrappedComponent>
       );
     }
@@ -866,18 +875,6 @@ export class GameComponent1 {
       this.createChart();
     }
     this.maybeShowStartDialog();
-    console.log(changes);
-    if (changes.game) {
-      if (changes.game.currentValue.game_state === Client.GameState.Lost) {
-        this.modalService.destroy();
-        this.modalService.init(ModalComponent, { lost: true }, {});
-      } else if (
-        changes.game.currentValue.game_state === Client.GameState.Won
-      ) {
-        this.modalService.destroy();
-        this.modalService.init(ModalComponent, { lost: false }, {});
-      }
-    }
   }
 
   zoomed(event: D3ZoomEvent<any, any>) {

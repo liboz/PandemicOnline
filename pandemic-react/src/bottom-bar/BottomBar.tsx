@@ -31,6 +31,7 @@ interface BottomBarProps {
   onTreat: () => void;
   onShare: () => void;
   onDiscover: () => void;
+  onPass: () => void;
 }
 
 const BottomBar: FC<BottomBarProps> = (props) => {
@@ -43,6 +44,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     onTreat,
     onShare,
     onDiscover,
+    onPass,
   } = props;
   const {
     isMoving,
@@ -137,6 +139,18 @@ const BottomBar: FC<BottomBarProps> = (props) => {
       onTap: () => {
         if (!discoverButtonDisabled) {
           onDiscover();
+        }
+      },
+    },
+    {
+      label: "Pass",
+      y: barBaseHeight,
+      width: baseButtonWidth,
+      height: baseButtonHeight,
+      disabled: cannotDoPrimaryAction(state, game),
+      onTap: () => {
+        if (!cannotDoPrimaryAction(state, game)) {
+          onPass();
         }
       },
     },
