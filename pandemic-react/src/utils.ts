@@ -159,3 +159,13 @@ export function colorNameToHex(color: string) {
 export function hasStarted(game: Client.Game) {
   return game?.game_state !== Client.GameState.NotStarted;
 }
+
+export function cubesChanged(oldCubes: Client.Cubes, newCubes: Client.Cubes) {
+  return (
+    oldCubes === undefined ||
+    oldCubes.black !== newCubes.black ||
+    oldCubes.blue !== newCubes.blue ||
+    oldCubes.yellow !== newCubes.yellow ||
+    oldCubes.red !== newCubes.red
+  );
+}

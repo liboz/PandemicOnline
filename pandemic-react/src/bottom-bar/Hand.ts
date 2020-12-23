@@ -47,18 +47,18 @@ function generateHand(
   return container;
 }
 
-interface BottomBarProps {
+interface HandProps {
   game: Client.Game;
   containerY: number;
 }
 
 const TYPE = "Hand";
 export const behavior = {
-  customDisplayObject: (props: BottomBarProps) => new PIXI.Graphics(),
+  customDisplayObject: (props: HandProps) => new PIXI.Graphics(),
   customApplyProps: function (
     instance: PIXI.Graphics,
-    oldProps: BottomBarProps,
-    newProps: BottomBarProps
+    oldProps: HandProps,
+    newProps: HandProps
   ) {
     const { game, containerY } = newProps;
     if (oldProps.game?.players !== game?.players) {

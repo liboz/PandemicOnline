@@ -41,12 +41,7 @@
   <div *ngIf="hasStarted()" id="bottom-left">
     <div>
       <ng-container *ngIf="game.player_index === player_index">
-        <button
-          [disabled]="cannotDoPrimaryAction() && !isMoving"
-          (click)="onMove()"
-        >
-          {{ isMoving ? "Cancel" : "Move" }}
-        </button>
+        
         <button
           *ngIf="isDispatcher()"
           [disabled]="cannotDoPrimaryAction() && !dispatcherMoveOtherPlayer"
@@ -54,45 +49,11 @@
         >
           {{ dispatcherMoveOtherPlayer ? "Cancel" : "Dispatcher Move" }}
         </button>
-        <button
-          [disabled]="
-            !game.can_build_research_station || cannotDoPrimaryAction()
-          "
-          (click)="onBuild()"
-        >
-          Build A Research Station
-        </button>
-        <button
-          [disabled]="
-            !game.can_treat || (cannotDoPrimaryAction() && !treatColorChoices)
-          "
-          (click)="onTreat()"
-        >
-          {{ treatColorChoices ? "Cancel" : "Treat Disease" }}
-        </button>
-        <button
-          [disabled]="
-            (!game.can_give && !game.can_take) ||
-            (cannotDoPrimaryAction() && !shareCardChoices)
-          "
-          (click)="onShare()"
-        >
-          {{ shareCardChoices ? "Cancel" : "Share Knowledge" }}
-        </button>
-        <button
-          [disabled]="
-            !game.can_cure || (cannotDoPrimaryAction() && !cureColorCards)
-          "
-          (click)="onDiscover()"
-        >
-          Discover Cure
-        </button>
-        <button *ngIf="cureColorCards" (click)="cancelDiscover()">
-          Cancel Discover Cure
-        </button>
-        <button [disabled]="cannotDoPrimaryAction()" (click)="onPass()">
-          Pass Turn
-        </button>
+        
+       
+        
+        
+        
       </ng-container>
     </div>
 
@@ -116,48 +77,9 @@
           (onSelect)="onSelectedCard($event)"
         ></app-player-hand>
       </div>
-      <div *ngIf="cureColorCards">
-        SELECT THE CARDS TO NOT USE FOR DISCOVERING
-        <app-player-hand
-          [hand]="cureColorCards"
-          [game]="game"
-          (onSelect)="onSelectedCard($event)"
-          [cardLimit]="game.cards_needed_to_cure"
-        >
-        </app-player-hand>
-      </div>
     </div>
   </div>
   <br />
-  <div *ngIf="hasStarted()" id="bottom-middle">
-    <div>Outbreak Counter: {{ game.outbreak_counter }}</div>
-    <hr />
-    <div>
-      Infection Rate: {{ game.infection_rate[game.infection_rate_index] }}
-    </div>
-    <hr />
-    <div>
-      Player Deck Cards Remaining: {{ game.player_deck_cards_remaining }}
-    </div>
-    <hr />
-    <div>
-      Cubes:
-      <ul>
-        <li *ngFor="let color of objectKeys(game.cubes)">
-          {{ color + " : " + game.cubes[color] }}
-        </li>
-      </ul>
-    </div>
-    <hr />
-    <div>
-      Cured:
-      <ul>
-        <li *ngFor="let color of objectKeys(game.cured)">
-          {{ color + " : " + game.cured[color] }}
-        </li>
-      </ul>
-    </div>
-  </div>
 
   <div *ngIf="hasStarted()" id="bottom-log">
     <div id="log">

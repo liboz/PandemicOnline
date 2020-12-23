@@ -2,7 +2,7 @@ import { Client } from "pandemiccommon/dist/out-tsc";
 import * as PIXI from "pixi.js";
 import { CustomPIXIComponent } from "react-pixi-fiber";
 import { CityNodeData } from "../node/CityNode";
-import { colorNameToHex } from "../utils";
+import { colorNameToHex, cubesChanged } from "../utils";
 
 const baseOffset = 25;
 
@@ -30,13 +30,7 @@ export const behavior = {
     newProps: CubeProps
   ) {
     const { node } = newProps;
-    if (
-      oldProps.node?.cubes === undefined ||
-      oldProps.node.cubes.black !== node.cubes.black ||
-      oldProps.node.cubes.blue !== node.cubes.blue ||
-      oldProps.node.cubes.yellow !== node.cubes.yellow ||
-      oldProps.node.cubes.red !== node.cubes.red
-    ) {
+    if (cubesChanged(oldProps.node?.cubes, node.cubes)) {
       instance.clear();
       const rotationStep = (2 * Math.PI * (Date.now() % 1440)) / 1440;
       const cubes = node.cubes;

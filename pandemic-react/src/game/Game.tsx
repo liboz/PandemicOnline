@@ -9,6 +9,7 @@ import Player from "../player/Player";
 import CubeContainer from "../cubes/CubeContainer";
 import BottomBar from "../bottom-bar/BottomBar";
 import withGameState, { GameComponentState } from "./withGameState";
+import TopBar from "../top-bar/TopBar";
 
 export const width = 1920;
 export const height = 960;
@@ -129,6 +130,7 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
               game={this.props.game}
               player_index={this.props.player_index}
             ></BottomBar>
+            <TopBar game={this.props.game}></TopBar>
           </Stage>
         )}
       </div>
