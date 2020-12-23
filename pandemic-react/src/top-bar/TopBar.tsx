@@ -19,31 +19,35 @@ const TopBar: FC<TopBarProps> = (props) => {
     align: "center",
   };
 
-  return (
-    <Container>
-      <Container x={0} y={0}>
-        <Text
-          text={`Outbreak Counter: ${game.outbreak_counter}`}
-          style={textStyle}
-        ></Text>
-        <Text
-          text={`Infection Rate: ${
-            game.infection_rate[game.infection_rate_index]
-          }`}
-          y={containerY / 3}
-          style={textStyle}
-        ></Text>
-        <Text
-          text={`Player Deck Cards Remaining: ${game.player_deck_cards_remaining}`}
-          y={(containerY / 3) * 2}
-          style={textStyle}
-        ></Text>
+  if (game.game_state !== Client.GameState.NotStarted) {
+    return (
+      <Container>
+        <Container x={0} y={0}>
+          <Text
+            text={`Outbreak Counter: ${game.outbreak_counter}`}
+            style={textStyle}
+          ></Text>
+          <Text
+            text={`Infection Rate: ${
+              game.infection_rate[game?.infection_rate_index]
+            }`}
+            y={containerY / 3}
+            style={textStyle}
+          ></Text>
+          <Text
+            text={`Player Deck Cards Remaining: ${game.player_deck_cards_remaining}`}
+            y={(containerY / 3) * 2}
+            style={textStyle}
+          ></Text>
+        </Container>
+        <Container x={width / 2}>
+          <CubeCureStatus game={game} containerY={containerY}></CubeCureStatus>
+        </Container>
       </Container>
-      <Container x={width / 2}>
-        <CubeCureStatus game={game} containerY={containerY}></CubeCureStatus>
-      </Container>
-    </Container>
-  );
+    );
+  } else {
+    return null;
+  }
 };
 
 export default TopBar;

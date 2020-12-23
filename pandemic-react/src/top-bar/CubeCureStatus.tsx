@@ -26,7 +26,10 @@ export const behavior = {
   ) {
     const { game, containerY } = newProps;
     const allowedY = containerY * 0.7;
-    if (cubesChanged(oldProps.game?.cubes, game?.cubes)) {
+    if (
+      cubesChanged(oldProps.game?.cubes, game?.cubes) ||
+      cubesChanged(oldProps.game?.cured, game?.cured)
+    ) {
       instance.removeChildren();
       const headerText = new PIXI.Text("Cubes");
       instance.addChild(headerText);
@@ -49,9 +52,6 @@ export const behavior = {
         text.y = baseY;
         instance.addChild(text);
       });
-    }
-
-    if (cubesChanged(oldProps.game?.cured, game?.cured)) {
     }
   },
 };

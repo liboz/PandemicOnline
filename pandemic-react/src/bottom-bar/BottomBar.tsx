@@ -172,7 +172,13 @@ const BottomBar: FC<BottomBarProps> = (props) => {
       </Container>
       <Container x={width / 4} y={barBaseHeight}>
         <Text text={infoTextRaw} style={{ fontSize: 20 }}></Text>
-        <Text text={actionsLeftTextRaw} style={{ fontSize: 20 }} y={50}></Text>
+        {game.turns_left && (
+          <Text
+            text={actionsLeftTextRaw}
+            style={{ fontSize: 20 }}
+            y={50}
+          ></Text>
+        )}
       </Container>
       {buttons}
     </Container>
