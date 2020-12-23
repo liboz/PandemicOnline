@@ -8,7 +8,7 @@ import Button, {
 } from "../button/button";
 import { barBaseHeight, width } from "../game/Game";
 import { GameComponentState } from "../game/withGameState";
-import Hand from "./Hand";
+import Hand from "../hand/BotHand";
 
 function cannotDoPrimaryAction(state: GameComponentState, game: Client.Game) {
   return !!(

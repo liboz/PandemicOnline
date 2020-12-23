@@ -31,7 +31,14 @@ export interface GameGraphicsProps {
   onPass: () => void;
 }
 
-class GameGraphics extends React.Component<GameGraphicsProps> {
+export interface GameGraphicsState {
+  assetsLoaded: boolean;
+}
+
+class GameGraphics extends React.Component<
+  GameGraphicsProps,
+  GameGraphicsState
+> {
   pixiApp!: PIXI.Application;
 
   elementRef: React.RefObject<HTMLDivElement>;
@@ -39,6 +46,7 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
   constructor(props: GameGraphicsProps) {
     super(props);
     this.elementRef = React.createRef<HTMLDivElement>();
+    this.state = { assetsLoaded: false };
   }
 
   componentDidMount() {
