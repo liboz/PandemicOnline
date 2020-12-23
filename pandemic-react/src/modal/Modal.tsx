@@ -1,5 +1,5 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
-import React, { CElement, ReactElement, ReactNode } from "react";
+import React, { CElement, ReactElement } from "react";
 
 import { Subject } from "rxjs";
 
@@ -114,6 +114,7 @@ export default class ModalService extends React.Component<
         if (typeof component.type !== "string") {
           return component.type.name;
         }
+        return undefined;
       });
     }
   }

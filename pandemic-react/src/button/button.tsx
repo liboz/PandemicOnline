@@ -16,7 +16,7 @@ export interface ButtonProps {
 }
 
 const Button: FC<ButtonProps> = (props) => {
-  const { x, y, width, height, label, disabled, onTap } = props;
+  const { x, y, label, disabled, onTap } = props;
   return (
     <Container interactive={true} buttonMode={true} pointerdown={onTap}>
       <ButtonBackground {...props}></ButtonBackground>
