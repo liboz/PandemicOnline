@@ -49,7 +49,7 @@ describe("Discard", () => {
     ]);
   });
 
-  test("discard multiple cards works", () => {
+  test("discard multiple cards works when unselect then reselecting", () => {
     const modifiedTestData = clone(testGame);
     modifiedTestData.players[0].hand.push("Lima");
     const { mockSocket, instance, root } = setupGameState(modifiedTestData);
