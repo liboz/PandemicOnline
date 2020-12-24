@@ -5,7 +5,7 @@ export namespace Client {
     outbreak_counter: number;
     infection_rate_index: number;
     infection_rate: number[];
-    faceup_deck: string[];
+    infection_faceup_deck: string[];
     players: Player[];
     research_stations: string[];
     cured: Cubes;
@@ -22,6 +22,7 @@ export namespace Client {
     can_treat: boolean;
     can_take: boolean;
     can_give: boolean;
+    player_deck_discard: string[];
     player_deck_cards_remaining: number;
     log: string[];
     difficulty: number;

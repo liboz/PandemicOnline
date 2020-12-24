@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import {
   clearComponent,

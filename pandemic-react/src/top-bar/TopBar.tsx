@@ -1,5 +1,5 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
-import React, { FC, ReactNode } from "react";
+import React, { FC } from "react";
 import { Container, Text } from "react-pixi-fiber";
 import Button, { baseButtonHeight } from "../button/button";
 import { height, width } from "../game/Game";
