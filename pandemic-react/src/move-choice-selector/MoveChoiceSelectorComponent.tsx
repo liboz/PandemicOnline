@@ -1,5 +1,8 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
+import { SelectedCardComponent } from "../common/SelectedCardsComponent";
+import { destroyEvent } from "../modal/Modal";
+import DivHand from "../player/DivHand";
 
 interface MoveChoiceSelectorProps {
   game: Client.Game;
@@ -13,14 +16,7 @@ interface MoveChoiceSelectorProps {
   destroy: () => void;
 }
 
-interface MoveChoiceSelectorState {
-  selectedCard: string;
-}
-
-export class MoveChoiceSelectorComponent extends React.Component<
-  MoveChoiceSelectorProps,
-  MoveChoiceSelectorState
-> {
+export class MoveChoiceSelectorComponent extends SelectedCardComponent<MoveChoiceSelectorProps> {
   constructor(props: MoveChoiceSelectorProps) {
     super(props);
     this.state = { selectedCard: "" };
@@ -28,6 +24,7 @@ export class MoveChoiceSelectorComponent extends React.Component<
     this.onDirectFlight = this.onDirectFlight.bind(this);
     this.onCharterFlight = this.onCharterFlight.bind(this);
     this.onOperationsExpertMove = this.onOperationsExpertMove.bind(this);
+    this.onCancel = this.onCancel.bind(this);
   }
 
   onDirectFlight() {
@@ -50,12 +47,13 @@ export class MoveChoiceSelectorComponent extends React.Component<
   }
 
   onCancel() {
-    const { destroy } = this.props;
-    destroy();
+    destroyEvent();
   }
 
   render() {
     const {
+      game,
+      hand,
       canDirect,
       canCharter,
       canOperationsExpertMove,
@@ -66,6 +64,14 @@ export class MoveChoiceSelectorComponent extends React.Component<
 
     return (
       <div>
+        {canOperationsExpertMove && (
+          <DivHand
+            hand={hand}
+            game={game}
+            cardLimit={hand.length - 1}
+            onClick={this.onSelectedCard}
+          ></DivHand>
+        )}
         <div style={{ marginBottom: "20px" }}>
           {canDirect && (
             <button onClick={this.onDirectFlight}>
@@ -82,25 +88,11 @@ export class MoveChoiceSelectorComponent extends React.Component<
               disabled={!selectedCard}
               onClick={this.onOperationsExpertMove}
             >
-              Operations Expert Move To {targetLocation} by discarding
+              Operations Expert Move To {targetLocation} by discarding {""}
               {selectedCard ? selectedCard : "a card in your hand"}
             </button>
           )}
         </div>
-        {/* TODO Add hand selector
-        <div
-    *ngIf="canOperationsExpertMove"
-    style="display: flex; justify-content: center"
-  >
-    <app-player-hand
-      [hand]="hand"
-      [game]="game"
-      (onSelect)="onSelectedCard($event)"
-      [cardLimit]="hand.length - 1"
-    >
-    </app-player-hand>
-  </div>
-        */}
         <div>
           <button onClick={this.onCancel}>Cancel</button>
         </div>

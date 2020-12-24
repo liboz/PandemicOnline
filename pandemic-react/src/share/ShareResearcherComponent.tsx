@@ -1,5 +1,6 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
+import { SelectedCardComponent } from "../common/SelectedCardsComponent";
 import { clearShare } from "../modal/Modal";
 import DivHand from "../player/DivHand";
 
@@ -12,25 +13,12 @@ interface ShareResearcherProps {
   destroy: () => void;
 }
 
-interface ShareResearcherState {
-  selectedCard: string;
-}
-
-export class ShareResearcherComponent extends React.Component<
-  ShareResearcherProps,
-  ShareResearcherState
-> {
+export class ShareResearcherComponent extends SelectedCardComponent<ShareResearcherProps> {
   constructor(props: ShareResearcherProps) {
     super(props);
     this.state = { selectedCard: "" };
-    this.onSelectedCard = this.onSelectedCard.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onCancel = this.onCancel.bind(this);
-  }
-
-  onSelectedCard(cardIndex: number) {
-    const { hand } = this.props;
-    this.setState({ selectedCard: hand[cardIndex] });
   }
 
   onCancel() {

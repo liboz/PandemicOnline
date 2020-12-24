@@ -27,3 +27,31 @@ export class SelectedCardsComponent<T> extends React.Component<
     this.setState({ selectedCards: newSelectedCards });
   }
 }
+
+export interface SelectedCardProps {
+  hand: string[];
+}
+
+interface SelectedCardState {
+  selectedCard: string;
+}
+
+export class SelectedCardComponent<
+  T extends SelectedCardProps
+> extends React.Component<T, SelectedCardState> {
+  constructor(props: T) {
+    super(props);
+    this.state = { selectedCard: "" };
+    this.onSelectedCard = this.onSelectedCard.bind(this);
+  }
+  onSelectedCard(cardIndex: number) {
+    const { hand } = this.props;
+    this.setState((state) => {
+      if (state.selectedCard === hand[cardIndex]) {
+        return { selectedCard: "" };
+      } else {
+        return { selectedCard: hand[cardIndex] };
+      }
+    });
+  }
+}
