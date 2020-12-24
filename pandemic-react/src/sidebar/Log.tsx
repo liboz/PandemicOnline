@@ -1,12 +1,8 @@
-import { Client } from "pandemiccommon/dist/out-tsc";
 import React, { FC } from "react";
 import BaseSidebarList from "./BaseSidebarList";
+import { SidebarItemProps } from "./Sidebar";
 
-interface LogProps {
-  game: Client.Game;
-}
-
-const Log: FC<LogProps> = (props: LogProps) => {
+const Log: FC<SidebarItemProps> = (props: SidebarItemProps) => {
   const { game } = props;
   const { log } = game;
   return React.createElement(BaseSidebarList, {

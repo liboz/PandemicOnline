@@ -43,6 +43,9 @@ export class City {
 
   infect_condition(game: Game, color: Client.Color, initialization = false) {
     if (game.cured[color] === 2) {
+      game.log.push(
+        `${this.name}'s infection prevented because ${color} is eradicated`
+      );
       return false;
     } else {
       let shouldInfect = true;
@@ -54,6 +57,9 @@ export class City {
             players[i].role === Client.Roles.QuarantineSpecialist)
         ) {
           shouldInfect = false;
+          game.log.push(
+            `${this.name}'s infection prevented because ${players[i]} is a Quarantine Specialist or Medic`
+          );
           break;
         }
       }
@@ -68,6 +74,9 @@ export class City {
               !initialization &&
               neighbor_players[j].role === Client.Roles.QuarantineSpecialist
             ) {
+              game.log.push(
+                `${this.name}'s infection prevented because ${players[i]} is a Quarantine Specialist`
+              );
               shouldInfect = false;
               break;
             }
@@ -86,6 +95,9 @@ export class City {
     initialization = false
   ) {
     if (this.infect_condition(game, color, initialization)) {
+      if (!initialization) {
+        game.log.push(`${this.name} is infected`);
+      }
       if (this.cubes[color] < 3) {
         game.cubes[color] -= 1;
         this.cubes[color] += 1;

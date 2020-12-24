@@ -1,14 +1,8 @@
-import { Client } from "pandemiccommon/dist/out-tsc";
 import React, { FC } from "react";
 import BaseSidebarList from "./BaseSidebarList";
+import { SidebarItemProps } from "./Sidebar";
 
-interface InfectionDeckFaceupProps {
-  game: Client.Game;
-}
-
-const InfectionDeckFaceup: FC<InfectionDeckFaceupProps> = (
-  props: InfectionDeckFaceupProps
-) => {
+const InfectionDeckFaceup: FC<SidebarItemProps> = (props: SidebarItemProps) => {
   const { game } = props;
   const cards = game.infection_faceup_deck;
   return React.createElement(BaseSidebarList, {

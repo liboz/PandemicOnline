@@ -1,12 +1,8 @@
-import { Client } from "pandemiccommon/dist/out-tsc";
 import React, { FC } from "react";
 import BaseSidebarList from "./BaseSidebarList";
+import { SidebarItemProps } from "./Sidebar";
 
-interface PlayerDeckDiscard {
-  game: Client.Game;
-}
-
-const PlayerDeckDiscard: FC<PlayerDeckDiscard> = (props: PlayerDeckDiscard) => {
+const PlayerDeckDiscard: FC<SidebarItemProps> = (props: SidebarItemProps) => {
   const { game } = props;
   const cards = game.player_deck_discard;
   if (cards.length === 0) {

@@ -24,6 +24,10 @@ export class MoveChoiceSelectorComponent extends React.Component<
   constructor(props: MoveChoiceSelectorProps) {
     super(props);
     this.state = { selectedCard: "" };
+
+    this.onDirectFlight = this.onDirectFlight.bind(this);
+    this.onCharterFlight = this.onCharterFlight.bind(this);
+    this.onOperationsExpertMove = this.onOperationsExpertMove.bind(this);
   }
 
   onDirectFlight() {

@@ -128,11 +128,12 @@ export class Game {
         // do all 3 cube infections, then 2 cube etc
         for (let j = 0; j < 3; j++) {
           let card = this.infection_deck.flip_card();
+          let city = this.game_graph[card];
           for (let k = 0; k <= i; k++) {
             //# of cubes to infect based on index i
-            let city = this.game_graph[card];
             city.infect(this, city.color, new Set(), true);
           }
+          this.log.push(`${city.name} infected with ${i + 1} cubes`);
         }
       }
       this.game_state = Client.GameState.Ready;
