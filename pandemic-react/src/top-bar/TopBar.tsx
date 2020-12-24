@@ -1,7 +1,7 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React, { FC, ReactNode } from "react";
 import { Container, Text } from "react-pixi-fiber";
-import Button, { baseButtonHeight, baseButtonWidth } from "../button/button";
+import Button, { baseButtonHeight } from "../button/button";
 import { height, width } from "../game/Game";
 import InfectionDeckFaceup from "../sidebar/InfectionDeckFaceup";
 import CubeCureStatus from "./CubeCureStatus";
