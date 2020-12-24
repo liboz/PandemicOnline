@@ -3,6 +3,7 @@ import React, { FC, ReactNode } from "react";
 import { Container, Text } from "react-pixi-fiber";
 import Button, { baseButtonHeight, baseButtonWidth } from "../button/button";
 import { height, width } from "../game/Game";
+import InfectionDeckFaceup from "../sidebar/InfectionDeckFaceup";
 import CubeCureStatus from "./CubeCureStatus";
 
 interface TopBarProps {
@@ -56,7 +57,11 @@ const TopBar: FC<TopBarProps> = (props) => {
             label={"Show Infection Deck Faceup"}
             disabled={false}
             onTap={() =>
-              showSideBar ? hideSidebar() : setSidebarChildren(null)
+              showSideBar
+                ? hideSidebar()
+                : setSidebarChildren(
+                    React.createElement(InfectionDeckFaceup, { game })
+                  )
             }
           ></Button>
           <Button

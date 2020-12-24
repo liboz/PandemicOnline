@@ -4,15 +4,21 @@ import "./Sidebar.css";
 
 interface SidebarProps extends PropsWithChildren<{}> {
   showSidebar: boolean;
+  hideSidebar: () => void;
 }
 
 const Sidebar: FC<SidebarProps> = (props: SidebarProps) => {
-  const { showSidebar, children } = props;
-  if (showSidebar) {
-    return <div className="sidenav">{children}</div>;
-  } else {
-    return null;
-  }
+  const { showSidebar, children, hideSidebar } = props;
+  return (
+    <>
+      {showSidebar && (
+        <div className="sidenav-overlay" onClick={hideSidebar}></div>
+      )}
+      <div className={`sidenav ${showSidebar ? "slide-in" : "slide-out"}`}>
+        {children}
+      </div>
+    </>
+  );
 };
 
 export default Sidebar;

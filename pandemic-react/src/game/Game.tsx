@@ -155,7 +155,9 @@ class GameGraphics extends React.Component<
             ></TopBar>
           </Stage>
         )}
-        <Sidebar showSidebar={showSideBar}>{sidebarChildren}</Sidebar>
+        <Sidebar showSidebar={showSideBar} hideSidebar={this.props.hideSidebar}>
+          {sidebarChildren}
+        </Sidebar>
       </div>
     );
   }

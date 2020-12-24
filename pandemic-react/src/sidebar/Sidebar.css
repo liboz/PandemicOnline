@@ -2,10 +2,43 @@
   height: 100%; /* Full-height: remove this if you want "auto" height */
   width: 20%; /* Set the width of the sidebar */
   position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-  z-index: 1; /* Stay on top */
+  z-index: 10000; /* Stay on top */
   top: 0; /* Stay at the top */
   right: 0;
   background-color: #392a2b;
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 20px;
+  border-left: 1px solid white;
+  color: white;
+  transition: transform 0.5s ease; /* our nice transition */
+}
+
+.slide-in {
+  transform: translateX(0);
+}
+
+.slide-out {
+  transform: translateX(100%);
+}
+
+.sidenav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  opacity: 10;
+  height: 120vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.sidenav div {
+  margin-left: 1em;
+}
+
+.sidenav .box {
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  margin: 0 5px;
 }
