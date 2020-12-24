@@ -11,10 +11,10 @@ const InfectionDeckFaceup: FC<InfectionDeckFaceupProps> = (
   props: InfectionDeckFaceupProps
 ) => {
   const { game } = props;
-  const cards = [...game.faceup_deck].reverse();
+  const cards = game.faceup_deck;
   return (
     <div>
-      Most Recent
+      Least Recent
       <ol>
         {cards.map((card) => {
           const cardIndex = game.game_graph_index[card];
@@ -31,7 +31,7 @@ const InfectionDeckFaceup: FC<InfectionDeckFaceupProps> = (
           );
         })}
       </ol>
-      Least Recent
+      Most Recent
     </div>
   );
 };
