@@ -11,7 +11,7 @@ const InfectionDeckFaceup: FC<InfectionDeckFaceupProps> = (
   props: InfectionDeckFaceupProps
 ) => {
   const { game } = props;
-  const cards = game.faceup_deck;
+  const cards = [...game.faceup_deck].reverse();
   return (
     <div>
       Most Recent
@@ -19,7 +19,7 @@ const InfectionDeckFaceup: FC<InfectionDeckFaceupProps> = (
         {cards.map((card) => {
           const cardIndex = game.game_graph_index[card];
           return (
-            <li>
+            <li key={`infection-deck-faceup-${card}`}>
               <span
                 className={"box"}
                 style={{
