@@ -263,7 +263,7 @@ class GameJSON implements Client.Game {
   outbreak_counter: number;
   infection_rate_index: number;
   infection_rate: number[];
-  faceup_deck: string[];
+  infection_faceup_deck: string[];
   players: Client.Player[];
   research_stations: string[];
   cured: Client.Cubes;
@@ -303,7 +303,7 @@ class GameJSON implements Client.Game {
     this.outbreak_counter = game.outbreak_counter;
     this.infection_rate_index = game.infection_rate_index;
     this.infection_rate = [2, 2, 2, 3, 3, 4, 4];
-    this.faceup_deck = game.infection_deck.faceup_deck;
+    this.infection_faceup_deck = game.infection_deck.faceup_deck;
     this.players = game.players.map((p) => new PlayerJSON(p, game));
 
     this.research_stations = [...game.research_stations];

@@ -11,7 +11,7 @@ const InfectionDeckFaceup: FC<InfectionDeckFaceupProps> = (
   props: InfectionDeckFaceupProps
 ) => {
   const { game } = props;
-  const cards = game.faceup_deck;
+  const cards = game.infection_faceup_deck;
   return (
     <div>
       Least Recent
