@@ -2,7 +2,7 @@
   height: 100%; /* Full-height: remove this if you want "auto" height */
   width: 20%; /* Set the width of the sidebar */
   position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-  z-index: 10000; /* Stay on top */
+  z-index: 12; /* Stay on top */
   top: 0; /* Stay at the top */
   right: 0;
   background-color: #392a2b;
@@ -29,7 +29,7 @@
   opacity: 10;
   height: 120vh;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  z-index: 11;
 }
 
 .sidenav div {
