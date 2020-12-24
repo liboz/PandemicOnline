@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import * as PIXI from "pixi.js";
 import { Container, Stage, Text } from "react-pixi-fiber";
@@ -10,6 +10,7 @@ import CubeContainer from "../cubes/CubeContainer";
 import BottomBar from "../bottom-bar/BottomBar";
 import withGameState, { GameComponentState } from "./withGameState";
 import TopBar from "../top-bar/TopBar";
+import Sidebar from "../sidebar/Sidebar";
 
 export const width = 1920;
 export const height = 960;
@@ -29,6 +30,8 @@ export interface GameGraphicsProps {
   onShare: () => void;
   onDiscover: () => void;
   onPass: () => void;
+  setSidebarChildren: (items: ReactNode) => void;
+  hideSidebar: () => void;
 }
 
 export interface GameGraphicsState {
@@ -84,7 +87,13 @@ class GameGraphics extends React.Component<
   }
 
   render() {
-    const { links, nodes, isMoving } = this.props.state;
+    const {
+      links,
+      nodes,
+      isMoving,
+      showSideBar,
+      sidebarChildren,
+    } = this.props.state;
     return (
       <div ref={this.elementRef}>
         {this.props.game && links && (
@@ -138,9 +147,15 @@ class GameGraphics extends React.Component<
               game={this.props.game}
               player_index={this.props.player_index}
             ></BottomBar>
-            <TopBar game={this.props.game}></TopBar>
+            <TopBar
+              game={this.props.game}
+              showSideBar={showSideBar}
+              setSidebarChildren={this.props.setSidebarChildren}
+              hideSidebar={this.props.hideSidebar}
+            ></TopBar>
           </Stage>
         )}
+        <Sidebar showSidebar={showSideBar}>{sidebarChildren}</Sidebar>
       </div>
     );
   }

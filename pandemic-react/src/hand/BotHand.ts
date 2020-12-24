@@ -52,7 +52,7 @@ interface HandProps {
   containerY: number;
 }
 
-const TYPE = "Hand";
+const TYPE = "BotHand";
 export const behavior = {
   customDisplayObject: (props: HandProps) => new PIXI.Graphics(),
   customApplyProps: function (

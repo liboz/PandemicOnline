@@ -1,15 +1,19 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
-import React, { FC } from "react";
+import React, { FC, ReactNode } from "react";
 import { Container, Text } from "react-pixi-fiber";
+import Button, { baseButtonHeight, baseButtonWidth } from "../button/button";
 import { height, width } from "../game/Game";
 import CubeCureStatus from "./CubeCureStatus";
 
 interface TopBarProps {
   game: Client.Game;
+  showSideBar: boolean;
+  setSidebarChildren: (items: ReactNode) => void;
+  hideSidebar: () => void;
 }
 
 const TopBar: FC<TopBarProps> = (props) => {
-  const { game } = props;
+  const { game, showSideBar, setSidebarChildren, hideSidebar } = props;
 
   const containerY = height / 8;
   const textStyle = {
@@ -42,6 +46,30 @@ const TopBar: FC<TopBarProps> = (props) => {
         </Container>
         <Container x={width / 2}>
           <CubeCureStatus game={game} containerY={containerY}></CubeCureStatus>
+        </Container>
+        <Container x={width / 4}>
+          <Button
+            x={0}
+            y={0}
+            width={375}
+            height={baseButtonHeight}
+            label={"Show Infection Deck Faceup"}
+            disabled={false}
+            onTap={() =>
+              showSideBar ? hideSidebar() : setSidebarChildren(null)
+            }
+          ></Button>
+          <Button
+            x={0}
+            y={baseButtonHeight}
+            width={160}
+            height={baseButtonHeight}
+            label={"Show Log"}
+            disabled={false}
+            onTap={() =>
+              showSideBar ? hideSidebar() : setSidebarChildren(null)
+            }
+          ></Button>
         </Container>
       </Container>
     );

@@ -8,7 +8,7 @@ import Button, {
 } from "../button/button";
 import { barBaseHeight, width } from "../game/Game";
 import { GameComponentState } from "../game/withGameState";
-import Hand from "../hand/BotHand";
+import BotHand from "../hand/BotHand";
 
 function cannotDoPrimaryAction(state: GameComponentState, game: Client.Game) {
   return !!(
@@ -168,7 +168,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
   return (
     <Container>
       <Container x={0} y={handContainerY}>
-        <Hand game={game} containerY={handContainerY}></Hand>
+        <BotHand game={game} containerY={handContainerY}></BotHand>
       </Container>
       <Container x={width / 4} y={barBaseHeight}>
         <Text text={infoTextRaw} style={{ fontSize: 20 }}></Text>

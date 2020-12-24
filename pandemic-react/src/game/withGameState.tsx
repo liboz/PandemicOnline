@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import {
   clearComponent,
@@ -43,6 +43,8 @@ export interface GameComponentState {
   treatColorChoices: string[] | null;
   links?: Link[];
   nodes?: CityNodeData[];
+  showSideBar: boolean;
+  sidebarChildren: React.ReactNode;
 }
 
 export interface GameStateInterface
@@ -61,6 +63,8 @@ export function initialState(): GameComponentState {
     shareCardChoices: null,
     cureColorCards: null,
     treatColorChoices: null,
+    showSideBar: false,
+    sidebarChildren: null,
   };
 }
 
@@ -97,6 +101,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.share = this.share.bind(this);
       this.shareResearcher = this.shareResearcher.bind(this);
       this.discover = this.discover.bind(this);
+      this.setSidebarChildren = this.setSidebarChildren.bind(this);
+      this.hideSidebar = this.hideSidebar.bind(this);
     }
 
     componentDidMount() {
@@ -830,6 +836,14 @@ function withGameState(WrappedComponent: typeof React.Component) {
       });
     }
 
+    setSidebarChildren(items: ReactNode) {
+      this.setState({ showSideBar: true, sidebarChildren: items });
+    }
+
+    hideSidebar() {
+      this.setState({ showSideBar: false });
+    }
+
     render() {
       // ... and renders the wrapped component with the fresh data!
       // Notice that we pass through any additional props
@@ -848,6 +862,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
           onShare={this.onShare}
           onDiscover={this.onDiscover}
           onPass={this.onPass}
+          setSidebarChildren={this.setSidebarChildren}
+          hideSidebar={this.hideSidebar}
         ></WrappedComponent>
       );
     }
