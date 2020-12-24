@@ -22,6 +22,7 @@ import { DiscoverComponent } from "../discover/DiscoverComponent";
 import { TreatComponent } from "../treat/TreatComponent";
 import { WinLossComponent } from "./WinLossComponent";
 import { StartGameComponent } from "../start-game/StartGameComponent";
+import { SidebarItemProps } from "../sidebar/Sidebar";
 
 export const width = 1920;
 export const height = 960;
@@ -44,7 +45,7 @@ export interface GameComponentState {
   links?: Link[];
   nodes?: CityNodeData[];
   showSideBar: boolean;
-  sidebarChildren: React.ReactNode;
+  sidebarDisplayItem: React.FunctionComponent<SidebarItemProps> | null;
 }
 
 export interface GameStateInterface
@@ -64,7 +65,7 @@ export function initialState(): GameComponentState {
     cureColorCards: null,
     treatColorChoices: null,
     showSideBar: false,
-    sidebarChildren: null,
+    sidebarDisplayItem: null,
   };
 }
 
@@ -836,8 +837,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
       });
     }
 
-    setSidebarChildren(items: ReactNode) {
-      this.setState({ showSideBar: true, sidebarChildren: items });
+    setSidebarChildren(item: React.FunctionComponent<SidebarItemProps>) {
+      this.setState({ showSideBar: true, sidebarDisplayItem: item });
     }
 
     hideSidebar() {

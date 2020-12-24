@@ -10,7 +10,7 @@ import CubeContainer from "../cubes/CubeContainer";
 import BottomBar from "../bottom-bar/BottomBar";
 import withGameState, { GameComponentState } from "./withGameState";
 import TopBar from "../top-bar/TopBar";
-import Sidebar from "../sidebar/Sidebar";
+import Sidebar, { SidebarItemProps } from "../sidebar/Sidebar";
 
 export const width = 1920;
 export const height = 960;
@@ -30,7 +30,7 @@ export interface GameGraphicsProps {
   onShare: () => void;
   onDiscover: () => void;
   onPass: () => void;
-  setSidebarChildren: (items: ReactNode) => void;
+  setSidebarChildren: (item: React.FunctionComponent<SidebarItemProps>) => void;
   hideSidebar: () => void;
 }
 
@@ -92,72 +92,80 @@ class GameGraphics extends React.Component<
       nodes,
       isMoving,
       showSideBar,
-      sidebarChildren,
+      sidebarDisplayItem,
     } = this.props.state;
     return (
       <div ref={this.elementRef}>
         {this.props.game && links && (
-          <Stage app={this.pixiApp}>
-            <Container>
-              <GeoBackground projection={this.props.projection} links={links} />
-              {nodes?.map((node) => {
-                return (
-                  <Container
-                    key={"container-parent" + node.id}
-                    sortableChildren={true}
-                  >
+          <>
+            <Stage app={this.pixiApp}>
+              <Container>
+                <GeoBackground
+                  projection={this.props.projection}
+                  links={links}
+                />
+                {nodes?.map((node) => {
+                  return (
                     <Container
-                      key={"container" + node.id}
-                      interactive={true}
-                      pointerdown={() => this.props.onSelectedNode(node)}
+                      key={"container-parent" + node.id}
+                      sortableChildren={true}
                     >
-                      <CityNode node={node} isMoving={isMoving}></CityNode>
-                    </Container>
+                      <Container
+                        key={"container" + node.id}
+                        interactive={true}
+                        pointerdown={() => this.props.onSelectedNode(node)}
+                      >
+                        <CityNode node={node} isMoving={isMoving}></CityNode>
+                      </Container>
 
-                    <Text
-                      zIndex={10}
-                      style={{
-                        fill: 0xffffff,
-                        fontSize: 18,
-                        stroke: "black",
-                        strokeThickness: 3,
-                        align: "center",
-                      }}
-                      text={node.name}
-                      x={node.x - 30}
-                      y={node.y - 30}
-                    ></Text>
-                    {node.hasResearchStation && (
-                      <ResearchStation node={node}></ResearchStation>
-                    )}
-                    <CubeContainer node={node}></CubeContainer>
-                    <Player node={node}></Player>
-                  </Container>
-                );
-              })}
-            </Container>
-            <BottomBar
-              state={this.props.state}
-              onMove={this.props.onMove}
-              onBuild={this.props.onBuild}
-              onTreat={this.props.onTreat}
-              onShare={this.props.onShare}
-              onDiscover={this.props.onDiscover}
-              onPass={this.props.onPass}
+                      <Text
+                        zIndex={10}
+                        style={{
+                          fill: 0xffffff,
+                          fontSize: 18,
+                          stroke: "black",
+                          strokeThickness: 3,
+                          align: "center",
+                        }}
+                        text={node.name}
+                        x={node.x - 30}
+                        y={node.y - 30}
+                      ></Text>
+                      {node.hasResearchStation && (
+                        <ResearchStation node={node}></ResearchStation>
+                      )}
+                      <CubeContainer node={node}></CubeContainer>
+                      <Player node={node}></Player>
+                    </Container>
+                  );
+                })}
+              </Container>
+              <BottomBar
+                state={this.props.state}
+                onMove={this.props.onMove}
+                onBuild={this.props.onBuild}
+                onTreat={this.props.onTreat}
+                onShare={this.props.onShare}
+                onDiscover={this.props.onDiscover}
+                onPass={this.props.onPass}
+                game={this.props.game}
+                player_index={this.props.player_index}
+              ></BottomBar>
+              <TopBar
+                game={this.props.game}
+                showSideBar={showSideBar}
+                setSidebarChildren={this.props.setSidebarChildren}
+                hideSidebar={this.props.hideSidebar}
+              ></TopBar>
+            </Stage>
+            <Sidebar
               game={this.props.game}
-              player_index={this.props.player_index}
-            ></BottomBar>
-            <TopBar
-              game={this.props.game}
-              showSideBar={showSideBar}
-              setSidebarChildren={this.props.setSidebarChildren}
+              showSidebar={showSideBar}
               hideSidebar={this.props.hideSidebar}
-            ></TopBar>
-          </Stage>
+              displayItem={sidebarDisplayItem}
+            ></Sidebar>
+          </>
         )}
-        <Sidebar showSidebar={showSideBar} hideSidebar={this.props.hideSidebar}>
-          {sidebarChildren}
-        </Sidebar>
       </div>
     );
   }

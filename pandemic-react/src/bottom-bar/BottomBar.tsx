@@ -148,7 +148,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
       y: barBaseHeight,
       width: baseButtonWidth,
       height: baseButtonHeight,
-      disabled: cannotDoPrimaryAction(state, game),
+      disabled: !isCurrentPlayer || cannotDoPrimaryAction(state, game),
       onTap: () => {
         if (!cannotDoPrimaryAction(state, game)) {
           onPass();

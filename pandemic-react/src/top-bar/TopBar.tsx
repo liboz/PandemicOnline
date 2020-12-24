@@ -4,12 +4,17 @@ import { Container, Text } from "react-pixi-fiber";
 import Button, { baseButtonHeight } from "../button/button";
 import { height, width } from "../game/Game";
 import InfectionDeckFaceup from "../sidebar/InfectionDeckFaceup";
+import Log from "../sidebar/Log";
+import PlayerDeckDiscard from "../sidebar/PlayerDeckDiscard";
+import { SidebarItemProps } from "../sidebar/Sidebar";
 import CubeCureStatus from "./CubeCureStatus";
 
 interface TopBarProps {
   game: Client.Game;
   showSideBar: boolean;
-  setSidebarChildren: (items: ReactNode) => void;
+  setSidebarChildren: (
+    items: React.FunctionComponent<SidebarItemProps>
+  ) => void;
   hideSidebar: () => void;
 }
 
@@ -52,27 +57,38 @@ const TopBar: FC<TopBarProps> = (props) => {
           <Button
             x={0}
             y={0}
-            width={375}
+            width={50}
             height={baseButtonHeight}
-            label={"Show Infection Deck Faceup"}
+            label={"I"}
             disabled={false}
             onTap={() =>
               showSideBar
                 ? hideSidebar()
-                : setSidebarChildren(
-                    React.createElement(InfectionDeckFaceup, { game })
-                  )
+                : setSidebarChildren(InfectionDeckFaceup)
             }
           ></Button>
           <Button
-            x={0}
-            y={baseButtonHeight}
-            width={160}
+            x={50}
+            y={0}
+            width={50}
             height={baseButtonHeight}
-            label={"Show Log"}
+            label={"L"}
             disabled={false}
             onTap={() =>
-              showSideBar ? hideSidebar() : setSidebarChildren(null)
+              showSideBar ? hideSidebar() : setSidebarChildren(Log)
+            }
+          ></Button>
+          <Button
+            x={100}
+            y={0}
+            width={50}
+            height={baseButtonHeight}
+            label={"P"}
+            disabled={false}
+            onTap={() =>
+              showSideBar
+                ? hideSidebar()
+                : setSidebarChildren(PlayerDeckDiscard)
             }
           ></Button>
         </Container>
