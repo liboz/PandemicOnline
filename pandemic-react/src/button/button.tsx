@@ -13,13 +13,25 @@ export interface ButtonProps {
   label: string;
   disabled: boolean;
   onTap: () => void;
+  mouseover?: (event: PIXI.InteractionEvent) => void;
+  mousemove?: (event: PIXI.InteractionEvent) => void;
+  mouseout?: (event: PIXI.InteractionEvent) => void;
 }
 
 const Button: FC<ButtonProps> = (props) => {
   const { x, y, label, disabled, onTap } = props;
+
+  const { mouseover, mousemove, mouseout, ...rest } = props;
   return (
-    <Container interactive={true} buttonMode={true} pointerdown={onTap}>
-      <ButtonBackground {...props}></ButtonBackground>
+    <Container
+      interactive={true}
+      buttonMode={true}
+      pointerdown={onTap}
+      mouseover={(event) => mouseover?.(event)}
+      mousemove={(event) => mousemove?.(event)}
+      mouseout={(event) => mouseout?.(event)}
+    >
+      <ButtonBackground {...rest}></ButtonBackground>
       <Text
         text={label}
         x={x + baseButtonWidth / 5}

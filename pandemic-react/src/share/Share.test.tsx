@@ -298,7 +298,6 @@ describe("Share", () => {
     checkSockets(mockSocket, 0); // other player is id 0
   });
 
-  //todo
   test("onShare works with 1 researcher when researcher is active player and other player has the location card, choose take location card", () => {
     const {
       root,

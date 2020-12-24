@@ -82,12 +82,10 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     game.turns_left !== undefined ? `Actions Left: ${game.turns_left}` : "";
   const handContainerY = (barBaseHeight * 2) / 3;
 
-  const buttonProps: Omit<ButtonProps, "x">[] = [
+  const buttonProps: Omit<ButtonProps, "x" | "y" | "height">[] = [
     {
       label: isMoving ? "Cancel" : "Move",
-      y: barBaseHeight,
       width: baseButtonWidth,
-      height: baseButtonHeight,
       disabled: !isCurrentPlayer || moveButtonDisabled,
       onTap: () => {
         if (!moveButtonDisabled) {
@@ -97,9 +95,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     },
     {
       label: "Build",
-      y: barBaseHeight,
       width: baseButtonWidth,
-      height: baseButtonHeight,
       disabled: !isCurrentPlayer || buildButtonDisabled,
       onTap: () => {
         if (!buildButtonDisabled) {
@@ -109,9 +105,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     },
     {
       label: treatColorChoices ? "Cancel" : "Treat Disease",
-      y: barBaseHeight,
       width: baseButtonWidth * 2,
-      height: baseButtonHeight,
       disabled: !isCurrentPlayer || treatButtonDisabled,
       onTap: () => {
         if (!treatButtonDisabled) {
@@ -121,9 +115,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     },
     {
       label: shareCardChoices ? "Cancel" : "Share Knowledge",
-      y: barBaseHeight,
       width: baseButtonWidth * 2.5,
-      height: baseButtonHeight,
       disabled: !isCurrentPlayer || shareButtonDisabled,
       onTap: () => {
         if (!shareButtonDisabled) {
@@ -133,9 +125,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     },
     {
       label: cureColorCards ? "Cancel" : "Discover",
-      y: barBaseHeight,
       width: baseButtonWidth * 1.5,
-      height: baseButtonHeight,
       disabled: !isCurrentPlayer || discoverButtonDisabled,
       onTap: () => {
         if (!discoverButtonDisabled) {
@@ -145,9 +135,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     },
     {
       label: "Pass",
-      y: barBaseHeight,
       width: baseButtonWidth,
-      height: baseButtonHeight,
       disabled: !isCurrentPlayer || cannotDoPrimaryAction(state, game),
       onTap: () => {
         if (!cannotDoPrimaryAction(state, game)) {
@@ -162,6 +150,8 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     <Button
       key={props.label + index}
       x={width * 0.4 + baseButtonWidth * widthAdjusters[index]}
+      y={barBaseHeight}
+      height={baseButtonHeight}
       {...props}
     ></Button>
   ));
