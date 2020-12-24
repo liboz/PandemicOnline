@@ -78,7 +78,8 @@ const BottomBar: FC<BottomBarProps> = (props) => {
       game.players[game.player_index].role
     }`;
 
-  const actionsLeftTextRaw = `Actions Left: ${game.turns_left}`;
+  const actionsLeftTextRaw =
+    game.turns_left !== undefined ? `Actions Left: ${game.turns_left}` : "";
   const handContainerY = (barBaseHeight * 2) / 3;
 
   const buttonProps: Omit<ButtonProps, "x">[] = [
@@ -172,13 +173,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
       </Container>
       <Container x={width / 4} y={barBaseHeight}>
         <Text text={infoTextRaw} style={{ fontSize: 20 }}></Text>
-        {game.turns_left && (
-          <Text
-            text={actionsLeftTextRaw}
-            style={{ fontSize: 20 }}
-            y={50}
-          ></Text>
-        )}
+        <Text text={actionsLeftTextRaw} style={{ fontSize: 20 }} y={50}></Text>
       </Container>
       {buttons}
     </Container>

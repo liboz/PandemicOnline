@@ -116,10 +116,7 @@ class GameSocketComponent extends React.Component<
 
         socket.on(Client.EventName.UpdateGameState, (data: Client.Game) => {
           console.log("game state updated", data);
-          this.setState((state) => {
-            console.log(state.game?.log.length, data.log.length);
-            return { game: data };
-          });
+          this.setState({ game: data });
         });
 
         socket.on(Client.EventName.DiscardCards, (data: number) => {
