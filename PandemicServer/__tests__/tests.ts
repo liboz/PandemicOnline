@@ -1027,7 +1027,9 @@ describe("Player", function () {
         5,
         seeded
       );
-      g.players[0].discard([...g.players[0].hand]);
+      const originalHand = [...g.players[0].hand];
+      g.players[0].discard(g, [...g.players[0].hand]);
+      expect(g.player_deck.discard).toStrictEqual(originalHand);
       expect(g.players[0].canDirectFlight("Beijing")).toBe(false);
       expect(g.players[0].move(g, "Beijing")).toBe(false);
       expect(g.players[0].location).toBe("Atlanta");
@@ -1041,6 +1043,7 @@ describe("Player", function () {
       expect(g.players[0].location).toBe("Beijing");
       expect(g.game_graph["Beijing"].players.has(g.players[0])).toBe(true);
       expect(g.players[0].hand.has("Beijing")).toBe(false);
+      expect(g.player_deck.discard).toStrictEqual([...originalHand, "Beijing"]);
       g.players[0].draw(g);
       g.players[0].draw(g);
       g.players[0].draw(g);
@@ -1075,6 +1078,11 @@ describe("Player", function () {
       expect(g.players[0].location).toBe("Tokyo");
       expect(g.game_graph["Tokyo"].players.has(g.players[0])).toBe(true);
       expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(false);
+      expect(g.player_deck.discard).toStrictEqual([
+        ...originalHand,
+        "Beijing",
+        "Ho Chi Minh City",
+      ]);
     });
   });
 
@@ -1089,7 +1097,8 @@ describe("Player", function () {
         5,
         seeded
       );
-      g.players[0].discard([...g.players[0].hand]);
+      const originalHand = [...g.players[0].hand];
+      g.players[0].discard(g, [...g.players[0].hand]);
       expect(g.players[1].location).toBe("Atlanta"); // moving player 1 with player 0
       g.players[0].draw(g);
       g.players[0].draw(g);
@@ -1106,6 +1115,7 @@ describe("Player", function () {
       expect(g.players[1].location).toBe("Beijing");
       expect(g.game_graph["Beijing"].players.has(g.players[1])).toBe(true);
       expect(g.players[0].hand.has("Beijing")).toBe(false);
+      expect(g.player_deck.discard).toStrictEqual([...originalHand, "Beijing"]);
       g.players[0].draw(g);
       g.players[0].draw(g);
       g.players[0].draw(g);
@@ -1146,6 +1156,11 @@ describe("Player", function () {
       expect(g.players[1].location).toBe("Tokyo");
       expect(g.game_graph["Tokyo"].players.has(g.players[1])).toBe(true);
       expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(false);
+      expect(g.player_deck.discard).toStrictEqual([
+        ...originalHand,
+        "Beijing",
+        "Ho Chi Minh City",
+      ]);
 
       expect(g.players[1].dispatcher_move(g, g.players[0], "Chicago")).toBe(
         false
@@ -1168,7 +1183,8 @@ describe("Player", function () {
       expect(g.players[0].canOperationsExpertMove(g)).toBe(true);
       expect(g.players[1].canOperationsExpertMove(g)).toBe(false);
 
-      g.players[0].discard([...g.players[0].hand]);
+      const originalHand = [...g.players[0].hand];
+      g.players[0].discard(g, [...g.players[0].hand]);
       expect(g.players[0].canOperationsExpertMove(g)).toBe(false);
       g.players[0].draw(g);
       expect(g.players[0].canOperationsExpertMove(g)).toBe(true);
@@ -1182,6 +1198,7 @@ describe("Player", function () {
         true
       );
       g.players[0].operationsExpertMove(g, "Tokyo", "Beijing");
+      expect(g.player_deck.discard).toStrictEqual([...originalHand, "Beijing"]);
       expect(g.players[0].location).toBe("Tokyo");
     });
   });
@@ -1236,6 +1253,7 @@ describe("Player", function () {
       expect(g.players[0].can_build_research_station(g)).toBe(true);
       expect(g.game_graph["Beijing"].hasResearchStation).toEqual(false);
       g.players[0].build_research_station(g);
+      expect(g.player_deck.discard).toStrictEqual(["Beijing"]);
 
       valid_final_destinations = g.players[0]
         .get_valid_final_destinations(g)
@@ -1344,7 +1362,7 @@ describe("Player", function () {
       );
       expect(g.research_stations).toEqual(new Set(["Atlanta"]));
       expect(g.players[0].can_build_research_station(g)).toBe(false);
-      g.players[0].discard([...g.players[0].hand]);
+      g.players[0].discard(g, [...g.players[0].hand]);
 
       g.players[0].draw(g);
       expect(g.players[0].hand).toEqual(new Set(["Beijing"]));
@@ -1378,7 +1396,7 @@ describe("Player", function () {
       );
       expect(g.research_stations).toEqual(new Set(["Atlanta"]));
       expect(g.players[0].can_build_research_station(g)).toBe(false);
-      g.players[0].discard([...g.players[0].hand]);
+      g.players[0].discard(g, [...g.players[0].hand]);
 
       g.players[0].draw(g);
       expect(g.players[0].hand).toEqual(new Set(["Beijing"]));
@@ -1426,7 +1444,8 @@ describe("Player", function () {
         5,
         seeded
       );
-      g.players[0].discard([...g.players[0].hand]);
+      const originalHand = [...g.players[0].hand];
+      g.players[0].discard(g, [...g.players[0].hand]);
 
       g.players[0].hand.add("Chennai");
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(false);
@@ -1443,8 +1462,15 @@ describe("Player", function () {
       g.players[0].move(g, "Miami");
       expect(g.players[0].can_build_research_station(g)).toBe(true);
       g.players[0].build_research_station(g);
+      const cureHand = [...g.players[0].hand];
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
       g.players[0].cure(g, [...g.players[0].hand]);
+      expect(g.player_deck.discard).toStrictEqual([
+        ...originalHand,
+        "Miami",
+        ...cureHand,
+      ]);
+
       expect(g.cured[Client.Color.Black]).toBe(2);
 
       g.players[0].hand.add("Algiers"); // cant cure already cured
@@ -1467,7 +1493,7 @@ describe("Player", function () {
         5,
         seeded
       );
-      g.players[0].discard([...g.players[0].hand]);
+      g.players[0].discard(g, [...g.players[0].hand]);
 
       g.players[0].hand.add("Chennai");
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(false);
@@ -1507,7 +1533,7 @@ describe("Player", function () {
         5,
         seeded
       );
-      g.players[0].discard([...g.players[0].hand]);
+      g.players[0].discard(g, [...g.players[0].hand]);
 
       g.infect_stage(); // infect tokyo
       g.players[0].hand.add("Tokyo");
@@ -1529,7 +1555,7 @@ describe("Player", function () {
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(false);
       g.players[0].move(g, "Atlanta");
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(true);
-      g.players[0].discard(["Moscow"]);
+      g.players[0].discard(g, ["Moscow"]);
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(false);
       g.players[0].hand.add("Baghdad"); // duplicates and having 5 is no good
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(false);
@@ -1547,7 +1573,7 @@ describe("Player", function () {
         5,
         seeded
       );
-      g.players[0].discard([...g.players[0].hand]);
+      g.players[0].discard(g, [...g.players[0].hand]);
 
       g.infect_stage(); // infect tokyo
       g.players[0].hand.add("Tokyo");
@@ -1576,7 +1602,7 @@ describe("Player", function () {
       g.players[0].hand.add("Moscow");
       g.players[0].hand.add("Baghdad");
       expect(g.players[0].can_cure(g, [...g.players[0].hand])).toBe(false);
-      g.players[0].discard([...g.players[0].hand]);
+      g.players[0].discard(g, [...g.players[0].hand]);
 
       g.players[0].hand.add("Mexico City");
       g.players[0].hand.add("Lagos");
@@ -1625,7 +1651,7 @@ describe("Player", function () {
         5,
         seeded
       );
-      g.players[0].discard([...g.players[0].hand]);
+      g.players[0].discard(g, [...g.players[0].hand]);
 
       g.players[0].hand.add("Chennai");
       g.players[0].hand.add("Tehran");
@@ -1676,7 +1702,7 @@ describe("Player", function () {
         seeded
       );
       expect(g.cubes[Client.Color.Red]).toBe(24);
-      g.players[0].discard([...g.players[0].hand]);
+      g.players[0].discard(g, [...g.players[0].hand]);
       g.infect_stage(); // infect tokyo
       g.infect_stage(); // infect taipei
       expect(g.cubes[Client.Color.Red]).toBe(22);
@@ -1722,8 +1748,13 @@ describe("Player", function () {
         seeded
       );
       expect(g.cubes[Client.Color.Red]).toBe(24);
-      g.players[0].discard([...g.players[0].hand]);
+      const originalHand = [...g.players[0].hand];
+      g.players[0].discard(g, [...g.players[0].hand]);
       g.epidemic();
+      expect(g.player_deck.discard).toStrictEqual([
+        ...originalHand,
+        "Epidemic",
+      ]);
 
       expect(g.cubes[Client.Color.Yellow]).toBe(21);
 
@@ -1867,7 +1898,7 @@ describe("Player", function () {
       g.players[0].draw(g);
       expect(g.players[0].hand.size).toBe(9);
       expect(g.players[0].can_discard(["Tokyo", "Beijing"])).toBe(false); // can't discard cards that don't exist in hand
-      expect(g.players[0].discard(["Tokyo", "Beijing"])).toBe(false);
+      expect(g.players[0].discard(g, ["Tokyo", "Beijing"])).toBe(false);
       expect(g.players[0].hand.size).toBe(9);
       expect(g.players[0].can_discard(["Beijing"])).toBe(false); // can't discard too few
       expect(g.players[0].can_discard(["Beijing", "Beijing"])).toBe(false); // can't discard dupliccates
@@ -1875,7 +1906,7 @@ describe("Player", function () {
         false
       ); // can't discard too many
       expect(g.players[0].can_discard(["Jakarta", "Beijing"])).toBe(true);
-      expect(g.players[0].discard(["Jakarta", "Beijing"])).toBe(true);
+      expect(g.players[0].discard(g, ["Jakarta", "Beijing"])).toBe(true);
       expect(g.players[0].hand.size).toBe(7);
     });
   });
@@ -2023,7 +2054,7 @@ describe("Player", function () {
 
       expect(g.players[0].can_take(g)).toBe(true);
       expect(g.players[1].can_give(g)).toBe(true);
-      g.players[1].discard([...g.players[1].hand]); // need cards in hand to trade!
+      g.players[1].discard(g, [...g.players[1].hand]); // need cards in hand to trade!
       expect(g.players[0].can_take(g)).toBe(false);
       expect(g.players[1].can_give(g)).toBe(false);
     });

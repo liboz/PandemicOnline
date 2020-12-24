@@ -579,7 +579,7 @@ io.on(EventName.Connection, function (socket) {
     }
     if (valid && curr_game().players[p_index].can_discard(cards)) {
       callback();
-      curr_game().players[p_index].discard(cards);
+      curr_game().players[p_index].discard(curr_game(), cards);
       curr_game().log.push(log_string);
       if (curr_game().turns_left === 0) {
         curr_game().infect_stage();

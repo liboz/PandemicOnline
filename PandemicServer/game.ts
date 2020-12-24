@@ -95,6 +95,10 @@ export class Game {
   }
 
   epidemic(clientWebSocket: ClientWebSocket = null, match_name: string = null) {
+    this.player_deck.deleteCardFromHand(
+      this.players[this.player_index].hand,
+      "Epidemic"
+    );
     this.infection_rate_index += 1;
     let card = this.infection_deck.infect_epidemic();
     this.log.push(`${card} was infected in an epidemic`);
@@ -204,7 +208,6 @@ export class Game {
     for (let i = 0; i < 2; i++) {
       let card = this.players[this.player_index].draw(this);
       if (card === "Epidemic") {
-        this.players[this.player_index].hand.delete(card);
         this.epidemic(clientWebSocket, match_name);
       }
     }
@@ -280,6 +283,7 @@ class GameJSON implements Client.Game {
   can_treat: boolean;
   can_take: boolean;
   can_give: boolean;
+  player_deck_discard: string[];
   player_deck_cards_remaining: number;
   log: string[];
   difficulty: number;
@@ -331,6 +335,7 @@ class GameJSON implements Client.Game {
       this.can_treat = game.players[game.player_index].can_treat(game);
       this.can_take = game.players[game.player_index].can_take(game);
       this.can_give = game.players[game.player_index].can_give(game);
+      this.player_deck_discard = game.player_deck.discard;
       this.player_deck_cards_remaining = game.player_deck.deck.length;
       this.log = [...game.log];
       this.difficulty = game.difficulty;

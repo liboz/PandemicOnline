@@ -72,7 +72,7 @@ export class Player {
     hand: Set<string>,
     socket: NodeJS.EventEmitter
   ) {
-    hand.delete(final_destination);
+    game.player_deck.deleteCardFromHand(hand, final_destination);
     this.movePiece(game, game.game_graph, final_destination, socket);
   }
 
@@ -82,7 +82,7 @@ export class Player {
     hand: Set<string>,
     socket: NodeJS.EventEmitter
   ) {
-    hand.delete(this.location);
+    game.player_deck.deleteCardFromHand(hand, this.location);
     this.movePiece(game, game.game_graph, final_destination, socket);
   }
 
@@ -96,7 +96,7 @@ export class Player {
     card: string,
     socket: NodeJS.EventEmitter = null
   ) {
-    this.hand.delete(card);
+    game.player_deck.deleteCardFromHand(this.hand, card);
     this.movePiece(game, game.game_graph, final_destination, socket);
   }
 
@@ -207,7 +207,7 @@ export class Player {
 
   build_research_station(game: Game) {
     if (this.role !== Client.Roles.OperationsExpert) {
-      this.hand.delete(this.location);
+      game.player_deck.deleteCardFromHand(this.hand, this.location);
     }
     game.game_graph[this.location].hasResearchStation = true;
     game.research_stations.add(this.location);
@@ -267,7 +267,7 @@ export class Player {
   cure(game: Game, cards: string[]) {
     let color = game.game_graph[cards[0]].color;
     cards.forEach((card) => {
-      this.hand.delete(card);
+      game.player_deck.deleteCardFromHand(this.hand, card);
     });
     game.cured[color] = game.cubes[color] !== 24 ? 1 : 2;
     if (Object.values(game.cured).every((c) => c > 0)) {
@@ -316,9 +316,9 @@ export class Player {
     return false;
   }
 
-  discard(cards: string[]) {
+  discard(game: Game, cards: string[]) {
     if (cards.every((c) => this.hand.has(c))) {
-      cards.forEach((c) => this.hand.delete(c));
+      cards.forEach((c) => game.player_deck.deleteCardFromHand(this.hand, c));
       return true;
     }
     return false;

@@ -6,6 +6,7 @@ export class PlayerDeck {
   base_deck: string[];
   partitions: string[][];
   deck: string[];
+  discard: string[];
   constructor(
     cities: CityData[],
     events: string[],
@@ -36,6 +37,7 @@ export class PlayerDeck {
       this.shuffle(p);
     });
     this.deck = [].concat.apply([], this.partitions);
+    this.discard = [];
   }
   partition_deck() {
     let size_partition = Math.trunc(this.base_deck.length / this.num_epidemics);
@@ -56,5 +58,10 @@ export class PlayerDeck {
   flip_card() {
     let card = this.deck.pop();
     return card;
+  }
+
+  deleteCardFromHand(hand: Set<string>, card: string) {
+    hand.delete(card);
+    this.discard.push(card);
   }
 }
