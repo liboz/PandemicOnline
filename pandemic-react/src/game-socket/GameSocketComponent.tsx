@@ -13,6 +13,7 @@ import { Subscription } from "rxjs";
 import { withRouter } from "react-router";
 import { RouteComponentProps } from "react-router-dom";
 import Game from "../game/Game";
+import { toast } from "react-toastify";
 
 interface GameSocketState {
   game?: Client.Game;
@@ -89,13 +90,13 @@ class GameSocketComponent extends React.Component<
         socket.on(
           Client.EventName.DiscoverSuccesful,
           (data: Client.Game, color: string) => {
-            //this.snackBarService.show(`Cure for ${color} was discovered`);
+            toast.success(`Cure for ${color} was discovered`);
             this.setState({ game: data });
           }
         );
 
         socket.on(Client.EventName.Eradicated, (color: string) => {
-          //this.snackBarService.show(`${color} was eradicated`);
+          toast.success(`${color} was eradicated`);
         });
 
         socket.on(Client.EventName.UpdateGameState, (data: Client.Game) => {
@@ -118,30 +119,26 @@ class GameSocketComponent extends React.Component<
               game: updatedGame,
             });
             if (updatedGame.must_discard_index === this.state.player_index) {
-              /*
-              this.snackBarService.show(
-                `You need to discard some cards`,
-                "danger"
-              );*/
+              toast.error("You need to discard some cards!");
             } else {
-              /*
-              this.snackBarService.show(
-                `Player ${this.state.game.must_discard_index} is discarding some cards`,
-                "danger"
-              );*/
+              toast.error(
+                `Player ${updatedGame.must_discard_index} is discarding some cards`
+              );
             }
           }
         });
 
         socket.on(Client.EventName.Epidemic, (data: any) => {
-          //this.snackBarService.show(`${data} infected by Epidemic`, "danger");
+          toast.warning(`${data} infected by Epidemic`);
         });
 
         socket.on(Client.EventName.InvalidAction, (data: any) => {
-          //this.snackBarService.show(data, "danger");
+          toast.error(data);
         });
 
         socket.on(Client.EventName.GameInitialized, (data: Client.Game) => {
+          destroyEvent();
+          toast.info(`Game started`);
           this.setState({ game: data });
         });
       });

@@ -4,11 +4,25 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import AppRouter from "./AppRouter";
 import ModalService from "./modal/Modal";
+import { ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.min.css";
 
 ReactDOM.render(
   <React.StrictMode>
     <AppRouter></AppRouter>
     <ModalService></ModalService>
+    <ToastContainer
+      position="top-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+    />
   </React.StrictMode>,
   document.getElementById("root")
 );
