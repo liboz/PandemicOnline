@@ -34,14 +34,7 @@ export interface GameGraphicsProps {
   hideSidebar: () => void;
 }
 
-export interface GameGraphicsState {
-  assetsLoaded: boolean;
-}
-
-class GameGraphics extends React.Component<
-  GameGraphicsProps,
-  GameGraphicsState
-> {
+class GameGraphics extends React.Component<GameGraphicsProps> {
   pixiApp!: PIXI.Application;
 
   elementRef: React.RefObject<HTMLDivElement>;
@@ -49,7 +42,6 @@ class GameGraphics extends React.Component<
   constructor(props: GameGraphicsProps) {
     super(props);
     this.elementRef = React.createRef<HTMLDivElement>();
-    this.state = { assetsLoaded: false };
   }
 
   componentDidMount() {
@@ -91,7 +83,7 @@ class GameGraphics extends React.Component<
       links,
       nodes,
       isMoving,
-      showSideBar,
+      showSidebar,
       sidebarDisplayItem,
     } = this.props.state;
     return (
@@ -153,14 +145,14 @@ class GameGraphics extends React.Component<
               ></BottomBar>
               <TopBar
                 game={this.props.game}
-                showSideBar={showSideBar}
+                showSidebar={showSidebar}
                 setSidebarChildren={this.props.setSidebarChildren}
                 hideSidebar={this.props.hideSidebar}
               ></TopBar>
             </Stage>
             <Sidebar
               game={this.props.game}
-              showSidebar={showSideBar}
+              showSidebar={showSidebar}
               hideSidebar={this.props.hideSidebar}
               displayItem={sidebarDisplayItem}
             ></Sidebar>

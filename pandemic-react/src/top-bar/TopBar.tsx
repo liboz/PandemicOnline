@@ -12,7 +12,7 @@ import * as PIXI from "pixi.js";
 
 interface TopBarProps {
   game: Client.Game;
-  showSideBar: boolean;
+  showSidebar: boolean;
   setSidebarChildren: (
     items: React.FunctionComponent<SidebarItemProps>
   ) => void;
@@ -20,7 +20,7 @@ interface TopBarProps {
 }
 
 const TopBar: FC<TopBarProps> = (props) => {
-  const { game, showSideBar, setSidebarChildren, hideSidebar } = props;
+  const { game, showSidebar, setSidebarChildren, hideSidebar } = props;
   const buttonsContainerRef = useRef<any>();
 
   const containerY = height / 8;
@@ -86,7 +86,7 @@ const TopBar: FC<TopBarProps> = (props) => {
       label={props.label}
       disabled={false}
       onTap={() =>
-        showSideBar ? hideSidebar() : setSidebarChildren(props.type)
+        showSidebar ? hideSidebar() : setSidebarChildren(props.type)
       }
       mouseover={mouseover(props.hoverText)}
       mousemove={mousemove}

@@ -64,3 +64,15 @@ export function clickDivHand(
   expect(submitButton.props["disabled"]).toBeFalsy();
   submitButton.props["onClick"]();
 }
+
+export function assertString(value: unknown): asserts value is string {
+  if (typeof value !== "string") {
+    throw new Error("value must be string");
+  }
+}
+
+export function assertNonString(value: unknown): asserts value is object {
+  if (typeof value === "string") {
+    throw new Error("value must be object");
+  }
+}

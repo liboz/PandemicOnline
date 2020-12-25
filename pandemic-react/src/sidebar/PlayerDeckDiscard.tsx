@@ -11,7 +11,6 @@ const PlayerDeckDiscard: FC<SidebarItemProps> = (props: SidebarItemProps) => {
     return React.createElement(BaseSidebarList, {
       list: cards.map((card) => {
         const cardIndex = game.game_graph_index[card];
-        console.log(card);
         return (
           <li key={`player-deck-discard-${card}`}>
             {cardIndex && (

@@ -1,10 +1,8 @@
-import { clickDivHand, setupGameState } from "../testUtil";
+import { setupGameState } from "../testUtil";
 import { Client } from "pandemiccommon/dist/out-tsc";
 import { testGame } from "../data/moveTestData";
-import rfdc from "rfdc";
 import DivHandComponent from "../player/DivHand";
 import { MoveChoiceSelectorComponent } from "./MoveChoiceSelectorComponent";
-const clone = rfdc();
 
 describe("Move choice selector", () => {
   test("operations expert move works", () => {

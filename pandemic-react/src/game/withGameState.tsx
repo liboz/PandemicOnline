@@ -44,7 +44,7 @@ export interface GameComponentState {
   treatColorChoices: string[] | null;
   links?: Link[];
   nodes?: CityNodeData[];
-  showSideBar: boolean;
+  showSidebar: boolean;
   sidebarDisplayItem: React.FunctionComponent<SidebarItemProps> | null;
 }
 
@@ -55,6 +55,8 @@ export interface GameStateInterface
   onShare(): void;
   onDiscover(): void;
   onSelectedNode(selectedNode: CityNodeData): void;
+  setSidebarChildren: (item: React.FunctionComponent<SidebarItemProps>) => void;
+  hideSidebar: () => void;
 }
 
 export function initialState(): GameComponentState {
@@ -64,7 +66,7 @@ export function initialState(): GameComponentState {
     shareCardChoices: null,
     cureColorCards: null,
     treatColorChoices: null,
-    showSideBar: false,
+    showSidebar: false,
     sidebarDisplayItem: null,
   };
 }
@@ -838,11 +840,11 @@ function withGameState(WrappedComponent: typeof React.Component) {
     }
 
     setSidebarChildren(item: React.FunctionComponent<SidebarItemProps>) {
-      this.setState({ showSideBar: true, sidebarDisplayItem: item });
+      this.setState({ showSidebar: true, sidebarDisplayItem: item });
     }
 
     hideSidebar() {
-      this.setState({ showSideBar: false });
+      this.setState({ showSidebar: false });
     }
 
     render() {
