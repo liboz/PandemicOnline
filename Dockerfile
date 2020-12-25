@@ -11,9 +11,11 @@ WORKDIR /usr/src/pandemicServer
 
 COPY ./PandemicServer/package*.json ./
 
-RUN npm ci --only=production
+RUN npm ci
 
-COPY ./PandemicServer/dist .
+COPY ./PandemicServer/ .
+
+RUN npm run build && npm prune --production && rm *.ts && rm -r data && cp -r dist/* . && rm -r dist
 
 EXPOSE 8080
 
