@@ -4,7 +4,7 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import AppRouter from "./AppRouter";
 import ModalService from "./modal/Modal";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.min.css";
 

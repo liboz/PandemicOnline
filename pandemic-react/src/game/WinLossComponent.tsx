@@ -6,10 +6,6 @@ interface WinLossComponentProps {
 }
 
 export class WinLossComponent extends React.Component<WinLossComponentProps> {
-  constructor(props: WinLossComponentProps) {
-    super(props);
-  }
-
   onClose() {
     destroyEvent();
   }
