@@ -33,9 +33,10 @@ jobs:
           npm run check
           npm run test
           npm run build
+      - name: Change folder to react
+        run: cd ./pandemic-react
       - name: Deploy Client
         uses: w9jds/firebase-action@master
-        working-directory: ./pandemic-react
         with:
           args: deploy --only hosting
         env:
