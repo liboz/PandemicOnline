@@ -49,21 +49,6 @@ class GameSocketComponent extends React.Component<
               this.state.game.game_state !== Client.GameState.Won &&
               !this.state.player_name
             ) {
-              /*
-              let config = {
-                game: this.state.game,
-                socket: socket,
-                roles: roles,
-              };
-              let currentComponent = this.modalService.currentComponent();
-              if (!currentComponent || currentComponent !== "JoinComponent") {
-                this.modalService.destroy();
-                this.modalService.init(JoinComponent, config, {});
-              } else {
-                config["selected_role"] = null; // not actually an input. kinda hacky...
-                this.modalService.updateConfig(config, {});
-              }
-              */
               clearComponent();
               nextComponent(() => {
                 const props = {

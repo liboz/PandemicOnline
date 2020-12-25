@@ -151,7 +151,9 @@ function withGameState(WrappedComponent: typeof React.Component) {
       } else if (
         game?.game_state === Client.GameState.NotStarted &&
         this.props.player_name !== undefined &&
-        this.props.socket
+        this.props.socket &&
+        (game?.game_state !== prevProps.game?.game_state ||
+          this.props.player_name !== prevProps.player_name)
       ) {
         this.showStartGameComponent();
       }
@@ -901,26 +903,6 @@ export class GameComponent1 {
   ngOnInit() {
     this.onMove = this.onMove.bind(this);
 
-    this.isMoving = false;
-    this.selectedCards = new Set();
-    this.destroySubscription = this.modalService.destroy$.subscribe(() => {
-      this.isMoving = false;
-      this.modalService.destroy();
-    });
-
-    this.clearShareCardsSubscription = this.modalService.clearShare$.subscribe(
-      () => {
-        this.shareCardChoices = null;
-        this.modalService.destroyEvent();
-      }
-    );
-    this.dispatcherMoveSubscription = this.modalService.dispatcherMoveTarget$.subscribe(
-      (player_index) => {
-        this.dispatcherMoveOtherPlayer = player_index;
-        this.modalService.destroyEvent();
-      }
-    );
-
     this.ngZone.runOutsideAngular(() => {
       this.pixiApp = new PIXI.Application({
         backgroundColor: 0x2a2c39,
@@ -949,18 +931,6 @@ export class GameComponent1 {
       this.renderBottomBarFull();
     });
   }
-
-  canPass() {
-    return (
-      this.game.turns_left > 0 &&
-      this.game.game_state === Client.GameState.Ready
-    );
-  }
-
-  onPass() {
-    this.socket.emit("pass");
-  }
-
 
   isDispatcher() {
     return (
