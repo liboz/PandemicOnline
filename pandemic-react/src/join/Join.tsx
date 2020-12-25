@@ -1,13 +1,12 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
-import { joinAs } from "../modal/Modal";
+import { destroyEvent, joinAs } from "../modal/Modal";
 import { formatPlayer, hasStarted } from "../utils";
 
 interface JoinComponentProps {
   game: Client.Game;
   socket: SocketIOClient.Socket;
   roles: Client.Roles[];
-  destroy: () => void;
 }
 
 interface JoinComponentState {
@@ -34,10 +33,10 @@ export class JoinComponent extends React.Component<
   }
 
   joinGameInternal() {
-    const { socket, destroy } = this.props;
+    const { socket } = this.props;
     const { selectedRole, playerName } = this.state;
 
-    destroy();
+    destroyEvent();
     socket.emit(
       Client.EventName.Join,
       selectedRole,

@@ -65,9 +65,8 @@ class GameSocketComponent extends React.Component<
               }
               */
               clearComponent();
-              nextComponent((destroy: () => void) => {
+              nextComponent(() => {
                 const props = {
-                  destroy,
                   game: this.state.game!,
                   socket,
                   roles,
