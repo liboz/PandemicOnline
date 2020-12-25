@@ -13,6 +13,7 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.6",
     "@types/react-test-renderer": "^17.0.0",
+    "@types/rx": "^4.1.2",
     "@types/socket.io-client": "^1.4.34",
     "cross-env": "^7.0.3",
     "d3": "^6.3.0",
