@@ -2,10 +2,9 @@ FROM node:14
 
 WORKDIR /usr/src/PandemicCommon
 
-COPY PandemicCommon/dist/out-tsc ./dist/out-tsc
+COPY PandemicCommon/package*.json PandemicCommon/index.ts PandemicCommon/tsconfig.json ./
 
-COPY PandemicCommon/package*.json ./
-
+RUN npm ci && npm run build
 
 # Create app directory
 WORKDIR /usr/src/pandemicServer
