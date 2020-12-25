@@ -10,7 +10,7 @@
     "start": "concurrently \"tsc -w\" \"nodemon dist/server.js\"",
     "fix": "prettier --write \"**/*.ts\"",
     "check": "prettier --check \"**/*.ts\"",
-    "server": "nodemon server.js"
+    "server": "NODE_ENV=production nodemon server.js"
   },
   "author": "",
   "license": "ISC",

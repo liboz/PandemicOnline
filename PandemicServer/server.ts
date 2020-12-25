@@ -38,7 +38,13 @@ const server = app.listen(8080);
 
 const io = socketIO(server);
 
-let seeded = seedrandom("test!");
+let seeded: seedrandom.prng;
+console.log(`running in ${process.env.NODE_ENV ?? "local"}`);
+if (process.env.NODE_ENV === "production") {
+  seeded = seedrandom();
+} else {
+  seeded = seedrandom("test!");
+}
 io.on(EventName.Connection, function (socket) {
   let match_name = socket.handshake.query.match_name;
   if (!games[match_name]) {
@@ -167,7 +173,7 @@ io.on(EventName.Connection, function (socket) {
   );
   clientWebSocket.on(EventName.Move, function (data, callback) {
     let log_string = `Player ${curr_game().player_index}: move to ${data}`;
-    console.log(log_string);
+    console.log(`${match_name}: ${log_string}`);
     if (isReady()) {
       let curr_player = curr_game().players[curr_game().player_index];
       if (curr_player.move(curr_game(), data, curr_player.hand, socket)) {
@@ -196,7 +202,7 @@ io.on(EventName.Connection, function (socket) {
     let log_string = `Player ${
       curr_game().player_index
     }: Direct Flight to ${data}`;
-    console.log(log_string);
+    console.log(`${match_name}: ${log_string}`);
     if (isReady()) {
       let curr_player = curr_game().players[curr_game().player_index];
       if (curr_player.canDirectFlight(data)) {
@@ -225,7 +231,7 @@ io.on(EventName.Connection, function (socket) {
     let log_string = `Player ${
       curr_game().player_index
     }: Charter Flight to ${data}`;
-    console.log(log_string);
+    console.log(`${match_name}: ${log_string}`);
     if (isReady()) {
       let curr_player = curr_game().players[curr_game().player_index];
       if (curr_player.canCharterFlight()) {
@@ -256,7 +262,7 @@ io.on(EventName.Connection, function (socket) {
       let log_string = `Player ${
         curr_game().player_index
       }: Operations Expert Move to ${final_destination} by discarding ${card}`;
-      console.log(log_string);
+      console.log(`${match_name}: ${log_string}`);
       if (isReady()) {
         if (
           curr_game().players[
@@ -296,7 +302,7 @@ io.on(EventName.Connection, function (socket) {
       let log_string = `Player ${
         curr_game().player_index
       }: Dispatcher Move ${other_player_index} to ${final_destination}`;
-      console.log(log_string);
+      console.log(`${match_name}: ${log_string}`);
       if (isReady()) {
         let curr_player = curr_game().players[curr_game().player_index];
         let valid_dispatcher_final_destinations = new Set(
@@ -337,7 +343,7 @@ io.on(EventName.Connection, function (socket) {
     let log_string = `Player ${curr_game().player_index}: build on ${
       curr_game().players[curr_game().player_index].location
     }`;
-    console.log(log_string);
+    console.log(`${match_name}: ${log_string}`);
     if (isReady()) {
       if (
         curr_game().players[
@@ -373,7 +379,7 @@ io.on(EventName.Connection, function (socket) {
     let log_string = `Player ${curr_game().player_index}: treat ${color} at ${
       curr_game().players[curr_game().player_index].location
     }`;
-    console.log(log_string);
+    console.log(`${match_name}: ${log_string}`);
     if (isReady()) {
       if (
         curr_game().players[curr_game().player_index].can_treat_color(
@@ -428,7 +434,7 @@ io.on(EventName.Connection, function (socket) {
       }`;
     }
 
-    console.log(log_string);
+    console.log(`${match_name}: ${log_string}`);
 
     if (isReady()) {
       if (!card) {
@@ -510,7 +516,7 @@ io.on(EventName.Connection, function (socket) {
     let log_string = `Player ${curr_game().player_index}: cure at ${
       curr_game().players[curr_game().player_index].location
     } with ${cards}`;
-    console.log(log_string);
+    console.log(`${match_name}: ${log_string}`);
     if (isReady()) {
       if (
         curr_game().players[curr_game().player_index].can_cure(
@@ -553,7 +559,7 @@ io.on(EventName.Connection, function (socket) {
 
   clientWebSocket.on(EventName.Pass, function () {
     let log_string = `Player ${curr_game().player_index}: pass move`;
-    console.log(log_string);
+    console.log(`${match_name}: ${log_string}`);
     if (isReady()) {
       curr_game().log.push(log_string);
       curr_game().pass_turn(clientWebSocket, match_name);
@@ -567,7 +573,7 @@ io.on(EventName.Connection, function (socket) {
 
   clientWebSocket.on(EventName.Discard, (cards, callback) => {
     let log_string = `Player ${curr_game().player_index} discards ${cards}`;
-    console.log(log_string);
+    console.log(`${match_name}: ${log_string}`);
     let valid = false;
     let p_index = curr_game().player_index;
     for (let player of curr_game().players) {

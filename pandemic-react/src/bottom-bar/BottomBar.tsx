@@ -54,21 +54,28 @@ const BottomBar: FC<BottomBarProps> = (props) => {
   } = state;
 
   const isCurrentPlayer = game.player_index === player_index;
-  const moveButtonDisabled = cannotDoPrimaryAction(state, game) && !isMoving;
+  const moveButtonDisabled =
+    !isCurrentPlayer || (cannotDoPrimaryAction(state, game) && !isMoving);
 
   const buildButtonDisabled =
-    !game.can_build_research_station || cannotDoPrimaryAction(state, game);
+    !isCurrentPlayer ||
+    !game.can_build_research_station ||
+    cannotDoPrimaryAction(state, game);
 
   const treatButtonDisabled =
+    !isCurrentPlayer ||
     !game.can_treat ||
     (cannotDoPrimaryAction(state, game) && !treatColorChoices);
 
   const shareButtonDisabled =
+    !isCurrentPlayer ||
     (!game.can_give && !game.can_take) ||
     (cannotDoPrimaryAction(state, game) && !shareCardChoices);
 
   const discoverButtonDisabled =
-    !game.can_cure || (cannotDoPrimaryAction(state, game) && !cureColorCards);
+    !isCurrentPlayer ||
+    !game.can_cure ||
+    (cannotDoPrimaryAction(state, game) && !cureColorCards);
 
   const infoTextRaw =
     game.players &&
@@ -86,7 +93,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     {
       label: isMoving ? "Cancel" : "Move",
       width: baseButtonWidth,
-      disabled: !isCurrentPlayer || moveButtonDisabled,
+      disabled: moveButtonDisabled,
       onTap: () => {
         if (!moveButtonDisabled) {
           onMove();
@@ -96,7 +103,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     {
       label: "Build",
       width: baseButtonWidth,
-      disabled: !isCurrentPlayer || buildButtonDisabled,
+      disabled: buildButtonDisabled,
       onTap: () => {
         if (!buildButtonDisabled) {
           onBuild();
@@ -106,7 +113,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     {
       label: treatColorChoices ? "Cancel" : "Treat Disease",
       width: baseButtonWidth * 2,
-      disabled: !isCurrentPlayer || treatButtonDisabled,
+      disabled: treatButtonDisabled,
       onTap: () => {
         if (!treatButtonDisabled) {
           onTreat();
@@ -116,7 +123,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     {
       label: shareCardChoices ? "Cancel" : "Share Knowledge",
       width: baseButtonWidth * 2.5,
-      disabled: !isCurrentPlayer || shareButtonDisabled,
+      disabled: shareButtonDisabled,
       onTap: () => {
         if (!shareButtonDisabled) {
           onShare();
@@ -126,7 +133,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     {
       label: cureColorCards ? "Cancel" : "Discover",
       width: baseButtonWidth * 1.5,
-      disabled: !isCurrentPlayer || discoverButtonDisabled,
+      disabled: discoverButtonDisabled,
       onTap: () => {
         if (!discoverButtonDisabled) {
           onDiscover();
@@ -138,7 +145,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
       width: baseButtonWidth,
       disabled: !isCurrentPlayer || cannotDoPrimaryAction(state, game),
       onTap: () => {
-        if (!cannotDoPrimaryAction(state, game)) {
+        if (!isCurrentPlayer || !cannotDoPrimaryAction(state, game)) {
           onPass();
         }
       },
