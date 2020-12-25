@@ -605,7 +605,7 @@ io.on(EventName.Connection, function (socket) {
     console.log(`user disconnected from ${match_name}`);
     if (match_name) {
       let room = io.sockets.adapter.rooms[match_name];
-      if (room && room.length === 0) {
+      if (room?.length === 0) {
         games[match_name] = null;
       }
     }
