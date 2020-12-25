@@ -161,5 +161,6 @@ describe("Move choice selector", () => {
     expect(call).toHaveLength(3);
     expect(call[0]).toBe(Client.EventName.Move);
     expect(call[1]).toBe("Bogota");
+    expect(instance.state.isMoving).toBeFalsy();
   });
 });

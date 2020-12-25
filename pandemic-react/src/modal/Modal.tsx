@@ -27,6 +27,12 @@ export const destroyEvent = () => {
   destroySource.next();
 };
 
+const clearMoveSource = new Subject<void>();
+export const clearMove$ = clearMoveSource.asObservable();
+export const clearMove = () => {
+  clearMoveSource.next();
+};
+
 const clearShareSource = new Subject<void>();
 export const clearShare$ = clearShareSource.asObservable();
 export const clearShare = () => {

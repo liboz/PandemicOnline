@@ -40,6 +40,7 @@ export class StartGameComponent extends React.Component<
           return (
             <div key={"difficulty" + difficulty} style={{ textAlign: "left" }}>
               <input
+                name="difficulty"
                 type="radio"
                 onChange={(e) =>
                   this.setState({ selectedDifficulty: Number(difficulty[0]) })

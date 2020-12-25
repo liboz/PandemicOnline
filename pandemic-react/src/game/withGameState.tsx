@@ -3,9 +3,9 @@ import { Client } from "pandemiccommon/dist/out-tsc/";
 import {
   clearComponent,
   clearDiscover$,
+  clearMove$,
   clearShare$,
   clearTreat$,
-  destroy$,
   destroyEvent,
   dispatcherMoveTarget$,
   nextComponent,
@@ -76,7 +76,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
   return class
     extends React.Component<GameComponentProps, GameComponentState>
     implements GameStateInterface {
-    destroySubscription?: Subscription;
+    clearMoveSubscription?: Subscription;
     clearShareCardsSubscription?: Subscription;
     dispatcherMoveSubscription?: Subscription;
     clearTreatSubscription?: Subscription;
@@ -109,8 +109,9 @@ function withGameState(WrappedComponent: typeof React.Component) {
     }
 
     componentDidMount() {
-      this.destroySubscription = destroy$.subscribe(() => {
+      this.clearMoveSubscription = clearMove$.subscribe(() => {
         this.setState({ isMoving: false });
+        destroyEvent();
       });
       this.clearShareCardsSubscription = clearShare$.subscribe(() => {
         this.setState({ shareCardChoices: null });
@@ -135,7 +136,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
 
     componentWillUnmount() {
       // prevent memory leak when component destroyed
-      this.destroySubscription?.unsubscribe();
+      this.clearMoveSubscription?.unsubscribe();
       this.dispatcherMoveSubscription?.unsubscribe();
       this.clearShareCardsSubscription?.unsubscribe();
       this.clearTreatSubscription?.unsubscribe();

@@ -1,7 +1,7 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
 import { SelectedCardComponent } from "../common/SelectedCardsComponent";
-import { destroyEvent } from "../modal/Modal";
+import { clearMove } from "../modal/Modal";
 import DivHand from "../player/DivHand";
 
 interface MoveChoiceSelectorProps {
@@ -49,7 +49,7 @@ export class MoveChoiceSelectorComponent extends SelectedCardComponent<MoveChoic
   }
 
   onCancel() {
-    destroyEvent();
+    clearMove();
   }
 
   render() {

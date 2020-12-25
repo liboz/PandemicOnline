@@ -4,6 +4,7 @@ import { APPCONFIG } from "../config";
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import {
   clearComponent,
+  clearMove,
   destroyEvent,
   join$,
   nextComponent,
@@ -68,7 +69,7 @@ class GameSocketComponent extends React.Component<
         });
 
         socket.on(Client.EventName.MoveChoiceSuccesful, (data: Client.Game) => {
-          destroyEvent();
+          clearMove();
           this.setState({ game: data });
         });
 
