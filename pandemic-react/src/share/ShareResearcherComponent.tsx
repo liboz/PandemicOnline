@@ -10,7 +10,6 @@ interface ShareResearcherProps {
   socket: SocketIOClient.Socket;
   target_player_index: number;
   curr_player_index: number;
-  destroy: () => void;
 }
 
 export class ShareResearcherComponent extends SelectedCardComponent<ShareResearcherProps> {

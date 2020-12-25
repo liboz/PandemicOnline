@@ -182,10 +182,9 @@ function withGameState(WrappedComponent: typeof React.Component) {
       const { socket } = this.props;
       if (socket) {
         clearComponent();
-        nextComponent((destroy: () => void) => {
+        nextComponent(() => {
           const props = {
             socket: socket,
-            destroy,
           };
           return React.createElement(StartGameComponent, props);
         });
@@ -194,10 +193,9 @@ function withGameState(WrappedComponent: typeof React.Component) {
 
     showWinLossComponent(lost: boolean) {
       clearComponent();
-      nextComponent((destroy: () => void) => {
+      nextComponent(() => {
         const props = {
           lost,
-          destroy,
         };
         return React.createElement(WinLossComponent, props);
       });
@@ -212,11 +210,10 @@ function withGameState(WrappedComponent: typeof React.Component) {
         game.must_discard_index === player_index &&
         game.game_state === Client.GameState.DiscardingCard
       ) {
-        nextComponent((destroy: () => void) => {
+        nextComponent(() => {
           const props = {
             game: game,
             socket: socket,
-            destroy,
           };
           return React.createElement(DiscardCardsComponent, props);
         });
@@ -250,10 +247,9 @@ function withGameState(WrappedComponent: typeof React.Component) {
           if (cubes_on.length === 1) {
             this.treat(cubes_on[0]);
           } else {
-            nextComponent((destroy: () => void) => {
+            nextComponent(() => {
               const props = {
                 treat: this.treat,
-                destroy,
                 treatColorChoices: cubes_on,
               };
               return React.createElement(TreatComponent, props);
@@ -322,9 +318,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
                   this.shareResearcher(curr_player, i, curr_player.id)
                 )
             );
-            nextComponent((destroy: () => void) => {
+            nextComponent(() => {
               const props = {
-                destroy,
                 shareCardChoices: choices,
               };
               return React.createElement(ShareChoicesComponent, props);
@@ -414,9 +409,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
               )
             ),
           ];
-          nextComponent((destroy: () => void) => {
+          nextComponent(() => {
             const props = {
-              destroy,
               shareCardChoices: choices,
             };
             return React.createElement(ShareChoicesComponent, props);
@@ -453,9 +447,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
               )
             ),
           ];
-          nextComponent((destroy: () => void) => {
+          nextComponent(() => {
             const props = {
-              destroy,
               shareCardChoices: choices,
             };
             return React.createElement(ShareChoicesComponent, props);
@@ -475,9 +468,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
                 () => this.share(i)
               )
           );
-          nextComponent((destroy: () => void) => {
+          nextComponent(() => {
             const props = {
-              destroy,
               shareCardChoices: choices,
             };
             return React.createElement(ShareChoicesComponent, props);
@@ -504,9 +496,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
               )
             ),
           ];
-          nextComponent((destroy: () => void) => {
+          nextComponent(() => {
             const props = {
-              destroy,
               shareCardChoices: choices,
             };
             return React.createElement(ShareChoicesComponent, props);
@@ -549,9 +540,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
               )
             ),
           ];
-          nextComponent((destroy: () => void) => {
+          nextComponent(() => {
             const props = {
-              destroy,
               shareCardChoices: choices,
             };
             return React.createElement(ShareChoicesComponent, props);
@@ -568,9 +558,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
                 this.shareResearcher(curr_player, i, curr_player.id)
               )
           );
-          nextComponent((destroy: () => void) => {
+          nextComponent(() => {
             const props = {
-              destroy,
               shareCardChoices: choices,
             };
             return React.createElement(ShareChoicesComponent, props);
@@ -593,9 +582,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
                 )
             ),
           ];
-          nextComponent((destroy: () => void) => {
+          nextComponent(() => {
             const props = {
-              destroy,
               shareCardChoices: choices,
             };
             return React.createElement(ShareChoicesComponent, props);
@@ -615,9 +603,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
       const { game, socket } = this.props;
       if (game && socket) {
         if (researcher.hand.length > 0) {
-          nextComponent((destroy: () => void) => {
+          nextComponent(() => {
             const props = {
-              destroy,
               game: game,
               hand: researcher.hand,
               socket: socket,
@@ -658,9 +645,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
           this.discover(cureColorCards);
         } else {
           this.setState({ cureColorCards: cureColorCards });
-          nextComponent((destroy: () => void) => {
+          nextComponent(() => {
             const props = {
-              destroy,
               game,
               cureColorCards,
               discover: this.discover,
@@ -810,9 +796,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
             choices[2] = true;
           }
           if (choices[2] || choices.reduce((a, b) => (b ? a + 1 : a), 0) > 1) {
-            nextComponent((destroy: () => void) => {
+            nextComponent(() => {
               const props = {
-                destroy,
                 game: game,
                 hand: curr_player.hand,
                 socket: socket,

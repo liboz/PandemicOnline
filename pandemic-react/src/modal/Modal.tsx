@@ -6,9 +6,7 @@ import { Subject } from "rxjs";
 import "./Modal.css";
 import { PlayerInfo } from "../join/Join";
 
-export type componentSourceType =
-  | ((destroy: () => void) => CElement<any, any>)
-  | "clear";
+export type componentSourceType = (() => CElement<any, any>) | "clear";
 
 const componentSource = new Subject<componentSourceType>();
 export const component$ = componentSource.asObservable();
@@ -82,7 +80,7 @@ export default class ModalService extends React.Component<
       } else {
         this.setState((state) => {
           return {
-            components: [...state.components, newComponent(this.destroy)],
+            components: [...state.components, newComponent()],
           };
         });
       }

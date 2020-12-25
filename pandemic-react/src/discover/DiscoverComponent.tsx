@@ -8,7 +8,6 @@ interface DiscoverProps {
   cureColorCards: string[];
   game: Client.Game;
   discover: (cards: string[]) => void;
-  destroy: () => void;
 }
 
 export class DiscoverComponent extends SelectedCardsComponent<DiscoverProps> {

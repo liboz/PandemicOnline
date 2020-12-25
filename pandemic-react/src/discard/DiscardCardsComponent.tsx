@@ -1,12 +1,12 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
 import { SelectedCardsComponent } from "../common/SelectedCardsComponent";
+import { destroyEvent } from "../modal/Modal";
 import DivHand from "../player/DivHand";
 
 interface DiscardCardsProps {
   game: Client.Game;
   socket: SocketIOClient.Socket;
-  destroy: () => void;
 }
 
 export class DiscardCardsComponent extends SelectedCardsComponent<DiscardCardsProps> {
@@ -25,7 +25,7 @@ export class DiscardCardsComponent extends SelectedCardsComponent<DiscardCardsPr
   }
 
   discardSelectedCards() {
-    const { game, socket, destroy } = this.props;
+    const { game, socket } = this.props;
     const { selectedCards } = this.state;
 
     socket.emit(
@@ -33,7 +33,7 @@ export class DiscardCardsComponent extends SelectedCardsComponent<DiscardCardsPr
       [...selectedCards].map(
         (i) => game.players[game.must_discard_index].hand[i]
       ),
-      () => destroy()
+      () => destroyEvent()
     );
   }
 

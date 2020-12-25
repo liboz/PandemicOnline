@@ -13,7 +13,6 @@ interface MoveChoiceSelectorProps {
   canOperationsExpertMove: boolean;
   currLocation: string;
   targetLocation: string;
-  destroy: () => void;
 }
 
 export class MoveChoiceSelectorComponent extends SelectedCardComponent<MoveChoiceSelectorProps> {

@@ -6,7 +6,6 @@ const difficulties = Object.entries(Client.GameDifficultyMap);
 
 interface StartGameProps {
   socket: SocketIOClient.Socket;
-  destroy: () => void;
 }
 
 interface StartGameState {

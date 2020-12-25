@@ -1,10 +1,9 @@
 import React from "react";
 import { ShareCard } from "../game/withGameState";
-import { clearShare } from "../modal/Modal";
+import { clearShare, destroyEvent } from "../modal/Modal";
 
 interface ShareChoicesProps {
   shareCardChoices: ShareCard[];
-  destroy: () => void;
 }
 
 export class ShareChoicesComponent extends React.Component<ShareChoicesProps> {
@@ -14,9 +13,8 @@ export class ShareChoicesComponent extends React.Component<ShareChoicesProps> {
   }
 
   handleClick(onClick: () => void) {
-    const { destroy } = this.props;
     onClick();
-    destroy();
+    destroyEvent();
   }
 
   onCancel() {

@@ -1,19 +1,17 @@
 import React from "react";
+import { destroyEvent } from "../modal/Modal";
 
 interface WinLossComponentProps {
   lost: boolean;
-  destroy: () => void;
 }
 
 export class WinLossComponent extends React.Component<WinLossComponentProps> {
   constructor(props: WinLossComponentProps) {
     super(props);
-    this.onClose = this.onClose.bind(this);
   }
 
   onClose() {
-    const { destroy } = this.props;
-    destroy();
+    destroyEvent();
   }
 
   render() {
