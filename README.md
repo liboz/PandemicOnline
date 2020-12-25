@@ -1,6 +1,6 @@
 # PandemicOnline
 
-Online Pandemic Simulator with Angular frontend
+Online Pandemic Simulator with React frontend
 
 # Notes
 
