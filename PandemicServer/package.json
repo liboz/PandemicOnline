@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest --watch",
-    "test:cloudbuild": "jest",
+    "test:cloudbuild": "jest --coverage && coveralls < coverage/lcov.info",
     "start": "concurrently \"tsc -w\" \"nodemon dist/server.js\"",
     "fix": "prettier --write \"**/*.ts\"",
     "check": "prettier --check \"**/*.ts\"",
