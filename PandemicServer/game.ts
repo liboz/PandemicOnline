@@ -4,10 +4,9 @@ import { InfectionDeck } from "./infection_deck";
 import { Player, PlayerJSON } from "./player";
 import { PlayerDeck } from "./player_deck";
 import { Client } from "pandemiccommon/dist/out-tsc/";
-import { ClientWebSocket } from "client_websocket";
+import { ClientWebSocket } from "./client_websocket";
+import { EventName } from "./server_game";
 const seedrandom = require("seedrandom");
-
-const EventName = Client.EventName;
 
 export class Game {
   game_graph: Record<string, City>;
@@ -100,7 +99,7 @@ export class Game {
       "Epidemic"
     );
     this.infection_rate_index += 1;
-    let card = this.infection_deck.infect_epidemic();
+    const card = this.infection_deck.infect_epidemic();
     this.log.push(`${card} was infected in an epidemic`);
     if (clientWebSocket) {
       clientWebSocket.sendMessageToAllInRoom(EventName.Epidemic, card);
@@ -114,7 +113,7 @@ export class Game {
 
   infect_stage() {
     for (let i = 0; i < this.infection_rate[this.infection_rate_index]; i++) {
-      let card = this.infection_deck.flip_card();
+      const card = this.infection_deck.flip_card();
       if (!this.game_graph[card].infect(this)) {
         this.lose_game();
         console.log("lost during an infect stage");
@@ -127,8 +126,8 @@ export class Game {
       for (let i = 2; i >= 0; i--) {
         // do all 3 cube infections, then 2 cube etc
         for (let j = 0; j < 3; j++) {
-          let card = this.infection_deck.flip_card();
-          let city = this.game_graph[card];
+          const card = this.infection_deck.flip_card();
+          const city = this.game_graph[card];
           for (let k = 0; k <= i; k++) {
             //# of cubes to infect based on index i
             city.infect(this, city.color, new Set(), true);
@@ -351,7 +350,7 @@ export class GameMap {
   game_state: Client.GameState;
   game_graph: Client.City[];
   constructor(cities: CityData[]) {
-    let game_graph = City.load(cities);
+    const game_graph = City.load(cities);
     this.game_graph = Object.values(game_graph).map((c) => new CityJSON(c));
     this.game_state = Client.GameState.NotStarted;
   }

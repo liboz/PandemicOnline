@@ -16,15 +16,14 @@ export class SocketIOSocket implements ClientWebSocket {
     private socket: Socket,
     private gameName: string
   ) {}
-  sendMessageToAllButClient(eventName: EventName, ...args: any[]): boolean {
-    return this.socket.broadcast.to(this.gameName).emit(eventName, ...args);
-  }
-
   sendMessageToAllInRoom(eventName: EventName, ...args: any[]): boolean {
     return this.io.in(this.gameName).emit(eventName, ...args);
   }
   sendMessageToClient(eventName: EventName, ...args: any[]): boolean {
     return this.socket.emit(eventName, ...args);
+  }
+  sendMessageToAllButClient(eventName: EventName, ...args: any[]): boolean {
+    return this.socket.broadcast.to(this.gameName).emit(eventName, ...args);
   }
   on(eventName: EventName, listener: (...args: any[]) => void): void {
     this.socket.on(eventName, listener);

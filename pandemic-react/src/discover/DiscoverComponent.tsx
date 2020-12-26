@@ -27,7 +27,7 @@ export class DiscoverComponent extends SelectedCardsComponent<DiscoverProps> {
   handleClick() {
     const { discover, cureColorCards } = this.props;
     const { selectedCards } = this.state;
-    let selected = new Set([...selectedCards].map((i) => cureColorCards[i]));
+    const selected = new Set([...selectedCards].map((i) => cureColorCards[i]));
     discover(cureColorCards.filter((i) => !selected.has(i)));
   }
 

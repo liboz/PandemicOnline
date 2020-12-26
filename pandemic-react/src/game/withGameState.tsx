@@ -250,9 +250,10 @@ function withGameState(WrappedComponent: typeof React.Component) {
         this.setState({ treatColorChoices: null });
       } else {
         if (game) {
-          let location = game?.players[game?.player_index].location;
-          let cubes = game?.game_graph[game?.game_graph_index[location]].cubes;
-          let cubes_on = Object.keys(cubes)
+          const location = game?.players[game?.player_index].location;
+          const cubes =
+            game?.game_graph[game?.game_graph_index[location]].cubes;
+          const cubes_on = Object.keys(cubes)
             .map((i) => i as Client.Color)
             .filter((i) => cubes[i] > 0);
           if (cubes_on.length === 1) {

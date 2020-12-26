@@ -1,7 +1,7 @@
 import { Game } from "./game";
-import { Socket } from "socket.io";
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import { ColorsIndex, City } from "./city";
+import { ClientWebSocket } from "client_websocket";
 
 export class Player {
   hand: Set<string>;
@@ -24,12 +24,17 @@ export class Player {
     game: Game,
     other_player: Player,
     final_destination: string,
-    socket: NodeJS.EventEmitter = null
+    clientWebSocket: ClientWebSocket = null
   ) {
     if (this.role !== Client.Roles.Dispatcher) {
       return false;
     } else {
-      return other_player.move(game, final_destination, this.hand, socket);
+      return other_player.move(
+        game,
+        final_destination,
+        this.hand,
+        clientWebSocket
+      );
     }
   }
 
@@ -38,7 +43,7 @@ export class Player {
     game: Game,
     final_destination: string,
     player_hand = this.hand,
-    socket: NodeJS.EventEmitter = null
+    clientWebSocket: ClientWebSocket = null
   ) {
     let game_graph = game.game_graph;
     if (
@@ -47,15 +52,15 @@ export class Player {
         game_graph[final_destination].hasResearchStation)
     ) {
       // drive/ferry + shuttle
-      this.movePiece(game, game_graph, final_destination, socket);
+      this.movePiece(game, game_graph, final_destination, clientWebSocket);
       return true;
     } else if (player_hand.has(final_destination)) {
       // direct
-      this.directFlight(game, final_destination, player_hand, socket);
+      this.directFlight(game, final_destination, player_hand, clientWebSocket);
       return true;
     } else if (player_hand.has(this.location)) {
       // charter
-      this.charterFlight(game, final_destination, player_hand, socket);
+      this.charterFlight(game, final_destination, player_hand, clientWebSocket);
       return true;
     } else {
       return false;
@@ -70,20 +75,20 @@ export class Player {
     game: Game,
     final_destination: string,
     hand: Set<string>,
-    socket: NodeJS.EventEmitter
+    clientWebSocket: ClientWebSocket
   ) {
     game.player_deck.deleteCardFromHand(hand, final_destination);
-    this.movePiece(game, game.game_graph, final_destination, socket);
+    this.movePiece(game, game.game_graph, final_destination, clientWebSocket);
   }
 
   charterFlight(
     game: Game,
     final_destination: string,
     hand: Set<string>,
-    socket: NodeJS.EventEmitter
+    clientWebSocket: ClientWebSocket
   ) {
     game.player_deck.deleteCardFromHand(hand, this.location);
-    this.movePiece(game, game.game_graph, final_destination, socket);
+    this.movePiece(game, game.game_graph, final_destination, clientWebSocket);
   }
 
   canCharterFlight(hand = this.hand) {
@@ -94,10 +99,10 @@ export class Player {
     game: Game,
     final_destination: string,
     card: string,
-    socket: NodeJS.EventEmitter = null
+    clientWebSocket: ClientWebSocket = null
   ) {
     game.player_deck.deleteCardFromHand(this.hand, card);
-    this.movePiece(game, game.game_graph, final_destination, socket);
+    this.movePiece(game, game.game_graph, final_destination, clientWebSocket);
   }
 
   canOperationsExpertMoveWithCard(game: Game, card: string) {
@@ -116,24 +121,24 @@ export class Player {
     game: Game,
     game_graph: Record<string, City>,
     final_destination: string,
-    socket: NodeJS.EventEmitter
+    clientWebSocket: ClientWebSocket
   ) {
     if (this.role === Client.Roles.Medic) {
-      this.medicMoveTreat(game, socket);
+      this.medicMoveTreat(game, clientWebSocket);
     }
     game_graph[this.location].players.delete(this);
     game_graph[final_destination].players.add(this);
     this.location = final_destination;
     if (this.role === Client.Roles.Medic) {
-      this.medicMoveTreat(game, socket);
+      this.medicMoveTreat(game, clientWebSocket);
     }
   }
 
-  medicMoveTreat(game: Game, socket: NodeJS.EventEmitter) {
+  medicMoveTreat(game: Game, clientWebSocket: ClientWebSocket) {
     let colors = Object.values(Client.Color);
     colors.forEach((c) => {
       if (game.cured[c] === 1) {
-        this.treat(game, c, socket);
+        this.treat(game, c, clientWebSocket);
       }
     });
   }
@@ -170,9 +175,9 @@ export class Player {
 
   get_valid_dispatcher_final_destinations(
     game: Game
-  ): Record<string, number[]> {
+  ): Record<number, number[]> {
     if (game.game_state === Client.GameState.Ready) {
-      let result: Record<string, number[]> = {};
+      let result: Record<number, number[]> = {};
       for (let player of game.players) {
         if (player !== this) {
           result[player.id] = player.get_valid_final_destinations(
@@ -288,7 +293,11 @@ export class Player {
     return game.game_graph[this.location].cubes[color] > 0;
   }
 
-  treat(game: Game, color: Client.Color, io: NodeJS.EventEmitter = null) {
+  treat(
+    game: Game,
+    color: Client.Color,
+    clientWebSocket: ClientWebSocket = null
+  ) {
     if (game.cured[color] === 1 || this.role === Client.Roles.Medic) {
       game.cubes[color] += game.game_graph[this.location].cubes[color];
       game.game_graph[this.location].cubes[color] = 0;
@@ -298,8 +307,11 @@ export class Player {
     }
 
     if (game.cured[color] === 1 && game.cubes[color] === 24) {
-      if (io) {
-        io.emit("eradicated", color);
+      if (clientWebSocket) {
+        clientWebSocket.sendMessageToAllInRoom(
+          Client.EventName.Eradicated,
+          color
+        );
       }
       game.cured[color] = 2;
     }
