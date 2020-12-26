@@ -257,9 +257,9 @@ export class ServerGame {
 
   onCharterFlight(clientWebSocket: ClientWebSocket) {
     return (data: string) => {
-      let log_string = `Player ${this.curr_game.player_index}: Charter Flight to ${data}`;
-      console.log(`${this.match_name}: ${log_string}`);
       if (this.isReady) {
+        let log_string = `Player ${this.curr_game.player_index}: Charter Flight to ${data}`;
+        console.log(`${this.match_name}: ${log_string}`);
         let curr_player = this.curr_game.players[this.curr_game.player_index];
         if (curr_player.canCharterFlight()) {
           curr_player.charterFlight(

@@ -245,6 +245,58 @@ describe("ServerGame", () => {
       expect(server_game.curr_game.players[0].location).toBe("Atlanta");
     });
   });
+
+  describe("#onCharterFlight", () => {
+    it("works", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      server_game.curr_game.players[0].location = "Milan";
+      server_game.curr_game.game_graph["Atlanta"].players.delete(
+        server_game.curr_game.players[0]
+      );
+      server_game.curr_game.game_graph["Milan"].players.add(
+        server_game.curr_game.players[0]
+      );
+      const onCharterFlight = server_game.onCharterFlight(mockSocket);
+      onCharterFlight("Atlanta");
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.MoveChoiceSuccesful
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+    });
+
+    it("dosnt work when not started", () => {
+      const mockSocket = mock<ClientWebSocket>();
+      const onJoin = server_game.onJoin(mockSocket);
+      joinGame(onJoin, Client.Roles.Medic, "p1");
+      joinGame(onJoin, Client.Roles.QuarantineSpecialist, "p2");
+
+      const onCharterFlight = server_game.onCharterFlight(mockSocket);
+      onCharterFlight("Paris");
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+    });
+
+    it("dosnt work when cannot charter flight", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const onCharterFlight = server_game.onCharterFlight(mockSocket);
+      onCharterFlight("Miami");
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(0);
+      expect(server_game.curr_game.players[0].location).toBe("Atlanta");
+    });
+  });
 });
 
 function lastSendMessageToClientIsInvalidAction(
