@@ -5,8 +5,8 @@ import { Socket } from "socket.io-client";
 import { GameStateInterface, initialState } from "./game/withGameState";
 import { MockComponentWithState } from "./mockComponentWithState";
 import { Client } from "pandemiccommon/dist/out-tsc";
-import ModalService from "./modal/Modal";
 import DivHandComponent from "./player/DivHand";
+import ModalService from "./modal/Modal";
 
 interface TestGameState {
   instance: GameStateInterface;

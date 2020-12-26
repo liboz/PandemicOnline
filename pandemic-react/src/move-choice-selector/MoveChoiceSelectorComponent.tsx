@@ -1,7 +1,7 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
 import { SelectedCardComponent } from "../common/SelectedCardsComponent";
-import { clearMove } from "../modal/Modal";
+import { clearMove } from "../Subscriptions";
 import DivHand from "../player/DivHand";
 
 interface MoveChoiceSelectorProps {

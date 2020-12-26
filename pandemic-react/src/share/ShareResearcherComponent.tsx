@@ -1,7 +1,7 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
 import { SelectedCardComponent } from "../common/SelectedCardsComponent";
-import { clearShare } from "../modal/Modal";
+import { clearShare } from "../Subscriptions";
 import DivHand from "../player/DivHand";
 
 interface ShareResearcherProps {

@@ -1,6 +1,6 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
-import { destroyEvent, joinAs } from "../modal/Modal";
+import { destroyEvent, joinAs } from "../Subscriptions";
 import { formatPlayer, hasStarted } from "../utils";
 
 interface JoinComponentProps {

@@ -1,7 +1,7 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
 import { SelectedCardsComponent } from "../common/SelectedCardsComponent";
-import { clearDiscover } from "../modal/Modal";
+import { clearDiscover } from "../Subscriptions";
 import DivHand from "../player/DivHand";
 
 interface DiscoverProps {

@@ -1,7 +1,7 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
 import { SelectedCardsComponent } from "../common/SelectedCardsComponent";
-import { destroyEvent } from "../modal/Modal";
+import { destroyEvent } from "../Subscriptions";
 import DivHand from "../player/DivHand";
 
 interface DiscardCardsProps {

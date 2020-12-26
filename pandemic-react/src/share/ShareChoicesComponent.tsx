@@ -1,6 +1,6 @@
 import React from "react";
 import { ShareCard } from "../game/withGameState";
-import { clearShare, destroyEvent } from "../modal/Modal";
+import { clearShare, destroyEvent } from "../Subscriptions";
 
 interface ShareChoicesProps {
   shareCardChoices: ShareCard[];

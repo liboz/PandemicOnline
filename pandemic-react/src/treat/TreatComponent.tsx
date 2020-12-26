@@ -1,6 +1,6 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
-import { clearTreat, destroyEvent } from "../modal/Modal";
+import { clearTreat, destroyEvent } from "../Subscriptions";
 
 interface TreatComponentProps {
   treat: (cube: Client.Color) => void;

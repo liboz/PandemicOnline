@@ -5,10 +5,11 @@ import { Client } from "pandemiccommon/dist/out-tsc/";
 import {
   clearComponent,
   clearMove,
+  closeSidebar,
   destroyEvent,
   join$,
   nextComponent,
-} from "../modal/Modal";
+} from "../Subscriptions";
 import { JoinComponent } from "../join/Join";
 import { Subscription } from "rxjs";
 import { withRouter } from "react-router";
@@ -107,6 +108,7 @@ class GameSocketComponent extends React.Component<
 
         socket.on(Client.EventName.Restarted, (data: Client.Game) => {
           toast.success(`${match_name} restarted`);
+          closeSidebar();
           this.setState({
             game: data,
             player_index: undefined,

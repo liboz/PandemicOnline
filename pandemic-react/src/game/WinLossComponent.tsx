@@ -1,6 +1,6 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
-import { destroyEvent } from "../modal/Modal";
+import { destroyEvent } from "../Subscriptions";
 
 interface WinLossComponentProps {
   socket?: SocketIOClient.Socket;

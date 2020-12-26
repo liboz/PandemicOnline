@@ -9,7 +9,7 @@ import {
   destroyEvent,
   dispatcherMoveTarget$,
   nextComponent,
-} from "../modal/Modal";
+} from "../Subscriptions";
 import { Subscription } from "rxjs";
 import * as d3 from "d3";
 import { CityNodeData } from "../node/CityNode";
