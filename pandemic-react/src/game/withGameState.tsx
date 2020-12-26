@@ -6,6 +6,7 @@ import {
   clearMove$,
   clearShare$,
   clearTreat$,
+  closeSidebar$,
   destroyEvent,
   dispatcherMoveTarget$,
   nextComponent,
@@ -23,6 +24,7 @@ import { TreatComponent } from "../treat/TreatComponent";
 import { WinLossComponent } from "./WinLossComponent";
 import { StartGameComponent } from "../start-game/StartGameComponent";
 import { SidebarItemProps } from "../sidebar/Sidebar";
+import { Subscription } from "rxjs";
 
 export const width = 1920;
 export const height = 960;
@@ -81,6 +83,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
     dispatcherMoveSubscription?: Subscription;
     clearTreatSubscription?: Subscription;
     clearDiscoverSubscription?: Subscription;
+    closeSidebarSubscription?: Subscription;
 
     rootProjection!: d3.GeoProjection;
     projection!: d3.GeoProjection;
@@ -132,6 +135,9 @@ function withGameState(WrappedComponent: typeof React.Component) {
         this.setState({ cureColorCards: null });
         destroyEvent();
       });
+      this.closeSidebarSubscription = closeSidebar$.subscribe(() => {
+        this.hideSidebar();
+      });
     }
 
     componentWillUnmount() {
@@ -141,6 +147,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.clearShareCardsSubscription?.unsubscribe();
       this.clearTreatSubscription?.unsubscribe();
       this.clearDiscoverSubscription?.unsubscribe();
+      this.closeSidebarSubscription?.unsubscribe();
     }
 
     componentDidUpdate(prevProps: GameComponentProps) {
