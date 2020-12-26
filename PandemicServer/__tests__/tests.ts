@@ -9,13 +9,13 @@ const seedrandom = require("seedrandom");
 describe("City", function () {
   describe("#Infect", function () {
     it("Increases the counter of cubes based on color", function () {
-      let g = new Game(
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
         [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
-      let chennai = g.game_graph["Chennai"];
+      const chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 3; i++) {
         expect(chennai.infect(g)).toBe(true);
         expect(chennai.cubes[Client.Color.Blue]).toBe(0);
@@ -28,14 +28,14 @@ describe("City", function () {
 
   describe("#Infect", function () {
     it("Medic Prevents Infect After Cure Discovered", function () {
-      let g = new Game(
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
         [Client.Roles.Medic, Client.Roles.Researcher]
       );
 
-      let atlanta = g.game_graph["Atlanta"];
+      const atlanta = g.game_graph["Atlanta"];
       expect(atlanta.cubes[Client.Color.Blue]).toBe(0);
       expect(atlanta.infect(g)).toBe(true);
       expect(atlanta.cubes[Client.Color.Blue]).toBe(1);
@@ -43,7 +43,7 @@ describe("City", function () {
       g.cured[Client.Color.Blue] = 1;
 
       expect(g.players[0].move(g, "Washington")).toBe(true);
-      let washington = g.game_graph["Washington"];
+      const washington = g.game_graph["Washington"];
       expect(washington.cubes[Client.Color.Blue]).toBe(0);
       expect(washington.infect(g)).toBe(true);
       expect(washington.cubes[Client.Color.Blue]).toBe(0);
@@ -57,8 +57,8 @@ describe("City", function () {
 
   describe("#Infect", function () {
     it("Quarantine Specialist Prevents Infect in Nearby Cities", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -67,37 +67,37 @@ describe("City", function () {
         seeded
       );
 
-      let atlanta = g.game_graph["Atlanta"];
+      const atlanta = g.game_graph["Atlanta"];
       expect(atlanta.cubes[Client.Color.Blue]).toBe(0);
       expect(atlanta.infect(g)).toBe(true);
       expect(atlanta.cubes[Client.Color.Blue]).toBe(0);
 
-      let washington = g.game_graph["Washington"];
+      const washington = g.game_graph["Washington"];
       expect(washington.cubes[Client.Color.Blue]).toBe(0);
       expect(washington.infect(g)).toBe(true);
       expect(washington.cubes[Client.Color.Blue]).toBe(0);
 
-      let chicago = g.game_graph["Chicago"];
+      const chicago = g.game_graph["Chicago"];
       expect(chicago.cubes[Client.Color.Blue]).toBe(0);
       expect(chicago.infect(g)).toBe(true);
       expect(chicago.cubes[Client.Color.Blue]).toBe(0);
 
       g.players[0].move(g, "Miami");
       //g.players[0].move(g, 'Bogota')
-      let saopaulo = g.game_graph["Sao Paulo"];
+      const saopaulo = g.game_graph["Sao Paulo"];
       g.epidemic(); // Sao Paulo
       expect(saopaulo.cubes[Client.Color.Yellow]).toBe(3);
 
       g.infect_stage(); // Sao Paulo
-      let bogota = g.game_graph["Bogota"];
+      const bogota = g.game_graph["Bogota"];
       expect(bogota.cubes[Client.Color.Yellow]).toBe(0);
     });
   });
 
   describe("#Infect", function () {
     it("Quarantine Specialist Does Nothing in Initialization", function () {
-      let seeded = seedrandom("5"); // initial infection contains Atlanta
-      let g = new Game(
+      const seeded = seedrandom("5"); // initial infection contains Atlanta
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -107,7 +107,7 @@ describe("City", function () {
       );
 
       g.initialize_board();
-      let infected = [
+      const infected = [
         "London",
         "Sao Paulo",
         "Tokyo",
@@ -120,8 +120,8 @@ describe("City", function () {
       ].reverse();
       expect(g.infection_deck.faceup_deck).toEqual(infected);
       for (let i = 0; i < infected.length; i++) {
-        let cube_count = 3 - Math.trunc(i / 3);
-        let c = g.game_graph[infected[i]];
+        const cube_count = 3 - Math.trunc(i / 3);
+        const c = g.game_graph[infected[i]];
         expect(c.cubes[c.color]).toBe(cube_count);
       }
     });
@@ -129,13 +129,13 @@ describe("City", function () {
 
   describe("#Infect", function () {
     it("No Infect when Eradicated", function () {
-      let g = new Game(
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
         [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
-      let chennai = g.game_graph["Chennai"];
+      const chennai = g.game_graph["Chennai"];
       g.cured[Client.Color.Black] = 2;
       for (let i = 0; i < 3; i++) {
         expect(chennai.infect(g)).toBe(true);
@@ -149,13 +149,13 @@ describe("City", function () {
 
   describe("#Infect", function () {
     it("Epidemic", function () {
-      let g = new Game(
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
         [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
-      let chennai = g.game_graph["Chennai"];
+      const chennai = g.game_graph["Chennai"];
 
       for (let i = 0; i < 3; i++) {
         chennai.infect_epidemic(g);
@@ -169,13 +169,13 @@ describe("City", function () {
 
   describe("#ChainReaction", function () {
     it("Create Chain Infection", function () {
-      let g = new Game(
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
         [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
-      let chennai = g.game_graph["Chennai"];
+      const chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 4; i++) {
         chennai.infect(g);
       }
@@ -187,7 +187,7 @@ describe("City", function () {
         expect(neighbor.cubes[Client.Color.Yellow]).toBe(0);
       });
 
-      let bangkok = g.game_graph["Bangkok"];
+      const bangkok = g.game_graph["Bangkok"];
       for (let i = 0; i < 4; i++) {
         bangkok.infect(g);
       }
@@ -195,7 +195,7 @@ describe("City", function () {
         expect(neighbor.cubes[Client.Color.Red]).toBe(1);
       });
 
-      let kolkata = g.game_graph["Kolkata"];
+      const kolkata = g.game_graph["Kolkata"];
       expect(kolkata.cubes[Client.Color.Red]).toBe(1);
       expect(kolkata.cubes["black"]).toBe(1);
       for (let i = 0; i < 3; i++) {
@@ -229,18 +229,18 @@ describe("City", function () {
 
   describe("#ChainReaction", function () {
     it("Outbreak Counter Multiple Chains", function () {
-      let g = new Game(
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
         [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
-      let chennai = g.game_graph["Chennai"];
+      const chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 3; i++) {
         chennai.infect(g);
       }
 
-      let kolkata = g.game_graph["Kolkata"];
+      const kolkata = g.game_graph["Kolkata"];
       for (let i = 0; i < 3; i++) {
         kolkata.infect(g);
       }
@@ -255,25 +255,25 @@ describe("City", function () {
 
   describe("#ChainReaction", function () {
     it("Outbreak Counter Multiple Chains No Infinite", function () {
-      let g = new Game(
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
         [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
-      let chennai = g.game_graph["Chennai"];
+      const chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 3; i++) {
         chennai.infect(g);
       }
 
-      let kolkata = g.game_graph["Kolkata"];
+      const kolkata = g.game_graph["Kolkata"];
       for (let i = 0; i < 3; i++) {
         kolkata.infect(g);
       }
       expect(g.outbreak_counter).toBe(0);
       chennai.infect(g);
       expect(g.outbreak_counter).toBe(2);
-      let delhi = g.game_graph["Delhi"];
+      const delhi = g.game_graph["Delhi"];
       delhi.infect(g);
       kolkata.infect(g);
       expect(g.outbreak_counter).toBe(6);
@@ -282,18 +282,18 @@ describe("City", function () {
 
   describe("#ChainReaction", function () {
     it("Outbreak Counter One Chain", function () {
-      let g = new Game(
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
         [Client.Roles.ContingencyPlanner, Client.Roles.Researcher]
       );
-      let tokyo = g.game_graph["Taipei"];
+      const tokyo = g.game_graph["Taipei"];
       for (let i = 0; i < 3; i++) {
         tokyo.infect(g);
       }
 
-      let osaka = g.game_graph["Osaka"];
+      const osaka = g.game_graph["Osaka"];
       for (let i = 0; i < 3; i++) {
         osaka.infect(g);
       }
@@ -318,8 +318,8 @@ describe("Data Integrity", function () {
 describe("Infection Deck", function () {
   describe("#Random", function () {
     it("Shuffles", function () {
-      let seeded = seedrandom("test!");
-      let i = new InfectionDeck(Cities, seeded);
+      const seeded = seedrandom("test!");
+      const i = new InfectionDeck(Cities, seeded);
       expect(i.facedown_deck.length).toBe(48);
       expect(i.facedown_deck.toArray()).toEqual([
         "Sao Paulo",
@@ -432,31 +432,31 @@ describe("Infection Deck", function () {
 
       seeded = seedrandom();
       i = new InfectionDeck(Cities, seeded);
-      let peek = i.facedown_deck.peekBack();
+      const peek = i.facedown_deck.peekBack();
       expect(i.flip_card()).toBe(peek);
     });
   });
 
   describe("#Intensify", function () {
     it("Check Top Cards are correct", function () {
-      let seeded = seedrandom();
-      let i = new InfectionDeck(Cities, seeded);
+      const seeded = seedrandom();
+      const i = new InfectionDeck(Cities, seeded);
 
       for (let j = 0; j < 9; j++) {
-        let c = i.facedown_deck.peekBack();
+        const c = i.facedown_deck.peekBack();
         expect(i.flip_card()).toBe(c);
       }
-      let prev_facedown = [...i.facedown_deck.toArray()];
-      let prev_faceup = [...i.faceup_deck];
+      const prev_facedown = [...i.facedown_deck.toArray()];
+      const prev_faceup = [...i.faceup_deck];
       prev_facedown.sort();
       prev_faceup.sort();
       i.intensify();
       expect(i.facedown_deck.length).toBe(48);
       expect(i.faceup_deck.length).toBe(0);
 
-      let arr_deck = i.facedown_deck.toArray();
-      let after_intensify_down = arr_deck.slice(0, 39);
-      let after_intensify_up = arr_deck.slice(39);
+      const arr_deck = i.facedown_deck.toArray();
+      const after_intensify_down = arr_deck.slice(0, 39);
+      const after_intensify_up = arr_deck.slice(39);
       after_intensify_down.sort();
       after_intensify_up.sort();
       expect(after_intensify_down).toEqual(prev_facedown);
@@ -466,8 +466,8 @@ describe("Infection Deck", function () {
         i.flip_card();
       }
 
-      let reflipped_down = [...i.facedown_deck.toArray()];
-      let reflipped_up = [...i.faceup_deck];
+      const reflipped_down = [...i.facedown_deck.toArray()];
+      const reflipped_up = [...i.faceup_deck];
       expect(reflipped_down.sort()).toEqual(prev_facedown);
       expect(reflipped_up.sort()).toEqual(prev_faceup);
     });
@@ -531,15 +531,15 @@ describe("Infection Deck", function () {
 
       seeded = seedrandom();
       i = new InfectionDeck(Cities, seeded);
-      let peek = i.facedown_deck.peekFront();
+      const peek = i.facedown_deck.peekFront();
       expect(i.infect_epidemic()).toBe(peek);
     });
   });
 
   describe("#Big Deck", function () {
     it("Shuffles", function () {
-      let seeded = seedrandom("test!");
-      let i = new InfectionDeck(Cities, seeded);
+      const seeded = seedrandom("test!");
+      const i = new InfectionDeck(Cities, seeded);
       for (let j = 0; j < 16; j++) {
         i.flip_card();
       }
@@ -628,7 +628,7 @@ describe("Infection Deck", function () {
 describe("Player Deck", function () {
   describe("#Partition", function () {
     it("Partitions Deck Correctly", function () {
-      let seeded = seedrandom();
+      const seeded = seedrandom();
       let partitions = new PlayerDeck(Cities, [], 6, seeded).partitions;
       expect(partitions.length).toBe(6);
       partitions.forEach((p) => {
@@ -638,7 +638,7 @@ describe("Player Deck", function () {
 
       partitions = new PlayerDeck(Cities, [], 5, seeded).partitions;
       expect(partitions.length).toBe(5);
-      let d: Record<number, number> = {};
+      const d: Record<number, number> = {};
       partitions.forEach((p) => {
         if (p.length in d) {
           d[p.length] += 1;
@@ -653,7 +653,7 @@ describe("Player Deck", function () {
 
   describe("#Partition", function () {
     it("Hand Size Is Correct", function () {
-      let seeded = seedrandom();
+      const seeded = seedrandom();
       let g = new Game(
         Cities,
         3,
@@ -686,8 +686,8 @@ describe("Player Deck", function () {
 describe("Game", function () {
   describe("#Epidemic", function () {
     it("Intensifies", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -715,8 +715,8 @@ describe("Game", function () {
 
   describe("#Epidemic", function () {
     it("No Epidemic Cubes when Disease Eradicated", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -733,8 +733,8 @@ describe("Game", function () {
 
   describe("#Initialize Board", function () {
     it("Right Number of Cubes ", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -748,7 +748,7 @@ describe("Game", function () {
         g.initialize_board();
         expect(g.game_state).toBe(Client.GameState.Ready);
         expect(g.outbreak_counter).toBe(0);
-        let infected = [
+        const infected = [
           "Madrid",
           "New York",
           "Delhi",
@@ -761,8 +761,8 @@ describe("Game", function () {
         ].reverse();
         expect(g.infection_deck.faceup_deck).toEqual(infected);
         for (let i = 0; i < infected.length; i++) {
-          let cube_count = 3 - Math.trunc(i / 3);
-          let c = g.game_graph[infected[i]];
+          const cube_count = 3 - Math.trunc(i / 3);
+          const c = g.game_graph[infected[i]];
           expect(c.cubes[c.color]).toBe(cube_count);
         }
       }
@@ -771,8 +771,8 @@ describe("Game", function () {
 
   describe("#Infect Stage", function () {
     it("Check Right number of cards ", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -794,8 +794,8 @@ describe("Game", function () {
 
   describe("#Outbreak", function () {
     it("over 8 ends game ", function () {
-      let seeded = seedrandom("test33!"); // want exactly 8!
-      let g = new Game(
+      const seeded = seedrandom("test33!"); // want exactly 8!
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -818,8 +818,8 @@ describe("Game", function () {
 
   describe("#Run out of Cubes", function () {
     it("Lose game", function () {
-      let seeded = seedrandom("test33!");
-      let g = new Game(
+      const seeded = seedrandom("test33!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -827,17 +827,17 @@ describe("Game", function () {
         5,
         seeded
       );
-      let chennai = g.game_graph["Chennai"];
+      const chennai = g.game_graph["Chennai"];
       for (let i = 0; i < 3; i++) {
         chennai.infect(g);
       }
 
-      let kolkata = g.game_graph["Kolkata"];
+      const kolkata = g.game_graph["Kolkata"];
       for (let i = 0; i < 3; i++) {
         kolkata.infect(g);
       }
       chennai.infect(g);
-      let delhi = g.game_graph["Delhi"];
+      const delhi = g.game_graph["Delhi"];
       delhi.infect(g);
       kolkata.infect(g);
       expect(g.game_state).toBe(Client.GameState.NotStarted);
@@ -848,8 +848,8 @@ describe("Game", function () {
 
   describe("#Run out of Cubes", function () {
     it("Epidemic can lose game", function () {
-      let seeded = seedrandom("test33!");
-      let g = new Game(
+      const seeded = seedrandom("test33!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -857,17 +857,17 @@ describe("Game", function () {
         5,
         seeded
       );
-      let mexico_city = g.game_graph["Mexico City"];
+      const mexico_city = g.game_graph["Mexico City"];
       for (let i = 0; i < 3; i++) {
         mexico_city.infect(g);
       }
 
-      let miami = g.game_graph["Miami"];
+      const miami = g.game_graph["Miami"];
       for (let i = 0; i < 3; i++) {
         miami.infect(g);
       }
       mexico_city.infect(g);
-      let bogota = g.game_graph["Bogota"];
+      const bogota = g.game_graph["Bogota"];
       bogota.infect(g);
       miami.infect(g);
       expect(g.game_state).toBe(Client.GameState.NotStarted);
@@ -880,7 +880,7 @@ describe("Game", function () {
 
   describe("#Next Player", function () {
     it("loops", function () {
-      let g = new Game(
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -896,7 +896,7 @@ describe("Game", function () {
 
   describe("#Turns", function () {
     it("stops when at 0", function () {
-      let g = new Game(
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -983,8 +983,8 @@ describe("Game", function () {
 describe("Player", function () {
   describe("#Movement", function () {
     it("Drive/Ferry", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1018,8 +1018,8 @@ describe("Player", function () {
 
   describe("#Movement", function () {
     it("Charter/Direct", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1088,8 +1088,8 @@ describe("Player", function () {
 
   describe("#Movement", function () {
     it("Dispatcher Move", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1171,8 +1171,8 @@ describe("Player", function () {
 
   describe("#Movement", function () {
     it("Operations Expert Special Move", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1205,8 +1205,8 @@ describe("Player", function () {
 
   describe("#Movement", function () {
     it("Movable Locations", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1214,7 +1214,7 @@ describe("Player", function () {
         5,
         seeded
       );
-      let all_locations = [...Array(48).keys()].sort();
+      const all_locations = [...Array(48).keys()].sort();
       let valid_final_destinations = g.players[0]
         .get_valid_final_destinations(g)
         .sort();
@@ -1301,8 +1301,8 @@ describe("Player", function () {
 
   describe("#Movement", function () {
     it("Movable Dispatcher Move Locations", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         3,
         ["test", "test"],
@@ -1314,7 +1314,7 @@ describe("Player", function () {
         5,
         seeded
       );
-      let all_locations = [...Array(48).keys()].sort();
+      const all_locations = [...Array(48).keys()].sort();
       let valid_final_destinations = g.players[2].get_valid_dispatcher_final_destinations(
         g
       );
@@ -1351,8 +1351,8 @@ describe("Player", function () {
 
   describe("#Research Station", function () {
     it("Can Build", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1385,8 +1385,8 @@ describe("Player", function () {
 
   describe("#Research Station", function () {
     it("Can Build", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1414,8 +1414,8 @@ describe("Player", function () {
 
   describe("#Draw out the Deck", function () {
     it("Lose Game", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1435,8 +1435,8 @@ describe("Player", function () {
 
   describe("#Cure", function () {
     it("Eradicate", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1484,8 +1484,8 @@ describe("Player", function () {
 
   describe("#Cure", function () {
     it("Scientist with 4 cards", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1524,8 +1524,8 @@ describe("Player", function () {
 
   describe("#Cure", function () {
     it("Can Cure", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1564,8 +1564,8 @@ describe("Player", function () {
 
   describe("#Cure", function () {
     it("Can Hand Cure", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1618,8 +1618,8 @@ describe("Player", function () {
 
   describe("#Cure", function () {
     it("Need the cards in hand", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1642,8 +1642,8 @@ describe("Player", function () {
 
   describe("#Cure", function () {
     it("Cure all means game won", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1692,8 +1692,8 @@ describe("Player", function () {
 
   describe("#Cure Disease", function () {
     it("Eradicate after treating last cube", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1738,8 +1738,8 @@ describe("Player", function () {
 
   describe("#Cure Disease", function () {
     it("#After Discovering a Cure, Treat all when treating", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1781,8 +1781,8 @@ describe("Player", function () {
 
   describe("#Treat Disease", function () {
     it("Can Treat", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1817,8 +1817,8 @@ describe("Player", function () {
 
   describe("#Treat Disease", function () {
     it("Medic Treats All", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1849,8 +1849,8 @@ describe("Player", function () {
 
   describe("#Movement", function () {
     it("Medic Treats When Moving If Cure Has been Discovered", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1881,8 +1881,8 @@ describe("Player", function () {
 
   describe("#Discard Cards", function () {
     it("Check Validity", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1913,8 +1913,8 @@ describe("Player", function () {
 
   describe("#Trade Cards", function () {
     it("Check Validity", function () {
-      let seeded = seedrandom("test167!");
-      let g = new Game(
+      const seeded = seedrandom("test167!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1962,8 +1962,8 @@ describe("Player", function () {
 
   describe("#Trade Cards", function () {
     it("Take From Specific Player", function () {
-      let seeded = seedrandom("test167!");
-      let g = new Game(
+      const seeded = seedrandom("test167!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -1999,8 +1999,8 @@ describe("Player", function () {
 
   describe("#Trade Cards", function () {
     it("Always be able to take from Researcher", function () {
-      let seeded = seedrandom("test167!");
-      let g = new Game(
+      const seeded = seedrandom("test167!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -2060,8 +2060,8 @@ describe("Player", function () {
     });
 
     it("Always be able to take from Researcher and give away when standing on the same city", function () {
-      let seeded = seedrandom("test167!");
-      let g = new Game(
+      const seeded = seedrandom("test167!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -2098,8 +2098,8 @@ describe("Player", function () {
 
   describe("#PlayerJSON", function () {
     it("Sorted Hand", function () {
-      let seeded = seedrandom("test!");
-      let g = new Game(
+      const seeded = seedrandom("test!");
+      const g = new Game(
         Cities,
         2,
         ["test", "test"],
@@ -2108,8 +2108,8 @@ describe("Player", function () {
         seeded
       );
       g.initialize_board();
-      let p1 = new PlayerJSON(g.players[0], g);
-      let p2 = new PlayerJSON(g.players[1], g);
+      const p1 = new PlayerJSON(g.players[0], g);
+      const p2 = new PlayerJSON(g.players[1], g);
       expect(p1.hand).toEqual(["Milan", "Jakarta", "Karachi", "Khartoum"]);
       expect(p2.hand).toEqual(["Washington", "Seoul", "Chennai", "Riyadh"]);
     });
