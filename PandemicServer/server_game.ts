@@ -1,11 +1,11 @@
 import { ClientWebSocket } from "./client_websocket";
 import { Cities } from "./data/cities";
-import { Game } from "./game";
+import { EventName, Game } from "./game";
 import { Client } from "pandemiccommon/dist/out-tsc";
 import seedrandom from "seedrandom";
-import { dummy_game } from "./server";
+import { GameMap } from "./game";
 
-export const EventName = Client.EventName;
+export const dummy_game = new GameMap(Cities);
 
 const generateDefault: () => GameObject = () => {
   return {

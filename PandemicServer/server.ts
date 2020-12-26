@@ -1,16 +1,14 @@
 import cors from "cors";
 import express from "express";
 import socketIO from "socket.io";
-import { Cities } from "./data/cities";
-import { GameMap } from "./game";
 import seedrandom from "seedrandom";
 import { SocketIOSocket, ClientWebSocket } from "./client_websocket";
-import { EventName, ServerGame } from "./server_game";
+import { dummy_game, ServerGame } from "./server_game";
+import { EventName } from "./game";
 
 const app = express();
 
-let games: Record<string, ServerGame> = {};
-export const dummy_game = new GameMap(Cities);
+const games: Record<string, ServerGame> = {};
 
 //console.log(games[0])
 

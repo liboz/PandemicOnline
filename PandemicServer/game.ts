@@ -5,9 +5,9 @@ import { Player, PlayerJSON } from "./player";
 import { PlayerDeck } from "./player_deck";
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import { ClientWebSocket } from "./client_websocket";
-import { EventName } from "./server_game";
 const seedrandom = require("seedrandom");
 
+export const EventName = Client.EventName;
 export class Game {
   game_graph: Record<string, City>;
   outbreak_counter: number;
