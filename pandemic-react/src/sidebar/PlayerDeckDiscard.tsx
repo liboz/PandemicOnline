@@ -13,7 +13,7 @@ const PlayerDeckDiscard: FC<SidebarItemProps> = (props: SidebarItemProps) => {
         const cardIndex = game.game_graph_index[card];
         return (
           <li key={`player-deck-discard-${card}-${discardDeckIndex}`}>
-            {cardIndex && (
+            {cardIndex !== undefined && (
               <span
                 className={"box"}
                 style={{
