@@ -32,7 +32,7 @@ app.get("/:match_name", (req, res) => {
 //Listen on port 8080
 const server = app.listen(8080);
 
-const io = socketIO(server);
+const io = socketIO(server, { transports: ["websocket"] });
 
 let seeded: seedrandom.prng;
 console.log(`running in ${process.env.NODE_ENV ?? "local"}`);

@@ -42,12 +42,13 @@ class GameSocketComponent extends React.Component<
         this.setState({ game });
         const socket = io(`${APPCONFIG.baseUrl}/`, {
           query: `match_name=${match_name}`,
+          transports: ["websocket"],
+          upgrade: false,
         });
         this.setState({ socket });
 
         socket.on(Client.EventName.Roles, (roles: Client.Roles[]) => {
           const { game, player_name } = this.state;
-          console.log(game?.game_state, player_name);
           if (game) {
             if (
               game.game_state !== Client.GameState.Lost &&
