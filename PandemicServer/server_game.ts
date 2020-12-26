@@ -7,7 +7,7 @@ import { GameMap } from "./game";
 
 export const dummy_game = new GameMap(Cities);
 
-const generateDefault: () => GameObject = () => {
+export const generateDefault: () => GameObject = () => {
   return {
     players: [],
     available_roles: new Set([
@@ -61,6 +61,17 @@ export class ServerGame {
     }
   }
 
+  joinInvalid(
+    clientWebSocket: ClientWebSocket,
+    player_name: string,
+    role: Client.Roles
+  ) {
+    clientWebSocket.sendMessageToClient(
+      EventName.InvalidAction,
+      `Joining ${this.match_name} as Player name ${player_name} in role ${role} is an invalid action`
+    );
+  }
+
   onJoin(clientWebSocket: ClientWebSocket) {
     return (
       role: Client.Roles,
@@ -70,37 +81,57 @@ export class ServerGame {
       // add logic for role is invalid
       const gameState = this.curr_game?.game_state;
       if (
-        this.game.available_roles.has(role) ||
-        gameState !== Client.GameState.NotStarted
+        gameState === undefined ||
+        gameState === Client.GameState.NotStarted
       ) {
+        // initial join game
+        if (!this.game.available_roles.has(role)) {
+          clientWebSocket.sendMessageToClient(
+            EventName.InvalidAction,
+            `Someone has already joined ${this.match_name} as role ${role}. Please try again`
+          );
+          this.emitRoles(clientWebSocket); // send to client too!
+          return;
+        }
+
         let player_index = this.players.findIndex((i) => i === player_name);
-        if (
-          player_index !== -1 &&
-          (gameState === undefined || gameState === Client.GameState.NotStarted)
-        ) {
+        if (player_index !== -1) {
           clientWebSocket.sendMessageToClient(
             EventName.InvalidAction,
             `Someone has already joined ${this.match_name} as Player name ${player_name}. Please pick another name`
           );
           this.emitRoles(clientWebSocket); // send to client too!
-        } else {
-          if (player_index === -1) {
-            player_index = this.players.length;
-            this.players.push(player_name);
-            this.player_roles.push(role);
-            this.game.available_roles.delete(role);
-            this.emitRoles(clientWebSocket, true);
-          }
-          callback(player_index);
-          console.log(
-            `${player_name} joined ${this.match_name} as Player ${player_index} in role ${role}`
-          );
+          return;
         }
-      } else {
-        clientWebSocket.sendMessageToClient(
-          EventName.InvalidAction,
-          `Joining ${this.match_name} as Player name ${player_name} in role ${role} is an invalid action`
+
+        player_index = this.players.length;
+        this.players.push(player_name);
+        this.player_roles.push(role);
+        this.game.available_roles.delete(role);
+        this.emitRoles(clientWebSocket, true);
+        callback(player_index);
+        console.log(
+          `${player_name} joined ${this.match_name} as Player ${player_index} in role ${role}`
         );
+      } else if (
+        gameState !== undefined &&
+        !this.game.available_roles.has(role)
+      ) {
+        // rejoin game (cannot join as a new role or player_name)
+        let player_index = this.players.findIndex((i) => i === player_name);
+        if (player_index === -1) {
+          this.joinInvalid(clientWebSocket, player_name, role);
+          return;
+        } else if (this.player_roles[player_index] !== role) {
+          this.joinInvalid(clientWebSocket, player_name, role);
+          return;
+        }
+        callback(player_index);
+        console.log(
+          `${player_name} joined ${this.match_name} as Player ${player_index} in role ${role}`
+        );
+      } else {
+        this.joinInvalid(clientWebSocket, player_name, role);
       }
     };
   }
@@ -156,9 +187,9 @@ export class ServerGame {
 
   onMove(clientWebSocket: ClientWebSocket) {
     return (data: string, callback: () => void) => {
-      let log_string = `Player ${this.curr_game.player_index}: move to ${data}`;
-      console.log(`${this.match_name}: ${log_string}`);
       if (this.isReady) {
+        let log_string = `Player ${this.curr_game.player_index}: move to ${data}`;
+        console.log(`${this.match_name}: ${log_string}`);
         let curr_player = this.curr_game.players[this.curr_game.player_index];
         if (
           curr_player.move(
@@ -192,9 +223,9 @@ export class ServerGame {
 
   onDirectFlight(clientWebSocket: ClientWebSocket) {
     return (data: string) => {
-      let log_string = `Player ${this.curr_game.player_index}: Direct Flight to ${data}`;
-      console.log(`${this.match_name}: ${log_string}`);
       if (this.isReady) {
+        let log_string = `Player ${this.curr_game.player_index}: Direct Flight to ${data}`;
+        console.log(`${this.match_name}: ${log_string}`);
         let curr_player = this.curr_game.players[this.curr_game.player_index];
         if (curr_player.canDirectFlight(data)) {
           curr_player.directFlight(

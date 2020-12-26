@@ -19,6 +19,7 @@
     "cors": "^2.8.5",
     "denque": "^1.4.1",
     "express": "^4.17.1",
+    "jest-mock-extended": "^1.0.10",
     "pandemiccommon": "file:../PandemicCommon",
     "seedrandom": "^3.0.5",
     "socket.io": "^2.3.0"
