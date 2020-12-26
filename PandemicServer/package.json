@@ -55,6 +55,13 @@
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/dist/"
+    ],
+    "collectCoverageFrom": [
+      "*.{js,jsx,ts}",
+      "!**/node_modules/**",
+      "!**/vendor/**",
+      "!**/dist/**",
+      "!**/coverage/**"
     ]
   }
 }
