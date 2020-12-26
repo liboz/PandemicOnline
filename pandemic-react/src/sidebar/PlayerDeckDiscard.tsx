@@ -9,10 +9,10 @@ const PlayerDeckDiscard: FC<SidebarItemProps> = (props: SidebarItemProps) => {
     return <div>No Player Cards Discarded Yet</div>;
   } else {
     return React.createElement(BaseSidebarList, {
-      list: cards.map((card) => {
+      list: cards.map((card, discardDeckIndex) => {
         const cardIndex = game.game_graph_index[card];
         return (
-          <li key={`player-deck-discard-${card}`}>
+          <li key={`player-deck-discard-${card}-${discardDeckIndex}`}>
             {cardIndex && (
               <span
                 className={"box"}
