@@ -50,7 +50,6 @@ export class JoinComponent extends React.Component<
 
   joinGame() {
     const { selectedRole, playerName } = this.state;
-    console.log(selectedRole, playerName);
     if (playerName && selectedRole) {
       this.joinGameInternal();
     }

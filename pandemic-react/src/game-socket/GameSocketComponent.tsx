@@ -46,16 +46,18 @@ class GameSocketComponent extends React.Component<
         this.setState({ socket });
 
         socket.on(Client.EventName.Roles, (roles: Client.Roles[]) => {
-          if (this.state.game) {
+          const { game, player_name } = this.state;
+          console.log(game?.game_state, player_name);
+          if (game) {
             if (
-              this.state.game.game_state !== Client.GameState.Lost &&
-              this.state.game.game_state !== Client.GameState.Won &&
-              !this.state.player_name
+              game.game_state !== Client.GameState.Lost &&
+              game.game_state !== Client.GameState.Won &&
+              !player_name
             ) {
               clearComponent();
               nextComponent(() => {
                 const props = {
-                  game: this.state.game!,
+                  game: game,
                   socket,
                   roles,
                 };

@@ -99,22 +99,34 @@ io.on(EventName.Connection, function (socket) {
     EventName.Join,
     function (role: Client.Roles, player_name: string, callback) {
       // add logic for role is invalid
+      const gameState = curr_game()?.game_state;
       if (
         games[match_name].available_roles.has(role) ||
-        (curr_game() && curr_game().game_state !== Client.GameState.NotStarted)
+        gameState !== Client.GameState.NotStarted
       ) {
-        let player_index = players().findIndex((i) => i === player_name); // should lock maybe?
-        if (player_index === -1) {
-          player_index = players().length;
-          players().push(player_name);
-          player_roles().push(role);
+        let player_index = players().findIndex((i) => i === player_name);
+        if (
+          player_index !== -1 &&
+          (gameState === undefined || gameState === Client.GameState.NotStarted)
+        ) {
+          clientWebSocket.sendMessageToClient(
+            EventName.InvalidAction,
+            `Someone has already joined ${match_name} as Player name ${player_name}. Please pick another name`
+          );
+          emitRoles(clientWebSocket, games, match_name, false); // send to client too!
+        } else {
+          if (player_index === -1) {
+            player_index = players().length;
+            players().push(player_name);
+            player_roles().push(role);
+            games[match_name].available_roles.delete(role);
+            emitRoles(clientWebSocket, games, match_name, true);
+          }
+          callback(player_index);
+          console.log(
+            `${player_name} joined ${match_name} as Player ${player_index} in role ${role}`
+          );
         }
-        callback(player_index);
-        games[match_name].available_roles.delete(role);
-        emitRoles(clientWebSocket, games, match_name, true);
-        console.log(
-          `${player_name} joined ${match_name} as Player ${player_index} in role ${role}`
-        );
       } else {
         clientWebSocket.sendMessageToClient(
           EventName.InvalidAction,
