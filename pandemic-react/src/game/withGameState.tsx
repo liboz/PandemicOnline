@@ -24,7 +24,6 @@ import { TreatComponent } from "../treat/TreatComponent";
 import { WinLossComponent } from "./WinLossComponent";
 import { StartGameComponent } from "../start-game/StartGameComponent";
 import { SidebarItemProps } from "../sidebar/Sidebar";
-import { Subscription } from "rxjs";
 
 export const width = 1920;
 export const height = 960;
