@@ -19,7 +19,7 @@ jobs:
         run: |
           npm ci
           npm run build
-      - name: Build Server
+      - name: Test Server
         working-directory: ./PandemicServer
         run: |
           npm ci
@@ -41,3 +41,8 @@ jobs:
           PROJECT_PATH: ./pandemic-react
           PROJECT_ID: pandemiconline
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      - name: Upload Coverage
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./PandemicServer/coverage/lcov.info
