@@ -105,6 +105,15 @@ class GameSocketComponent extends React.Component<
           this.setState({ game: data });
         });
 
+        socket.on(Client.EventName.Restarted, (data: Client.Game) => {
+          toast.success(`${match_name} restarted`);
+          this.setState({
+            game: data,
+            player_index: undefined,
+            player_name: undefined,
+          });
+        });
+
         socket.on(Client.EventName.DiscardCards, (data: number) => {
           const { game } = this.state;
           if (game) {

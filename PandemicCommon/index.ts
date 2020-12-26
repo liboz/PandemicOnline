@@ -99,6 +99,8 @@ export namespace Client {
     Eradicated = "eradicated",
     DiscardCards = "discard cards",
     Epidemic = "epidemic",
+    Restart = "restart",
+    Restarted = "restarted",
 
     // Success Messages
     MoveSuccessful = "move successful",

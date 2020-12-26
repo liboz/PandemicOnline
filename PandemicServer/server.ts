@@ -33,6 +33,22 @@ app.get("/:match_name", (req, res) => {
   );
 });
 
+const generateDefault: () => GameObject = () => {
+  return {
+    players: [],
+    game: null,
+    available_roles: new Set([
+      Client.Roles.Dispatcher,
+      Client.Roles.Medic,
+      Client.Roles.QuarantineSpecialist,
+      Client.Roles.Researcher,
+      Client.Roles.Scientist,
+      Client.Roles.OperationsExpert,
+    ]),
+    player_roles: [],
+  };
+};
+
 //Listen on port 8080
 const server = app.listen(8080);
 
@@ -48,19 +64,7 @@ if (process.env.NODE_ENV === "production") {
 io.on(EventName.Connection, function (socket) {
   let match_name = socket.handshake.query.match_name;
   if (!games[match_name]) {
-    games[match_name] = {
-      players: [],
-      game: null,
-      available_roles: new Set([
-        Client.Roles.Dispatcher,
-        Client.Roles.Medic,
-        Client.Roles.QuarantineSpecialist,
-        Client.Roles.Researcher,
-        Client.Roles.Scientist,
-        Client.Roles.OperationsExpert,
-      ]),
-      player_roles: [],
-    };
+    games[match_name] = generateDefault();
   }
   socket.join(match_name);
   const clientWebSocket: ClientWebSocket = new SocketIOSocket(
@@ -614,6 +618,15 @@ io.on(EventName.Connection, function (socket) {
       if (room?.length === 0) {
         games[match_name] = null;
       }
+    }
+  });
+
+  clientWebSocket.on(EventName.Restart, function () {
+    if (match_name) {
+      console.log(`${match_name} restarted`);
+      games[match_name] = generateDefault();
+      clientWebSocket.sendMessageToAllInRoom(EventName.Restarted, dummy_game);
+      emitRoles(clientWebSocket, games, match_name);
     }
   });
 });

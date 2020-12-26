@@ -69,20 +69,22 @@ export const behavior = {
       instance.drawRect(0, 0, width / 6, barBaseHeight);
       instance.endFill();
 
-      const sizePerPlayer = (height - containerY) / game.players.length;
-      game.players.forEach((player, index) => {
-        const handContainer = generateHand(
-          player,
-          game,
-          sizePerPlayer,
-          width / 6
-        );
-        handContainer.y = sizePerPlayer * index;
-        instance.addChild(handContainer);
-        instance.lineStyle(4, 0x0, 0.3);
-        instance.moveTo(0, sizePerPlayer * index);
-        instance.lineTo(width / 6, sizePerPlayer * index);
-      });
+      if (game.players) {
+        const sizePerPlayer = (height - containerY) / game.players.length;
+        game.players.forEach((player, index) => {
+          const handContainer = generateHand(
+            player,
+            game,
+            sizePerPlayer,
+            width / 6
+          );
+          handContainer.y = sizePerPlayer * index;
+          instance.addChild(handContainer);
+          instance.lineStyle(4, 0x0, 0.3);
+          instance.moveTo(0, sizePerPlayer * index);
+          instance.lineTo(width / 6, sizePerPlayer * index);
+        });
+      }
     }
   },
 };

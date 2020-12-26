@@ -195,9 +195,11 @@ function withGameState(WrappedComponent: typeof React.Component) {
     }
 
     showWinLossComponent(lost: boolean) {
+      const { socket } = this.props;
       clearComponent();
       nextComponent(() => {
         const props = {
+          socket,
           lost,
         };
         return React.createElement(WinLossComponent, props);
