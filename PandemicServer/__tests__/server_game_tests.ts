@@ -692,6 +692,28 @@ describe("ServerGame", () => {
       );
     });
 
+    it("can trigger epidemic", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      server_game.curr_game.player_deck.deck.push("Epidemic");
+      const onPass = server_game.onPass(mockSocket);
+      onPass();
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(0);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(3); // one for epidemic, one for ending turn and one for next turn
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.Epidemic
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][1]).toBe(
+        "Sao Paulo"
+      );
+      mockSocket.sendMessageToAllInRoom.mock.calls
+        .slice(1)
+        .forEach((call) => expect(call[0]).toBe(EventName.UpdateGameState));
+    });
+
     it("dosnt work when no turns left", () => {
       const mockSocket = createGame(server_game, [
         { role: Client.Roles.Medic, name: "p1" },
@@ -736,6 +758,41 @@ describe("ServerGame", () => {
       const mockCallbackDiscard = jest.fn();
       onDiscard(cards.slice(1, 3), mockCallbackDiscard);
 
+      expect(mockCallbackDiscard.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+    });
+
+    it("works when not end of turn", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+      mockSocket.sendMessageToAllButClient.mockClear();
+
+      // trigger discard
+      const cards = ["Atlanta", "New York", "Washington", "San Francisco"];
+      cards.forEach((card) => server_game.curr_game.players[0].hand.add(card));
+      const onMove = server_game.onMove(mockSocket);
+      const mockCallback = jest.fn();
+      onMove("Miami", mockCallback);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(2);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][0]).toBe(
+        EventName.DiscardCards
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][1]).toBe(0);
+      mockSocket.sendMessageToAllInRoom.mockClear();
+
+      const onDiscard = server_game.onDiscard(mockSocket);
+      const mockCallbackDiscard = jest.fn();
+      onDiscard(cards.slice(1, 2), mockCallbackDiscard);
+
+      expect(mockCallbackDiscard.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
         EventName.UpdateGameState
@@ -771,6 +828,7 @@ describe("ServerGame", () => {
       const mockCallbackDiscard = jest.fn();
       onDiscard(cards.slice(0, 2), mockCallbackDiscard);
 
+      expect(mockCallbackDiscard.mock.calls).toHaveLength(0);
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
         EventName.DiscardInvalid
