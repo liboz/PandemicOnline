@@ -50,7 +50,7 @@ export const behavior = {
     oldProps: CubeCureStatusProps,
     newProps: CubeCureStatusProps
   ) {
-    const { game, containerY, widthRatio, heightRatio } = newProps;
+    const { game, containerY, widthRatio } = newProps;
     if (
       cubesChanged(oldProps.game?.cubes, game?.cubes) ||
       cubesChanged(oldProps.game?.cured, game?.cured)
