@@ -135,6 +135,24 @@ describe("ServerGame", () => {
       lastSendMessageToClientIsInvalidAction(mockSocket);
     });
 
+    it("doesnt work when move than 5 players", () => {
+      const mockSocket = mock<ClientWebSocket>();
+      const onJoin = server_game.onJoin(mockSocket);
+      joinGame(onJoin, Client.Roles.Medic, "p1");
+      joinGame(onJoin, Client.Roles.Scientist, "p2");
+      joinGame(onJoin, Client.Roles.Researcher, "p3");
+      joinGame(onJoin, Client.Roles.Dispatcher, "p4");
+      joinGame(onJoin, Client.Roles.QuarantineSpecialist, "p5");
+      joinGame(onJoin, Client.Roles.OperationsExpert, "p6");
+
+      const mockCallbackStart = startGame(server_game, mockSocket);
+      expect(mockCallbackStart.mock.calls).toHaveLength(0);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(0);
+
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+    });
+
     it("doesnt work when already started", () => {
       const mockSocket = createGame(server_game, [
         { role: Client.Roles.Medic, name: "p1" },
