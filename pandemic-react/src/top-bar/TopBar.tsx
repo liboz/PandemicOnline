@@ -9,8 +9,9 @@ import PlayerDeckDiscard from "../sidebar/PlayerDeckDiscard";
 import { SidebarItemProps } from "../sidebar/Sidebar";
 import CubeCureStatus from "./CubeCureStatus";
 import * as PIXI from "pixi.js";
+import { ScalingGraphics } from "../utils";
 
-interface TopBarProps {
+interface TopBarProps extends ScalingGraphics {
   game: Client.Game;
   showSidebar: boolean;
   setSidebarChildren: (
@@ -20,22 +21,33 @@ interface TopBarProps {
 }
 
 const TopBar: FC<TopBarProps> = (props) => {
-  const { game, showSidebar, setSidebarChildren, hideSidebar } = props;
+  const {
+    game,
+    showSidebar,
+    setSidebarChildren,
+    hideSidebar,
+    heightRatio,
+    widthRatio,
+  } = props;
   const buttonsContainerRef = useRef<any>();
 
-  const containerY = height / 8;
+  const containerY = (height / 8) * heightRatio;
   const textStyle = {
+    fontSize: 24 * widthRatio,
     fill: 0xffffff,
     stroke: "black",
     strokeThickness: 3,
     align: "center",
   };
 
+  const topButtonWidthOffset = (width / 4) * widthRatio;
+  const topButtonHeightOffset = 20 * heightRatio;
+
   const mouseover = (messageText: string) => {
     return (event: PIXI.InteractionEvent) => {
       const message = new PIXI.Text(messageText, textStyle);
-      message.x = event.data.global.x - width / 4;
-      message.y = event.data.global.y + 20;
+      message.x = event.data.global.x - topButtonWidthOffset;
+      message.y = event.data.global.y + topButtonHeightOffset;
 
       if (buttonsContainerRef.current) {
         buttonsContainerRef.current.message = message;
@@ -48,8 +60,9 @@ const TopBar: FC<TopBarProps> = (props) => {
       return;
     }
 
-    buttonsContainerRef.current.message.x = event.data.global.x - width / 4;
-    buttonsContainerRef.current.message.y = event.data.global.y + 20;
+    buttonsContainerRef.current.message.x = event.data.global.x - widthRatio;
+    buttonsContainerRef.current.message.y =
+      event.data.global.y + topButtonHeightOffset;
   };
   const mouseout = () => {
     buttonsContainerRef.current.removeChild(
@@ -91,8 +104,8 @@ const TopBar: FC<TopBarProps> = (props) => {
       mouseover={mouseover(props.hoverText)}
       mousemove={mousemove}
       mouseout={mouseout}
-      heightRatio={1}
-      widthRatio={1}
+      heightRatio={heightRatio}
+      widthRatio={widthRatio}
     ></Button>
   ));
 
@@ -117,10 +130,15 @@ const TopBar: FC<TopBarProps> = (props) => {
             style={textStyle}
           ></Text>
         </Container>
-        <Container x={width / 2}>
-          <CubeCureStatus game={game} containerY={containerY}></CubeCureStatus>
+        <Container x={(width / 2) * widthRatio}>
+          <CubeCureStatus
+            game={game}
+            containerY={containerY}
+            widthRatio={widthRatio}
+            heightRatio={heightRatio}
+          ></CubeCureStatus>
         </Container>
-        <Container x={width / 4} ref={buttonsContainerRef}>
+        <Container x={(width / 4) * widthRatio} ref={buttonsContainerRef}>
           {buttons}
         </Container>
       </Container>

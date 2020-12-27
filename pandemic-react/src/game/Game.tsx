@@ -154,6 +154,8 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
                 showSidebar={showSidebar}
                 setSidebarChildren={this.props.setSidebarChildren}
                 hideSidebar={this.props.hideSidebar}
+                heightRatio={heightRatio}
+                widthRatio={widthRatio}
               ></TopBar>
             </Stage>
             <Sidebar

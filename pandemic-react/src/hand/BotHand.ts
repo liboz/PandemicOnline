@@ -3,7 +3,7 @@ import * as PIXI from "pixi.js";
 import { CustomPIXIComponent } from "react-pixi-fiber";
 import { barBaseHeight, height, width } from "../game/Game";
 import { playerInfo } from "../player/Player";
-import { colorNameToHex } from "../utils";
+import { colorNameToHex, ScalingGraphics } from "../utils";
 
 function generateHand(
   player: Client.Player,
@@ -62,11 +62,9 @@ function generateHand(
   return container;
 }
 
-interface HandProps {
+interface HandProps extends ScalingGraphics {
   game: Client.Game;
   containerY: number;
-  widthRatio: number;
-  heightRatio: number;
 }
 
 const TYPE = "BotHand";

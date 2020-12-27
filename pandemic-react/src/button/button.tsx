@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { Container, Text } from "react-pixi-fiber";
+import { ScalingGraphics } from "../utils";
 import ButtonBackground from "./ButtonBackground";
 
 export const baseButtonHeight = 75;
 export const baseButtonWidth = 100;
-
-export interface ButtonProps {
+export interface ButtonProps extends ScalingGraphics {
   x: number;
   y: number;
   width: number;
@@ -16,8 +16,6 @@ export interface ButtonProps {
   mouseover?: (event: PIXI.InteractionEvent) => void;
   mousemove?: (event: PIXI.InteractionEvent) => void;
   mouseout?: (event: PIXI.InteractionEvent) => void;
-  widthRatio: number;
-  heightRatio: number;
 }
 
 const Button: FC<ButtonProps> = (props) => {

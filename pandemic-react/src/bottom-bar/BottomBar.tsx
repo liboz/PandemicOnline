@@ -9,6 +9,7 @@ import Button, {
 import { barBaseHeight, width } from "../game/Game";
 import { GameComponentState } from "../game/withGameState";
 import BotHand from "../hand/BotHand";
+import { ScalingGraphics } from "../utils";
 
 function cannotDoPrimaryAction(state: GameComponentState, game: Client.Game) {
   return !!(
@@ -22,7 +23,7 @@ function cannotDoPrimaryAction(state: GameComponentState, game: Client.Game) {
   );
 }
 
-interface BottomBarProps {
+interface BottomBarProps extends ScalingGraphics {
   game: Client.Game;
   player_index?: number;
   state: GameComponentState;
@@ -32,8 +33,6 @@ interface BottomBarProps {
   onShare: () => void;
   onDiscover: () => void;
   onPass: () => void;
-  widthRatio: number;
-  heightRatio: number;
 }
 
 const BottomBar: FC<BottomBarProps> = (props) => {

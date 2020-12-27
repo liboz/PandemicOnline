@@ -1,10 +1,10 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import { CustomPIXIComponent } from "react-pixi-fiber";
 import { width } from "../game/Game";
-import { colorNameToHex, cubesChanged } from "../utils";
+import { colorNameToHex, cubesChanged, ScalingGraphics } from "../utils";
 import * as PIXI from "pixi.js";
 
-interface CubeCureStatusProps {
+interface CubeCureStatusProps extends ScalingGraphics {
   game: Client.Game;
   containerY: number;
 }
@@ -20,12 +20,12 @@ function calculateBaseY(allowedY: number, index: number, containerY: number) {
 const TYPE = "CubeCureStatus";
 export const behavior = {
   customDisplayObject: (props: CubeCureStatusProps) => {
-    const { containerY } = props;
+    const { containerY, widthRatio, heightRatio } = props;
     const allowedY = calculateAllowedY(containerY);
     const instance = new PIXI.Graphics();
     instance.beginFill(0x3e494b);
     instance.lineStyle(4, 0x0, 0.3);
-    instance.drawRect(0, 0, width / 20, props.containerY);
+    instance.drawRect(0, 0, (width / 20) * widthRatio, props.containerY);
     instance.endFill();
 
     Object.values(Client.Color).forEach((color, index) => {
@@ -34,7 +34,12 @@ export const behavior = {
 
       instance.beginFill(hexColor);
       instance.lineStyle(2, 0xffffff, 0.3);
-      instance.drawRect(10, baseY + 2.5, 10, 10);
+      instance.drawRect(
+        10 * widthRatio,
+        baseY + 2.5 * heightRatio,
+        10 * widthRatio,
+        10 * widthRatio
+      );
       instance.endFill();
     });
 
@@ -45,15 +50,15 @@ export const behavior = {
     oldProps: CubeCureStatusProps,
     newProps: CubeCureStatusProps
   ) {
-    const { game, containerY } = newProps;
+    const { game, containerY, widthRatio, heightRatio } = newProps;
     if (
       cubesChanged(oldProps.game?.cubes, game?.cubes) ||
       cubesChanged(oldProps.game?.cured, game?.cured)
     ) {
       const allowedY = calculateAllowedY(containerY);
       instance.removeChildren();
-      const headerText = new PIXI.Text("Cubes");
-      headerText.x = 10;
+      const headerText = new PIXI.Text("Cubes", { fontSize: 24 * widthRatio });
+      headerText.x = 10 * widthRatio;
       instance.addChild(headerText);
 
       Object.values(Client.Color).forEach((color, index) => {
@@ -61,10 +66,10 @@ export const behavior = {
         const text = new PIXI.Text(
           `${game.cubes[color]} | ${game.cured[color] ? "☑" : "☒"}`,
           {
-            fontSize: 15,
+            fontSize: 15 * widthRatio,
           }
         );
-        text.x = 0 + 25;
+        text.x = 0 + 25 * widthRatio;
         text.y = baseY;
         instance.addChild(text);
       });

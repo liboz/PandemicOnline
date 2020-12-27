@@ -169,3 +169,8 @@ export function cubesChanged(oldCubes: Client.Cubes, newCubes: Client.Cubes) {
     oldCubes.red !== newCubes.red
   );
 }
+
+export interface ScalingGraphics {
+  widthRatio: number;
+  heightRatio: number;
+}
