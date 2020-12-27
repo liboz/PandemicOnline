@@ -63,8 +63,19 @@ export const behavior = {
 
       Object.values(Client.Color).forEach((color, index) => {
         const baseY = calculateBaseY(allowedY, index, containerY);
+        const curedStatusIcon = (function (status: number) {
+          switch (status) {
+            case 1:
+              return "☑";
+            case 2:
+              return "★";
+            default:
+              return "☒";
+          }
+        })(game.cured[color]);
+
         const text = new PIXI.Text(
-          `${game.cubes[color]} | ${game.cured[color] ? "☑" : "☒"}`,
+          `${game.cubes[color]} | ${curedStatusIcon}`,
           {
             fontSize: 15 * widthRatio,
           }
