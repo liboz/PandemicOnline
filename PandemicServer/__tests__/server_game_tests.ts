@@ -443,6 +443,34 @@ describe("ServerGame", () => {
       ).toBe(0);
     });
 
+    it("sends eradicated message when eradicated", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      server_game.curr_game.cured.blue = 1;
+      server_game.curr_game.cubes.blue = 23;
+      server_game.curr_game.game_graph["Atlanta"].cubes[Client.Color.Blue] += 1;
+      const onTreat = server_game.onTreat(mockSocket);
+      const mockCallback = jest.fn();
+      onTreat(Client.Color.Blue, mockCallback);
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.TreatSuccesful
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(2);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.Eradicated
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][0]).toBe(
+        EventName.UpdateGameState
+      );
+      expect(
+        server_game.curr_game.game_graph["Atlanta"].cubes[Client.Color.Blue]
+      ).toBe(0);
+    });
+
     it("dosnt work when no turns left", () => {
       const mockSocket = createGame(server_game, [
         { role: Client.Roles.Medic, name: "p1" },
