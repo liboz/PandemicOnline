@@ -59,7 +59,6 @@
     ],
     "collectCoverageFrom": [
       "*.{js,jsx,ts}",
-      "**/.{js,jsx,ts}",
       "!**/node_modules/**",
       "!**/vendor/**",
       "!**/dist/**",
