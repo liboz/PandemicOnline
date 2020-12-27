@@ -44,6 +44,7 @@
     "start": "react-scripts start",
     "build": "cross-env REACT_APP_ENV=prod react-scripts build",
     "test": "react-scripts test",
+    "test:cloudBuild": "react-scripts test --coverage",
     "eject": "react-scripts eject",
     "fix": "prettier --write \"**/*.{ts,tsx}\"",
     "check": "prettier --check \"**/*.{ts,tsx}\""

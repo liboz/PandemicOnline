@@ -31,7 +31,7 @@ jobs:
         run: |
           npm ci
           npm run check
-          npm run test
+          npm run test:cloudBuild
           npm run build
       - name: Deploy Client
         uses: w9jds/firebase-action@master
