@@ -661,6 +661,77 @@ describe("ServerGame", () => {
     });
   });
 
+  describe("#onDiscard", () => {
+    it("works", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+      mockSocket.sendMessageToAllButClient.mockClear();
+
+      // trigger discard
+      const cards = ["Atlanta", "New York", "Washington", "San Francisco"];
+      cards.forEach((card) => server_game.curr_game.players[0].hand.add(card));
+      server_game.curr_game.turns_left = 1;
+      const onShare = server_game.onShare(mockSocket);
+      const mockCallback = jest.fn();
+      onShare(1, null, mockCallback);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(2);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][0]).toBe(
+        EventName.DiscardCards
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][1]).toBe(0);
+      mockSocket.sendMessageToAllInRoom.mockClear();
+
+      const onDiscard = server_game.onDiscard(mockSocket);
+      const mockCallbackDiscard = jest.fn();
+      onDiscard(cards.slice(1, 3), mockCallbackDiscard);
+
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+    });
+
+    it("prevents invalid discard", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+      mockSocket.sendMessageToAllButClient.mockClear();
+
+      // trigger discard
+      const cards = ["Atlanta", "New York", "Washington", "San Francisco"];
+      cards.forEach((card) => server_game.curr_game.players[0].hand.add(card));
+      server_game.curr_game.turns_left = 1;
+      const onShare = server_game.onShare(mockSocket);
+      const mockCallback = jest.fn();
+      onShare(1, null, mockCallback);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(2);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][0]).toBe(
+        EventName.DiscardCards
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][1]).toBe(0);
+      mockSocket.sendMessageToAllInRoom.mockClear();
+      mockSocket.sendMessageToClient.mockClear();
+
+      const onDiscard = server_game.onDiscard(mockSocket);
+      const mockCallbackDiscard = jest.fn();
+      onDiscard(cards.slice(0, 2), mockCallbackDiscard);
+
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.DiscardInvalid
+      );
+    });
+  });
+
   describe("#onRestart", () => {
     it("works", () => {
       const mockSocket = createGame(server_game, [
@@ -669,7 +740,6 @@ describe("ServerGame", () => {
       ]);
       mockSocket.sendMessageToAllButClient.mockClear();
 
-      server_game.curr_game.game_graph["Atlanta"].cubes[Client.Color.Blue] += 1;
       const onRestart = server_game.onRestart(mockSocket);
       onRestart();
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);

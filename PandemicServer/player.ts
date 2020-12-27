@@ -318,14 +318,11 @@ export class Player {
   }
 
   can_discard(cards: string[]) {
-    if (Array.isArray(cards)) {
-      return (
-        this.hand.size - cards.length == this.hand_size_limit &&
-        new Set(cards).size === cards.length &&
-        cards.every((c) => this.hand.has(c))
-      );
-    }
-    return false;
+    return (
+      this.hand.size - cards.length == this.hand_size_limit &&
+      new Set(cards).size === cards.length &&
+      cards.every((c) => this.hand.has(c))
+    );
   }
 
   discard(game: Game, cards: string[]) {
