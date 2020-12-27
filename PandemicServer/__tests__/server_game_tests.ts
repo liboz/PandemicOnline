@@ -453,6 +453,247 @@ describe("ServerGame", () => {
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(0);
     });
   });
+
+  describe("#onShare", () => {
+    it("works", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      server_game.curr_game.players[0].hand.add("Atlanta");
+      const onShare = server_game.onShare(mockSocket);
+      const mockCallback = jest.fn();
+      onShare(1, null, mockCallback);
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.ShareSuccesful
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+      expect(
+        server_game.curr_game.game_graph["Atlanta"].cubes[Client.Color.Blue]
+      ).toBe(0);
+    });
+
+    it("works as researcher", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Researcher, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const onShare = server_game.onShare(mockSocket);
+      const mockCallback = jest.fn();
+      onShare(1, "Khartoum", mockCallback);
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.ResearchShareSuccesful
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+      expect(
+        server_game.curr_game.game_graph["Atlanta"].cubes[Client.Color.Blue]
+      ).toBe(0);
+    });
+
+    it("dosnt work when no turns left", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      server_game.curr_game.turns_left = 0;
+
+      const onShare = server_game.onShare(mockSocket);
+      const mockCallback = jest.fn();
+      onShare(1, null, mockCallback);
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+    });
+
+    it("dosnt work when no turns left as researcher", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Researcher, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      server_game.curr_game.turns_left = 0;
+
+      const onShare = server_game.onShare(mockSocket);
+      const mockCallback = jest.fn();
+      onShare(1, "Khartoum", mockCallback);
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+    });
+
+    it("dosnt work when cannot share there", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const onShare = server_game.onShare(mockSocket);
+      const mockCallback = jest.fn();
+      onShare(1, null, mockCallback);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(0);
+    });
+
+    it("dosnt work when cannot share there as Researcher", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const onShare = server_game.onShare(mockSocket);
+      const mockCallback = jest.fn();
+      onShare(1, "Khartoum", mockCallback);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(0);
+    });
+  });
+
+  describe("#onDiscover", () => {
+    it("works", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const cards = ["Atlanta", "New York", "Washington", "San Francisco"];
+      cards.forEach((card) => server_game.curr_game.players[0].hand.add(card));
+      const onDiscover = server_game.onDiscover(mockSocket);
+      const mockCallback = jest.fn();
+      onDiscover(["Milan", ...cards], mockCallback);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(2);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.DiscoverSuccesful
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][0]).toBe(
+        EventName.UpdateGameState
+      );
+    });
+
+    it("works with eradicate", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      server_game.curr_game.cubes[Client.Color.Blue] = 24;
+      const cards = ["Atlanta", "New York", "Washington", "San Francisco"];
+      cards.forEach((card) => server_game.curr_game.players[0].hand.add(card));
+      const onDiscover = server_game.onDiscover(mockSocket);
+      const mockCallback = jest.fn();
+      onDiscover(["Milan", ...cards], mockCallback);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(2);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.Eradicated
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][0]).toBe(
+        EventName.UpdateGameState
+      );
+    });
+
+    it("dosnt work when no turns left", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      server_game.curr_game.turns_left = 0;
+
+      const cards = ["Atlanta", "New York", "Washington", "San Francisco"];
+      cards.forEach((card) => server_game.curr_game.players[0].hand.add(card));
+      const onDiscover = server_game.onDiscover(mockSocket);
+      const mockCallback = jest.fn();
+      onDiscover(["Milan", ...cards], mockCallback);
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+    });
+
+    it("dosnt work when cannot discover there", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const onDiscover = server_game.onDiscover(mockSocket);
+      const mockCallback = jest.fn();
+      onDiscover([], mockCallback);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(0);
+    });
+  });
+
+  describe("#onPass", () => {
+    it("works", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const onPass = server_game.onPass(mockSocket);
+      onPass();
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(0);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(2); // one for ending turn and one for next turn
+      mockSocket.sendMessageToAllInRoom.mock.calls.forEach((call) =>
+        expect(call[0]).toBe(EventName.UpdateGameState)
+      );
+    });
+
+    it("dosnt work when no turns left", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      server_game.curr_game.turns_left = 0;
+
+      const onPass = server_game.onPass(mockSocket);
+      onPass();
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+    });
+  });
+
+  describe("#onRestart", () => {
+    it("works", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+      mockSocket.sendMessageToAllButClient.mockClear();
+
+      server_game.curr_game.game_graph["Atlanta"].cubes[Client.Color.Blue] += 1;
+      const onRestart = server_game.onRestart(mockSocket);
+      onRestart();
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.Restarted
+      );
+
+      expect(mockSocket.sendMessageToAllButClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllButClient.mock.calls[0][0]).toBe(
+        EventName.Roles
+      );
+      expect(
+        mockSocket.sendMessageToAllButClient.mock.calls[0][1]
+      ).toStrictEqual([...defaultMatch.available_roles]);
+
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.Roles
+      );
+      expect(mockSocket.sendMessageToClient.mock.calls[0][1]).toStrictEqual([
+        ...defaultMatch.available_roles,
+      ]);
+    });
+  });
 });
 
 function lastSendMessageToClientIsInvalidAction(

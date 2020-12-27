@@ -661,7 +661,9 @@ export class ServerGame {
         console.log(`${this.match_name} restarted`);
         this.game = generateDefault();
         clientWebSocket.sendMessageToAllInRoom(EventName.Restarted, dummy_game);
+        // send roles to everyone!
         this.emitRoles(clientWebSocket);
+        this.emitRoles(clientWebSocket, true);
       }
     };
   }
