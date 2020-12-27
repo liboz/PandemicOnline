@@ -33,7 +33,7 @@ const TopBar: FC<TopBarProps> = (props) => {
 
   const containerY = (height / 8) * heightRatio;
   const textStyle = {
-    fontSize: 24 * widthRatio,
+    fontSize: Math.max(24 * widthRatio, 12),
     fill: 0xffffff,
     stroke: "black",
     strokeThickness: 3,
@@ -60,7 +60,8 @@ const TopBar: FC<TopBarProps> = (props) => {
       return;
     }
 
-    buttonsContainerRef.current.message.x = event.data.global.x - widthRatio;
+    buttonsContainerRef.current.message.x =
+      event.data.global.x - topButtonWidthOffset;
     buttonsContainerRef.current.message.y =
       event.data.global.y + topButtonHeightOffset;
   };
@@ -108,7 +109,6 @@ const TopBar: FC<TopBarProps> = (props) => {
       widthRatio={widthRatio}
     ></Button>
   ));
-
   if (game.game_state !== Client.GameState.NotStarted) {
     return (
       <Container>
@@ -133,7 +133,7 @@ const TopBar: FC<TopBarProps> = (props) => {
         <Container x={(width / 2) * widthRatio}>
           <CubeCureStatus
             game={game}
-            containerY={containerY}
+            containerY={Math.max(containerY, 50)}
             widthRatio={widthRatio}
             heightRatio={heightRatio}
           ></CubeCureStatus>

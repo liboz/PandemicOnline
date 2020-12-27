@@ -25,7 +25,12 @@ export const behavior = {
     const instance = new PIXI.Graphics();
     instance.beginFill(0x3e494b);
     instance.lineStyle(4, 0x0, 0.3);
-    instance.drawRect(0, 0, (width / 20) * widthRatio, props.containerY);
+    instance.drawRect(
+      0,
+      0,
+      Math.max((width / 20) * widthRatio, 45),
+      props.containerY
+    );
     instance.endFill();
 
     Object.values(Client.Color).forEach((color, index) => {
@@ -36,9 +41,9 @@ export const behavior = {
       instance.lineStyle(2, 0xffffff, 0.3);
       instance.drawRect(
         10 * widthRatio,
-        baseY + 2.5 * heightRatio,
-        10 * widthRatio,
-        10 * widthRatio
+        heightRatio < 0.5 ? baseY + 3 : baseY + 2.5 * heightRatio,
+        Math.max(10 * widthRatio, 5),
+        Math.max(10 * widthRatio, 5)
       );
       instance.endFill();
     });
@@ -57,7 +62,10 @@ export const behavior = {
     ) {
       const allowedY = calculateAllowedY(containerY);
       instance.removeChildren();
-      const headerText = new PIXI.Text("Cubes", { fontSize: 24 * widthRatio });
+      const headerText = new PIXI.Text("Cubes", {
+        fontSize: Math.max(24 * widthRatio, 12),
+        fill: 0xffffff,
+      });
       headerText.x = 10 * widthRatio;
       instance.addChild(headerText);
 
@@ -66,18 +74,19 @@ export const behavior = {
         const curedStatusIcon = (function (status: number) {
           switch (status) {
             case 1:
-              return "☑";
+              return "✅";
             case 2:
-              return "★";
+              return "⭐";
             default:
-              return "☒";
+              return "❎";
           }
         })(game.cured[color]);
 
         const text = new PIXI.Text(
           `${game.cubes[color]} | ${curedStatusIcon}`,
           {
-            fontSize: 15 * widthRatio,
+            fontSize: Math.max(15 * widthRatio, 9),
+            fill: 0xffffff,
           }
         );
         text.x = 0 + 25 * widthRatio;
