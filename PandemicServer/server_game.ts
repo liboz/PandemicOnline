@@ -291,9 +291,9 @@ export class ServerGame {
 
   onOperationsExpertMove(clientWebSocket: ClientWebSocket) {
     return (final_destination: string, card: string) => {
-      let log_string = `Player ${this.curr_game.player_index}: Operations Expert Move to ${final_destination} by discarding ${card}`;
-      console.log(`${this.match_name}: ${log_string}`);
       if (this.isReady) {
+        let log_string = `Player ${this.curr_game.player_index}: Operations Expert Move to ${final_destination} by discarding ${card}`;
+        console.log(`${this.match_name}: ${log_string}`);
         if (
           this.curr_game.players[
             this.curr_game.player_index
@@ -372,11 +372,11 @@ export class ServerGame {
 
   onBuild(clientWebSocket: ClientWebSocket) {
     return () => {
-      let log_string = `Player ${this.curr_game.player_index}: build on ${
-        this.curr_game.players[this.curr_game.player_index].location
-      }`;
-      console.log(`${this.match_name}: ${log_string}`);
       if (this.isReady) {
+        let log_string = `Player ${this.curr_game.player_index}: build on ${
+          this.curr_game.players[this.curr_game.player_index].location
+        }`;
+        console.log(`${this.match_name}: ${log_string}`);
         if (
           this.curr_game.players[
             this.curr_game.player_index
@@ -410,13 +410,13 @@ export class ServerGame {
 
   onTreat(clientWebSocket: ClientWebSocket) {
     return (color: Client.Color, callback: () => void) => {
-      let log_string = `Player ${
-        this.curr_game.player_index
-      }: treat ${color} at ${
-        this.curr_game.players[this.curr_game.player_index].location
-      }`;
-      console.log(`${this.match_name}: ${log_string}`);
       if (this.isReady) {
+        let log_string = `Player ${
+          this.curr_game.player_index
+        }: treat ${color} at ${
+          this.curr_game.players[this.curr_game.player_index].location
+        }`;
+        console.log(`${this.match_name}: ${log_string}`);
         if (
           this.curr_game.players[this.curr_game.player_index].can_treat_color(
             this.curr_game,
@@ -456,25 +456,24 @@ export class ServerGame {
 
   onShare(clientWebSocket: ClientWebSocket) {
     return (player_index: number, card: string, callback: () => void) => {
-      let log_string = "";
-      if (card) {
-        //researcher
-        log_string = `Player ${
-          this.curr_game.player_index
-        } and Player ${player_index} trade ${card} at ${
-          this.curr_game.players[this.curr_game.player_index].location
-        }`;
-      } else {
-        log_string = `Player ${
-          this.curr_game.player_index
-        } and Player ${player_index} trade ${
-          this.curr_game.players[this.curr_game.player_index].location
-        }`;
-      }
-
-      console.log(`${this.match_name}: ${log_string}`);
-
       if (this.isReady) {
+        let log_string = "";
+        if (card) {
+          //researcher
+          log_string = `Player ${
+            this.curr_game.player_index
+          } and Player ${player_index} trade ${card} at ${
+            this.curr_game.players[this.curr_game.player_index].location
+          }`;
+        } else {
+          log_string = `Player ${
+            this.curr_game.player_index
+          } and Player ${player_index} trade ${
+            this.curr_game.players[this.curr_game.player_index].location
+          }`;
+        }
+
+        console.log(`${this.match_name}: ${log_string}`);
         if (!card) {
           if (
             this.curr_game.players[this.curr_game.player_index].can_give(

@@ -297,6 +297,162 @@ describe("ServerGame", () => {
       expect(server_game.curr_game.players[0].location).toBe("Atlanta");
     });
   });
+
+  describe("#onOperationsExpertMove", () => {
+    it("works", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.OperationsExpert, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const onOperationsExpertMove = server_game.onOperationsExpertMove(
+        mockSocket
+      );
+      onOperationsExpertMove("Paris", "Khartoum");
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.MoveChoiceSuccesful
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+    });
+
+    it("dosnt work when not started", () => {
+      const mockSocket = mock<ClientWebSocket>();
+      const onJoin = server_game.onJoin(mockSocket);
+      joinGame(onJoin, Client.Roles.OperationsExpert, "p1");
+      joinGame(onJoin, Client.Roles.QuarantineSpecialist, "p2");
+
+      const onOperationsExpertMove = server_game.onOperationsExpertMove(
+        mockSocket
+      );
+      onOperationsExpertMove("Paris", "Khartoum");
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+    });
+
+    it("dosnt work when cannot operations expert move", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.OperationsExpert, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const onOperationsExpertMove = server_game.onOperationsExpertMove(
+        mockSocket
+      );
+      onOperationsExpertMove("Paris", "Mexico City");
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(0);
+      expect(server_game.curr_game.players[0].location).toBe("Atlanta");
+    });
+  });
+
+  describe("#onBuild", () => {
+    it("works", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      // cant build on Atlanta as there is a research station there already
+      server_game.curr_game.players[0].hand.add("Miami");
+      const onMove = server_game.onMove(mockSocket);
+      const mockCallback = jest.fn();
+      onMove("Miami", mockCallback);
+      mockSocket.sendMessageToClient.mockClear();
+      mockSocket.sendMessageToAllInRoom.mockClear();
+
+      const onBuild = server_game.onBuild(mockSocket);
+      onBuild();
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.BuildSuccesful
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+    });
+
+    it("dosnt work when not started", () => {
+      const mockSocket = mock<ClientWebSocket>();
+      const onJoin = server_game.onJoin(mockSocket);
+      joinGame(onJoin, Client.Roles.Medic, "p1");
+      joinGame(onJoin, Client.Roles.QuarantineSpecialist, "p2");
+
+      const onBuild = server_game.onBuild(mockSocket);
+      onBuild();
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+    });
+
+    it("dosnt work when cannot build there", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const onBuild = server_game.onBuild(mockSocket);
+      onBuild();
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(0);
+    });
+  });
+
+  describe("#onTreat", () => {
+    it("works", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      server_game.curr_game.game_graph["Atlanta"].cubes[Client.Color.Blue] += 1;
+      const onTreat = server_game.onTreat(mockSocket);
+      const mockCallback = jest.fn();
+      onTreat(Client.Color.Blue, mockCallback);
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.TreatSuccesful
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+      expect(
+        server_game.curr_game.game_graph["Atlanta"].cubes[Client.Color.Blue]
+      ).toBe(0);
+    });
+
+    it("dosnt work when no turns left", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      server_game.curr_game.turns_left = 0;
+
+      const onTreat = server_game.onTreat(mockSocket);
+      const mockCallback = jest.fn();
+      onTreat(Client.Color.Blue, mockCallback);
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+    });
+
+    it("dosnt work when cannot treat there", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const onTreat = server_game.onTreat(mockSocket);
+      const mockCallback = jest.fn();
+      onTreat(Client.Color.Blue, mockCallback);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(0);
+    });
+  });
 });
 
 function lastSendMessageToClientIsInvalidAction(
