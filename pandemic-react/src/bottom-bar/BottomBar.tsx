@@ -32,6 +32,8 @@ interface BottomBarProps {
   onShare: () => void;
   onDiscover: () => void;
   onPass: () => void;
+  widthRatio: number;
+  heightRatio: number;
 }
 
 const BottomBar: FC<BottomBarProps> = (props) => {
@@ -45,6 +47,8 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     onShare,
     onDiscover,
     onPass,
+    heightRatio,
+    widthRatio,
   } = props;
   const {
     isMoving,
@@ -89,7 +93,10 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     game.turns_left !== undefined ? `Actions Left: ${game.turns_left}` : "";
   const handContainerY = (barBaseHeight * 2) / 3;
 
-  const buttonProps: Omit<ButtonProps, "x" | "y" | "height">[] = [
+  const buttonProps: Omit<
+    ButtonProps,
+    "x" | "y" | "height" | "heightRatio" | "widthRatio"
+  >[] = [
     {
       label: isMoving ? "Cancel" : "Move",
       width: baseButtonWidth,
@@ -159,18 +166,29 @@ const BottomBar: FC<BottomBarProps> = (props) => {
       x={width * 0.4 + baseButtonWidth * widthAdjusters[index]}
       y={barBaseHeight}
       height={baseButtonHeight}
+      widthRatio={widthRatio}
+      heightRatio={heightRatio}
       {...props}
     ></Button>
   ));
 
   return (
     <Container>
-      <Container x={0} y={handContainerY}>
-        <BotHand game={game} containerY={handContainerY}></BotHand>
+      <Container x={0} y={handContainerY * heightRatio}>
+        <BotHand
+          game={game}
+          containerY={handContainerY}
+          heightRatio={heightRatio}
+          widthRatio={widthRatio}
+        ></BotHand>
       </Container>
-      <Container x={width / 4} y={barBaseHeight}>
-        <Text text={infoTextRaw} style={{ fontSize: 20 }}></Text>
-        <Text text={actionsLeftTextRaw} style={{ fontSize: 20 }} y={50}></Text>
+      <Container x={(width / 4) * widthRatio} y={barBaseHeight * heightRatio}>
+        <Text text={infoTextRaw} style={{ fontSize: 20 * widthRatio }}></Text>
+        <Text
+          text={actionsLeftTextRaw}
+          style={{ fontSize: 20 * widthRatio }}
+          y={50 * heightRatio}
+        ></Text>
       </Container>
       {buttons}
     </Container>

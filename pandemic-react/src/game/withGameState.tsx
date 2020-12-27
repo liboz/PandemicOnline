@@ -47,6 +47,8 @@ export interface GameComponentState {
   nodes?: CityNodeData[];
   showSidebar: boolean;
   sidebarDisplayItem: React.FunctionComponent<SidebarItemProps> | null;
+  currentHeight: number;
+  currentWidth: number;
 }
 
 export interface GameStateInterface
@@ -69,6 +71,8 @@ export function initialState(): GameComponentState {
     treatColorChoices: null,
     showSidebar: false,
     sidebarDisplayItem: null,
+    currentHeight: window.innerHeight,
+    currentWidth: window.innerWidth,
   };
 }
 

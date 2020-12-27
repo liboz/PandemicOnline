@@ -85,7 +85,11 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
       isMoving,
       showSidebar,
       sidebarDisplayItem,
+      currentWidth,
+      currentHeight,
     } = this.props.state;
+    const heightRatio = currentHeight / height;
+    const widthRatio = currentWidth / width;
     return (
       <div ref={this.elementRef}>
         {this.props.game && links && (
@@ -142,6 +146,8 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
                 onPass={this.props.onPass}
                 game={this.props.game}
                 player_index={this.props.player_index}
+                heightRatio={heightRatio}
+                widthRatio={widthRatio}
               ></BottomBar>
               <TopBar
                 game={this.props.game}

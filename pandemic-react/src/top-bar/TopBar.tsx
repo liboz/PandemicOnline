@@ -91,6 +91,8 @@ const TopBar: FC<TopBarProps> = (props) => {
       mouseover={mouseover(props.hoverText)}
       mousemove={mousemove}
       mouseout={mouseout}
+      heightRatio={1}
+      widthRatio={1}
     ></Button>
   ));
 

@@ -16,10 +16,12 @@ export interface ButtonProps {
   mouseover?: (event: PIXI.InteractionEvent) => void;
   mousemove?: (event: PIXI.InteractionEvent) => void;
   mouseout?: (event: PIXI.InteractionEvent) => void;
+  widthRatio: number;
+  heightRatio: number;
 }
 
 const Button: FC<ButtonProps> = (props) => {
-  const { x, y, label, disabled, onTap } = props;
+  const { x, y, label, disabled, onTap, widthRatio, heightRatio } = props;
 
   const { mouseover, mousemove, mouseout, ...rest } = props;
   return (
@@ -31,12 +33,19 @@ const Button: FC<ButtonProps> = (props) => {
       mousemove={(event) => mousemove?.(event)}
       mouseout={(event) => mouseout?.(event)}
     >
-      <ButtonBackground {...rest}></ButtonBackground>
+      <ButtonBackground
+        {...rest}
+        heightRatio={heightRatio}
+        widthRatio={widthRatio}
+      ></ButtonBackground>
       <Text
         text={label}
-        x={x + baseButtonWidth / 5}
-        y={y + baseButtonHeight / 3}
-        style={{ file: disabled ? 0x696969 : 0x000000 }}
+        x={(x + baseButtonWidth / 5) * widthRatio}
+        y={(y + baseButtonHeight / 3) * heightRatio}
+        style={{
+          fontSize: 24 * widthRatio,
+          fill: disabled ? 0x696969 : 0x000000,
+        }}
       ></Text>
     </Container>
   );

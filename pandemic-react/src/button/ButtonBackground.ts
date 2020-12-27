@@ -2,15 +2,18 @@ import * as PIXI from "pixi.js";
 import { CustomPIXIComponent } from "react-pixi-fiber";
 import { ButtonProps } from "./button";
 
+type ButtonBackgroundProps = Required<
+  Omit<ButtonProps, "mouseover" | "mousemove" | "mouseout">
+>;
 const TYPE = "ButtonBackground";
 const behavior = {
-  customDisplayObject: (props: ButtonProps) => new PIXI.Graphics(),
+  customDisplayObject: (props: ButtonBackgroundProps) => new PIXI.Graphics(),
   customApplyProps: function (
     instance: PIXI.Graphics,
-    oldProps: ButtonProps,
-    newProps: ButtonProps
+    oldProps: ButtonBackgroundProps,
+    newProps: ButtonBackgroundProps
   ) {
-    const { x, y, width, height, disabled } = newProps;
+    const { x, y, width, height, disabled, widthRatio, heightRatio } = newProps;
     if (
       oldProps.x !== x ||
       oldProps.y !== y ||
@@ -20,7 +23,13 @@ const behavior = {
       instance.clear();
       instance.beginFill(0x7a6f64);
       instance.lineStyle(4, 0x0, 0.3);
-      instance.drawRoundedRect(x, y, width, height, 30);
+      instance.drawRoundedRect(
+        x * widthRatio,
+        y * heightRatio,
+        width * widthRatio,
+        height * heightRatio,
+        30 * heightRatio
+      );
       instance.endFill();
     }
     if (oldProps.disabled !== disabled) {
