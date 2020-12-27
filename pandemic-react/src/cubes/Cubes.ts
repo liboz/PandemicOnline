@@ -2,7 +2,7 @@ import { Client } from "pandemiccommon/dist/out-tsc";
 import * as PIXI from "pixi.js";
 import { CustomPIXIComponent } from "react-pixi-fiber";
 import { CityNodeData } from "../node/CityNode";
-import { colorNameToHex, cubesChanged } from "../utils";
+import { colorNameToHex, cubesChanged, ScalingGraphics } from "../utils";
 
 const baseOffset = 25;
 
@@ -17,7 +17,7 @@ function flattenCubeMap(cubes: Client.Cubes): Client.Color[] {
   return result;
 }
 
-interface CubeProps {
+interface CubeProps extends ScalingGraphics {
   node: CityNodeData;
 }
 
@@ -29,7 +29,7 @@ export const behavior = {
     oldProps: CubeProps,
     newProps: CubeProps
   ) {
-    const { node } = newProps;
+    const { node, widthRatio } = newProps;
     if (cubesChanged(oldProps.node?.cubes, node.cubes)) {
       instance.clear();
       const rotationStep = (2 * Math.PI * (Date.now() % 1440)) / 1440;
@@ -48,10 +48,14 @@ export const behavior = {
         }
         // 7 so the center of the rectangle aligns with the center of the circle
         instance.drawRect(
-          baseX + baseOffset * Math.cos(radians + rotationStep) - 7,
-          baseY + baseOffset * Math.sin(radians + rotationStep) - 7,
-          14,
-          14
+          baseX +
+            baseOffset * Math.cos(radians + rotationStep) * widthRatio -
+            7 * widthRatio,
+          baseY +
+            baseOffset * Math.sin(radians + rotationStep) * widthRatio -
+            7 * widthRatio,
+          14 * widthRatio,
+          14 * widthRatio
         );
         if (color) {
           instance.endFill();

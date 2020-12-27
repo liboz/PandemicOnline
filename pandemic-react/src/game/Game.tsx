@@ -111,27 +111,44 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
                         interactive={true}
                         pointerdown={() => this.props.onSelectedNode(node)}
                       >
-                        <CityNode node={node} isMoving={isMoving}></CityNode>
+                        <CityNode
+                          node={node}
+                          isMoving={isMoving}
+                          heightRatio={heightRatio}
+                          widthRatio={widthRatio}
+                        ></CityNode>
                       </Container>
 
                       <Text
                         zIndex={10}
                         style={{
                           fill: 0xffffff,
-                          fontSize: 18,
+                          fontSize: 18 * widthRatio,
                           stroke: "black",
                           strokeThickness: 3,
                           align: "center",
                         }}
                         text={node.name}
-                        x={node.x - 30}
-                        y={node.y - 30}
+                        x={node.x - 30 * widthRatio}
+                        y={node.y - 30 * heightRatio}
                       ></Text>
                       {node.hasResearchStation && (
-                        <ResearchStation node={node}></ResearchStation>
+                        <ResearchStation
+                          node={node}
+                          heightRatio={heightRatio}
+                          widthRatio={widthRatio}
+                        ></ResearchStation>
                       )}
-                      <CubeContainer node={node}></CubeContainer>
-                      <Player node={node}></Player>
+                      <CubeContainer
+                        node={node}
+                        heightRatio={heightRatio}
+                        widthRatio={widthRatio}
+                      ></CubeContainer>
+                      <Player
+                        node={node}
+                        heightRatio={heightRatio}
+                        widthRatio={widthRatio}
+                      ></Player>
                     </Container>
                   );
                 })}

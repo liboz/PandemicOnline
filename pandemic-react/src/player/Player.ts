@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import { CustomPIXIComponent } from "react-pixi-fiber";
 import { CityNodeData } from "../node/CityNode";
+import { ScalingGraphics } from "../utils";
 
 export const playerInfo: Record<number, number> = {
   0: 0x42d4f4,
@@ -9,7 +10,7 @@ export const playerInfo: Record<number, number> = {
   3: 0xf58231,
 };
 
-interface PlayerProps {
+interface PlayerProps extends ScalingGraphics {
   node: CityNodeData;
 }
 
@@ -21,20 +22,25 @@ export const behavior = {
     oldProps: PlayerProps,
     newProps: PlayerProps
   ) {
-    const { node } = newProps;
+    const { node, heightRatio, widthRatio } = newProps;
     if (oldProps.node?.players !== node.players) {
       instance.clear();
-      const intervalSize = 28 / (node.players.length + 1);
+      const intervalSize = (28 * widthRatio) / (node.players.length + 1);
 
       node?.players.forEach((playerIndex, index) => {
         const playerColor = playerInfo[playerIndex];
-        const baseXPosition = -20 + intervalSize * (index + 1);
+        const baseXPosition = -20 * heightRatio + intervalSize * (index + 1);
         instance.lineStyle(3, 0x000000);
         instance.beginFill(playerColor);
         const baseX = node.x + baseXPosition;
-        const baseY = node.y + 14;
-        instance.drawCircle(baseX, baseY, 7);
-        instance.drawRect(baseX - 7, baseY + 7, 14, 14);
+        const baseY = node.y + 14 * heightRatio;
+        instance.drawCircle(baseX, baseY, 7 * widthRatio);
+        instance.drawRect(
+          baseX - 7 * widthRatio,
+          baseY + 7 * heightRatio,
+          14 * widthRatio,
+          14 * widthRatio
+        );
         instance.endFill();
       });
     }

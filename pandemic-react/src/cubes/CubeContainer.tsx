@@ -2,9 +2,10 @@ import * as PIXI from "pixi.js";
 import React from "react";
 import { Container, withApp } from "react-pixi-fiber";
 import { CityNodeData } from "../node/CityNode";
+import { ScalingGraphics } from "../utils";
 import Cubes from "./Cubes";
 
-interface CubeProps {
+interface CubeProps extends ScalingGraphics {
   node: CityNodeData;
   app: PIXI.Application;
 }
@@ -39,7 +40,7 @@ class CubeContainer extends React.Component<CubeProps, CubeState> {
     const { node } = this.props;
     return (
       <Container x={node.x} y={node.y} rotation={this.state.rotation}>
-        <Cubes node={node}></Cubes>
+        <Cubes {...this.props}></Cubes>
       </Container>
     );
   }

@@ -1,7 +1,7 @@
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import * as PIXI from "pixi.js";
 import { CustomPIXIComponent } from "react-pixi-fiber";
-import { colorNameToHex } from "../utils";
+import { colorNameToHex, ScalingGraphics } from "../utils";
 
 export interface CityNodeData {
   id: number;
@@ -14,39 +14,7 @@ export interface CityNodeData {
   players: number[];
   isValidDestination?: boolean;
 }
-
-export function renderNode(
-  node: CityNodeData,
-  isMoving: boolean
-): PIXI.Graphics {
-  const graphics = new PIXI.Graphics();
-  const color = colorNameToHex(node.color);
-  if (color) {
-    graphics.lineStyle(5, Number(color));
-    graphics.beginFill(Number(color));
-  }
-  graphics.alpha = isMoving && !node.isValidDestination ? 0.1 : 1.0;
-  graphics.drawCircle(node.x, node.y, 10);
-  if (color) {
-    graphics.endFill();
-  }
-  return graphics;
-}
-
-export function renderNodeText(node: CityNodeData): PIXI.Text {
-  var text = new PIXI.Text(node.name, {
-    fill: 0xffffff,
-    fontSize: 18,
-    stroke: "black",
-    strokeThickness: 3,
-    align: "center",
-  });
-  text.x = node.x - 30;
-  text.y = node.y - 30;
-  return text;
-}
-
-interface CityNodeProps {
+interface CityNodeProps extends ScalingGraphics {
   node: CityNodeData;
   isMoving: boolean;
 }
@@ -55,13 +23,13 @@ const TYPE = "CityNodes";
 export const behavior = {
   customDisplayObject: (props: CityNodeProps) => {
     const instance = new PIXI.Graphics();
-    const { node } = props;
+    const { node, widthRatio } = props;
     const color = colorNameToHex(node.color);
     if (color) {
       instance.lineStyle(5, Number(color));
       instance.beginFill(Number(color));
     }
-    instance.drawCircle(node.x, node.y, 10);
+    instance.drawCircle(node.x, node.y, 10 * widthRatio);
     if (color) {
       instance.endFill();
     }
