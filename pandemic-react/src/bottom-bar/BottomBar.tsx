@@ -171,6 +171,14 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     ></Button>
   ));
 
+  const actionsContainerY =
+    heightRatio < 0.4
+      ? barBaseHeight * heightRatio - 10
+      : barBaseHeight * heightRatio;
+
+  const actionsLeftTextY =
+    heightRatio < 0.4 ? 50 * heightRatio + 10 : 50 * heightRatio;
+
   return (
     <Container>
       <Container x={0} y={handContainerY * heightRatio}>
@@ -181,12 +189,25 @@ const BottomBar: FC<BottomBarProps> = (props) => {
           widthRatio={widthRatio}
         ></BotHand>
       </Container>
-      <Container x={(width / 4) * widthRatio} y={barBaseHeight * heightRatio}>
-        <Text text={infoTextRaw} style={{ fontSize: 20 * widthRatio }}></Text>
+      <Container x={(width / 4) * widthRatio} y={actionsContainerY}>
+        <Text
+          text={infoTextRaw}
+          style={{
+            fontSize: Math.max(20 * widthRatio, 10),
+            fill: 0xffffff,
+            stroke: "black",
+            strokeThickness: 3,
+          }}
+        ></Text>
         <Text
           text={actionsLeftTextRaw}
-          style={{ fontSize: 20 * widthRatio }}
-          y={50 * heightRatio}
+          style={{
+            fontSize: Math.max(20 * widthRatio, 10),
+            fill: 0xffffff,
+            stroke: "black",
+            strokeThickness: 3,
+          }}
+          y={actionsLeftTextY}
         ></Text>
       </Container>
       {buttons}

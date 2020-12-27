@@ -31,7 +31,7 @@ function generateHand(
 
   const infoTextRaw = `Player ${player.id} (${player.name}) - ${player.role}`;
   const infoText = new PIXI.Text(infoTextRaw, {
-    fontSize: infoTextFontSize * widthRatio,
+    fontSize: Math.max(infoTextFontSize * widthRatio, 10),
   });
   container.addChild(infoText);
   const heightLeft = heightAllowed - infoTextFontSizeWithPadding * heightRatio;
@@ -49,11 +49,13 @@ function generateHand(
     graphics.drawRect(
       baseX + 10 * widthRatio,
       baseY + 2.5 * heightRatio,
-      10 * widthRatio,
-      10 * widthRatio
+      Math.max(10 * widthRatio, 5),
+      Math.max(10 * widthRatio, 5)
     );
     graphics.endFill();
-    const cityName = new PIXI.Text(card, { fontSize: 15 * widthRatio });
+    const cityName = new PIXI.Text(card, {
+      fontSize: Math.max(15 * widthRatio, 10),
+    });
     cityName.x = baseX + 25 * widthRatio;
     cityName.y = baseY;
     container.addChild(cityName);
