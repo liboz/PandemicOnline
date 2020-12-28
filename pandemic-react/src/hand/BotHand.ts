@@ -78,7 +78,11 @@ export const behavior = {
     newProps: HandProps
   ) {
     const { game, containerY, widthRatio, heightRatio } = newProps;
-    if (oldProps.game?.players !== game?.players) {
+    if (
+      oldProps.game?.players !== game?.players ||
+      oldProps.widthRatio !== widthRatio ||
+      oldProps.heightRatio !== heightRatio
+    ) {
       instance.clear();
       instance.removeChildren();
       instance.beginFill(0x3e494b);
