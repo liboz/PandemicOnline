@@ -18,7 +18,9 @@ const behavior = {
       oldProps.x !== x ||
       oldProps.y !== y ||
       oldProps.width !== width ||
-      oldProps.height !== height
+      oldProps.height !== height ||
+      oldProps.widthRatio !== widthRatio ||
+      oldProps.heightRatio !== heightRatio
     ) {
       instance.clear();
       instance.beginFill(0x7a6f64);

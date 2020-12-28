@@ -112,6 +112,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.discover = this.discover.bind(this);
       this.setSidebarChildren = this.setSidebarChildren.bind(this);
       this.hideSidebar = this.hideSidebar.bind(this);
+      this.resize = this.resize.bind(this);
     }
 
     componentDidMount() {
@@ -153,6 +154,18 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.closeSidebarSubscription?.unsubscribe();
     }
 
+    resize() {
+      this.preRender();
+      const nodes = this.regenerateNodes();
+      const links = this.regenerateLinks(nodes);
+      this.setState({
+        nodes,
+        links,
+        currentHeight: window.innerHeight,
+        currentWidth: window.innerWidth,
+      });
+    }
+
     componentDidUpdate(prevProps: GameComponentProps) {
       const { game } = this.props;
       if (game?.game_state === Client.GameState.Lost) {
@@ -170,10 +183,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
       }
 
       if (prevProps.game === undefined) {
-        this.preRender();
-        const nodes = this.regenerateNodes();
-        const links = this.regenerateLinks(nodes);
-        this.setState({ nodes, links });
+        this.resize();
         this.maybeShowDiscardComponent();
       } else {
         if (prevProps.game?.game_graph !== game?.game_graph) {
@@ -868,6 +878,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
           onPass={this.onPass}
           setSidebarChildren={this.setSidebarChildren}
           hideSidebar={this.hideSidebar}
+          resize={this.resize}
         ></WrappedComponent>
       );
     }

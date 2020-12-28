@@ -32,6 +32,7 @@ export interface GameGraphicsProps {
   onPass: () => void;
   setSidebarChildren: (item: React.FunctionComponent<SidebarItemProps>) => void;
   hideSidebar: () => void;
+  resize: () => void;
 }
 
 class GameGraphics extends React.Component<GameGraphicsProps> {
@@ -76,6 +77,10 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
     if (prevProps.game === undefined) {
       this.pixiApp.resizeTo = window;
     }
+
+    this.pixiApp.renderer.on("resize", () => {
+      this.props.resize();
+    });
   }
 
   render() {
@@ -99,6 +104,8 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
                 <GeoBackground
                   projection={this.props.projection}
                   links={links}
+                  heightRatio={heightRatio}
+                  widthRatio={widthRatio}
                 />
                 {nodes?.map((node) => {
                   return (
