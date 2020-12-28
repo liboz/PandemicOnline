@@ -9,6 +9,7 @@ import {
   destroyEvent,
   join$,
   nextComponent,
+  restartGame$,
 } from "../Subscriptions";
 import { JoinComponent } from "../join/Join";
 import { Subscription } from "rxjs";
@@ -28,7 +29,8 @@ class GameSocketComponent extends React.Component<
   RouteComponentProps<{ match_name: string }>,
   GameSocketState
 > {
-  subscription?: Subscription;
+  joinGameSubscription?: Subscription;
+  restartGameSubscription?: Subscription;
   constructor(props: any) {
     super(props);
     this.state = {};
@@ -111,12 +113,7 @@ class GameSocketComponent extends React.Component<
 
         socket.on(Client.EventName.Restarted, (data: Client.Game) => {
           toast.success(`${match_name} restarted`);
-          closeSidebar();
-          this.setState({
-            game: data,
-            player_index: undefined,
-            player_name: undefined,
-          });
+          closeSidebar(data);
         });
 
         socket.on(Client.EventName.DiscardCards, (data: number) => {
@@ -158,18 +155,25 @@ class GameSocketComponent extends React.Component<
         });
       });
 
-    this.subscription = join$.subscribe((playerInfo) => {
+    this.joinGameSubscription = join$.subscribe((playerInfo) => {
       this.setState({
         player_name: playerInfo.player_name,
         player_index: playerInfo.player_index,
       });
     });
+
+    this.restartGameSubscription = restartGame$.subscribe((data) => {
+      this.setState({
+        game: data,
+        player_index: undefined,
+        player_name: undefined,
+      });
+    });
   }
 
   componentWillUnmount() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.joinGameSubscription?.unsubscribe();
+    this.restartGameSubscription?.unsubscribe();
   }
 
   render() {
