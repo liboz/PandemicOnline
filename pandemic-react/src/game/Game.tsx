@@ -120,6 +120,8 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
                       </Container>
 
                       <Text
+                        interactive={true}
+                        pointerdown={() => this.props.onSelectedNode(node)}
                         zIndex={10}
                         style={{
                           fill: 0xffffff,

@@ -130,7 +130,7 @@ const TopBar: FC<TopBarProps> = (props) => {
             style={textStyle}
           ></Text>
         </Container>
-        <Container x={(width / 2) * widthRatio}>
+        <Container x={width * 0.65 * widthRatio}>
           <CubeCureStatus
             game={game}
             containerY={Math.max(containerY, 50)}
