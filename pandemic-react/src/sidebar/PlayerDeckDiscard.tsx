@@ -5,7 +5,9 @@ import { SidebarItemProps } from "./Sidebar";
 const PlayerDeckDiscard: FC<SidebarItemProps> = (props: SidebarItemProps) => {
   const { game } = props;
   const cards = game.player_deck_discard;
-  if (cards.length === 0) {
+  if (!cards) {
+    return null;
+  } else if (cards.length === 0) {
     return <div>No Player Cards Discarded Yet</div>;
   } else {
     return React.createElement(BaseSidebarList, {

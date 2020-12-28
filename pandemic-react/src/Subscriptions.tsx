@@ -60,14 +60,8 @@ export const clearDiscover = () => {
   clearDiscoverSource.next();
 };
 
-const closeSidebarSource = new Subject<Client.Game>();
+const closeSidebarSource = new Subject<void>();
 export const closeSidebar$ = closeSidebarSource.asObservable();
-export const closeSidebar = (data: Client.Game) => {
-  closeSidebarSource.next(data);
-};
-
-const restartGameSource = new Subject<Client.Game>();
-export const restartGame$ = restartGameSource.asObservable();
-export const restartGame = (data: Client.Game) => {
-  restartGameSource.next(data);
+export const closeSidebar = () => {
+  closeSidebarSource.next();
 };

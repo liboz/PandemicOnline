@@ -10,7 +10,6 @@ import {
   destroyEvent,
   dispatcherMoveTarget$,
   nextComponent,
-  restartGame,
 } from "../Subscriptions";
 import { Subscription } from "rxjs";
 import * as d3 from "d3";
@@ -139,9 +138,8 @@ function withGameState(WrappedComponent: typeof React.Component) {
         this.setState({ cureColorCards: null });
         destroyEvent();
       });
-      this.closeSidebarSubscription = closeSidebar$.subscribe((data) => {
+      this.closeSidebarSubscription = closeSidebar$.subscribe(() => {
         this.hideSidebar();
-        restartGame(data);
       });
     }
 

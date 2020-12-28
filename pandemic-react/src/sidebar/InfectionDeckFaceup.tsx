@@ -4,8 +4,8 @@ import { SidebarItemProps } from "./Sidebar";
 
 const InfectionDeckFaceup: FC<SidebarItemProps> = (props: SidebarItemProps) => {
   const { game } = props;
-  if (game) {
-    const cards = game.infection_faceup_deck;
+  const cards = game.infection_faceup_deck;
+  if (cards) {
     return React.createElement(BaseSidebarList, {
       list: cards.map((card) => {
         const cardIndex = game.game_graph_index[card];
