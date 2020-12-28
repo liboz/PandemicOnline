@@ -30,7 +30,10 @@ export const behavior = {
     newProps: CubeProps
   ) {
     const { node, widthRatio } = newProps;
-    if (cubesChanged(oldProps.node?.cubes, node.cubes)) {
+    if (
+      cubesChanged(oldProps.node?.cubes, node.cubes) ||
+      oldProps.widthRatio !== widthRatio
+    ) {
       instance.clear();
       const rotationStep = (2 * Math.PI * (Date.now() % 1440)) / 1440;
       const cubes = node.cubes;

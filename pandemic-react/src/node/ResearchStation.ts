@@ -16,6 +16,7 @@ export const behavior = {
     newProps: CityNodeProps
   ) {
     const { node, heightRatio, widthRatio } = newProps;
+    instance.clear();
     instance.lineStyle(3 * widthRatio, 0x000000);
     instance.beginFill(0xffffff);
     const baseX = node.x;

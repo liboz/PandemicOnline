@@ -23,7 +23,11 @@ export const behavior = {
     newProps: PlayerProps
   ) {
     const { node, heightRatio, widthRatio } = newProps;
-    if (oldProps.node?.players !== node.players) {
+    if (
+      oldProps.node?.players !== node.players ||
+      oldProps.heightRatio !== heightRatio ||
+      oldProps.widthRatio !== widthRatio
+    ) {
       instance.clear();
       const intervalSize =
         Math.max(28 * widthRatio, 10) / (node.players.length + 1);
