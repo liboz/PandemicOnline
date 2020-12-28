@@ -123,14 +123,14 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
                         zIndex={10}
                         style={{
                           fill: 0xffffff,
-                          fontSize: 18 * widthRatio,
+                          fontSize: Math.max(18 * widthRatio, 10),
                           stroke: "black",
                           strokeThickness: 3,
                           align: "center",
                         }}
                         text={node.name}
-                        x={node.x - 30 * widthRatio}
-                        y={node.y - 30 * heightRatio}
+                        x={node.x - Math.max(30 * widthRatio, 20)}
+                        y={node.y - Math.max(30 * heightRatio, 15)}
                       ></Text>
                       {node.hasResearchStation && (
                         <ResearchStation

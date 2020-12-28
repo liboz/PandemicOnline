@@ -16,16 +16,25 @@ export const behavior = {
     newProps: CityNodeProps
   ) {
     const { node, heightRatio, widthRatio } = newProps;
-    instance.lineStyle(3, 0x000000);
+    instance.lineStyle(3 * widthRatio, 0x000000);
     instance.beginFill(0xffffff);
     const baseX = node.x;
     const baseY = node.y;
     instance.drawPolygon([
-      new PIXI.Point(baseX + 10 * widthRatio, baseY + 5 * heightRatio),
-      new PIXI.Point(baseX, baseY + 20 * heightRatio),
-      new PIXI.Point(baseX, baseY + 30 * heightRatio),
-      new PIXI.Point(baseX + 20 * widthRatio, baseY + 30 * heightRatio),
-      new PIXI.Point(baseX + 20 * widthRatio, baseY + 20 * heightRatio),
+      new PIXI.Point(
+        baseX + Math.max(10 * widthRatio, 6),
+        baseY + Math.max(5 * heightRatio, 3)
+      ),
+      new PIXI.Point(baseX, baseY + Math.max(20 * heightRatio, 12)),
+      new PIXI.Point(baseX, baseY + Math.max(30 * heightRatio, 18)),
+      new PIXI.Point(
+        baseX + Math.max(20 * widthRatio, 12),
+        baseY + Math.max(30 * heightRatio, 18)
+      ),
+      new PIXI.Point(
+        baseX + Math.max(20 * widthRatio, 12),
+        baseY + Math.max(20 * heightRatio, 12)
+      ),
     ]);
     instance.endFill();
   },

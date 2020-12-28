@@ -25,21 +25,22 @@ export const behavior = {
     const { node, heightRatio, widthRatio } = newProps;
     if (oldProps.node?.players !== node.players) {
       instance.clear();
-      const intervalSize = (28 * widthRatio) / (node.players.length + 1);
+      const intervalSize =
+        Math.max(28 * widthRatio, 10) / (node.players.length + 1);
 
       node?.players.forEach((playerIndex, index) => {
         const playerColor = playerInfo[playerIndex];
         const baseXPosition = -20 * heightRatio + intervalSize * (index + 1);
-        instance.lineStyle(3, 0x000000);
+        instance.lineStyle(3 * widthRatio, 0x000000);
         instance.beginFill(playerColor);
         const baseX = node.x + baseXPosition;
         const baseY = node.y + 14 * heightRatio;
-        instance.drawCircle(baseX, baseY, 7 * widthRatio);
+        instance.drawCircle(baseX, baseY, Math.max(7 * widthRatio, 4));
         instance.drawRect(
-          baseX - 7 * widthRatio,
-          baseY + 7 * heightRatio,
-          14 * widthRatio,
-          14 * widthRatio
+          baseX - Math.max(7 * widthRatio, 4),
+          baseY + Math.max(7 * heightRatio, 4),
+          Math.max(14 * widthRatio, 8),
+          Math.max(14 * widthRatio, 8)
         );
         instance.endFill();
       });
