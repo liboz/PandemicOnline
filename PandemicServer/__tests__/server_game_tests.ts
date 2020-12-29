@@ -367,6 +367,68 @@ describe("ServerGame", () => {
     });
   });
 
+  describe("#onDispatcherMove", () => {
+    it("works", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Dispatcher, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const onDispatcherMove = server_game.onDispatcherMove(mockSocket);
+      onDispatcherMove(1, "Khartoum");
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.MoveChoiceSuccesful
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+      expect(server_game.curr_game.players[1].location).toBe("Khartoum");
+      mockSocket.sendMessageToClient.mockClear();
+      mockSocket.sendMessageToAllInRoom.mockClear();
+
+      // can move self to another pawn
+      expect(server_game.curr_game.players[0].location).toBe("Atlanta");
+
+      onDispatcherMove(0, "Khartoum");
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.MoveChoiceSuccesful
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+      expect(server_game.curr_game.players[0].location).toBe("Khartoum");
+    });
+
+    it("dosnt work when not started", () => {
+      const mockSocket = mock<ClientWebSocket>();
+      const onJoin = server_game.onJoin(mockSocket);
+      joinGame(onJoin, Client.Roles.OperationsExpert, "p1");
+      joinGame(onJoin, Client.Roles.QuarantineSpecialist, "p2");
+
+      const onDispatcherMove = server_game.onDispatcherMove(mockSocket);
+      onDispatcherMove(1, "Khartoum");
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+    });
+
+    it("dosnt work when not dispatcher move", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.OperationsExpert, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const onDispatcherMove = server_game.onDispatcherMove(mockSocket);
+      onDispatcherMove(1, "Khartoum");
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(0);
+      expect(server_game.curr_game.players[0].location).toBe("Atlanta");
+    });
+  });
+
   describe("#onBuild", () => {
     it("works", () => {
       const mockSocket = createGame(server_game, [

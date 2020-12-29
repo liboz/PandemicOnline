@@ -58,7 +58,7 @@ export class City {
         ) {
           shouldInfect = false;
           game.log.push(
-            `${this.name}'s infection prevented because ${players[i]} is a Quarantine Specialist or Medic`
+            `${this.name}'s infection prevented because ${players[i].name} is a Quarantine Specialist or Medic`
           );
           break;
         }
@@ -75,7 +75,7 @@ export class City {
               neighbor_players[j].role === Client.Roles.QuarantineSpecialist
             ) {
               game.log.push(
-                `${this.name}'s infection prevented because ${neighbor_players[j]} is a Quarantine Specialist`
+                `${this.name}'s infection prevented because ${neighbor_players[j].name} is a Quarantine Specialist`
               );
               shouldInfect = false;
               break;

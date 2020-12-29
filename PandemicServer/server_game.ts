@@ -330,9 +330,9 @@ export class ServerGame {
 
   onDispatcherMove(clientWebSocket: ClientWebSocket) {
     return (player_index: number, final_destination: string) => {
-      let log_string = `Player ${this.curr_game.player_index}: Dispatcher Move ${player_index} to ${final_destination}`;
-      console.log(`${this.match_name}: ${log_string}`);
       if (this.isReady) {
+        let log_string = `Player ${this.curr_game.player_index}: Dispatcher Move ${player_index} to ${final_destination}`;
+        console.log(`${this.match_name}: ${log_string}`);
         let curr_player = this.curr_game.players[this.curr_game.player_index];
         let valid_dispatcher_final_destinations = new Set(
           curr_player.get_valid_dispatcher_final_destinations(this.curr_game)[
@@ -342,20 +342,21 @@ export class ServerGame {
         if (
           valid_dispatcher_final_destinations.has(
             this.curr_game.game_graph[final_destination].index
-          )
-        ) {
+          ) &&
           curr_player.dispatcher_move(
             this.curr_game,
             this.curr_game.players[player_index],
             final_destination,
             clientWebSocket
-          );
+          )
+        ) {
           this.curr_game.log.push(log_string);
           clientWebSocket.sendMessageToClient(
             EventName.MoveChoiceSuccesful,
             this.curr_game.toJSON()
           );
           this.curr_game.use_turn(clientWebSocket, this.match_name);
+          console.log(this.curr_game.players.map((i) => i.location));
         } else {
           clientWebSocket.sendMessageToClient(
             EventName.InvalidAction,
