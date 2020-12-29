@@ -190,10 +190,14 @@ export class Player {
             this.hand
           );
         }
+
+        const nonCurrentPlayerLocation = [...new Set(playerLocations)].filter(
+          (location) => location !== game.game_graph[player.location].index
+        );
         // no duplicates
         const allValidDestinations = new Set([
           ...baseValidDestinations,
-          ...playerLocations,
+          ...nonCurrentPlayerLocation,
         ]);
 
         result[player.id] = [...allValidDestinations];

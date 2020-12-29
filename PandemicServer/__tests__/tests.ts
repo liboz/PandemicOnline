@@ -1326,15 +1326,7 @@ describe("Player", function () {
       );
 
       expect(valid_final_destinations[0].sort()).toEqual(
-        [
-          "Atlanta",
-          "Chicago",
-          "Washington",
-          "Miami",
-          "Milan",
-          "Riyadh",
-          "Essen",
-        ]
+        ["Chicago", "Washington", "Miami", "Milan", "Riyadh", "Essen"]
           .map((i) => g.game_graph[i].index)
           .sort()
       );
@@ -1350,36 +1342,36 @@ describe("Player", function () {
       expect(valid_final_destinations[0].sort()).toEqual(all_locations);
 
       expect(valid_final_destinations[1].sort()).toEqual(
-        [
-          "Atlanta",
-          "Chicago",
-          "Washington",
-          "Miami",
-          "Milan",
-          "Riyadh",
-          "Essen",
-        ]
+        ["Chicago", "Washington", "Miami", "Milan", "Riyadh", "Essen"]
           .map((i) => g.game_graph[i].index)
           .sort()
       ); // operations expert move not usable
 
       g.players[0].move(g, "St Petersburg");
+      g.players[2].move(g, "Chicago");
+      g.players[2].move(g, "San Francisco");
+
       valid_final_destinations = g.players[2].get_valid_dispatcher_final_destinations(
         g
       );
       expect(valid_final_destinations[1].sort()).toEqual(
         [
-          "Atlanta",
           "Chicago",
           "Washington",
           "Miami",
           "Milan",
           "Riyadh",
           "Essen",
+          "San Francisco",
           "St Petersburg",
         ]
           .map((i) => g.game_graph[i].index)
           .sort()
+      );
+
+      // self should be able to go to other two tokens
+      expect(valid_final_destinations[2].sort()).toEqual(
+        ["Atlanta", "St Petersburg"].map((i) => g.game_graph[i].index).sort()
       );
     });
   });
