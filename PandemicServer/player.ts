@@ -178,13 +178,25 @@ export class Player {
   ): Record<number, number[]> {
     if (game.game_state === Client.GameState.Ready) {
       let result: Record<number, number[]> = {};
+      const playerLocations = game.players
+        .map((player) => player.location)
+        .map((location) => game.game_graph[location].index);
+
       for (let player of game.players) {
+        let baseValidDestinations: number[] = [];
         if (player !== this) {
-          result[player.id] = player.get_valid_final_destinations(
+          baseValidDestinations = player.get_valid_final_destinations(
             game,
             this.hand
           );
         }
+        // no duplicates
+        const allValidDestinations = new Set([
+          ...baseValidDestinations,
+          ...playerLocations,
+        ]);
+
+        result[player.id] = [...allValidDestinations];
       }
       return result;
     } else {

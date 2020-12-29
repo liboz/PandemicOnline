@@ -1300,7 +1300,7 @@ describe("Player", function () {
   });
 
   describe("#Movement", function () {
-    it("Movable Dispatcher Move Locations", function () {
+    it.only("Movable Dispatcher Move Locations", function () {
       const seeded = seedrandom("test!");
       const g = new Game(
         Cities,
@@ -1326,7 +1326,15 @@ describe("Player", function () {
       );
 
       expect(valid_final_destinations[0].sort()).toEqual(
-        ["Chicago", "Washington", "Miami", "Milan", "Riyadh", "Essen"]
+        [
+          "Atlanta",
+          "Chicago",
+          "Washington",
+          "Miami",
+          "Milan",
+          "Riyadh",
+          "Essen",
+        ]
           .map((i) => g.game_graph[i].index)
           .sort()
       );
@@ -1342,10 +1350,37 @@ describe("Player", function () {
       expect(valid_final_destinations[0].sort()).toEqual(all_locations);
 
       expect(valid_final_destinations[1].sort()).toEqual(
-        ["Chicago", "Washington", "Miami", "Milan", "Riyadh", "Essen"]
+        [
+          "Atlanta",
+          "Chicago",
+          "Washington",
+          "Miami",
+          "Milan",
+          "Riyadh",
+          "Essen",
+        ]
           .map((i) => g.game_graph[i].index)
           .sort()
       ); // operations expert move not usable
+
+      g.players[0].move(g, "St Petersburg");
+      valid_final_destinations = g.players[2].get_valid_dispatcher_final_destinations(
+        g
+      );
+      expect(valid_final_destinations[1].sort()).toEqual(
+        [
+          "Atlanta",
+          "Chicago",
+          "Washington",
+          "Miami",
+          "Milan",
+          "Riyadh",
+          "Essen",
+          "St Petersburg",
+        ]
+          .map((i) => g.game_graph[i].index)
+          .sort()
+      );
     });
   });
 
