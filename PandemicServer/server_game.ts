@@ -329,42 +329,43 @@ export class ServerGame {
   }
 
   onDispatcherMove(clientWebSocket: ClientWebSocket) {
-    return (other_player_index: number, final_destination: string) => {
-      let log_string = `Player ${this.curr_game.player_index}: Dispatcher Move ${other_player_index} to ${final_destination}`;
+    return (player_index: number, final_destination: string) => {
+      let log_string = `Player ${this.curr_game.player_index}: Dispatcher Move ${player_index} to ${final_destination}`;
       console.log(`${this.match_name}: ${log_string}`);
       if (this.isReady) {
         let curr_player = this.curr_game.players[this.curr_game.player_index];
         let valid_dispatcher_final_destinations = new Set(
           curr_player.get_valid_dispatcher_final_destinations(this.curr_game)[
-            other_player_index
+            player_index
           ]
         );
-        // TODO dispatcher
-        /*
-      if (valid_dispatcher_final_destinations.has(final_destination)) {
-        curr_player.dispatcher_move(
-          this.curr_game,
-          this.curr_game.players[other_player_index],
-          final_destination,
-          clientWebSocket
-        );
-        this.curr_game.log.push(log_string);
-        clientWebSocket.sendMessageToClient(
-          EventName.MoveChoiceSuccesful,
-          this.curr_game.toJSON()
-        );
-        this.curr_game.use_turn(clientWebSocket, this.match_name);
+        if (
+          valid_dispatcher_final_destinations.has(
+            this.curr_game.game_graph[final_destination].index
+          )
+        ) {
+          curr_player.dispatcher_move(
+            this.curr_game,
+            this.curr_game.players[player_index],
+            final_destination,
+            clientWebSocket
+          );
+          this.curr_game.log.push(log_string);
+          clientWebSocket.sendMessageToClient(
+            EventName.MoveChoiceSuccesful,
+            this.curr_game.toJSON()
+          );
+          this.curr_game.use_turn(clientWebSocket, this.match_name);
+        } else {
+          clientWebSocket.sendMessageToClient(
+            EventName.InvalidAction,
+            `Moving ${player_index} to ${final_destination} is an invalid Dispatcher Move`
+          );
+        }
       } else {
         clientWebSocket.sendMessageToClient(
           EventName.InvalidAction,
-          `Moving ${other_player_index} to ${final_destination} is an invalid Dispatcher Move`
-        );
-      }
-      */
-      } else {
-        clientWebSocket.sendMessageToClient(
-          EventName.InvalidAction,
-          `Moving ${other_player_index} to ${final_destination} is an invalid Dispatcher Move`
+          `Moving ${player_index} to ${final_destination} is an invalid Dispatcher Move`
         );
       }
     };

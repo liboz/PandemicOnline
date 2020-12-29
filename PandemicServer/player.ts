@@ -29,12 +29,18 @@ export class Player {
     if (this.role !== Client.Roles.Dispatcher) {
       return false;
     } else {
-      return other_player.move(
-        game,
-        final_destination,
-        this.hand,
-        clientWebSocket
-      );
+      if (
+        this.moveToAnotherPlayerPiece(game, final_destination, clientWebSocket)
+      ) {
+        return true;
+      } else {
+        return other_player.move(
+          game,
+          final_destination,
+          this.hand,
+          clientWebSocket
+        );
+      }
     }
   }
 
@@ -170,6 +176,19 @@ export class Player {
       }
     } else {
       return [];
+    }
+  }
+
+  moveToAnotherPlayerPiece(
+    game: Game,
+    final_destination: string,
+    clientWebSocket: ClientWebSocket
+  ) {
+    if (game.game_graph[final_destination].players.size > 0) {
+      this.movePiece(game, game.game_graph, final_destination, clientWebSocket);
+      return true;
+    } else {
+      return false;
     }
   }
 

@@ -1014,9 +1014,7 @@ describe("Player", function () {
       expect(g.players[0].location).toBe("Tokyo");
       expect(g.game_graph["Tokyo"].players.has(g.players[0])).toBe(true);
     });
-  });
 
-  describe("#Movement", function () {
     it("Charter/Direct", function () {
       const seeded = seedrandom("test!");
       const g = new Game(
@@ -1084,126 +1082,7 @@ describe("Player", function () {
         "Ho Chi Minh City",
       ]);
     });
-  });
 
-  describe("#Movement", function () {
-    it("Dispatcher Move", function () {
-      const seeded = seedrandom("test!");
-      const g = new Game(
-        Cities,
-        2,
-        ["test", "test"],
-        [Client.Roles.Dispatcher, Client.Roles.Researcher],
-        5,
-        seeded
-      );
-      const originalHand = [...g.players[0].hand];
-      g.players[0].discard(g, [...g.players[0].hand]);
-      expect(g.players[1].location).toBe("Atlanta"); // moving player 1 with player 0
-      g.players[0].draw(g);
-      g.players[0].draw(g);
-
-      //Direct Flight
-      expect(g.players[1].canDirectFlight("Beijing")).toBe(false); //can't direct fly normally
-      expect(g.players[1].canDirectFlight("Beijing", g.players[0].hand)).toBe(
-        true
-      );
-      expect(g.players[0].hand.has("Beijing")).toBe(true);
-      expect(g.players[0].dispatcher_move(g, g.players[1], "Beijing")).toBe(
-        true
-      );
-      expect(g.players[1].location).toBe("Beijing");
-      expect(g.game_graph["Beijing"].players.has(g.players[1])).toBe(true);
-      expect(g.players[0].hand.has("Beijing")).toBe(false);
-      expect(g.player_deck.discard).toStrictEqual([...originalHand, "Beijing"]);
-      g.players[0].draw(g);
-      g.players[0].draw(g);
-      g.players[0].draw(g);
-      g.players[0].draw(g);
-
-      //Drive/Ferry
-      expect(g.players[0].hand.has("Shanghai")).toBe(false);
-      expect(g.players[0].dispatcher_move(g, g.players[1], "Shanghai")).toBe(
-        true
-      );
-      expect(g.players[1].location).toBe("Shanghai");
-      expect(g.game_graph["Shanghai"].players.has(g.players[1])).toBe(true);
-      expect(g.players[0].hand.has("Shanghai")).toBe(false);
-
-      expect(g.players[0].hand.has("Hong Kong")).toBe(false);
-      expect(g.players[0].dispatcher_move(g, g.players[1], "Hong Kong")).toBe(
-        true
-      );
-      expect(g.players[1].location).toBe("Hong Kong");
-      expect(g.game_graph["Hong Kong"].players.has(g.players[1])).toBe(true);
-      expect(g.players[0].hand.has("Hong Kong")).toBe(false);
-
-      expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(true);
-      expect(
-        g.players[0].dispatcher_move(g, g.players[1], "Ho Chi Minh City")
-      ).toBe(true);
-      expect(g.players[1].location).toBe("Ho Chi Minh City");
-      expect(g.game_graph["Ho Chi Minh City"].players.has(g.players[1])).toBe(
-        true
-      );
-
-      //Charter
-      expect(g.players[1].canCharterFlight()).toBe(false); // can't charter normally
-      expect(g.players[1].canCharterFlight(g.players[0].hand)).toBe(true);
-      expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(true);
-      expect(g.players[0].hand.has("Tokyo")).toBe(false);
-      expect(g.players[0].dispatcher_move(g, g.players[1], "Tokyo")).toBe(true);
-      expect(g.players[1].location).toBe("Tokyo");
-      expect(g.game_graph["Tokyo"].players.has(g.players[1])).toBe(true);
-      expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(false);
-      expect(g.player_deck.discard).toStrictEqual([
-        ...originalHand,
-        "Beijing",
-        "Ho Chi Minh City",
-      ]);
-
-      expect(g.players[1].dispatcher_move(g, g.players[0], "Chicago")).toBe(
-        false
-      ); //p1 isnt a dispatcher
-      expect(g.players[0].move(g, "Chicago")).toBe(true);
-    });
-  });
-
-  describe("#Movement", function () {
-    it("Operations Expert Special Move", function () {
-      const seeded = seedrandom("test!");
-      const g = new Game(
-        Cities,
-        2,
-        ["test", "test"],
-        [Client.Roles.OperationsExpert, Client.Roles.Researcher],
-        5,
-        seeded
-      );
-      expect(g.players[0].canOperationsExpertMove(g)).toBe(true);
-      expect(g.players[1].canOperationsExpertMove(g)).toBe(false);
-
-      const originalHand = [...g.players[0].hand];
-      g.players[0].discard(g, [...g.players[0].hand]);
-      expect(g.players[0].canOperationsExpertMove(g)).toBe(false);
-      g.players[0].draw(g);
-      expect(g.players[0].canOperationsExpertMove(g)).toBe(true);
-      g.players[0].move(g, "Chicago");
-      expect(g.players[0].canOperationsExpertMove(g)).toBe(false);
-      g.players[0].move(g, "Atlanta");
-      expect(g.players[0].canOperationsExpertMoveWithCard(g, "Atlanta")).toBe(
-        false
-      );
-      expect(g.players[0].canOperationsExpertMoveWithCard(g, "Beijing")).toBe(
-        true
-      );
-      g.players[0].operationsExpertMove(g, "Tokyo", "Beijing");
-      expect(g.player_deck.discard).toStrictEqual([...originalHand, "Beijing"]);
-      expect(g.players[0].location).toBe("Tokyo");
-    });
-  });
-
-  describe("#Movement", function () {
     it("Movable Locations", function () {
       const seeded = seedrandom("test!");
       const g = new Game(
@@ -1297,10 +1176,176 @@ describe("Player", function () {
           .sort()
       ); // adjacent + direct flight
     });
+
+    it("Medic Treats When Moving If Cure Has been Discovered", function () {
+      const seeded = seedrandom("test!");
+      const g = new Game(
+        Cities,
+        2,
+        ["test", "test"],
+        [Client.Roles.Medic, Client.Roles.Researcher],
+        5,
+        seeded
+      );
+
+      g.initialize_board();
+      g.cured[Client.Color.Blue] = 1;
+      g.players[0].move(g, "Washington");
+      g.players[0].move(g, "New York");
+      expect(g.game_graph["London"].cubes[Client.Color.Blue]).toBe(3);
+      g.players[0].move(g, "London");
+      expect(g.players[0].can_treat(g)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Client.Color.Blue)).toBe(false);
+      expect(g.game_graph["London"].cubes[Client.Color.Blue]).toBe(0);
+
+      g.cured[Client.Color.Red] = 1;
+      g.players[0].move(g, "Jakarta");
+      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(2);
+      g.players[0].move(g, "Ho Chi Minh City");
+      expect(g.players[0].can_treat(g)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Client.Color.Red)).toBe(false);
+      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(0);
+    });
   });
 
-  describe("#Movement", function () {
-    it.only("Movable Dispatcher Move Locations", function () {
+  describe("#Dispatcher Movement", function () {
+    it("Dispatcher Move", function () {
+      const seeded = seedrandom("test!");
+      const g = new Game(
+        Cities,
+        2,
+        ["test", "test"],
+        [Client.Roles.Dispatcher, Client.Roles.Researcher],
+        5,
+        seeded
+      );
+      const originalHand = [...g.players[0].hand];
+      g.players[0].discard(g, [...g.players[0].hand]);
+      expect(g.players[1].location).toBe("Atlanta"); // moving player 1 with player 0
+      g.players[0].draw(g);
+      g.players[0].draw(g);
+
+      //Direct Flight
+      expect(g.players[1].canDirectFlight("Beijing")).toBe(false); //can't direct fly normally
+      expect(g.players[1].canDirectFlight("Beijing", g.players[0].hand)).toBe(
+        true
+      );
+      expect(g.players[0].hand.has("Beijing")).toBe(true);
+      expect(g.players[0].dispatcher_move(g, g.players[1], "Beijing")).toBe(
+        true
+      );
+      expect(g.players[1].location).toBe("Beijing");
+      expect(g.game_graph["Beijing"].players.has(g.players[1])).toBe(true);
+      expect(g.players[0].hand.has("Beijing")).toBe(false);
+      expect(g.player_deck.discard).toStrictEqual([...originalHand, "Beijing"]);
+      g.players[0].draw(g);
+      g.players[0].draw(g);
+      g.players[0].draw(g);
+      g.players[0].draw(g);
+
+      //Drive/Ferry
+      expect(g.players[0].hand.has("Shanghai")).toBe(false);
+      expect(g.players[0].dispatcher_move(g, g.players[1], "Shanghai")).toBe(
+        true
+      );
+      expect(g.players[1].location).toBe("Shanghai");
+      expect(g.game_graph["Shanghai"].players.has(g.players[1])).toBe(true);
+      expect(g.players[0].hand.has("Shanghai")).toBe(false);
+
+      expect(g.players[0].hand.has("Hong Kong")).toBe(false);
+      expect(g.players[0].dispatcher_move(g, g.players[1], "Hong Kong")).toBe(
+        true
+      );
+      expect(g.players[1].location).toBe("Hong Kong");
+      expect(g.game_graph["Hong Kong"].players.has(g.players[1])).toBe(true);
+      expect(g.players[0].hand.has("Hong Kong")).toBe(false);
+
+      expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(true);
+      expect(
+        g.players[0].dispatcher_move(g, g.players[1], "Ho Chi Minh City")
+      ).toBe(true);
+      expect(g.players[1].location).toBe("Ho Chi Minh City");
+      expect(g.game_graph["Ho Chi Minh City"].players.has(g.players[1])).toBe(
+        true
+      );
+
+      //Charter
+      expect(g.players[1].canCharterFlight()).toBe(false); // can't charter normally
+      expect(g.players[1].canCharterFlight(g.players[0].hand)).toBe(true);
+      expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(true);
+      expect(g.players[0].hand.has("Tokyo")).toBe(false);
+      expect(g.players[0].dispatcher_move(g, g.players[1], "Tokyo")).toBe(true);
+      expect(g.players[1].location).toBe("Tokyo");
+      expect(g.game_graph["Tokyo"].players.has(g.players[1])).toBe(true);
+      expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(false);
+      expect(g.player_deck.discard).toStrictEqual([
+        ...originalHand,
+        "Beijing",
+        "Ho Chi Minh City",
+      ]);
+
+      expect(g.players[1].dispatcher_move(g, g.players[0], "Chicago")).toBe(
+        false
+      ); //p1 isnt a dispatcher
+      expect(g.players[0].move(g, "Chicago")).toBe(true);
+
+      expect(g.players[0].dispatcher_move(g, g.players[0], "Tokyo")).toBe(true); // can move self to other player
+
+      expect(g.players[0].dispatcher_move(g, g.players[1], "Osaka")).toBe(true);
+      expect(g.players[0].dispatcher_move(g, g.players[1], "Taipei")).toBe(
+        true
+      );
+
+      g.players[0].hand.add("Tokyo");
+      expect(g.players[0].hand.has("Tokyo")).toBe(true);
+      // can move other player to self, but it does not use a card
+      expect(g.players[0].dispatcher_move(g, g.players[1], "Tokyo")).toBe(true);
+      expect(g.players[0].hand.has("Tokyo")).toBe(true);
+    });
+
+    it("Dispatcher Medic Treats when moving after cured", function () {
+      const seeded = seedrandom("test!");
+      const g = new Game(
+        Cities,
+        2,
+        ["test", "test"],
+        [Client.Roles.Medic, Client.Roles.Dispatcher],
+        5,
+        seeded
+      );
+
+      g.initialize_board();
+      g.cured[Client.Color.Blue] = 1;
+      g.players[0].move(g, "Washington");
+      g.players[0].move(g, "New York");
+      expect(g.game_graph["London"].cubes[Client.Color.Blue]).toBe(3);
+      expect(g.players[1].dispatcher_move(g, g.players[0], "London")).toBe(
+        true
+      );
+
+      expect(g.players[0].can_treat(g)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Client.Color.Blue)).toBe(false);
+      expect(g.game_graph["London"].cubes[Client.Color.Blue]).toBe(0);
+
+      g.cured[Client.Color.Red] = 1;
+      expect(g.players[1].dispatcher_move(g, g.players[0], "Seoul")).toBe(true);
+
+      expect(g.players[1].dispatcher_move(g, g.players[0], "Shanghai")).toBe(
+        true
+      );
+      expect(g.players[1].dispatcher_move(g, g.players[0], "Hong Kong")).toBe(
+        true
+      );
+      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(2);
+      expect(
+        g.players[1].dispatcher_move(g, g.players[0], "Ho Chi Minh City")
+      ).toBe(true);
+      expect(g.players[0].can_treat(g)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Client.Color.Red)).toBe(false);
+      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(0);
+    });
+
+    it("Movable Dispatcher Move Locations", function () {
       const seeded = seedrandom("test!");
       const g = new Game(
         Cities,
@@ -1373,6 +1418,40 @@ describe("Player", function () {
       expect(valid_final_destinations[2].sort()).toEqual(
         ["Atlanta", "St Petersburg"].map((i) => g.game_graph[i].index).sort()
       );
+    });
+  });
+
+  describe("#Operations Expert Movement", function () {
+    it("Operations Expert Special Move", function () {
+      const seeded = seedrandom("test!");
+      const g = new Game(
+        Cities,
+        2,
+        ["test", "test"],
+        [Client.Roles.OperationsExpert, Client.Roles.Researcher],
+        5,
+        seeded
+      );
+      expect(g.players[0].canOperationsExpertMove(g)).toBe(true);
+      expect(g.players[1].canOperationsExpertMove(g)).toBe(false);
+
+      const originalHand = [...g.players[0].hand];
+      g.players[0].discard(g, [...g.players[0].hand]);
+      expect(g.players[0].canOperationsExpertMove(g)).toBe(false);
+      g.players[0].draw(g);
+      expect(g.players[0].canOperationsExpertMove(g)).toBe(true);
+      g.players[0].move(g, "Chicago");
+      expect(g.players[0].canOperationsExpertMove(g)).toBe(false);
+      g.players[0].move(g, "Atlanta");
+      expect(g.players[0].canOperationsExpertMoveWithCard(g, "Atlanta")).toBe(
+        false
+      );
+      expect(g.players[0].canOperationsExpertMoveWithCard(g, "Beijing")).toBe(
+        true
+      );
+      g.players[0].operationsExpertMove(g, "Tokyo", "Beijing");
+      expect(g.player_deck.discard).toStrictEqual([...originalHand, "Beijing"]);
+      expect(g.players[0].location).toBe("Tokyo");
     });
   });
 
@@ -1870,38 +1949,6 @@ describe("Player", function () {
       expect(g.players[0].can_treat_color(g, Client.Color.Red)).toBe(true);
       expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(2);
       g.players[0].treat(g, Client.Color.Red);
-      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(0);
-    });
-  });
-
-  describe("#Movement", function () {
-    it("Medic Treats When Moving If Cure Has been Discovered", function () {
-      const seeded = seedrandom("test!");
-      const g = new Game(
-        Cities,
-        2,
-        ["test", "test"],
-        [Client.Roles.Medic, Client.Roles.Researcher],
-        5,
-        seeded
-      );
-
-      g.initialize_board();
-      g.cured[Client.Color.Blue] = 1;
-      g.players[0].move(g, "Washington");
-      g.players[0].move(g, "New York");
-      expect(g.game_graph["London"].cubes[Client.Color.Blue]).toBe(3);
-      g.players[0].move(g, "London");
-      expect(g.players[0].can_treat(g)).toBe(false);
-      expect(g.players[0].can_treat_color(g, Client.Color.Blue)).toBe(false);
-      expect(g.game_graph["London"].cubes[Client.Color.Blue]).toBe(0);
-
-      g.cured[Client.Color.Red] = 1;
-      g.players[0].move(g, "Jakarta");
-      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(2);
-      g.players[0].move(g, "Ho Chi Minh City");
-      expect(g.players[0].can_treat(g)).toBe(false);
-      expect(g.players[0].can_treat_color(g, Client.Color.Red)).toBe(false);
       expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(0);
     });
   });
