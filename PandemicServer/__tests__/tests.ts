@@ -1289,7 +1289,7 @@ describe("Player", function () {
       ); //p1 isnt a dispatcher
       expect(g.players[0].move(g, "Chicago")).toBe(true);
 
-      expect(g.players[0].dispatcher_move(g, g.players[0], "Tokyo")).toBe(true); // can move self to other player
+      expect(g.players[0].move(g, "Tokyo")).toBe(true); // can move self to other player
 
       expect(g.players[0].dispatcher_move(g, g.players[1], "Osaka")).toBe(true);
       expect(g.players[0].dispatcher_move(g, g.players[1], "Taipei")).toBe(
@@ -1345,7 +1345,7 @@ describe("Player", function () {
       expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(0);
     });
 
-    it("Movable Dispatcher Move Locations", function () {
+    it("Dispatcher Move Locations", function () {
       const seeded = seedrandom("test!");
       const g = new Game(
         Cities,
@@ -1392,6 +1392,12 @@ describe("Player", function () {
           .sort()
       ); // operations expert move not usable
 
+      expect(
+        g.players[2]
+          .get_valid_final_destinations(g)
+          .includes(g.game_graph["St Petersburg"].index)
+      ).toBeFalsy();
+
       g.players[0].move(g, "St Petersburg");
       g.players[2].move(g, "Chicago");
       g.players[2].move(g, "San Francisco");
@@ -1413,10 +1419,14 @@ describe("Player", function () {
           .map((i) => g.game_graph[i].index)
           .sort()
       );
+      expect(valid_final_destinations[2]).toBeUndefined();
 
       // self should be able to go to other two tokens
-      expect(valid_final_destinations[2].sort()).toEqual(
-        ["Atlanta", "St Petersburg"].map((i) => g.game_graph[i].index).sort()
+      expect(g.players[2].get_valid_final_destinations(g)).toContain(
+        g.game_graph["St Petersburg"].index
+      );
+      expect(g.players[2].get_valid_final_destinations(g)).toContain(
+        g.game_graph["Atlanta"].index
       );
     });
   });

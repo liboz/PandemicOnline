@@ -388,13 +388,22 @@ describe("ServerGame", () => {
       mockSocket.sendMessageToClient.mockClear();
       mockSocket.sendMessageToAllInRoom.mockClear();
 
-      // can move self to another pawn
+      // cant move self to another pawn via dispatcher action
       expect(server_game.curr_game.players[0].location).toBe("Atlanta");
-
       onDispatcherMove(0, "Khartoum");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
-        EventName.MoveChoiceSuccesful
+        EventName.InvalidAction
+      );
+      mockSocket.sendMessageToClient.mockClear();
+
+      const onMove = server_game.onMove(mockSocket);
+      const mockCallback = jest.fn();
+      onMove("Khartoum", mockCallback);
+      expect(mockCallback.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.MoveSuccessful
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(

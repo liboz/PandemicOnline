@@ -68,6 +68,12 @@ export class Player {
       // charter
       this.charterFlight(game, final_destination, player_hand, clientWebSocket);
       return true;
+    } else if (this.role === Client.Roles.Dispatcher) {
+      return this.moveToAnotherPlayerPiece(
+        game,
+        final_destination,
+        clientWebSocket
+      );
     } else {
       return false;
     }
@@ -171,6 +177,12 @@ export class Player {
             s.add(game.game_graph[c].index);
           });
         }
+
+        if (this.role === Client.Roles.Dispatcher) {
+          game.players.forEach((player) =>
+            s.add(game.game_graph[player.location].index)
+          );
+        }
         s.delete(game.game_graph[this.location].index);
         return [...s];
       }
@@ -202,24 +214,22 @@ export class Player {
         .map((location) => game.game_graph[location].index);
 
       for (let player of game.players) {
-        let baseValidDestinations: number[] = [];
         if (player !== this) {
-          baseValidDestinations = player.get_valid_final_destinations(
+          const baseValidDestinations = player.get_valid_final_destinations(
             game,
             this.hand
           );
+          const nonCurrentPlayerLocation = [...new Set(playerLocations)].filter(
+            (location) => location !== game.game_graph[player.location].index
+          );
+          // no duplicates
+          const allValidDestinations = new Set([
+            ...baseValidDestinations,
+            ...nonCurrentPlayerLocation,
+          ]);
+
+          result[player.id] = [...allValidDestinations];
         }
-
-        const nonCurrentPlayerLocation = [...new Set(playerLocations)].filter(
-          (location) => location !== game.game_graph[player.location].index
-        );
-        // no duplicates
-        const allValidDestinations = new Set([
-          ...baseValidDestinations,
-          ...nonCurrentPlayerLocation,
-        ]);
-
-        result[player.id] = [...allValidDestinations];
       }
       return result;
     } else {
