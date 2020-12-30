@@ -1,7 +1,9 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
-import React from "react";
+import React, { ReactNode } from "react";
 import { destroyEvent, joinAs } from "../Subscriptions";
 import { formatPlayer, hasStarted } from "../utils";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css"; // optional
 
 interface JoinComponentProps {
   game: Client.Game;
@@ -13,6 +15,101 @@ interface JoinComponentState {
   playerName: string;
   selectedRole: string;
 }
+
+const infoMap: Record<Client.Roles, ReactNode> = {
+  [Client.Roles.ContingencyPlanner]: (
+    <>
+      <div>
+        The Contingency Planner may, as an action, take an Event card from
+        anywhere in the Player Discard Pile and place it on his Role card. Only
+        1 Event card can be on his role card at a time. It does not count
+        against his hand limit.
+      </div>
+      <div>
+        When the Contingency Planner plays the Event card on his role card,
+        remove this Event card from the game (instead of discarding it).
+      </div>
+    </>
+  ),
+  [Client.Roles.Dispatcher]: (
+    <>
+      The Dispatcher may, as an action, either:
+      <ul>
+        <li>move any pawn to any city containing another pawn</li>
+        <li>move another player’s pawn as if it were his own</li>
+      </ul>
+    </>
+  ),
+  [Client.Roles.Medic]: (
+    <>
+      <div>
+        The Medic removes{" "}
+        <b>
+          <i>all</i>
+        </b>{" "}
+        cubes, not 1, of the same color when doing the Treat Disease action.
+      </div>
+      <div>
+        If a disease has been{" "}
+        <b>
+          <i>cured</i>
+        </b>
+        , he automatically removes all cubes of that color from a city, simply
+        by entering it or being there. This does not take an action
+      </div>
+      <div>
+        The Medic also prevents placing disease cubes (and outbreaks) of{" "}
+        <b>
+          <i>cured</i>
+        </b>{" "}
+        diseases in his location
+      </div>
+    </>
+  ),
+  [Client.Roles.OperationsExpert]: (
+    <>
+      The Operations Expert may, as an action, either:
+      <ul>
+        <li>
+          build a research station in his current city without discarding (or
+          using) a City card
+        </li>
+        <li>
+          once per turn, move from a research station to any city by discarding
+          any City card.
+        </li>
+      </ul>
+    </>
+  ),
+  [Client.Roles.QuarantineSpecialist]: (
+    <>
+      The Quarantine Specialist prevents both outbreaks and the placement of
+      disease cubes in the city she is in{" "}
+      <b>
+        <i>and</i>
+      </b>{" "}
+      all cities connected to that city. She does not affect cubes placed during
+      setup
+    </>
+  ),
+  [Client.Roles.Researcher]: (
+    <>
+      When doing the Share Knowledge action, the Researcher may give any City
+      card from her hand to another player in the same city as her,{" "}
+      <b>
+        <i>without</i>
+      </b>{" "}
+      this card having to match her city. The transfer must be{" "}
+      <b>
+        <i>from</i>
+      </b>{" "}
+      her hand to the other player’s hand, but it can occur on either player’s
+      turn.
+    </>
+  ),
+  [Client.Roles.Scientist]:
+    "The Scientist needs only 4 (not 5) City cards of the same disease color to Discover a Cure for that disease.",
+};
 
 export class JoinComponent extends React.Component<
   JoinComponentProps,
@@ -94,14 +191,21 @@ export class JoinComponent extends React.Component<
           </div>
           {roles.map((role) => {
             return (
-              <div key={role}>
-                <input
-                  name="role"
-                  type="radio"
-                  onChange={(e) => this.setState({ selectedRole: role })}
-                />
-                {role}
-              </div>
+              <Tippy
+                placement="right"
+                content={infoMap[role]}
+                touch={["hold", 500]}
+              >
+                <div key={role}>
+                  <input
+                    name="role"
+                    type="radio"
+                    onChange={(e) => this.setState({ selectedRole: role })}
+                  />
+                  {role}
+                  ℹ️
+                </div>
+              </Tippy>
             );
           })}
         </>
