@@ -56,6 +56,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     treatColorChoices,
     shareCardChoices,
     cureColorCards,
+    dispatcherMoveOtherPlayer,
   } = state;
 
   const isCurrentPlayer = game.player_index === player_index;
@@ -186,7 +187,9 @@ const BottomBar: FC<BottomBarProps> = (props) => {
       }
       y={barBaseHeight}
       height={baseButtonHeight}
-      label={"Special Action"}
+      label={
+        dispatcherMoveOtherPlayer === undefined ? "Special Action" : "Cancel"
+      }
       width={baseButtonWidth * 2}
       disabled={moveButtonDisabled}
       onTap={() => {

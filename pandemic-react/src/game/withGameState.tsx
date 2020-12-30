@@ -8,6 +8,7 @@ import {
   clearTreat$,
   closeSidebar$,
   destroyEvent,
+  dispatcherMoveTarget,
   dispatcherMoveTarget$,
   nextComponent,
 } from "../Subscriptions";
@@ -819,64 +820,60 @@ function withGameState(WrappedComponent: typeof React.Component) {
     onSelectedNode(selectedNode: CityNodeData) {
       const { isMoving, dispatcherMoveOtherPlayer } = this.state;
       const { game, socket } = this.props;
-      if (
-        game &&
-        socket &&
-        isMoving &&
-        dispatcherMoveOtherPlayer !== undefined
-      ) {
-        socket.emit(
-          Client.EventName.DispatcherMove,
-          dispatcherMoveOtherPlayer,
-          selectedNode.name
-        );
-      } else if (
-        game &&
-        socket &&
-        isMoving &&
-        selectedNode.isValidDestination
-      ) {
-        let curr_player = game.players[game.player_index];
-        let curr_city =
-          game.game_graph[game.game_graph_index[curr_player.location]];
-        let target_city =
-          game.game_graph[game.game_graph_index[selectedNode.name]];
-        let neighbors = curr_city.neighbors;
-        if (
-          neighbors.includes(selectedNode.id) ||
-          (curr_city.hasResearchStation && target_city.hasResearchStation)
-        ) {
-          this.moveEmit(selectedNode);
-          this.setState({ isMoving: false });
-        } else {
-          // choice 1 = direct, choice 2 = charter, choice 3 = operations expert
-          let choices = [false, false, false];
-          if (curr_player.hand.includes(selectedNode.name)) {
-            choices[0] = true;
-          }
-          if (game.can_charter_flight) {
-            choices[1] = true;
-          }
-          if (game.can_operations_expert_move) {
-            choices[2] = true;
-          }
-          if (choices[2] || choices.reduce((a, b) => (b ? a + 1 : a), 0) > 1) {
-            nextComponent(() => {
-              const props = {
-                game: game,
-                hand: curr_player.hand,
-                socket: socket,
-                canDirect: choices[0],
-                canCharter: choices[1],
-                canOperationsExpertMove: choices[2],
-                currLocation: curr_city.name,
-                targetLocation: target_city.name,
-              };
-              return React.createElement(MoveChoiceSelectorComponent, props);
-            });
-          } else {
+      if (game && socket && isMoving) {
+        if (dispatcherMoveOtherPlayer !== undefined) {
+          socket.emit(
+            Client.EventName.DispatcherMove,
+            dispatcherMoveOtherPlayer,
+            selectedNode.name
+          );
+          dispatcherMoveTarget();
+        } else if (selectedNode.isValidDestination) {
+          let curr_player = game.players[game.player_index];
+          let curr_city =
+            game.game_graph[game.game_graph_index[curr_player.location]];
+          let target_city =
+            game.game_graph[game.game_graph_index[selectedNode.name]];
+          let neighbors = curr_city.neighbors;
+          if (
+            neighbors.includes(selectedNode.id) ||
+            (curr_city.hasResearchStation && target_city.hasResearchStation)
+          ) {
             this.moveEmit(selectedNode);
             this.setState({ isMoving: false });
+          } else {
+            // choice 1 = direct, choice 2 = charter, choice 3 = operations expert
+            let choices = [false, false, false];
+            if (curr_player.hand.includes(selectedNode.name)) {
+              choices[0] = true;
+            }
+            if (game.can_charter_flight) {
+              choices[1] = true;
+            }
+            if (game.can_operations_expert_move) {
+              choices[2] = true;
+            }
+            if (
+              choices[2] ||
+              choices.reduce((a, b) => (b ? a + 1 : a), 0) > 1
+            ) {
+              nextComponent(() => {
+                const props = {
+                  game: game,
+                  hand: curr_player.hand,
+                  socket: socket,
+                  canDirect: choices[0],
+                  canCharter: choices[1],
+                  canOperationsExpertMove: choices[2],
+                  currLocation: curr_city.name,
+                  targetLocation: target_city.name,
+                };
+                return React.createElement(MoveChoiceSelectorComponent, props);
+              });
+            } else {
+              this.moveEmit(selectedNode);
+              this.setState({ isMoving: false });
+            }
           }
         }
       }
@@ -884,7 +881,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
 
     onDispatcherMove() {
       if (this.state.dispatcherMoveOtherPlayer) {
-        this.setState({ dispatcherMoveOtherPlayer: undefined });
+        dispatcherMoveTarget();
       } else {
         const { game } = this.props;
         if (game) {

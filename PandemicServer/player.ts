@@ -30,7 +30,12 @@ export class Player {
       return false;
     } else {
       if (
-        this.moveToAnotherPlayerPiece(game, final_destination, clientWebSocket)
+        this.moveToAnotherPlayerPiece(
+          game,
+          final_destination,
+          clientWebSocket,
+          other_player
+        )
       ) {
         return true;
       } else {
@@ -72,7 +77,8 @@ export class Player {
       return this.moveToAnotherPlayerPiece(
         game,
         final_destination,
-        clientWebSocket
+        clientWebSocket,
+        this
       );
     } else {
       return false;
@@ -194,10 +200,16 @@ export class Player {
   moveToAnotherPlayerPiece(
     game: Game,
     final_destination: string,
-    clientWebSocket: ClientWebSocket
+    clientWebSocket: ClientWebSocket,
+    player: Player
   ) {
     if (game.game_graph[final_destination].players.size > 0) {
-      this.movePiece(game, game.game_graph, final_destination, clientWebSocket);
+      player.movePiece(
+        game,
+        game.game_graph,
+        final_destination,
+        clientWebSocket
+      );
       return true;
     } else {
       return false;

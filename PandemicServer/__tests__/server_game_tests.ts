@@ -412,6 +412,42 @@ describe("ServerGame", () => {
       expect(server_game.curr_game.players[0].location).toBe("Khartoum");
     });
 
+    it("works to actually move someone to the dispatcher", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Dispatcher, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      // move dispatcher first
+      const onMove = server_game.onMove(mockSocket);
+      const mockCallback = jest.fn();
+      onMove("Khartoum", mockCallback);
+      expect(mockCallback.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.MoveSuccessful
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+      expect(server_game.curr_game.players[0].location).toBe("Khartoum");
+      mockSocket.sendMessageToClient.mockClear();
+      mockSocket.sendMessageToAllInRoom.mockClear();
+
+      const onDispatcherMove = server_game.onDispatcherMove(mockSocket);
+      onDispatcherMove(1, "Khartoum");
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
+        EventName.MoveChoiceSuccesful
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.UpdateGameState
+      );
+      expect(server_game.curr_game.players[1].location).toBe("Khartoum");
+    });
+
     it("dosnt work when not started", () => {
       const mockSocket = mock<ClientWebSocket>();
       const onJoin = server_game.onJoin(mockSocket);

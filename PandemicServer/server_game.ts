@@ -356,7 +356,6 @@ export class ServerGame {
             this.curr_game.toJSON()
           );
           this.curr_game.use_turn(clientWebSocket, this.match_name);
-          console.log(this.curr_game.players.map((i) => i.location));
         } else {
           clientWebSocket.sendMessageToClient(
             EventName.InvalidAction,

@@ -62,13 +62,11 @@ export const behavior = {
         node?.isValidDispatcherDestination
       )
     ) {
-      if (
-        dispatcherMoveOtherPlayer !== undefined &&
-        node.isValidDispatcherDestination
-      ) {
+      if (dispatcherMoveOtherPlayer !== undefined) {
         instance.alpha =
           isMoving &&
-          !node.isValidDispatcherDestination[dispatcherMoveOtherPlayer]
+          (node.isValidDispatcherDestination === undefined ||
+            !node.isValidDispatcherDestination[dispatcherMoveOtherPlayer])
             ? 0.1
             : 1.0;
       } else {
