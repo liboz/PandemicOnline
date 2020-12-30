@@ -822,12 +822,18 @@ function withGameState(WrappedComponent: typeof React.Component) {
       const { game, socket } = this.props;
       if (game && socket && isMoving) {
         if (dispatcherMoveOtherPlayer !== undefined) {
-          socket.emit(
-            Client.EventName.DispatcherMove,
-            dispatcherMoveOtherPlayer,
-            selectedNode.name
-          );
-          dispatcherMoveTarget();
+          if (
+            game.valid_dispatcher_final_destinations?.[
+              dispatcherMoveOtherPlayer
+            ].includes(selectedNode.id)
+          ) {
+            socket.emit(
+              Client.EventName.DispatcherMove,
+              dispatcherMoveOtherPlayer,
+              selectedNode.name
+            );
+            dispatcherMoveTarget();
+          }
         } else if (selectedNode.isValidDestination) {
           let curr_player = game.players[game.player_index];
           let curr_city =
