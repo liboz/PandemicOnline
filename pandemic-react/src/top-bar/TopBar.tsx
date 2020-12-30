@@ -10,6 +10,7 @@ import { SidebarItemProps } from "../sidebar/Sidebar";
 import CubeCureStatus from "./CubeCureStatus";
 import * as PIXI from "pixi.js";
 import { ScalingGraphics } from "../utils";
+import Faq from "../sidebar/Faq";
 
 interface TopBarProps extends ScalingGraphics {
   game: Client.Game;
@@ -87,6 +88,11 @@ const TopBar: FC<TopBarProps> = (props) => {
       label: "P",
       hoverText: "Show discarded player deck",
       type: PlayerDeckDiscard,
+    },
+    {
+      label: "F",
+      hoverText: "Show faq",
+      type: Faq,
     },
   ];
 
