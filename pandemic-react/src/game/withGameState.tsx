@@ -101,6 +101,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
 
       this.state = initialState();
       this.onMove = this.onMove.bind(this);
+      this.onDispatcherMove = this.onDispatcherMove.bind(this);
       this.onBuild = this.onBuild.bind(this);
       this.onTreat = this.onTreat.bind(this);
       this.onShare = this.onShare.bind(this);
@@ -897,6 +898,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
           state={this.state}
           onSelectedNode={this.onSelectedNode}
           onMove={this.onMove}
+          onDispatcherMove={this.onDispatcherMove}
           onBuild={this.onBuild}
           onTreat={this.onTreat}
           onShare={this.onShare}

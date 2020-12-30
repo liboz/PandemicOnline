@@ -25,6 +25,7 @@ export interface GameGraphicsProps {
   state: GameComponentState;
   onSelectedNode: (selectedNode: CityNodeData) => void;
   onMove: () => void;
+  onDispatcherMove: () => void;
   onBuild: () => void;
   onTreat: () => void;
   onShare: () => void;
@@ -165,6 +166,7 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
               <BottomBar
                 state={this.props.state}
                 onMove={this.props.onMove}
+                onDispatcherMove={this.props.onDispatcherMove}
                 onBuild={this.props.onBuild}
                 onTreat={this.props.onTreat}
                 onShare={this.props.onShare}

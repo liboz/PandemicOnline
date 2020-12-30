@@ -28,6 +28,7 @@ interface BottomBarProps extends ScalingGraphics {
   player_index?: number;
   state: GameComponentState;
   onMove: () => void;
+  onDispatcherMove: () => void;
   onBuild: () => void;
   onTreat: () => void;
   onShare: () => void;
@@ -41,6 +42,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     player_index,
     state,
     onMove,
+    onDispatcherMove,
     onBuild,
     onTreat,
     onShare,
@@ -189,7 +191,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
       disabled={moveButtonDisabled}
       onTap={() => {
         if (!moveButtonDisabled) {
-          onPass();
+          onDispatcherMove();
         }
       }}
       widthRatio={widthRatio}
