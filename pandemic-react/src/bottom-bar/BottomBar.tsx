@@ -80,6 +80,11 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     !game.can_cure ||
     (cannotDoPrimaryAction(state, game) && !cureColorCards);
 
+  // if there are players with special role and that is the current player
+  const showSpecialActionsButton = game.players
+    ?.filter((player) => player.role === Client.Roles.Dispatcher)
+    ?.some((player) => player.id === player_index);
+
   const infoTextRaw =
     game.players &&
     `Current Turn: ${
@@ -158,7 +163,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     },
   ];
 
-  const widthAdjusters = [0, 1, 2, 4, 6.5, 8]; // some elements are not same size so need to adjust
+  const widthAdjusters = [0, 1, 2, 4, 6.5, 8, 9]; // some elements are not same size so need to adjust
   const buttons = buttonProps.map((props, index) => (
     <Button
       key={props.label + index}
@@ -170,6 +175,27 @@ const BottomBar: FC<BottomBarProps> = (props) => {
       {...props}
     ></Button>
   ));
+
+  const specialActionButton = (
+    <Button
+      x={
+        width * 0.4 +
+        baseButtonWidth * widthAdjusters[widthAdjusters.length - 1]
+      }
+      y={barBaseHeight}
+      height={baseButtonHeight}
+      label={"Special Action"}
+      width={baseButtonWidth * 2}
+      disabled={moveButtonDisabled}
+      onTap={() => {
+        if (!moveButtonDisabled) {
+          onPass();
+        }
+      }}
+      widthRatio={widthRatio}
+      heightRatio={heightRatio}
+    ></Button>
+  );
 
   const actionsContainerY =
     heightRatio < 0.4
@@ -211,6 +237,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
         ></Text>
       </Container>
       {buttons}
+      {showSpecialActionsButton && specialActionButton}
     </Container>
   );
 };

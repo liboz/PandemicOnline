@@ -15,7 +15,7 @@ import { Subscription } from "rxjs";
 import * as d3 from "d3";
 import { CityNodeData } from "../node/CityNode";
 import Link from "../link/link";
-import { MoveChoiceSelectorComponent } from "../move-choice-selector/MoveChoiceSelectorComponent";
+import { MoveChoiceSelectorComponent } from "../move/MoveChoiceSelectorComponent";
 import { ShareResearcherComponent } from "../share/ShareResearcherComponent";
 import { ShareChoicesComponent } from "../share/ShareChoicesComponent";
 import { DiscardCardsComponent } from "../discard/DiscardCardsComponent";
@@ -24,6 +24,7 @@ import { TreatComponent } from "../treat/TreatComponent";
 import { WinLossComponent } from "./WinLossComponent";
 import { StartGameComponent } from "../start-game/StartGameComponent";
 import { SidebarItemProps } from "../sidebar/Sidebar";
+import { DispatcherMoveComponent } from "../move/DispatcherMoveComponent";
 
 export const width = 1920;
 export const height = 960;
@@ -843,6 +844,31 @@ function withGameState(WrappedComponent: typeof React.Component) {
       }
     }
 
+    onDispatcherMove() {
+      if (this.state.dispatcherMoveOtherPlayer) {
+        this.setState({ dispatcherMoveOtherPlayer: undefined });
+      } else {
+        const { game } = this.props;
+        if (game) {
+          const other_players = game.players.filter(
+            (i) => i.id !== game.player_index
+          );
+          if (other_players.length > 1) {
+            nextComponent(() => {
+              const props = {
+                other_players,
+              };
+              return React.createElement(DispatcherMoveComponent, props);
+            });
+          } else if (other_players.length === 1) {
+            this.setState({
+              dispatcherMoveOtherPlayer: other_players[0].id,
+            });
+          }
+        }
+      }
+    }
+
     moveEmit(selectedNode: CityNodeData) {
       const { socket } = this.props;
       socket?.emit(Client.EventName.Move, selectedNode.name, () => {
@@ -884,37 +910,6 @@ function withGameState(WrappedComponent: typeof React.Component) {
     }
   };
 }
-/*
-
-  isDispatcher() {
-    return (
-      this.game.players[this.game.player_index].role === Client.Roles.Dispatcher
-    );
-  }
-
-  onDispatcherMove() {
-    if (this.dispatcherMoveOtherPlayer) {
-      this.dispatcherMoveOtherPlayer = null;
-    } else {
-      const other_players = this.game.players.filter(
-        (i) => i.id !== this.game.player_index
-      );
-      if (other_players.length > 1) {
-        this.modalService.init(
-          DispatcherMoveComponent,
-          {
-            other_players: other_players,
-          },
-          {}
-        );
-      } else if (other_players.length === 1) {
-        this.dispatcherMoveOtherPlayer = other_players[0].id;
-      }
-    }
-  }
-
-
-}*/
 
 export class ShareCard {
   public static Take = "Take from";

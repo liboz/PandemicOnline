@@ -38,7 +38,7 @@ export const clearShare = () => {
 
 const dispatcherMoveTargetSource = new Subject<number>();
 export const dispatcherMoveTarget$ = dispatcherMoveTargetSource.asObservable();
-export const dispatcherMoveTarget = (target_player_id: number) => {
+export const dispatcherMoveTarget = (target_player_id?: number) => {
   dispatcherMoveTargetSource.next(target_player_id);
 };
 
