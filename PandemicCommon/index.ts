@@ -14,6 +14,7 @@ export namespace Client {
     player_index: number;
     turns_left: number;
     valid_final_destinations: number[];
+    valid_dispatcher_final_destinations?: Record<number, number[]>;
     can_charter_flight: boolean;
     can_operations_expert_move: boolean;
     can_build_research_station: boolean;

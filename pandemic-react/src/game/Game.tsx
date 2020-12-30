@@ -93,6 +93,7 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
       sidebarDisplayItem,
       currentWidth,
       currentHeight,
+      dispatcherMoveOtherPlayer,
     } = this.props.state;
     const heightRatio = currentHeight / height;
     const widthRatio = currentWidth / width;
@@ -124,6 +125,7 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
                           isMoving={isMoving}
                           heightRatio={heightRatio}
                           widthRatio={widthRatio}
+                          dispatcherMoveOtherPlayer={dispatcherMoveOtherPlayer}
                         ></CityNode>
                       </Container>
 

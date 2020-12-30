@@ -1,6 +1,6 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
-import { clearMove, dispatcherMoveTarget } from "../Subscriptions";
+import { dispatcherMoveTarget } from "../Subscriptions";
 import { formatPlayer } from "../utils";
 
 interface DispatcherMoveComponentProps {
@@ -8,10 +8,6 @@ interface DispatcherMoveComponentProps {
 }
 
 export class DispatcherMoveComponent extends React.Component<DispatcherMoveComponentProps> {
-  constructor(props: DispatcherMoveComponentProps) {
-    super(props);
-  }
-
   dispatcherMoveTargetSelect(target_player_id: number) {
     dispatcherMoveTarget(target_player_id);
   }
@@ -29,6 +25,7 @@ export class DispatcherMoveComponent extends React.Component<DispatcherMoveCompo
           {other_players.map((player) => {
             return (
               <button
+                key={`dispatcher-choice-${player.id}`}
                 onClick={() => this.dispatcherMoveTargetSelect(player.id)}
               >
                 Move {formatPlayer(player)}

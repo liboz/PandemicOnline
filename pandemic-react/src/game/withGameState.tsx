@@ -128,7 +128,10 @@ function withGameState(WrappedComponent: typeof React.Component) {
       });
       this.dispatcherMoveSubscription = dispatcherMoveTarget$.subscribe(
         (player_index) => {
-          this.setState({ dispatcherMoveOtherPlayer: player_index });
+          this.setState({
+            dispatcherMoveOtherPlayer: player_index,
+            isMoving: player_index === undefined ? false : true,
+          });
           destroyEvent();
         }
       );
@@ -251,6 +254,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.setState((state) => {
         return {
           isMoving: !state.isMoving,
+          dispatcherMoveOtherPlayer: undefined,
         };
       });
     }
@@ -748,6 +752,23 @@ function withGameState(WrappedComponent: typeof React.Component) {
             nodes[c].isValidDestination = true;
           });
         }
+
+        if (game.valid_dispatcher_final_destinations) {
+          for (const player in game.valid_dispatcher_final_destinations) {
+            const destinations =
+              game.valid_dispatcher_final_destinations[player];
+            destinations.forEach((d) => {
+              const isValidDestination = nodes[d].isValidDispatcherDestination;
+              if (isValidDestination) {
+                isValidDestination[player] = true;
+              } else {
+                const newRecord: Record<number, boolean> = {};
+                newRecord[player] = true;
+                nodes[d].isValidDispatcherDestination = newRecord;
+              }
+            });
+          }
+        }
         return nodes;
       }
       return;
@@ -796,9 +817,25 @@ function withGameState(WrappedComponent: typeof React.Component) {
     }
 
     onSelectedNode(selectedNode: CityNodeData) {
-      const { isMoving } = this.state;
+      const { isMoving, dispatcherMoveOtherPlayer } = this.state;
       const { game, socket } = this.props;
-      if (game && socket && isMoving && selectedNode.isValidDestination) {
+      if (
+        game &&
+        socket &&
+        isMoving &&
+        dispatcherMoveOtherPlayer !== undefined
+      ) {
+        socket.emit(
+          Client.EventName.DispatcherMove,
+          dispatcherMoveOtherPlayer,
+          selectedNode.name
+        );
+      } else if (
+        game &&
+        socket &&
+        isMoving &&
+        selectedNode.isValidDestination
+      ) {
         let curr_player = game.players[game.player_index];
         let curr_city =
           game.game_graph[game.game_graph_index[curr_player.location]];
@@ -864,6 +901,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
           } else if (other_players.length === 1) {
             this.setState({
               dispatcherMoveOtherPlayer: other_players[0].id,
+              isMoving: true,
             });
           }
         }

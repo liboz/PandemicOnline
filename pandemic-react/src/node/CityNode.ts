@@ -13,10 +13,19 @@ export interface CityNodeData {
   hasResearchStation: boolean;
   players: number[];
   isValidDestination?: boolean;
+  isValidDispatcherDestination?: Record<number, boolean>;
 }
 interface CityNodeProps extends ScalingGraphics {
   node: CityNodeData;
   isMoving: boolean;
+  dispatcherMoveOtherPlayer?: number;
+}
+
+function isValidDispatcherDestinationChanged(
+  old: Record<number, boolean> | undefined,
+  newValue: Record<number, boolean> | undefined
+) {
+  return JSON.stringify(old) === JSON.stringify(newValue);
 }
 
 const TYPE = "CityNodes";
@@ -27,7 +36,7 @@ export const behavior = {
     oldProps: CityNodeProps,
     newProps: CityNodeProps
   ) {
-    const { node, isMoving, widthRatio } = newProps;
+    const { node, isMoving, widthRatio, dispatcherMoveOtherPlayer } = newProps;
     if (
       oldProps.node?.x !== node.x ||
       oldProps.node?.y !== node.y ||
@@ -46,9 +55,25 @@ export const behavior = {
     }
     if (
       oldProps?.node?.isValidDestination !== node.isValidDestination ||
-      oldProps.isMoving !== newProps.isMoving
+      oldProps.isMoving !== newProps.isMoving ||
+      oldProps?.dispatcherMoveOtherPlayer !== dispatcherMoveOtherPlayer ||
+      isValidDispatcherDestinationChanged(
+        oldProps?.node?.isValidDispatcherDestination,
+        node?.isValidDispatcherDestination
+      )
     ) {
-      instance.alpha = isMoving && !node.isValidDestination ? 0.1 : 1.0;
+      if (
+        dispatcherMoveOtherPlayer !== undefined &&
+        node.isValidDispatcherDestination
+      ) {
+        instance.alpha =
+          isMoving &&
+          !node.isValidDispatcherDestination[dispatcherMoveOtherPlayer]
+            ? 0.1
+            : 1.0;
+      } else {
+        instance.alpha = isMoving && !node.isValidDestination ? 0.1 : 1.0;
+      }
     }
   },
 };

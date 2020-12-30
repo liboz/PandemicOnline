@@ -275,6 +275,7 @@ class GameJSON implements Client.Game {
   player_index: number;
   turns_left: number;
   valid_final_destinations: number[];
+  valid_dispatcher_final_destinations?: Record<number, number[]>;
   can_charter_flight: boolean;
   can_operations_expert_move: boolean;
   can_build_research_station: boolean;
@@ -320,6 +321,16 @@ class GameJSON implements Client.Game {
       this.valid_final_destinations = game.players[
         game.player_index
       ].get_valid_final_destinations(game);
+
+      const maybeDispatcher = game.players.filter(
+        (player) => player.role === Client.Roles.Dispatcher
+      );
+      if (maybeDispatcher.length > 0) {
+        this.valid_dispatcher_final_destinations = maybeDispatcher[0].get_valid_dispatcher_final_destinations(
+          game
+        );
+      }
+
       this.can_charter_flight = game.players[
         game.player_index
       ].canCharterFlight();
