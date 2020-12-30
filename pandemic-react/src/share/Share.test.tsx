@@ -4,7 +4,6 @@ import { testGame } from "../data/shareTestData";
 import rfdc from "rfdc";
 import { GameStateInterface, ShareCard } from "../game/withGameState";
 import { ShareResearcherComponent } from "./ShareResearcherComponent";
-import DivHandComponent from "../player/DivHand";
 import { ReactTestInstance } from "react-test-renderer";
 import { MockProxy } from "jest-mock-extended";
 import { ShareChoicesComponent } from "./ShareChoicesComponent";

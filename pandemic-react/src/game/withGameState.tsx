@@ -56,6 +56,7 @@ export interface GameComponentState {
 export interface GameStateInterface
   extends React.Component<GameComponentProps, GameComponentState> {
   onMove(): void;
+  onDispatcherMove(): void;
   onTreat(): void;
   onShare(): void;
   onDiscover(): void;
