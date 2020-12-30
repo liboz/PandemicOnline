@@ -191,21 +191,45 @@ export class JoinComponent extends React.Component<
           </div>
           {roles.map((role) => {
             return (
-              <Tippy
-                placement="right"
-                content={infoMap[role]}
-                touch={["hold", 500]}
-              >
-                <div key={role}>
-                  <input
-                    name="role"
-                    type="radio"
-                    onChange={(e) => this.setState({ selectedRole: role })}
-                  />
-                  {role}
-                  ℹ️
-                </div>
-              </Tippy>
+              <div key={role}>
+                <input
+                  name="role"
+                  type="radio"
+                  onChange={(e) => this.setState({ selectedRole: role })}
+                />
+                <Tippy
+                  placement="right"
+                  content={infoMap[role]}
+                  touch={"hold"}
+                  popperOptions={{
+                    strategy: "fixed",
+                    modifiers: [
+                      {
+                        name: "flip",
+                        options: {
+                          fallbackPlacements: ["bottom", "left"],
+                        },
+                      },
+                      {
+                        name: "preventOverflow",
+                        options: {
+                          altAxis: true,
+                          tether: false,
+                        },
+                      },
+                    ],
+                  }}
+                >
+                  <a
+                    style={{
+                      textDecoration: "none",
+                    }}
+                  >
+                    {role}
+                    ℹ️
+                  </a>
+                </Tippy>
+              </div>
             );
           })}
         </>
