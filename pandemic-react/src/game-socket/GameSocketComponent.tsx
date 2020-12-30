@@ -73,28 +73,31 @@ class GameSocketComponent extends React.Component<
           this.setState({ game: data });
         });
 
-        socket.on(Client.EventName.MoveChoiceSuccesful, (data: Client.Game) => {
-          clearMove();
-          this.setState({ game: data });
-        });
+        socket.on(
+          Client.EventName.MoveChoiceSuccessful,
+          (data: Client.Game) => {
+            clearMove();
+            this.setState({ game: data });
+          }
+        );
 
         socket.on(
-          Client.EventName.ResearchShareSuccesful,
+          Client.EventName.ResearchShareSuccessful,
           (data: Client.Game) => {
             this.setState({ game: data });
           }
         );
 
-        socket.on(Client.EventName.BuildSuccesful, (data: Client.Game) => {
+        socket.on(Client.EventName.BuildSuccessful, (data: Client.Game) => {
           this.setState({ game: data });
         });
 
-        socket.on(Client.EventName.TreatSuccesful, (data: Client.Game) => {
+        socket.on(Client.EventName.TreatSuccessful, (data: Client.Game) => {
           this.setState({ game: data });
         });
 
         socket.on(
-          Client.EventName.DiscoverSuccesful,
+          Client.EventName.DiscoverSuccessful,
           (data: Client.Game, color: string) => {
             toast.success(`Cure for ${color} was discovered`);
             this.setState({ game: data });

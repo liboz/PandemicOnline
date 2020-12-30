@@ -236,7 +236,7 @@ export class ServerGame {
           );
           this.curr_game.log.push(log_string);
           clientWebSocket.sendMessageToClient(
-            EventName.MoveChoiceSuccesful,
+            EventName.MoveChoiceSuccessful,
             this.curr_game.toJSON()
           );
           this.curr_game.use_turn(clientWebSocket, this.match_name);
@@ -270,7 +270,7 @@ export class ServerGame {
           );
           this.curr_game.log.push(log_string);
           clientWebSocket.sendMessageToClient(
-            EventName.MoveChoiceSuccesful,
+            EventName.MoveChoiceSuccessful,
             this.curr_game.toJSON()
           );
           this.curr_game.use_turn(clientWebSocket, this.match_name);
@@ -309,7 +309,7 @@ export class ServerGame {
           );
           this.curr_game.log.push(log_string);
           clientWebSocket.sendMessageToClient(
-            EventName.MoveChoiceSuccesful,
+            EventName.MoveChoiceSuccessful,
             this.curr_game.toJSON()
           );
           this.curr_game.use_turn(clientWebSocket, this.match_name);
@@ -352,7 +352,7 @@ export class ServerGame {
         ) {
           this.curr_game.log.push(log_string);
           clientWebSocket.sendMessageToClient(
-            EventName.MoveChoiceSuccesful,
+            EventName.MoveChoiceSuccessful,
             this.curr_game.toJSON()
           );
           this.curr_game.use_turn(clientWebSocket, this.match_name);
@@ -388,7 +388,7 @@ export class ServerGame {
           ].build_research_station(this.curr_game);
           this.curr_game.log.push(log_string);
           clientWebSocket.sendMessageToClient(
-            EventName.BuildSuccesful,
+            EventName.BuildSuccessful,
             this.curr_game.toJSON()
           );
           this.curr_game.use_turn(clientWebSocket, this.match_name);
@@ -432,7 +432,7 @@ export class ServerGame {
           callback();
           this.curr_game.log.push(log_string);
           clientWebSocket.sendMessageToClient(
-            EventName.TreatSuccesful,
+            EventName.TreatSuccessful,
             this.curr_game.toJSON()
           );
           this.curr_game.use_turn(clientWebSocket, this.match_name);
@@ -490,7 +490,7 @@ export class ServerGame {
             callback();
             this.curr_game.log.push(log_string);
             clientWebSocket.sendMessageToClient(
-              EventName.ShareSuccesful,
+              EventName.ShareSuccessful,
               this.curr_game.toJSON()
             );
             this.curr_game.use_turn(clientWebSocket, this.match_name);
@@ -519,7 +519,7 @@ export class ServerGame {
             callback();
             this.curr_game.log.push(log_string);
             clientWebSocket.sendMessageToClient(
-              EventName.ResearchShareSuccesful,
+              EventName.ResearchShareSuccessful,
               this.curr_game.toJSON()
             );
             this.curr_game.use_turn(clientWebSocket, this.match_name);
@@ -576,7 +576,7 @@ export class ServerGame {
             clientWebSocket.sendMessageToAllInRoom(EventName.Eradicated, color);
           } else {
             clientWebSocket.sendMessageToAllInRoom(
-              EventName.DiscoverSuccesful,
+              EventName.DiscoverSuccessful,
               this.curr_game.toJSON(),
               color
             );

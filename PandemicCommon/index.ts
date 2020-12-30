@@ -81,6 +81,14 @@ export namespace Client {
     id: number;
   }
 
+  export enum EventCard {
+    ResilientPopulation = "resilient population",
+    Airlift = "airlift",
+    Forecast = "forecast",
+    OneQuietNight = "one quiet night",
+    GovernmentGrant = "government grant",
+  }
+
   export enum EventName {
     StartGame = "start game",
     Move = "move",
@@ -101,17 +109,19 @@ export namespace Client {
     DiscardCards = "discard cards",
     Epidemic = "epidemic",
     Restart = "restart",
-    Restarted = "restarted",
+    EventCard = "event card",
 
     // Success Messages
     MoveSuccessful = "move successful",
-    MoveChoiceSuccesful = "move choice successful",
-    BuildSuccesful = "build successful",
-    TreatSuccesful = "treat successful",
-    ShareSuccesful = "share successful",
-    ResearchShareSuccesful = "research share successful",
+    MoveChoiceSuccessful = "move choice successful",
+    BuildSuccessful = "build successful",
+    TreatSuccessful = "treat successful",
+    ShareSuccessful = "share successful",
+    ResearchShareSuccessful = "research share successful",
     UpdateGameState = "update game state",
-    DiscoverSuccesful = "discover successful",
+    DiscoverSuccessful = "discover successful",
+    Restarted = "restarted",
+    EventCardSuccessful = "event card successful",
 
     // Invalid Message
     DiscardInvalid = "discard invalid",

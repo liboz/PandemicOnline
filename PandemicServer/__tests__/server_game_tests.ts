@@ -230,7 +230,7 @@ describe("ServerGame", () => {
       onDirectFlight("Milan");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
-        EventName.MoveChoiceSuccesful
+        EventName.MoveChoiceSuccessful
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
@@ -282,7 +282,7 @@ describe("ServerGame", () => {
       onCharterFlight("Atlanta");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
-        EventName.MoveChoiceSuccesful
+        EventName.MoveChoiceSuccessful
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
@@ -329,7 +329,7 @@ describe("ServerGame", () => {
       onOperationsExpertMove("Paris", "Khartoum");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
-        EventName.MoveChoiceSuccesful
+        EventName.MoveChoiceSuccessful
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
@@ -378,7 +378,7 @@ describe("ServerGame", () => {
       onDispatcherMove(1, "Khartoum");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
-        EventName.MoveChoiceSuccesful
+        EventName.MoveChoiceSuccessful
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
@@ -439,7 +439,7 @@ describe("ServerGame", () => {
       onDispatcherMove(1, "Khartoum");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
-        EventName.MoveChoiceSuccesful
+        EventName.MoveChoiceSuccessful
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
@@ -493,7 +493,7 @@ describe("ServerGame", () => {
       onBuild();
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
-        EventName.BuildSuccesful
+        EventName.BuildSuccessful
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
@@ -539,7 +539,7 @@ describe("ServerGame", () => {
       onTreat(Client.Color.Blue, mockCallback);
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
-        EventName.TreatSuccesful
+        EventName.TreatSuccessful
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
@@ -564,7 +564,7 @@ describe("ServerGame", () => {
       onTreat(Client.Color.Blue, mockCallback);
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
-        EventName.TreatSuccesful
+        EventName.TreatSuccessful
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(2);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
@@ -620,7 +620,7 @@ describe("ServerGame", () => {
       onShare(1, null, mockCallback);
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
-        EventName.ShareSuccesful
+        EventName.ShareSuccessful
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
@@ -642,7 +642,7 @@ describe("ServerGame", () => {
       onShare(1, "Khartoum", mockCallback);
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
-        EventName.ResearchShareSuccesful
+        EventName.ResearchShareSuccessful
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
@@ -724,7 +724,7 @@ describe("ServerGame", () => {
       onDiscover(["Milan", ...cards], mockCallback);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(2);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
-        EventName.DiscoverSuccesful
+        EventName.DiscoverSuccessful
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][0]).toBe(
         EventName.UpdateGameState
