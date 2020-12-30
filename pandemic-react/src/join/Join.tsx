@@ -220,14 +220,20 @@ export class JoinComponent extends React.Component<
                     ],
                   }}
                 >
-                  <a
+                  <button
                     style={{
                       textDecoration: "none",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      display: "inline",
+                      margin: 0,
+                      padding: 0,
                     }}
                   >
                     {role}
                     ℹ️
-                  </a>
+                  </button>
                 </Tippy>
               </div>
             );
