@@ -2,6 +2,7 @@ import { Client } from "pandemiccommon/dist/out-tsc";
 import React, { ReactNode } from "react";
 import { destroyEvent, joinAs } from "../Subscriptions";
 import { formatPlayer, hasStarted } from "../utils";
+import { FaQuestionCircle } from "react-icons/fa";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css"; // optional
 
@@ -231,8 +232,7 @@ export class JoinComponent extends React.Component<
                       padding: 0,
                     }}
                   >
-                    {role}
-                    ℹ️
+                    {role} <FaQuestionCircle />
                   </button>
                 </Tippy>
               </div>
