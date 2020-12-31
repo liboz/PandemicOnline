@@ -28,6 +28,7 @@ export namespace Client {
     log: string[];
     difficulty: number;
     must_discard_index: number;
+    one_quiet_night_active: boolean;
   }
 
   export interface Cubes extends Record<Color, number> {

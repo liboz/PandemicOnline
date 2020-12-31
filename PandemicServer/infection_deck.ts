@@ -37,4 +37,8 @@ export class InfectionDeck {
     });
     this.faceup_deck = [];
   }
+
+  removeFromFaceup(targetCard: string) {
+    this.faceup_deck = this.faceup_deck.filter((card) => card !== targetCard);
+  }
 }

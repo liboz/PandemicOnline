@@ -27,6 +27,7 @@ export class Game {
   difficulty: number;
   rng: seedrandom.prng;
   must_discard_index: number;
+  one_quiet_night_active: boolean = false;
 
   constructor(
     cities: CityData[],
@@ -112,12 +113,16 @@ export class Game {
   }
 
   infect_stage() {
-    for (let i = 0; i < this.infection_rate[this.infection_rate_index]; i++) {
-      const card = this.infection_deck.flip_card();
-      if (!this.game_graph[card].infect(this)) {
-        this.lose_game();
-        console.log("lost during an infect stage");
+    if (!this.one_quiet_night_active) {
+      for (let i = 0; i < this.infection_rate[this.infection_rate_index]; i++) {
+        const card = this.infection_deck.flip_card();
+        if (!this.game_graph[card].infect(this)) {
+          this.lose_game();
+          console.log("lost during an infect stage");
+        }
       }
+    } else {
+      this.one_quiet_night_active = false;
     }
   }
 
@@ -289,6 +294,7 @@ class GameJSON implements Client.Game {
   log: string[];
   difficulty: number;
   must_discard_index: number;
+  one_quiet_night_active: boolean;
   constructor(game: Game) {
     if (game === null) {
       return null;
@@ -350,6 +356,7 @@ class GameJSON implements Client.Game {
       this.player_deck_cards_remaining = game.player_deck.deck.length;
       this.log = [...game.log];
       this.difficulty = game.difficulty;
+      this.one_quiet_night_active = game.one_quiet_night_active;
     }
     if (game.game_state === Client.GameState.DiscardingCard) {
       this.must_discard_index = game.must_discard_index;

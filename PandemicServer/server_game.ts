@@ -4,6 +4,7 @@ import { EventName, Game } from "./game";
 import { Client } from "pandemiccommon/dist/out-tsc";
 import seedrandom from "seedrandom";
 import { GameMap } from "./game";
+import { canUseEventCard, handleEventCard } from "event_cards";
 
 export const dummy_game = new GameMap(Cities);
 
@@ -652,6 +653,43 @@ export class ServerGame {
         );
       } else {
         clientWebSocket.sendMessageToClient(EventName.DiscardInvalid, cards);
+      }
+    };
+  }
+
+  onEventCard(clientWebSocket: ClientWebSocket) {
+    return (
+      eventCard: Client.EventCard,
+      card_owner_player_index: number,
+      arg1: string | number,
+      arg2?: string | number
+    ) => {
+      let log_string = `Player ${card_owner_player_index}: plays event card ${eventCard}`;
+      console.log(`${this.match_name}: ${log_string}`);
+      if (canUseEventCard(eventCard, card_owner_player_index, this.curr_game)) {
+        handleEventCard(
+          eventCard,
+          this.curr_game,
+          this.curr_game.game_graph,
+          clientWebSocket,
+          arg1,
+          arg2
+        );
+
+        if (eventCard !== Client.EventCard.Forecast) {
+          this.curr_game.log.push(log_string);
+          clientWebSocket.sendMessageToAllInRoom(
+            EventName.EventCardSuccessful,
+            eventCard,
+            card_owner_player_index,
+            this.curr_game.toJSON()
+          );
+        }
+      } else {
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
+          `It is invalid for ${card_owner_player_index} to use event card ${eventCard}`
+        );
       }
     };
   }

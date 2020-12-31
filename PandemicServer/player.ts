@@ -267,8 +267,8 @@ export class Player {
     );
   }
 
-  build_research_station(game: Game) {
-    if (this.role !== Client.Roles.OperationsExpert) {
+  build_research_station(game: Game, eventCard = false) {
+    if (this.role !== Client.Roles.OperationsExpert && !eventCard) {
       game.player_deck.deleteCardFromHand(this.hand, this.location);
     }
     game.game_graph[this.location].hasResearchStation = true;
