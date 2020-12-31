@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import SpanCube from "../cubes/SpanCubes";
 import BaseSidebarList from "./BaseSidebarList";
 import { SidebarItemProps } from "./Sidebar";
 
@@ -16,12 +17,7 @@ const PlayerDeckDiscard: FC<SidebarItemProps> = (props: SidebarItemProps) => {
         return (
           <li key={`player-deck-discard-${card}-${discardDeckIndex}`}>
             {cardIndex !== undefined && (
-              <span
-                className={"box"}
-                style={{
-                  backgroundColor: game.game_graph[cardIndex].color,
-                }}
-              ></span>
+              <SpanCube game={game} cardIndex={cardIndex} />
             )}
             {card}
           </li>

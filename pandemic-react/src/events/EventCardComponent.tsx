@@ -3,6 +3,7 @@ import React from "react";
 import { destroyEvent } from "../Subscriptions";
 import DivHand from "../player/DivHand";
 import { getEventCardsInHand } from "../utils";
+import Select from "react-select";
 
 interface EventCardProps {
   game: Client.Game;
@@ -10,10 +11,32 @@ interface EventCardProps {
   player_index: number;
 }
 
+interface SelectOption {
+  value: string;
+  label: string;
+  color: string;
+}
+
 interface EventCardState {
+  selectOption?: SelectOption | null;
   arg1?: string | number;
   arg2?: string;
 }
+
+const dot = (color = "#ccc") => ({
+  alignItems: "center",
+  display: "flex",
+
+  ":before": {
+    backgroundColor: color,
+    borderRadius: 10,
+    content: '" "',
+    display: "block",
+    marginRight: 8,
+    height: 10,
+    width: 10,
+  },
+});
 
 export class EventCardComponent extends React.Component<
   EventCardProps,
@@ -21,7 +44,15 @@ export class EventCardComponent extends React.Component<
 > {
   constructor(props: EventCardProps) {
     super(props);
-    this.state = { arg1: undefined, arg2: undefined };
+    this.state = { arg1: undefined, arg2: undefined, selectOption: null };
+    this.onGovernmentGrant = this.onGovernmentGrant.bind(this);
+  }
+
+  onGovernmentGrant(eventCard: string) {
+    const { socket, player_index } = this.props;
+    const { arg1 } = this.state;
+
+    socket.emit(Client.EventName.EventCard, eventCard, player_index, arg1);
   }
 
   onCancel() {
@@ -30,6 +61,7 @@ export class EventCardComponent extends React.Component<
 
   displayEventCard(eventCard: Client.EventCard) {
     const { game } = this.props;
+    const { arg1, arg2, selectOption } = this.state;
     switch (eventCard) {
       case Client.EventCard.Airlift:
         /*
@@ -41,16 +73,49 @@ export class EventCardComponent extends React.Component<
         break;
       case Client.EventCard.Forecast: // todo
       case Client.EventCard.GovernmentGrant:
+        const options = game.game_graph
+          .filter((city) => !city.hasResearchStation)
+          .map((city) => {
+            return {
+              value: city.name,
+              label: city.name,
+              color: city.color,
+            };
+          });
+
+        const colourStyles: any = {
+          control: (styles: any) => ({ ...styles, backgroundColor: "white" }),
+          option: (styles: any, { data }: any) => {
+            return {
+              ...styles,
+              ...dot(data.color),
+            };
+          },
+          input: (styles: any) => ({ ...styles, ...dot() }),
+          placeholder: (styles: any) => ({ ...styles, ...dot() }),
+          singleValue: (styles: any, { data }: any) => ({
+            ...styles,
+            ...dot(data.color),
+          }),
+        };
         return (
           <div>
             Select City To Build Research Station:{" "}
-            <select>
-              {game.game_graph
-                .filter((city) => !city.hasResearchStation)
-                .map((city) => (
-                  <option value={city.name}>{city.name}</option>
-                ))}
-            </select>
+            <Select<SelectOption>
+              onChange={(data) => {
+                this.setState({
+                  selectOption: data,
+                  arg1: data?.value,
+                });
+              }}
+              defaultValue={selectOption}
+              label="Select City To Build Research Station"
+              options={options}
+              styles={colourStyles}
+            />
+            <button onClick={() => this.onGovernmentGrant(eventCard)}>
+              Make Research Station on {arg1}
+            </button>
           </div>
         );
       /*

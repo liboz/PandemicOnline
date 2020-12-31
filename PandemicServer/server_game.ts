@@ -662,7 +662,7 @@ export class ServerGame {
       eventCard: Client.EventCard,
       card_owner_player_index: number,
       arg1: string | number,
-      arg2?: string | number
+      arg2?: string
     ) => {
       let log_string = `Player ${card_owner_player_index}: plays event card ${eventCard}`;
       console.log(`${this.match_name}: ${log_string}`);
@@ -676,12 +676,16 @@ export class ServerGame {
           arg2
         );
 
+        this.curr_game.players[card_owner_player_index].hand.delete(eventCard);
+
         if (eventCard !== Client.EventCard.Forecast) {
           this.curr_game.log.push(log_string);
           clientWebSocket.sendMessageToAllInRoom(
             EventName.EventCardSuccessful,
             eventCard,
             card_owner_player_index,
+            arg1,
+            arg2,
             this.curr_game.toJSON()
           );
         }

@@ -79,6 +79,7 @@ io.on(EventName.Connection, function (socket) {
   clientWebSocket.on(EventName.Share, game.onShare(clientWebSocket));
   clientWebSocket.on(EventName.Discover, game.onDiscover(clientWebSocket));
   clientWebSocket.on(EventName.Pass, game.onPass(clientWebSocket));
+  clientWebSocket.on(EventName.EventCard, game.onEventCard(clientWebSocket));
   clientWebSocket.on(EventName.Discard, game.onDiscard(clientWebSocket));
   clientWebSocket.on(EventName.Disconnect, function () {
     console.log(`user disconnected from ${match_name}`);

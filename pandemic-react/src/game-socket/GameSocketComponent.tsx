@@ -24,13 +24,15 @@ interface GameSocketState {
   player_index?: number;
 }
 
+type GameSocketComponentProps = RouteComponentProps<{ match_name: string }>;
+
 class GameSocketComponent extends React.Component<
-  RouteComponentProps<{ match_name: string }>,
+  GameSocketComponentProps,
   GameSocketState
 > {
   joinGameSubscription?: Subscription;
   restartGameSubscription?: Subscription;
-  constructor(props: any) {
+  constructor(props: GameSocketComponentProps) {
     super(props);
     this.state = {};
   }
@@ -147,13 +149,40 @@ class GameSocketComponent extends React.Component<
           }
         });
 
-        socket.on(Client.EventName.Epidemic, (data: any) => {
+        socket.on(Client.EventName.Epidemic, (data: string) => {
           toast.warning(`${data} infected by Epidemic`);
         });
 
         socket.on(Client.EventName.InvalidAction, (data: any) => {
           toast.error(data);
         });
+
+        socket.on(
+          Client.EventName.EventCardSuccessful,
+          (
+            eventCard: string,
+            card_owner_player_index: string,
+            arg1: string | number,
+            arg2: string | undefined,
+            data: Client.Game
+          ) => {
+            switch (eventCard) {
+              case Client.EventCard.Airlift:
+                break;
+              case Client.EventCard.Forecast: // todo
+              case Client.EventCard.GovernmentGrant:
+                toast.success(
+                  `Player ${card_owner_player_index} has played ${eventCard} to build a research station on ${arg1}`
+                );
+                break;
+              case Client.EventCard.OneQuietNight:
+                break;
+              case Client.EventCard.ResilientPopulation:
+                break;
+            }
+            this.setState({ game: data });
+          }
+        );
 
         socket.on(Client.EventName.GameInitialized, (data: Client.Game) => {
           destroyEvent();
