@@ -261,6 +261,11 @@ export class Game {
     }
   }
 
+  addResearchStation(location: string) {
+    this.game_graph[location].hasResearchStation = true;
+    this.research_stations.add(location);
+  }
+
   toJSON() {
     return new GameJSON(this);
   }

@@ -269,12 +269,11 @@ export class Player {
     );
   }
 
-  build_research_station(game: Game, eventCard = false) {
-    if (this.role !== Client.Roles.OperationsExpert && !eventCard) {
+  build_research_station(game: Game) {
+    if (this.role !== Client.Roles.OperationsExpert) {
       game.player_deck.deleteCardFromHand(this.hand, this.location);
     }
-    game.game_graph[this.location].hasResearchStation = true;
-    game.research_stations.add(this.location);
+    game.addResearchStation(this.location);
   }
 
   can_cure(game: Game, cards: string[]) {

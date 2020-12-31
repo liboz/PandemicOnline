@@ -26,6 +26,7 @@ import { WinLossComponent } from "./WinLossComponent";
 import { StartGameComponent } from "../start-game/StartGameComponent";
 import { SidebarItemProps } from "../sidebar/Sidebar";
 import { DispatcherMoveComponent } from "../move/DispatcherMoveComponent";
+import { EventCardComponent } from "../events/EventCardComponent";
 
 export const width = 1920;
 export const height = 960;
@@ -109,6 +110,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.onShare = this.onShare.bind(this);
       this.onDiscover = this.onDiscover.bind(this);
       this.onPass = this.onPass.bind(this);
+      this.onEventCard = this.onEventCard.bind(this);
       this.onSelectedNode = this.onSelectedNode.bind(this);
       this.treat = this.treat.bind(this);
       this.share = this.share.bind(this);
@@ -912,6 +914,20 @@ function withGameState(WrappedComponent: typeof React.Component) {
       }
     }
 
+    onEventCard() {
+      const { game, socket, player_index } = this.props;
+      if (game && socket && player_index !== undefined) {
+        nextComponent(() => {
+          const props = {
+            game,
+            socket,
+            player_index,
+          };
+          return React.createElement(EventCardComponent, props);
+        });
+      }
+    }
+
     moveEmit(selectedNode: CityNodeData) {
       const { socket } = this.props;
       socket?.emit(Client.EventName.Move, selectedNode.name, () => {
@@ -946,6 +962,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
           onShare={this.onShare}
           onDiscover={this.onDiscover}
           onPass={this.onPass}
+          onEventCard={this.onEventCard}
           setSidebarChildren={this.setSidebarChildren}
           hideSidebar={this.hideSidebar}
           resize={this.resize}

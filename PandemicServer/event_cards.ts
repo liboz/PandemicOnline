@@ -18,11 +18,11 @@ export function handleEventCard(
   game_graph: Record<string, City>,
   clientWebSocket: ClientWebSocket,
   arg1: string | number,
-  arg2?: string | number
+  arg2?: string
 ) {
   switch (event) {
     case Client.EventCard.Airlift:
-      if (typeof arg1 === "number" && typeof arg2 === "string") {
+      if (typeof arg1 === "number") {
         // arg1 is playerIndex and arg2 is final destination
         const target_player = game.players[arg1];
         handleAirlift(target_player, game, game_graph, arg2, clientWebSocket);
@@ -30,10 +30,9 @@ export function handleEventCard(
       break;
     case Client.EventCard.Forecast: // todo
     case Client.EventCard.GovernmentGrant:
-      if (typeof arg1 === "number") {
-        // arg1 is playerIndex
-        const target_player = game.players[arg1];
-        handleGovernmentGrant(target_player, game);
+      if (typeof arg1 === "string") {
+        // arg1 is location
+        handleGovernmentGrant(arg1, game);
       }
       break;
     case Client.EventCard.OneQuietNight:
@@ -58,8 +57,8 @@ function handleAirlift(
   target_player.movePiece(game, game_graph, final_destination, clientWebSocket);
 }
 
-function handleGovernmentGrant(target_player: Player, game: Game) {
-  target_player.build_research_station(game, true);
+function handleGovernmentGrant(location: string, game: Game) {
+  game.addResearchStation(location);
 }
 
 function handleOneQuietNight(game: Game) {

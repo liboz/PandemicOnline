@@ -174,3 +174,13 @@ export interface ScalingGraphics {
   widthRatio: number;
   heightRatio: number;
 }
+
+export function getEventCardsInHand(game: Client.Game, player_index: number) {
+  return (
+    game.players?.[player_index].hand
+      .filter((card) =>
+        Object.values(Client.EventCard).includes(card as Client.EventCard)
+      )
+      .map((card) => card as Client.EventCard) || []
+  );
+}

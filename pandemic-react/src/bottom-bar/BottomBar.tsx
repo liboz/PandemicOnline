@@ -9,7 +9,7 @@ import Button, {
 import { barBaseHeight, width } from "../game/Game";
 import { GameComponentState } from "../game/withGameState";
 import BotHand from "../hand/BotHand";
-import { ScalingGraphics } from "../utils";
+import { getEventCardsInHand, ScalingGraphics } from "../utils";
 
 function cannotDoPrimaryAction(state: GameComponentState, game: Client.Game) {
   return !!(
@@ -34,6 +34,7 @@ interface BottomBarProps extends ScalingGraphics {
   onShare: () => void;
   onDiscover: () => void;
   onPass: () => void;
+  onEventCard: () => void;
 }
 
 const BottomBar: FC<BottomBarProps> = (props) => {
@@ -48,6 +49,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     onShare,
     onDiscover,
     onPass,
+    onEventCard,
     heightRatio,
     widthRatio,
   } = props;
@@ -82,6 +84,10 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     !isCurrentPlayer ||
     !game.can_cure ||
     (cannotDoPrimaryAction(state, game) && !cureColorCards);
+
+  const eventButtonDisabled =
+    player_index === undefined ||
+    !(getEventCardsInHand(game, player_index).length > 0);
 
   // if there are players with special role and that is the current player
   const showSpecialActionsButton = game.players
@@ -157,10 +163,10 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     {
       label: "Event Card",
       width: baseButtonWidth * 1.5,
-      disabled: !isCurrentPlayer || cannotDoPrimaryAction(state, game),
+      disabled: eventButtonDisabled,
       onTap: () => {
-        if (!isCurrentPlayer || !cannotDoPrimaryAction(state, game)) {
-          onPass();
+        if (!eventButtonDisabled) {
+          onEventCard();
         }
       },
     },

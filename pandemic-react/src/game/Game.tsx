@@ -31,6 +31,7 @@ export interface GameGraphicsProps {
   onShare: () => void;
   onDiscover: () => void;
   onPass: () => void;
+  onEventCard: () => void;
   setSidebarChildren: (item: React.FunctionComponent<SidebarItemProps>) => void;
   hideSidebar: () => void;
   resize: () => void;
@@ -48,7 +49,11 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
 
   componentDidMount() {
     if (this.pixiApp) {
-      this.pixiApp.destroy();
+      this.pixiApp.destroy(true, {
+        children: true,
+        texture: true,
+        baseTexture: true,
+      });
     }
     this.pixiApp = new PIXI.Application({
       backgroundColor: 0x2a2c39,
@@ -71,8 +76,6 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
 
     this.elementRef.current!.appendChild(this.pixiApp.view);
   }
-
-  componentWillUnmount() {}
 
   componentDidUpdate(prevProps: GameGraphicsProps) {
     if (prevProps.game === undefined) {
@@ -174,6 +177,7 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
                 onShare={this.props.onShare}
                 onDiscover={this.props.onDiscover}
                 onPass={this.props.onPass}
+                onEventCard={this.props.onEventCard}
                 game={this.props.game}
                 player_index={this.props.player_index}
                 heightRatio={heightRatio}
