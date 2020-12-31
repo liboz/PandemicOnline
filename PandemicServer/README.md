@@ -6,6 +6,10 @@ Online Pandemic Simulator
 
 Run the `run_docker` script in the main folder
 
+# Notes
+
+Imports require `./file` instead of just `file`
+
 # Todo
 
 Words too small on certain screens

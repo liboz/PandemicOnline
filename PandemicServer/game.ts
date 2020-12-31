@@ -51,9 +51,10 @@ export class Game {
       this.game_graph[player.location].players.add(player);
     });
     this.initial_cards_for_players = [];
+    const events = Object.values(Client.EventCard);
     this.player_deck = new PlayerDeck(
       cities,
-      [],
+      events,
       num_epidemics,
       this.rng,
       this

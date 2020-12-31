@@ -4,7 +4,7 @@ import { EventName, Game } from "./game";
 import { Client } from "pandemiccommon/dist/out-tsc";
 import seedrandom from "seedrandom";
 import { GameMap } from "./game";
-import { canUseEventCard, handleEventCard } from "event_cards";
+import { canUseEventCard, handleEventCard } from "./event_cards";
 
 export const dummy_game = new GameMap(Cities);
 

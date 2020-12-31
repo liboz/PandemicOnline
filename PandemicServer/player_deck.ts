@@ -1,5 +1,6 @@
 import { CityData } from "data/cities";
 import { Game } from "game";
+import { Client } from "pandemiccommon/dist/out-tsc";
 import { shuffle } from "./random";
 
 export class PlayerDeck {
@@ -9,7 +10,7 @@ export class PlayerDeck {
   discard: string[];
   constructor(
     cities: CityData[],
-    events: string[],
+    events: Client.EventCard[],
     public num_epidemics: number,
     public rng: seedrandom.prng,
     game: Game = null

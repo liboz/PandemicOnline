@@ -155,6 +155,16 @@ const BottomBar: FC<BottomBarProps> = (props) => {
       },
     },
     {
+      label: "Event Card",
+      width: baseButtonWidth * 1.5,
+      disabled: !isCurrentPlayer || cannotDoPrimaryAction(state, game),
+      onTap: () => {
+        if (!isCurrentPlayer || !cannotDoPrimaryAction(state, game)) {
+          onPass();
+        }
+      },
+    },
+    {
       label: "Pass",
       width: baseButtonWidth,
       disabled: !isCurrentPlayer || cannotDoPrimaryAction(state, game),
@@ -166,11 +176,11 @@ const BottomBar: FC<BottomBarProps> = (props) => {
     },
   ];
 
-  const widthAdjusters = [0, 1, 2, 4, 6.5, 8, 9]; // some elements are not same size so need to adjust
+  const widthAdjusters = [0, 1, 2, 4, 6.5, 8, 9.5, 10.5]; // some elements are not same size so need to adjust
   const buttons = buttonProps.map((props, index) => (
     <Button
       key={props.label + index}
-      x={width * 0.4 + baseButtonWidth * widthAdjusters[index]}
+      x={width * 0.3 + baseButtonWidth * widthAdjusters[index]}
       y={barBaseHeight}
       height={baseButtonHeight}
       widthRatio={widthRatio}
@@ -182,7 +192,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
   const specialActionButton = (
     <Button
       x={
-        width * 0.4 +
+        width * 0.3 +
         baseButtonWidth * widthAdjusters[widthAdjusters.length - 1]
       }
       y={barBaseHeight}
@@ -220,7 +230,7 @@ const BottomBar: FC<BottomBarProps> = (props) => {
           widthRatio={widthRatio}
         ></BotHand>
       </Container>
-      <Container x={(width / 4) * widthRatio} y={actionsContainerY}>
+      <Container x={width * 0.18 * widthRatio} y={actionsContainerY}>
         <Text
           text={infoTextRaw}
           style={{

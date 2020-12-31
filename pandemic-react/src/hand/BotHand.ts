@@ -40,19 +40,23 @@ function generateHand(
   player.hand.forEach((card, index) => {
     const baseY =
       infoTextFontSizeWithPadding * heightRatio + heightPerCard * (index % 4);
-    const color = game.game_graph[game.game_graph_index[card]].color;
-    const hexColor = Number(colorNameToHex(color));
 
     const baseX = index >= 4 ? widthAllowed / 2 : 0;
-    graphics.beginFill(hexColor);
-    graphics.lineStyle(2, 0xffffff, 0.3);
-    graphics.drawRect(
-      baseX + 10 * widthRatio,
-      baseY + 2.5 * heightRatio,
-      Math.max(10 * widthRatio, 5),
-      Math.max(10 * widthRatio, 5)
-    );
-    graphics.endFill();
+
+    if (game.game_graph_index[card]) {
+      const color = game.game_graph[game.game_graph_index[card]].color;
+      const hexColor = Number(colorNameToHex(color));
+
+      graphics.beginFill(hexColor);
+      graphics.lineStyle(2, 0xffffff, 0.3);
+      graphics.drawRect(
+        baseX + 10 * widthRatio,
+        baseY + 2.5 * heightRatio,
+        Math.max(10 * widthRatio, 5),
+        Math.max(10 * widthRatio, 5)
+      );
+      graphics.endFill();
+    }
     const cityName = new PIXI.Text(card, {
       fontSize: Math.max(15 * widthRatio, 10),
     });

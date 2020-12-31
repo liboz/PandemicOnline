@@ -176,7 +176,9 @@ export class Player {
         );
 
         hand.forEach((c) => {
-          s.add(game.game_graph[c].index);
+          if (game.game_graph[c]) {
+            s.add(game.game_graph[c].index);
+          }
         });
         if (game.game_graph[this.location].hasResearchStation) {
           game.research_stations.forEach((c) => {
@@ -312,7 +314,9 @@ export class Player {
         yellow: 0,
       };
       this.hand.forEach((card) => {
-        cards[game.game_graph[card].color] += 1;
+        if (game.game_graph[card]) {
+          cards[game.game_graph[card].color] += 1;
+        }
       });
 
       let cards_needed = this.role === Client.Roles.Scientist ? 4 : 5;
@@ -468,8 +472,8 @@ export class PlayerJSON implements Client.Player {
     this.name = player.name;
     this.role = player.role;
     this.hand = [...player.hand].sort((i, j) => {
-      let first_index = ColorsIndex[game.game_graph[i].color];
-      let second_index = ColorsIndex[game.game_graph[j].color];
+      let first_index = ColorsIndex?.[game.game_graph[i]?.color];
+      let second_index = ColorsIndex?.[game.game_graph[j]?.color];
       if (first_index > second_index) {
         return 1;
       }
