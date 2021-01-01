@@ -113,9 +113,10 @@ export function handleForecastComplete(
 
   const player = game.players[forecastingPlayerIndex];
   player.hand.delete(Client.EventCard.Forecast);
-  if (player.hand.size === 7) {
+  if (player.hand.size === player.hand_size_limit) {
+    // this means we went from over the limit to under the limit
     onDiscardContinue(clientWebSocket);
-  } else if (player.hand.size < 7) {
+  } else if (player.hand.size < player.hand_size_limit) {
     game.game_state = Client.GameState.Ready;
   } else {
     game.checkDiscardingNeeded(clientWebSocket);
