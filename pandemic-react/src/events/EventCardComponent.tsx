@@ -83,6 +83,9 @@ export class EventCardComponent extends React.Component<
     super(props);
     this.state = { arg1: undefined, arg2: undefined, selectOption: null };
     this.onGovernmentGrant = this.onGovernmentGrant.bind(this);
+    this.onAirlift = this.onAirlift.bind(this);
+    this.onOneQuietNight = this.onOneQuietNight.bind(this);
+    this.onResilientPopulation = this.onResilientPopulation.bind(this);
   }
 
   onGovernmentGrant(eventCard: string) {
@@ -105,6 +108,19 @@ export class EventCardComponent extends React.Component<
     );
   }
 
+  onOneQuietNight(eventCard: string) {
+    const { socket, player_index } = this.props;
+
+    socket.emit(Client.EventName.EventCard, eventCard, player_index);
+  }
+
+  onResilientPopulation(eventCard: string) {
+    const { socket, player_index } = this.props;
+    const { arg1 } = this.state;
+
+    socket.emit(Client.EventName.EventCard, eventCard, player_index, arg1);
+  }
+
   onCancel() {
     destroyEvent();
   }
@@ -116,7 +132,7 @@ export class EventCardComponent extends React.Component<
       case Client.EventCard.Airlift: {
         let { options, colourStyles } = generateSelectStylesAndOptions(
           game,
-          (city) => true
+          () => true
         );
         const otherPlayers = game.players.filter(
           (player) => player.id !== player_index
@@ -137,9 +153,12 @@ export class EventCardComponent extends React.Component<
             Select Player + City to Airlift to
             <Select<SelectOption>
               onChange={(data) => {
-                this.setState({
-                  arg1: data?.value,
-                });
+                const value = data?.value;
+                if (value) {
+                  this.setState({
+                    arg1: parseInt(value),
+                  });
+                }
               }}
               placeholder={"Select Player"}
               defaultValue={selectOption}
@@ -163,9 +182,8 @@ export class EventCardComponent extends React.Component<
               onClick={() => this.onAirlift(eventCard)}
             >
               Use Airlift to send{" "}
-              {typeof arg1 === "string" &&
-                formatPlayer(game.players[parseInt(arg1)])}{" "}
-              to {arg2}
+              {typeof arg1 === "number" && formatPlayer(game.players[arg1])} to{" "}
+              {arg2}
             </button>
           </div>
         );
@@ -207,15 +225,42 @@ export class EventCardComponent extends React.Component<
         handleGovernmentGrant(target_player, game);
       }*/
       case Client.EventCard.OneQuietNight:
-        //handleOneQuietNight(game);
-        break;
+        return (
+          <div>
+            {" "}
+            <button onClick={() => this.onOneQuietNight(eventCard)}>
+              Play One Quiet Night
+            </button>
+          </div>
+        );
       case Client.EventCard.ResilientPopulation:
-        /*
-      if (typeof arg1 === "string") {
-        // arg1 is card
-        handleResilientPopulation(game, arg1);
-      }*/
-        break;
+        let { options, colourStyles } = generateSelectStylesAndOptions(
+          game,
+          (city) => game.infection_faceup_deck.includes(city.name)
+        );
+        return (
+          <div>
+            Select Card from Infection Deck to Remove
+            <Select<ColoredSelectOption>
+              onChange={(data) => {
+                this.setState({
+                  selectOption: data,
+                  arg1: data?.value,
+                });
+              }}
+              placeholder={"Select City"}
+              defaultValue={selectOption}
+              options={options}
+              styles={colourStyles}
+            />
+            <button
+              disabled={arg1 === undefined}
+              onClick={() => this.onResilientPopulation(eventCard)}
+            >
+              Use Resilient Population to remove {arg1} from the infection deck
+            </button>
+          </div>
+        );
     }
   }
 

@@ -43,7 +43,7 @@ function generateHand(
 
     const baseX = index >= 4 ? widthAllowed / 2 : 0;
 
-    if (game.game_graph_index[card]) {
+    if (game.game_graph_index[card] !== undefined) {
       const color = game.game_graph[game.game_graph_index[card]].color;
       const hexColor = Number(colorNameToHex(color));
 

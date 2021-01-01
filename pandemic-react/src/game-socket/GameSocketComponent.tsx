@@ -182,8 +182,14 @@ class GameSocketComponent extends React.Component<
                 );
                 break;
               case Client.EventCard.OneQuietNight:
+                toast.success(
+                  `Player ${card_owner_player_index} has played ${eventCard}`
+                );
                 break;
               case Client.EventCard.ResilientPopulation:
+                toast.success(
+                  `Player ${card_owner_player_index} has played ${eventCard} to remove ${arg1} from the infection deck`
+                );
                 break;
             }
             destroyEvent();

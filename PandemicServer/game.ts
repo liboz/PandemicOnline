@@ -123,6 +123,8 @@ export class Game {
         }
       }
     } else {
+      console.log("infect stage skipped due to one quiet night being active");
+      this.log.push("infect stage skipped due to one quiet night being active");
       this.one_quiet_night_active = false;
     }
   }
