@@ -227,7 +227,7 @@ describe("ServerGame", () => {
       ]);
 
       const onDirectFlight = server_game.onDirectFlight(mockSocket);
-      onDirectFlight("Milan");
+      onDirectFlight("Kolkata");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
         EventName.MoveChoiceSuccessful
@@ -245,7 +245,7 @@ describe("ServerGame", () => {
       joinGame(onJoin, Client.Roles.QuarantineSpecialist, "p2");
 
       const onDirectFlight = server_game.onDirectFlight(mockSocket);
-      onDirectFlight("Milan");
+      onDirectFlight("Kolkata");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       lastSendMessageToClientIsInvalidAction(mockSocket);
     });
@@ -271,11 +271,11 @@ describe("ServerGame", () => {
         { role: Client.Roles.QuarantineSpecialist, name: "p2" },
       ]);
 
-      server_game.curr_game.players[0].location = "Milan";
+      server_game.curr_game.players[0].location = "Kolkata";
       server_game.curr_game.game_graph["Atlanta"].players.delete(
         server_game.curr_game.players[0]
       );
-      server_game.curr_game.game_graph["Milan"].players.add(
+      server_game.curr_game.game_graph["Kolkata"].players.add(
         server_game.curr_game.players[0]
       );
       const onCharterFlight = server_game.onCharterFlight(mockSocket);
@@ -326,7 +326,7 @@ describe("ServerGame", () => {
       const onOperationsExpertMove = server_game.onOperationsExpertMove(
         mockSocket
       );
-      onOperationsExpertMove("Paris", "Khartoum");
+      onOperationsExpertMove("Paris", "Kolkata");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
         EventName.MoveChoiceSuccessful
@@ -346,7 +346,7 @@ describe("ServerGame", () => {
       const onOperationsExpertMove = server_game.onOperationsExpertMove(
         mockSocket
       );
-      onOperationsExpertMove("Paris", "Khartoum");
+      onOperationsExpertMove("Paris", "Kolkata");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       lastSendMessageToClientIsInvalidAction(mockSocket);
     });
@@ -375,7 +375,7 @@ describe("ServerGame", () => {
       ]);
 
       const onDispatcherMove = server_game.onDispatcherMove(mockSocket);
-      onDispatcherMove(1, "Khartoum");
+      onDispatcherMove(1, "Kolkata");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
         EventName.MoveChoiceSuccessful
@@ -384,13 +384,13 @@ describe("ServerGame", () => {
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
         EventName.UpdateGameState
       );
-      expect(server_game.curr_game.players[1].location).toBe("Khartoum");
+      expect(server_game.curr_game.players[1].location).toBe("Kolkata");
       mockSocket.sendMessageToClient.mockClear();
       mockSocket.sendMessageToAllInRoom.mockClear();
 
       // cant move self to another pawn via dispatcher action
       expect(server_game.curr_game.players[0].location).toBe("Atlanta");
-      onDispatcherMove(0, "Khartoum");
+      onDispatcherMove(0, "Kolkata");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
         EventName.InvalidAction
@@ -399,7 +399,7 @@ describe("ServerGame", () => {
 
       const onMove = server_game.onMove(mockSocket);
       const mockCallback = jest.fn();
-      onMove("Khartoum", mockCallback);
+      onMove("Kolkata", mockCallback);
       expect(mockCallback.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
@@ -409,7 +409,7 @@ describe("ServerGame", () => {
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
         EventName.UpdateGameState
       );
-      expect(server_game.curr_game.players[0].location).toBe("Khartoum");
+      expect(server_game.curr_game.players[0].location).toBe("Kolkata");
     });
 
     it("works to actually move someone to the dispatcher", () => {
@@ -421,7 +421,7 @@ describe("ServerGame", () => {
       // move dispatcher first
       const onMove = server_game.onMove(mockSocket);
       const mockCallback = jest.fn();
-      onMove("Khartoum", mockCallback);
+      onMove("Kolkata", mockCallback);
       expect(mockCallback.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
@@ -431,12 +431,12 @@ describe("ServerGame", () => {
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
         EventName.UpdateGameState
       );
-      expect(server_game.curr_game.players[0].location).toBe("Khartoum");
+      expect(server_game.curr_game.players[0].location).toBe("Kolkata");
       mockSocket.sendMessageToClient.mockClear();
       mockSocket.sendMessageToAllInRoom.mockClear();
 
       const onDispatcherMove = server_game.onDispatcherMove(mockSocket);
-      onDispatcherMove(1, "Khartoum");
+      onDispatcherMove(1, "Kolkata");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
         EventName.MoveChoiceSuccessful
@@ -445,7 +445,7 @@ describe("ServerGame", () => {
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
         EventName.UpdateGameState
       );
-      expect(server_game.curr_game.players[1].location).toBe("Khartoum");
+      expect(server_game.curr_game.players[1].location).toBe("Kolkata");
     });
 
     it("dosnt work when not started", () => {
@@ -455,7 +455,7 @@ describe("ServerGame", () => {
       joinGame(onJoin, Client.Roles.QuarantineSpecialist, "p2");
 
       const onDispatcherMove = server_game.onDispatcherMove(mockSocket);
-      onDispatcherMove(1, "Khartoum");
+      onDispatcherMove(1, "Kolkata");
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       lastSendMessageToClientIsInvalidAction(mockSocket);
     });
@@ -467,7 +467,7 @@ describe("ServerGame", () => {
       ]);
 
       const onDispatcherMove = server_game.onDispatcherMove(mockSocket);
-      onDispatcherMove(1, "Khartoum");
+      onDispatcherMove(1, "Kolkata");
       lastSendMessageToClientIsInvalidAction(mockSocket);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(0);
       expect(server_game.curr_game.players[0].location).toBe("Atlanta");
@@ -639,7 +639,7 @@ describe("ServerGame", () => {
 
       const onShare = server_game.onShare(mockSocket);
       const mockCallback = jest.fn();
-      onShare(1, "Khartoum", mockCallback);
+      onShare(1, "Kolkata", mockCallback);
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToClient.mock.calls[0][0]).toBe(
         EventName.ResearchShareSuccessful
@@ -678,7 +678,7 @@ describe("ServerGame", () => {
 
       const onShare = server_game.onShare(mockSocket);
       const mockCallback = jest.fn();
-      onShare(1, "Khartoum", mockCallback);
+      onShare(1, "Kolkata", mockCallback);
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(1);
       lastSendMessageToClientIsInvalidAction(mockSocket);
     });
@@ -717,11 +717,11 @@ describe("ServerGame", () => {
         { role: Client.Roles.QuarantineSpecialist, name: "p2" },
       ]);
 
-      const cards = ["Atlanta", "New York", "Washington", "San Francisco"];
+      const cards = ["Cairo", "Algiers", "Tehran"];
       cards.forEach((card) => server_game.curr_game.players[0].hand.add(card));
       const onDiscover = server_game.onDiscover(mockSocket);
       const mockCallback = jest.fn();
-      onDiscover(["Milan", ...cards], mockCallback);
+      onDiscover(["Kolkata", "Mumbai", ...cards], mockCallback);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(2);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
         EventName.DiscoverSuccessful
@@ -737,12 +737,12 @@ describe("ServerGame", () => {
         { role: Client.Roles.QuarantineSpecialist, name: "p2" },
       ]);
 
-      server_game.curr_game.cubes[Client.Color.Blue] = 24;
-      const cards = ["Atlanta", "New York", "Washington", "San Francisco"];
+      server_game.curr_game.cubes[Client.Color.Black] = 24;
+      const cards = ["Cairo", "Algiers", "Tehran"];
       cards.forEach((card) => server_game.curr_game.players[0].hand.add(card));
       const onDiscover = server_game.onDiscover(mockSocket);
       const mockCallback = jest.fn();
-      onDiscover(["Milan", ...cards], mockCallback);
+      onDiscover(["Kolkata", "Mumbai", ...cards], mockCallback);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(2);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
         EventName.Eradicated
@@ -785,6 +785,8 @@ describe("ServerGame", () => {
 
   describe("#onPass", () => {
     it("works", () => {
+      seeded = seedrandom("test!1");
+      server_game = new ServerGame(match_name, seeded);
       const mockSocket = createGame(server_game, [
         { role: Client.Roles.Medic, name: "p1" },
         { role: Client.Roles.QuarantineSpecialist, name: "p2" },
@@ -805,7 +807,6 @@ describe("ServerGame", () => {
         { role: Client.Roles.QuarantineSpecialist, name: "p2" },
       ]);
 
-      server_game.curr_game.player_deck.deck.push("Epidemic");
       const onPass = server_game.onPass(mockSocket);
       onPass();
       expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(0);
@@ -851,19 +852,22 @@ describe("ServerGame", () => {
       const onShare = server_game.onShare(mockSocket);
       const mockCallback = jest.fn();
       onShare(1, null, mockCallback);
-      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(2);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(3);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
-        EventName.UpdateGameState
+        EventName.Epidemic
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][0]).toBe(
+        EventName.UpdateGameState
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[2][0]).toBe(
         EventName.DiscardCards
       );
-      expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][1]).toBe(0);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[2][1]).toBe(0);
       mockSocket.sendMessageToAllInRoom.mockClear();
 
       const onDiscard = server_game.onDiscard(mockSocket);
       const mockCallbackDiscard = jest.fn();
-      onDiscard(cards.slice(1, 3), mockCallbackDiscard);
+      onDiscard(cards.slice(1, 2), mockCallbackDiscard);
 
       expect(mockCallbackDiscard.mock.calls).toHaveLength(1);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1);
@@ -920,14 +924,17 @@ describe("ServerGame", () => {
       const onShare = server_game.onShare(mockSocket);
       const mockCallback = jest.fn();
       onShare(1, null, mockCallback);
-      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(2);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(3);
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
-        EventName.UpdateGameState
+        EventName.Epidemic
       );
       expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][0]).toBe(
+        EventName.UpdateGameState
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[2][0]).toBe(
         EventName.DiscardCards
       );
-      expect(mockSocket.sendMessageToAllInRoom.mock.calls[1][1]).toBe(0);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[2][1]).toBe(0);
       mockSocket.sendMessageToAllInRoom.mockClear();
       mockSocket.sendMessageToClient.mockClear();
 
