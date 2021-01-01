@@ -1025,6 +1025,7 @@ describe("Player", function () {
         5,
         seeded
       );
+      g.players[0].draw(g); // first card is epidemic, ignore
       const originalHand = [...g.players[0].hand];
       g.players[0].discard(g, [...g.players[0].hand]);
       expect(g.player_deck.discard).toStrictEqual(originalHand);
@@ -1035,51 +1036,42 @@ describe("Player", function () {
       g.players[0].draw(g);
 
       //Direct Flight
-      expect(g.players[0].canDirectFlight("Beijing")).toBe(true);
-      expect(g.players[0].hand.has("Beijing")).toBe(true);
-      expect(g.players[0].move(g, "Beijing")).toBe(true);
-      expect(g.players[0].location).toBe("Beijing");
-      expect(g.game_graph["Beijing"].players.has(g.players[0])).toBe(true);
-      expect(g.players[0].hand.has("Beijing")).toBe(false);
-      expect(g.player_deck.discard).toStrictEqual([...originalHand, "Beijing"]);
-      g.players[0].draw(g);
-      g.players[0].draw(g);
+      expect(g.players[0].canDirectFlight("Milan")).toBe(true);
+      expect(g.players[0].hand.has("Milan")).toBe(true);
+      expect(g.players[0].move(g, "Milan")).toBe(true);
+      expect(g.players[0].location).toBe("Milan");
+      expect(g.game_graph["Milan"].players.has(g.players[0])).toBe(true);
+      expect(g.players[0].hand.has("Milan")).toBe(false);
+      expect(g.player_deck.discard).toStrictEqual([...originalHand, "Milan"]);
       g.players[0].draw(g);
       g.players[0].draw(g);
 
       //Drive/Ferry
-      expect(g.players[0].hand.has("Shanghai")).toBe(false);
-      expect(g.players[0].move(g, "Shanghai")).toBe(true);
-      expect(g.players[0].location).toBe("Shanghai");
-      expect(g.game_graph["Shanghai"].players.has(g.players[0])).toBe(true);
-      expect(g.players[0].hand.has("Shanghai")).toBe(false);
+      expect(g.players[0].hand.has("Essen")).toBe(false);
+      expect(g.players[0].move(g, "Essen")).toBe(true);
+      expect(g.players[0].location).toBe("Essen");
+      expect(g.game_graph["Essen"].players.has(g.players[0])).toBe(true);
+      expect(g.players[0].hand.has("Essen")).toBe(false);
 
-      expect(g.players[0].hand.has("Hong Kong")).toBe(false);
-      expect(g.players[0].move(g, "Hong Kong")).toBe(true);
-      expect(g.players[0].location).toBe("Hong Kong");
-      expect(g.game_graph["Hong Kong"].players.has(g.players[0])).toBe(true);
-      expect(g.players[0].hand.has("Hong Kong")).toBe(false);
-      expect(g.players[0].canCharterFlight()).toBe(false); // on Hong Kong can't charter flight
-
-      expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(true);
-      expect(g.players[0].move(g, "Ho Chi Minh City")).toBe(true);
-      expect(g.players[0].location).toBe("Ho Chi Minh City");
-      expect(g.game_graph["Ho Chi Minh City"].players.has(g.players[0])).toBe(
+      expect(g.players[0].hand.has("St Petersburg")).toBe(true);
+      expect(g.players[0].move(g, "St Petersburg")).toBe(true);
+      expect(g.players[0].location).toBe("St Petersburg");
+      expect(g.game_graph["St Petersburg"].players.has(g.players[0])).toBe(
         true
       );
 
       //Charter
       expect(g.players[0].canCharterFlight()).toBe(true);
-      expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(true);
+      expect(g.players[0].hand.has("St Petersburg")).toBe(true);
       expect(g.players[0].hand.has("Tokyo")).toBe(false);
       expect(g.players[0].move(g, "Tokyo")).toBe(true);
       expect(g.players[0].location).toBe("Tokyo");
       expect(g.game_graph["Tokyo"].players.has(g.players[0])).toBe(true);
-      expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(false);
+      expect(g.players[0].hand.has("St Petersburg")).toBe(false);
       expect(g.player_deck.discard).toStrictEqual([
         ...originalHand,
-        "Beijing",
-        "Ho Chi Minh City",
+        "Milan",
+        "St Petersburg",
       ]);
     });
 
@@ -1104,49 +1096,34 @@ describe("Player", function () {
         .get_valid_final_destinations(g)
         .sort();
       expect(valid_final_destinations).toEqual(
-        [
-          "Chicago",
-          "Washington",
-          "Miami",
-          "Khartoum",
-          "Milan",
-          "Jakarta",
-          "Karachi",
-        ]
+        ["Chicago", "Washington", "Miami", "Kolkata", "Mumbai", "Johannesburg"]
           .map((i) => g.game_graph[i].index)
           .sort()
       );
 
       g.players[0].draw(g);
-      g.players[0].move(g, "Chicago");
-      g.players[0].move(g, "San Francisco");
-      g.players[0].move(g, "Tokyo");
-      g.players[0].move(g, "Seoul");
-      g.players[0].move(g, "Beijing");
-      expect(g.players[0].hand.has("Beijing")).toBe(true);
+      g.players[0].move(g, "Miami");
+      g.players[0].move(g, "Bogota");
+      g.players[0].move(g, "Sao Paulo");
+      g.players[0].move(g, "Lagos");
+      g.players[0].move(g, "Kinshasa");
+      g.players[0].move(g, "Johannesburg");
+      expect(g.players[0].hand.has("Johannesburg")).toBe(true);
       valid_final_destinations = g.players[0]
         .get_valid_final_destinations(g)
         .sort(); // all locations with a charter
       expect(valid_final_destinations).toEqual(all_locations);
 
       expect(g.players[0].can_build_research_station(g)).toBe(true);
-      expect(g.game_graph["Beijing"].hasResearchStation).toEqual(false);
+      expect(g.game_graph["Johannesburg"].hasResearchStation).toEqual(false);
       g.players[0].build_research_station(g);
-      expect(g.player_deck.discard).toStrictEqual(["Beijing"]);
+      expect(g.player_deck.discard).toStrictEqual(["Johannesburg"]);
 
       valid_final_destinations = g.players[0]
         .get_valid_final_destinations(g)
         .sort();
       expect(valid_final_destinations).toEqual(
-        [
-          "Shanghai",
-          "Seoul",
-          "Khartoum",
-          "Milan",
-          "Jakarta",
-          "Karachi",
-          "Atlanta",
-        ]
+        ["Kinshasa", "Khartoum", "Kolkata", "Mumbai", "Atlanta"]
           .map((i) => g.game_graph[i].index)
           .sort()
       ); // adjacent + direct flight + shuttle flight
@@ -1156,21 +1133,21 @@ describe("Player", function () {
         .sort();
       expect(valid_final_destinations_player2).toEqual(all_locations); //operations expert in a research station
 
-      g.players[1].move(g, "Chicago");
+      g.players[1].move(g, "Washington");
       valid_final_destinations_player2 = g.players[1]
         .get_valid_final_destinations(g)
         .sort();
+
       expect(valid_final_destinations_player2).toEqual(
         [
           "Atlanta",
-          "Washington",
+          "New York",
           "Montreal",
-          "Mexico City",
-          "Los Angeles",
-          "San Francisco",
+          "Miami",
+          "Taipei",
+          "Chicago",
           "Seoul",
-          "Chennai",
-          "Riyadh",
+          "Tokyo",
         ]
           .map((i) => g.game_graph[i].index)
           .sort()
@@ -1198,13 +1175,19 @@ describe("Player", function () {
       expect(g.players[0].can_treat_color(g, Client.Color.Blue)).toBe(false);
       expect(g.game_graph["London"].cubes[Client.Color.Blue]).toBe(0);
 
-      g.cured[Client.Color.Red] = 1;
-      g.players[0].move(g, "Jakarta");
-      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(2);
-      g.players[0].move(g, "Ho Chi Minh City");
+      g.cured[Client.Color.Black] = 1;
+      g.players[0].move(g, "Kolkata");
+      expect(g.game_graph["Delhi"].cubes[Client.Color.Black]).toBe(1);
+      g.players[0].move(g, "Delhi");
       expect(g.players[0].can_treat(g)).toBe(false);
-      expect(g.players[0].can_treat_color(g, Client.Color.Red)).toBe(false);
-      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(0);
+      expect(g.players[0].can_treat_color(g, Client.Color.Black)).toBe(false);
+      expect(g.game_graph["Delhi"].cubes[Client.Color.Black]).toBe(0);
+
+      expect(g.game_graph["Karachi"].cubes[Client.Color.Black]).toBe(3);
+      g.players[0].move(g, "Karachi");
+      expect(g.players[0].can_treat(g)).toBe(false);
+      expect(g.players[0].can_treat_color(g, Client.Color.Black)).toBe(false);
+      expect(g.game_graph["Karachi"].cubes[Client.Color.Black]).toBe(0);
     });
   });
 
@@ -1219,6 +1202,7 @@ describe("Player", function () {
         5,
         seeded
       );
+      g.players[0].draw(g); // first card is epidemic, ignore
       const originalHand = [...g.players[0].hand];
       g.players[0].discard(g, [...g.players[0].hand]);
       expect(g.players[1].location).toBe("Atlanta"); // moving player 1 with player 0
@@ -1226,62 +1210,48 @@ describe("Player", function () {
       g.players[0].draw(g);
 
       //Direct Flight
-      expect(g.players[1].canDirectFlight("Beijing")).toBe(false); //can't direct fly normally
-      expect(g.players[1].canDirectFlight("Beijing", g.players[0].hand)).toBe(
+      expect(g.players[1].canDirectFlight("Milan")).toBe(false); //can't direct fly normally
+      expect(g.players[1].canDirectFlight("Milan", g.players[0].hand)).toBe(
         true
       );
-      expect(g.players[0].hand.has("Beijing")).toBe(true);
-      expect(g.players[0].dispatcher_move(g, g.players[1], "Beijing")).toBe(
-        true
-      );
-      expect(g.players[1].location).toBe("Beijing");
-      expect(g.game_graph["Beijing"].players.has(g.players[1])).toBe(true);
-      expect(g.players[0].hand.has("Beijing")).toBe(false);
-      expect(g.player_deck.discard).toStrictEqual([...originalHand, "Beijing"]);
-      g.players[0].draw(g);
-      g.players[0].draw(g);
+      expect(g.players[0].hand.has("Milan")).toBe(true);
+      expect(g.players[0].dispatcher_move(g, g.players[1], "Milan")).toBe(true);
+      expect(g.players[1].location).toBe("Milan");
+      expect(g.game_graph["Milan"].players.has(g.players[1])).toBe(true);
+      expect(g.players[0].hand.has("Milan")).toBe(false);
+      expect(g.player_deck.discard).toStrictEqual([...originalHand, "Milan"]);
       g.players[0].draw(g);
       g.players[0].draw(g);
 
       //Drive/Ferry
-      expect(g.players[0].hand.has("Shanghai")).toBe(false);
-      expect(g.players[0].dispatcher_move(g, g.players[1], "Shanghai")).toBe(
-        true
-      );
-      expect(g.players[1].location).toBe("Shanghai");
-      expect(g.game_graph["Shanghai"].players.has(g.players[1])).toBe(true);
-      expect(g.players[0].hand.has("Shanghai")).toBe(false);
+      expect(g.players[0].hand.has("Essen")).toBe(false);
+      expect(g.players[0].dispatcher_move(g, g.players[1], "Essen")).toBe(true);
+      expect(g.players[1].location).toBe("Essen");
+      expect(g.game_graph["Essen"].players.has(g.players[1])).toBe(true);
+      expect(g.players[0].hand.has("Essen")).toBe(false);
 
-      expect(g.players[0].hand.has("Hong Kong")).toBe(false);
-      expect(g.players[0].dispatcher_move(g, g.players[1], "Hong Kong")).toBe(
-        true
-      );
-      expect(g.players[1].location).toBe("Hong Kong");
-      expect(g.game_graph["Hong Kong"].players.has(g.players[1])).toBe(true);
-      expect(g.players[0].hand.has("Hong Kong")).toBe(false);
-
-      expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(true);
+      expect(g.players[0].hand.has("St Petersburg")).toBe(true);
       expect(
-        g.players[0].dispatcher_move(g, g.players[1], "Ho Chi Minh City")
+        g.players[0].dispatcher_move(g, g.players[1], "St Petersburg")
       ).toBe(true);
-      expect(g.players[1].location).toBe("Ho Chi Minh City");
-      expect(g.game_graph["Ho Chi Minh City"].players.has(g.players[1])).toBe(
+      expect(g.players[1].location).toBe("St Petersburg");
+      expect(g.game_graph["St Petersburg"].players.has(g.players[1])).toBe(
         true
       );
 
       //Charter
       expect(g.players[1].canCharterFlight()).toBe(false); // can't charter normally
       expect(g.players[1].canCharterFlight(g.players[0].hand)).toBe(true);
-      expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(true);
+      expect(g.players[0].hand.has("St Petersburg")).toBe(true);
       expect(g.players[0].hand.has("Tokyo")).toBe(false);
       expect(g.players[0].dispatcher_move(g, g.players[1], "Tokyo")).toBe(true);
       expect(g.players[1].location).toBe("Tokyo");
       expect(g.game_graph["Tokyo"].players.has(g.players[1])).toBe(true);
-      expect(g.players[0].hand.has("Ho Chi Minh City")).toBe(false);
+      expect(g.players[0].hand.has("St Petersburg")).toBe(false);
       expect(g.player_deck.discard).toStrictEqual([
         ...originalHand,
-        "Beijing",
-        "Ho Chi Minh City",
+        "Milan",
+        "St Petersburg",
       ]);
 
       expect(g.players[1].dispatcher_move(g, g.players[0], "Chicago")).toBe(
@@ -1371,15 +1341,15 @@ describe("Player", function () {
       );
 
       expect(valid_final_destinations[0].sort()).toEqual(
-        ["Chicago", "Washington", "Miami", "Milan", "Riyadh", "Essen"]
+        ["Chicago", "Washington", "Miami", "Mumbai", "Seoul", "Hong Kong"]
           .map((i) => g.game_graph[i].index)
           .sort()
       );
 
-      g.players[0].move(g, "Washington");
-      g.players[0].move(g, "New York");
-      g.players[0].move(g, "London");
-      g.players[0].move(g, "Essen");
+      g.players[0].move(g, "Chicago");
+      g.players[0].move(g, "San Francisco");
+      g.players[0].move(g, "Tokyo");
+      g.players[0].move(g, "Seoul");
 
       valid_final_destinations = g.players[2].get_valid_dispatcher_final_destinations(
         g
@@ -1387,7 +1357,7 @@ describe("Player", function () {
       expect(valid_final_destinations[0].sort()).toEqual(all_locations);
 
       expect(valid_final_destinations[1].sort()).toEqual(
-        ["Chicago", "Washington", "Miami", "Milan", "Riyadh", "Essen"]
+        ["Chicago", "Washington", "Miami", "Mumbai", "Seoul", "Hong Kong"]
           .map((i) => g.game_graph[i].index)
           .sort()
       ); // operations expert move not usable
@@ -1395,10 +1365,10 @@ describe("Player", function () {
       expect(
         g.players[2]
           .get_valid_final_destinations(g)
-          .includes(g.game_graph["St Petersburg"].index)
+          .includes(g.game_graph["Beijing"].index)
       ).toBeFalsy();
 
-      g.players[0].move(g, "St Petersburg");
+      g.players[0].move(g, "Beijing");
       g.players[2].move(g, "Chicago");
       g.players[2].move(g, "San Francisco");
 
@@ -1410,11 +1380,11 @@ describe("Player", function () {
           "Chicago",
           "Washington",
           "Miami",
-          "Milan",
-          "Riyadh",
-          "Essen",
+          "Mumbai",
+          "Seoul",
+          "Hong Kong",
           "San Francisco",
-          "St Petersburg",
+          "Beijing",
         ]
           .map((i) => g.game_graph[i].index)
           .sort()
@@ -1423,7 +1393,7 @@ describe("Player", function () {
 
       // self should be able to go to other two tokens
       expect(g.players[2].get_valid_final_destinations(g)).toContain(
-        g.game_graph["St Petersburg"].index
+        g.game_graph["Beijing"].index
       );
       expect(g.players[2].get_valid_final_destinations(g)).toContain(
         g.game_graph["Atlanta"].index
@@ -1445,6 +1415,7 @@ describe("Player", function () {
       expect(g.players[0].canOperationsExpertMove(g)).toBe(true);
       expect(g.players[1].canOperationsExpertMove(g)).toBe(false);
 
+      g.players[0].draw(g); // first card is epidemic, ignore
       const originalHand = [...g.players[0].hand];
       g.players[0].discard(g, [...g.players[0].hand]);
       expect(g.players[0].canOperationsExpertMove(g)).toBe(false);
@@ -1456,11 +1427,11 @@ describe("Player", function () {
       expect(g.players[0].canOperationsExpertMoveWithCard(g, "Atlanta")).toBe(
         false
       );
-      expect(g.players[0].canOperationsExpertMoveWithCard(g, "Beijing")).toBe(
+      expect(g.players[0].canOperationsExpertMoveWithCard(g, "Milan")).toBe(
         true
       );
-      g.players[0].operationsExpertMove(g, "Tokyo", "Beijing");
-      expect(g.player_deck.discard).toStrictEqual([...originalHand, "Beijing"]);
+      g.players[0].operationsExpertMove(g, "Tokyo", "Milan");
+      expect(g.player_deck.discard).toStrictEqual([...originalHand, "Milan"]);
       expect(g.players[0].location).toBe("Tokyo");
     });
   });
@@ -2155,7 +2126,6 @@ describe("Player", function () {
         seeded
       );
       expect(g.players[1].can_take(g)).toBe(true);
-      console.log(g.players.map((p) => p.hand));
       expect(
         g.players[1].can_take_from_player(
           g.players[0],
