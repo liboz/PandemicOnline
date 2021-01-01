@@ -2015,7 +2015,7 @@ describe("Player", function () {
       expect(g.players[0].can_give(g)).toBe(true);
       expect(g.players[1].can_take(g)).toBe(true);
       expect(g.players[1].can_give(g)).toBe(false);
-      g.players[0].move(g, "Miami");
+      g.players[0].move(g, "Washington");
       expect(g.players[0].can_take(g)).toBe(false);
       expect(g.players[0].can_give(g)).toBe(false);
       expect(g.players[1].can_take(g)).toBe(false);
@@ -2025,13 +2025,13 @@ describe("Player", function () {
       expect(g.players[0].hand.has("Atlanta")).toBe(false);
       expect(g.players[1].hand.has("Atlanta")).toBe(true);
 
-      g.players[0].move(g, "Miami");
-      g.players[1].move(g, "Miami");
+      g.players[0].move(g, "Washington");
+      g.players[1].move(g, "Washington");
       expect(g.players[0].can_take(g)).toBe(false);
       expect(g.players[0].can_give(g)).toBe(false);
       expect(g.players[1].can_take(g)).toBe(false);
       expect(g.players[1].can_give(g)).toBe(false);
-      g.players[1].hand.add("Miami");
+      g.players[1].hand.add("Washington");
       expect(g.players[0].can_take(g)).toBe(true);
       expect(g.players[0].can_give(g)).toBe(false);
       expect(g.players[1].can_take(g)).toBe(false);
@@ -2039,8 +2039,8 @@ describe("Player", function () {
       g.players[0].trade(g.players[1]);
       expect(g.players[0].hand.has("Atlanta")).toBe(false);
       expect(g.players[1].hand.has("Atlanta")).toBe(true);
-      expect(g.players[0].hand.has("Miami")).toBe(true);
-      expect(g.players[1].hand.has("Miami")).toBe(false);
+      expect(g.players[0].hand.has("Washington")).toBe(true);
+      expect(g.players[1].hand.has("Washington")).toBe(false);
     });
   });
 
@@ -2058,7 +2058,7 @@ describe("Player", function () {
       g.players[0].hand.add("Atlanta");
       expect(g.players[0].can_take_from_player(g.players[1])).toBe(false);
       expect(g.players[1].can_take_from_player(g.players[0])).toBe(true);
-      g.players[0].move(g, "Miami");
+      g.players[0].move(g, "Washington");
       expect(g.players[0].can_take_from_player(g.players[1])).toBe(false);
       expect(g.players[1].can_take_from_player(g.players[0])).toBe(false);
       g.players[0].move(g, "Atlanta");
@@ -2066,18 +2066,18 @@ describe("Player", function () {
       expect(g.players[0].hand.has("Atlanta")).toBe(false);
       expect(g.players[1].hand.has("Atlanta")).toBe(true);
 
-      g.players[0].move(g, "Miami");
-      g.players[1].move(g, "Miami");
+      g.players[0].move(g, "Washington");
+      g.players[1].move(g, "Washington");
       expect(g.players[0].can_take_from_player(g.players[1])).toBe(false);
       expect(g.players[1].can_take_from_player(g.players[0])).toBe(false);
-      g.players[1].hand.add("Miami");
+      g.players[1].hand.add("Washington");
       expect(g.players[0].can_take_from_player(g.players[1])).toBe(true);
       expect(g.players[1].can_take_from_player(g.players[0])).toBe(false);
       g.players[0].trade(g.players[1]);
       expect(g.players[0].hand.has("Atlanta")).toBe(false);
       expect(g.players[1].hand.has("Atlanta")).toBe(true);
-      expect(g.players[0].hand.has("Miami")).toBe(true);
-      expect(g.players[1].hand.has("Miami")).toBe(false);
+      expect(g.players[0].hand.has("Washington")).toBe(true);
+      expect(g.players[1].hand.has("Washington")).toBe(false);
     });
   });
 
@@ -2111,7 +2111,7 @@ describe("Player", function () {
       expect(g.players[1].hand.has("Algiers")).toBe(false);
       g.players[0].trade(g.players[1], "Algiers");
 
-      g.players[0].move(g, "Miami");
+      g.players[0].move(g, "Washington");
       expect(g.players[0].can_take(g)).toBe(false);
       expect(g.players[0].can_take_from_player(g.players[1], "Algiers")).toBe(
         false
@@ -2120,7 +2120,7 @@ describe("Player", function () {
       expect(g.players[0].can_give(g)).toBe(false);
       expect(g.players[1].can_give(g)).toBe(false);
 
-      g.players[1].move(g, "Miami");
+      g.players[1].move(g, "Washington");
       expect(g.players[0].can_take(g)).toBe(true);
       expect(g.players[0].can_take_from_player(g.players[1], "Algiers")).toBe(
         true
