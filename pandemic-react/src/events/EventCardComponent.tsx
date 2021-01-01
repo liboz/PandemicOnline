@@ -126,7 +126,7 @@ export class EventCardComponent extends React.Component<
   }
 
   displayEventCard(eventCard: Client.EventCard) {
-    const { game, player_index } = this.props;
+    const { game } = this.props;
     const { arg1, arg2, selectOption } = this.state;
     switch (eventCard) {
       case Client.EventCard.Airlift: {
@@ -134,11 +134,8 @@ export class EventCardComponent extends React.Component<
           game,
           () => true
         );
-        const otherPlayers = game.players.filter(
-          (player) => player.id !== player_index
-        );
 
-        const playerOptions: ColoredSelectOption[] = otherPlayers.map(
+        const playerOptions: ColoredSelectOption[] = game.players.map(
           (player) => {
             return {
               value: player.id.toString(),
@@ -218,12 +215,6 @@ export class EventCardComponent extends React.Component<
           </div>
         );
       }
-      /*
-      if (typeof arg1 === "number") {
-        // arg1 is playerIndex
-        const target_player = game.players[arg1];
-        handleGovernmentGrant(target_player, game);
-      }*/
       case Client.EventCard.OneQuietNight:
         return (
           <div>
