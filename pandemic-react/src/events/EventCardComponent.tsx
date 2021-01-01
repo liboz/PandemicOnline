@@ -284,7 +284,6 @@ export class EventCardComponent extends React.Component<
         label: card,
       };
     });
-    console.log(eventCards);
     return (
       <div style={{ minWidth: "80%" }}>
         {eventCards.length > 1 && (
