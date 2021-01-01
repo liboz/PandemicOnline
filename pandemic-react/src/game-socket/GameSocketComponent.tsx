@@ -16,6 +16,7 @@ import { withRouter } from "react-router";
 import { RouteComponentProps } from "react-router-dom";
 import Game from "../game/Game";
 import { toast } from "react-toastify";
+import { formatPlayer } from "../utils";
 
 interface GameSocketState {
   game?: Client.Game;
@@ -168,6 +169,11 @@ class GameSocketComponent extends React.Component<
           ) => {
             switch (eventCard) {
               case Client.EventCard.Airlift:
+                toast.success(
+                  `Player ${card_owner_player_index} has played ${eventCard} to send ${
+                    typeof arg1 === "number" && formatPlayer(data.players[arg1])
+                  } to ${arg2}`
+                );
                 break;
               case Client.EventCard.Forecast: // todo
               case Client.EventCard.GovernmentGrant:
@@ -180,6 +186,7 @@ class GameSocketComponent extends React.Component<
               case Client.EventCard.ResilientPopulation:
                 break;
             }
+            destroyEvent();
             this.setState({ game: data });
           }
         );

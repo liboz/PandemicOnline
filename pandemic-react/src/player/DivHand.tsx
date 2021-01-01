@@ -71,7 +71,9 @@ const DivHandComponent: FC<DivHandInterface> = (props: DivHandInterface) => {
               className="card"
               style={{
                 backgroundColor:
-                  game.game_graph[game.game_graph_index[item.card]].color,
+                  game.game_graph_index[item.card] !== undefined
+                    ? game.game_graph[game.game_graph_index[item.card]].color
+                    : "white",
               }}
             >
               <div className="card-text">{item.card}</div>
