@@ -224,7 +224,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
             game.must_discard_index !== undefined &&
             prevProps.game.players[prevProps.game.must_discard_index].hand
               .length !== game.players[game.must_discard_index].hand.length) ||
-          prevState.showingEventCard !== this.state.showingEventCard
+          !this.state.showingEventCard
         ) {
           this.maybeShowDiscardComponent();
         }
