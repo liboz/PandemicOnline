@@ -1,14 +1,12 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
-import { closeEventCard } from "../Subscriptions";
-//import DivHand from "../player/DivHand";
-import { formatPlayer, getEventCardsInHand, playerInfo } from "../utils";
 import {
   DragDropContext,
   Droppable,
   Draggable,
   DropResult,
 } from "react-beautiful-dnd";
+import { destroyEvent } from "../Subscriptions";
 
 const reorder = (list: string[], startIndex: number, endIndex: number) => {
   const result = Array.from(list);
@@ -83,6 +81,7 @@ export class ForecastComponent extends React.Component<
     const { orderedCards } = this.state;
 
     socket.emit(Client.EventName.Forecasting, orderedCards);
+    destroyEvent();
   }
 
   render() {

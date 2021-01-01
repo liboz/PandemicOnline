@@ -211,6 +211,21 @@ class GameSocketComponent extends React.Component<
           this.setState({ game: data });
         });
 
+        socket.on(
+          Client.EventName.ForecastingSuccessful,
+          (
+            data: Client.Game,
+            player_index: number,
+            oldOrder: string[],
+            newOrder: string[]
+          ) => {
+            toast.success(
+              `Player ${player_index} has changed the order of the infection deck from ${oldOrder} to ${newOrder}`
+            );
+            this.setState({ game: data });
+          }
+        );
+
         socket.on(Client.EventName.GameInitialized, (data: Client.Game) => {
           destroyEvent();
           toast.info(`Game started`);

@@ -36,7 +36,8 @@ export function handleEventCard(
       break;
     case Client.EventCard.Forecast:
       handleForecastInitial(card_owner_player_index, game);
-      break;
+      // dont discard now, do it after forecast completes
+      return;
     case Client.EventCard.GovernmentGrant:
       if (typeof arg1 === "string") {
         // arg1 is location
@@ -92,4 +93,31 @@ function handleOneQuietNight(game: Game) {
 
 function handleResilientPopulation(game: Game, targetCard: string) {
   game.infection_deck.removeFromFaceup(targetCard);
+}
+
+export function handleForecastComplete(
+  game: Game,
+  orderedCards: string[],
+  clientWebSocket: ClientWebSocket,
+  forecastingPlayerIndex: number,
+  onDiscardContinue: (clientWebSocket: ClientWebSocket) => void
+) {
+  for (let i = 0; i < orderedCards.length; i++) {
+    game.infection_deck.facedown_deck.pop();
+  }
+  for (let i = 0; i < orderedCards.length; i++) {
+    game.infection_deck.facedown_deck.push(orderedCards[i]);
+  }
+  game.top_6_infection_cards = undefined;
+  game.forecasting_player_index = undefined;
+
+  const player = game.players[forecastingPlayerIndex];
+  player.hand.delete(Client.EventCard.Forecast);
+  if (player.hand.size === 7) {
+    onDiscardContinue(clientWebSocket);
+  } else if (player.hand.size < 7) {
+    game.game_state = Client.GameState.Ready;
+  } else {
+    game.checkDiscardingNeeded(clientWebSocket);
+  }
 }

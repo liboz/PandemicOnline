@@ -199,20 +199,25 @@ export class Game {
         EventName.UpdateGameState,
         this.toJSON()
       );
-      for (let player of this.players) {
-        if (player.hand.size > player.hand_size_limit) {
-          this.game_state = Client.GameState.DiscardingCard;
-          this.must_discard_index = player.id;
-          this.log.push(`Player ${player.id} is discarding cards`);
-          // Send notification of discard to all players
-          clientWebSocket.sendMessageToAllInRoom(
-            EventName.DiscardCards,
-            this.must_discard_index
-          );
-          break;
-        }
+      this.checkDiscardingNeeded(clientWebSocket);
+    }
+  }
+
+  checkDiscardingNeeded(clientWebSocket: ClientWebSocket) {
+    for (let player of this.players) {
+      if (player.hand.size > player.hand_size_limit) {
+        this.game_state = Client.GameState.DiscardingCard;
+        this.must_discard_index = player.id;
+        this.log.push(`Player ${player.id} is discarding cards`);
+        // Send notification of discard to all players
+        clientWebSocket.sendMessageToAllInRoom(
+          EventName.DiscardCards,
+          this.must_discard_index
+        );
+        return false;
       }
     }
+    return true;
   }
 
   turn_end(clientWebSocket: ClientWebSocket, match_name: string) {
@@ -228,21 +233,7 @@ export class Game {
       this.toJSON()
     );
     if (this.game_state === Client.GameState.Ready) {
-      let next_turn = true;
-      for (let player of this.players) {
-        if (player.hand.size > player.hand_size_limit) {
-          this.game_state = Client.GameState.DiscardingCard;
-          this.must_discard_index = player.id;
-          this.log.push(`Player ${player.id} is discarding cards`);
-          // Send notification of discard to all players
-          clientWebSocket.sendMessageToAllInRoom(
-            EventName.DiscardCards,
-            this.must_discard_index
-          );
-          next_turn = false;
-          break;
-        }
-      }
+      let next_turn = this.checkDiscardingNeeded(clientWebSocket);
 
       if (next_turn) {
         this.infect_stage();

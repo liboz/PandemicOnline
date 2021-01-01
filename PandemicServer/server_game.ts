@@ -4,7 +4,11 @@ import { EventName, Game } from "./game";
 import { Client } from "pandemiccommon/dist/out-tsc";
 import seedrandom from "seedrandom";
 import { GameMap } from "./game";
-import { canUseEventCard, handleEventCard } from "./event_cards";
+import {
+  canUseEventCard,
+  handleEventCard,
+  handleForecastComplete,
+} from "./event_cards";
 
 export const dummy_game = new GameMap(Cities);
 
@@ -27,6 +31,7 @@ export class ServerGame {
   game: GameObject;
   constructor(private match_name: string, private seeded: seedrandom.prng) {
     this.game = generateDefault();
+    this.onDiscardContinue = this.onDiscardContinue.bind(this);
   }
 
   get players() {
@@ -708,6 +713,37 @@ export class ServerGame {
         clientWebSocket.sendMessageToClient(
           EventName.InvalidAction,
           `It is invalid for ${card_owner_player_index} to use event card ${eventCard}`
+        );
+      }
+    };
+  }
+
+  onForecastingComplete(clientWebSocket: ClientWebSocket) {
+    return (orderedCards: string[]) => {
+      if (this.curr_game.game_state === Client.GameState.Forecasting) {
+        const forecastingPlayerIndex = this.curr_game.forecasting_player_index;
+        const oldOrder = [...this.curr_game.top_6_infection_cards];
+        let log_string = `Player ${forecastingPlayerIndex}: adjusts the infection deck from ${oldOrder} to ${orderedCards}`;
+        console.log(`${this.match_name}: ${log_string}`);
+        handleForecastComplete(
+          this.curr_game,
+          orderedCards,
+          clientWebSocket,
+          forecastingPlayerIndex,
+          this.onDiscardContinue
+        );
+        this.curr_game.log.push(log_string);
+        clientWebSocket.sendMessageToAllInRoom(
+          EventName.ForecastingSuccessful,
+          this.curr_game.toJSON(),
+          forecastingPlayerIndex,
+          oldOrder,
+          orderedCards
+        );
+      } else {
+        clientWebSocket.sendMessageToClient(
+          EventName.InvalidAction,
+          `It is invalid to try to forecast at the current time`
         );
       }
     };
