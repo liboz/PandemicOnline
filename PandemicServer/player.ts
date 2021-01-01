@@ -65,6 +65,13 @@ export class Player {
       // drive/ferry + shuttle
       this.movePiece(game, game_graph, final_destination, clientWebSocket);
       return true;
+    } else if (this.role === Client.Roles.Dispatcher) {
+      return this.moveToAnotherPlayerPiece(
+        game,
+        final_destination,
+        clientWebSocket,
+        this
+      );
     } else if (player_hand.has(final_destination)) {
       // direct
       this.directFlight(game, final_destination, player_hand, clientWebSocket);
@@ -73,13 +80,6 @@ export class Player {
       // charter
       this.charterFlight(game, final_destination, player_hand, clientWebSocket);
       return true;
-    } else if (this.role === Client.Roles.Dispatcher) {
-      return this.moveToAnotherPlayerPiece(
-        game,
-        final_destination,
-        clientWebSocket,
-        this
-      );
     } else {
       return false;
     }
