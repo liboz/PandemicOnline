@@ -2154,27 +2154,25 @@ describe("Player", function () {
         seeded
       );
       expect(g.players[0].can_take(g)).toBe(true);
-      expect(g.players[0].can_take_from_player(g.players[1], "Tokyo")).toBe(
+      expect(g.players[0].can_take_from_player(g.players[1], "Beijing")).toBe(
         false
       );
-      expect(g.players[0].can_take_from_player(g.players[1], "Algiers")).toBe(
+      expect(g.players[0].can_take_from_player(g.players[1], "Shanghai")).toBe(
         true
       );
       g.players[0].move(g, "Washington");
       g.players[0].move(g, "New York");
       g.players[0].move(g, "London");
-      g.players[0].move(g, "Madrid");
 
       g.players[1].move(g, "Washington");
       g.players[1].move(g, "New York");
       g.players[1].move(g, "London");
-      g.players[1].move(g, "Madrid");
       expect(g.players[0].can_take(g)).toBe(true);
       expect(g.players[0].can_give(g)).toBe(true);
-      expect(g.players[0].can_take_from_player(g.players[1], "Tokyo")).toBe(
+      expect(g.players[0].can_take_from_player(g.players[1], "Beijing")).toBe(
         false
       );
-      expect(g.players[0].can_take_from_player(g.players[1], "Algiers")).toBe(
+      expect(g.players[0].can_take_from_player(g.players[1], "Shanghai")).toBe(
         true
       );
     });
@@ -2194,8 +2192,13 @@ describe("Player", function () {
       g.initialize_board();
       const p1 = new PlayerJSON(g.players[0], g);
       const p2 = new PlayerJSON(g.players[1], g);
-      expect(p1.hand).toEqual(["Milan", "Jakarta", "Karachi", "Khartoum"]);
-      expect(p2.hand).toEqual(["Washington", "Seoul", "Chennai", "Riyadh"]);
+      expect(p1.hand).toEqual([
+        "Government Grant",
+        "Kolkata",
+        "Mumbai",
+        "Johannesburg",
+      ]);
+      expect(p2.hand).toEqual(["Chicago", "Seoul", "Taipei", "Tokyo"]);
     });
   });
 });

@@ -83,11 +83,11 @@ export namespace Client {
   }
 
   export enum EventCard {
-    ResilientPopulation = "resilient population",
-    Airlift = "airlift",
-    Forecast = "forecast",
-    OneQuietNight = "one quiet night",
-    GovernmentGrant = "government grant",
+    ResilientPopulation = "Resilient Population",
+    Airlift = "Airlift",
+    Forecast = "Forecast",
+    OneQuietNight = "One Quiet Night",
+    GovernmentGrant = "Government Grant",
   }
 
   export enum EventName {
