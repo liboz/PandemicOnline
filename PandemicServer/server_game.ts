@@ -725,6 +725,8 @@ export class ServerGame {
         const oldOrder = [...this.curr_game.top_6_infection_cards];
         let log_string = `Player ${forecastingPlayerIndex}: adjusts the infection deck from ${oldOrder} to ${orderedCards}`;
         console.log(`${this.match_name}: ${log_string}`);
+        this.curr_game.log.push(log_string);
+
         handleForecastComplete(
           this.curr_game,
           orderedCards,
@@ -732,7 +734,6 @@ export class ServerGame {
           forecastingPlayerIndex,
           this.onDiscardContinue
         );
-        this.curr_game.log.push(log_string);
         clientWebSocket.sendMessageToAllInRoom(
           EventName.ForecastingSuccessful,
           this.curr_game.toJSON(),

@@ -88,6 +88,16 @@ export class ForecastComponent extends React.Component<
     const { game } = this.props;
     return (
       <>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "80%",
+          }}
+        >
+          <span>Next to draw</span>
+          <span>Last to draw</span>
+        </div>
         <DragDropContext onDragEnd={this.onDragEnd}>
           <Droppable droppableId="droppable" direction="horizontal">
             {(provided, snapshot) => (

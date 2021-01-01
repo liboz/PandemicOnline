@@ -105,9 +105,13 @@ export function handleForecastComplete(
   for (let i = 0; i < orderedCards.length; i++) {
     game.infection_deck.facedown_deck.pop();
   }
-  for (let i = 0; i < orderedCards.length; i++) {
-    game.infection_deck.facedown_deck.push(orderedCards[i]);
+
+  const cards = [...orderedCards];
+  while (cards.length > 0) {
+    const card = cards.pop();
+    game.infection_deck.facedown_deck.push(card);
   }
+
   game.top_6_infection_cards = undefined;
   game.forecasting_player_index = undefined;
 
