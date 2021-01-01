@@ -11,6 +11,7 @@ import BottomBar from "../bottom-bar/BottomBar";
 import withGameState, { GameComponentState } from "./withGameState";
 import TopBar from "../top-bar/TopBar";
 import Sidebar, { SidebarItemProps } from "../sidebar/Sidebar";
+import { hasCubes } from "../utils";
 
 export const width = 1920;
 export const height = 960;
@@ -154,11 +155,13 @@ class GameGraphics extends React.Component<GameGraphicsProps> {
                           widthRatio={widthRatio}
                         ></ResearchStation>
                       )}
-                      <CubeContainer
-                        node={node}
-                        heightRatio={heightRatio}
-                        widthRatio={widthRatio}
-                      ></CubeContainer>
+                      {hasCubes(node.cubes) && (
+                        <CubeContainer
+                          node={node}
+                          heightRatio={heightRatio}
+                          widthRatio={widthRatio}
+                        ></CubeContainer>
+                      )}
                       <Player
                         node={node}
                         heightRatio={heightRatio}

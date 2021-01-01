@@ -170,6 +170,16 @@ export function cubesChanged(oldCubes: Client.Cubes, newCubes: Client.Cubes) {
   );
 }
 
+export function hasCubes(cubes: Client.Cubes) {
+  return (
+    cubes !== undefined &&
+    (cubes.black !== 0 ||
+      cubes.blue !== 0 ||
+      cubes.yellow !== 0 ||
+      cubes.red !== 0)
+  );
+}
+
 export const playerInfo: Record<number, number> = {
   0: 0x42d4f4,
   1: 0x911eb4,
