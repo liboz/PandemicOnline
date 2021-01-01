@@ -413,10 +413,17 @@ export class Player {
       return false;
     } else {
       if (card) {
-        return (
-          player.hand.has(this.location) ||
-          (player.role === Client.Roles.Researcher && player.hand.has(card))
-        );
+        // cannot trade event cards see: https://boardgamegeek.com/thread/300778/article/2163786#2163786
+        if (
+          Object.values(Client.EventCard).includes(card as Client.EventCard)
+        ) {
+          return false;
+        } else {
+          return (
+            player.hand.has(this.location) ||
+            (player.role === Client.Roles.Researcher && player.hand.has(card))
+          );
+        }
       } else {
         return player.hand.has(this.location);
       }

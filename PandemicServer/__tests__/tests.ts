@@ -1478,29 +1478,28 @@ describe("Player", function () {
       );
       expect(g.research_stations).toEqual(new Set(["Atlanta"]));
       expect(g.players[0].can_build_research_station(g)).toBe(false);
+      g.players[0].draw(g); // first card is epidemic, ignore
       g.players[0].discard(g, [...g.players[0].hand]);
 
       g.players[0].draw(g);
-      expect(g.players[0].hand).toEqual(new Set(["Beijing"]));
-      g.players[0].move(g, "Chicago");
-      g.players[0].move(g, "San Francisco");
-      g.players[0].move(g, "Tokyo");
-      g.players[0].move(g, "Seoul");
-      g.players[0].move(g, "Beijing");
-      expect(g.players[0].hand).toEqual(new Set(["Beijing"]));
+      expect(g.players[0].hand).toEqual(new Set(["Milan"]));
+      g.players[0].move(g, "Washington");
+      g.players[0].move(g, "New York");
+      g.players[0].move(g, "London");
+      g.players[0].move(g, "Paris");
+      g.players[0].move(g, "Milan");
+      expect(g.players[0].hand).toEqual(new Set(["Milan"]));
       expect(g.players[0].can_build_research_station(g)).toBe(true);
-      expect(g.game_graph["Beijing"].hasResearchStation).toEqual(false);
+      expect(g.game_graph["Milan"].hasResearchStation).toEqual(false);
       g.players[0].build_research_station(g);
       expect(g.players[0].hand).toEqual(new Set());
-      expect(g.research_stations).toEqual(new Set(["Atlanta", "Beijing"]));
-      expect(g.game_graph["Beijing"].hasResearchStation).toEqual(true);
+      expect(g.research_stations).toEqual(new Set(["Atlanta", "Milan"]));
+      expect(g.game_graph["Milan"].hasResearchStation).toEqual(true);
       expect(g.players[0].move(g, "Atlanta")).toBe(true);
-      expect(g.players[0].move(g, "Beijing")).toBe(true);
+      expect(g.players[0].move(g, "Milan")).toBe(true);
     });
-  });
 
-  describe("#Research Station", function () {
-    it("Can Build", function () {
+    it("Can Build anywhere as Operations Expert", function () {
       const seeded = seedrandom("test!");
       const g = new Game(
         Cities,
@@ -1512,19 +1511,20 @@ describe("Player", function () {
       );
       expect(g.research_stations).toEqual(new Set(["Atlanta"]));
       expect(g.players[0].can_build_research_station(g)).toBe(false);
+      g.players[0].draw(g); // first card is epidemic, ignore
       g.players[0].discard(g, [...g.players[0].hand]);
 
       g.players[0].draw(g);
-      expect(g.players[0].hand).toEqual(new Set(["Beijing"]));
-      g.players[0].move(g, "Beijing");
+      expect(g.players[0].hand).toEqual(new Set(["Milan"]));
+      g.players[0].move(g, "Milan");
       expect(g.players[0].hand).toEqual(new Set());
       expect(g.players[0].can_build_research_station(g)).toBe(true);
-      expect(g.game_graph["Beijing"].hasResearchStation).toEqual(false);
+      expect(g.game_graph["Milan"].hasResearchStation).toEqual(false);
       g.players[0].build_research_station(g);
-      expect(g.research_stations).toEqual(new Set(["Atlanta", "Beijing"]));
-      expect(g.game_graph["Beijing"].hasResearchStation).toEqual(true);
+      expect(g.research_stations).toEqual(new Set(["Atlanta", "Milan"]));
+      expect(g.game_graph["Milan"].hasResearchStation).toEqual(true);
       expect(g.players[0].move(g, "Atlanta")).toBe(true);
-      expect(g.players[0].move(g, "Beijing")).toBe(true);
+      expect(g.players[0].move(g, "Milan")).toBe(true);
     });
   });
 
@@ -1539,8 +1539,8 @@ describe("Player", function () {
         5,
         seeded
       );
-      for (let i = 0; i < 45; i++) {
-        // 48 Cities + 5 epidemic, but start with 8 cards removed with 2 people
+      for (let i = 0; i < 50; i++) {
+        // 48 Cities + 5 epidemic + 5 event cards, but start with 8 cards removed with 2 people
         g.players[0].draw(g);
         expect(g.game_state).toBe(Client.GameState.NotStarted);
       }
@@ -1953,13 +1953,14 @@ describe("Player", function () {
       g.players[0].treat(g, Client.Color.Blue);
       expect(g.game_graph["London"].cubes[Client.Color.Blue]).toBe(0);
 
-      g.players[0].move(g, "Jakarta");
-      g.players[0].move(g, "Ho Chi Minh City");
+      g.players[0].move(g, "Kolkata");
+      g.players[0].move(g, "Delhi");
+      g.players[0].move(g, "Karachi");
       expect(g.players[0].can_treat(g)).toBe(true);
-      expect(g.players[0].can_treat_color(g, Client.Color.Red)).toBe(true);
-      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(2);
-      g.players[0].treat(g, Client.Color.Red);
-      expect(g.game_graph["Ho Chi Minh City"].cubes[Client.Color.Red]).toBe(0);
+      expect(g.players[0].can_treat_color(g, Client.Color.Black)).toBe(true);
+      expect(g.game_graph["Karachi"].cubes[Client.Color.Black]).toBe(3);
+      g.players[0].treat(g, Client.Color.Black);
+      expect(g.game_graph["Karachi"].cubes[Client.Color.Black]).toBe(0);
     });
   });
 
@@ -1981,16 +1982,16 @@ describe("Player", function () {
       g.players[0].draw(g);
       g.players[0].draw(g);
       expect(g.players[0].hand.size).toBe(9);
-      expect(g.players[0].can_discard(["Tokyo", "Beijing"])).toBe(false); // can't discard cards that don't exist in hand
-      expect(g.players[0].discard(g, ["Tokyo", "Beijing"])).toBe(false);
+      expect(g.players[0].can_discard(["Tokyo", "Milan"])).toBe(false); // can't discard cards that don't exist in hand
+      expect(g.players[0].discard(g, ["Tokyo", "Milan"])).toBe(false);
       expect(g.players[0].hand.size).toBe(9);
-      expect(g.players[0].can_discard(["Beijing"])).toBe(false); // can't discard too few
-      expect(g.players[0].can_discard(["Beijing", "Beijing"])).toBe(false); // can't discard dupliccates
-      expect(g.players[0].can_discard(["Milan", "Jakarta", "Beijing"])).toBe(
+      expect(g.players[0].can_discard(["Milan"])).toBe(false); // can't discard too few
+      expect(g.players[0].can_discard(["Milan", "Milan"])).toBe(false); // can't discard dupliccates
+      expect(g.players[0].can_discard(["Milan", "Mumbai", "Kolkata"])).toBe(
         false
       ); // can't discard too many
-      expect(g.players[0].can_discard(["Jakarta", "Beijing"])).toBe(true);
-      expect(g.players[0].discard(g, ["Jakarta", "Beijing"])).toBe(true);
+      expect(g.players[0].can_discard(["Milan", "Mumbai"])).toBe(true);
+      expect(g.players[0].discard(g, ["Milan", "Mumbai"])).toBe(true);
       expect(g.players[0].hand.size).toBe(7);
     });
   });
@@ -2141,6 +2142,26 @@ describe("Player", function () {
       g.players[1].discard(g, [...g.players[1].hand]); // need cards in hand to trade!
       expect(g.players[0].can_take(g)).toBe(false);
       expect(g.players[1].can_give(g)).toBe(false);
+    });
+
+    it("Always be able to take from Researcher unless it is an event card", function () {
+      const seeded = seedrandom("test!");
+      const g = new Game(
+        Cities,
+        2,
+        ["test", "test"],
+        [Client.Roles.Researcher, Client.Roles.ContingencyPlanner],
+        5,
+        seeded
+      );
+      expect(g.players[1].can_take(g)).toBe(true);
+      console.log(g.players.map((p) => p.hand));
+      expect(
+        g.players[1].can_take_from_player(
+          g.players[0],
+          Client.EventCard.GovernmentGrant
+        )
+      ).toBe(false);
     });
 
     it("Always be able to take from Researcher and give away when standing on the same city", function () {
