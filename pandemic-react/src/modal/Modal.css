@@ -21,3 +21,13 @@
   flex-direction: column;
   overflow-y: auto;
 }
+
+.faded {
+  opacity: 20%;
+}
+
+#fade-button {
+  position: fixed;
+  top: 25%;
+  right: 30%;
+}

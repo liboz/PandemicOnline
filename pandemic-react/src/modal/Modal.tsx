@@ -1,10 +1,12 @@
 import React, { ReactElement } from "react";
 import { component$, destroy$ } from "../Subscriptions";
+import { FaMinusCircle } from "react-icons/fa";
 
 import "./Modal.css";
 
 interface ModalServiceState {
   components: ReactElement[];
+  faded: boolean;
 }
 
 export default class ModalService extends React.Component<
@@ -15,8 +17,10 @@ export default class ModalService extends React.Component<
     super(props);
     this.state = {
       components: [],
+      faded: false,
     };
     this.destroy = this.destroy.bind(this);
+    this.triggerFade = this.triggerFade.bind(this);
   }
 
   componentDidMount() {
@@ -49,6 +53,14 @@ export default class ModalService extends React.Component<
     });
   }
 
+  triggerFade() {
+    this.setState((state) => {
+      return {
+        faded: !state.faded,
+      };
+    });
+  }
+
   currentComponents() {
     if (
       this.state.components.length > 0 &&
@@ -63,12 +75,17 @@ export default class ModalService extends React.Component<
     }
   }
 
+  generateClassName() {
+    const base = this.state.components.length > 0 ? "show" : "hidden";
+    return base + (this.state.faded ? " faded" : "");
+  }
+
   render() {
     return (
-      <div
-        id={this.modalElementId}
-        className={this.state.components.length > 0 ? "show" : "hidden"}
-      >
+      <div id={this.modalElementId} className={this.generateClassName()}>
+        <span id={"fade-button"} onClick={this.triggerFade}>
+          <FaMinusCircle />
+        </span>
         {this.state.components.length > 0 && this.state.components[0]}
       </div>
     );
