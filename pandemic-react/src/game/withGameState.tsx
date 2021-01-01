@@ -62,6 +62,7 @@ export interface GameStateInterface
   onShare(): void;
   onDiscover(): void;
   onSelectedNode(selectedNode: CityNodeData): void;
+  onEventCard(): void;
   setSidebarChildren: (item: React.FunctionComponent<SidebarItemProps>) => void;
   hideSidebar: () => void;
 }

@@ -21,6 +21,7 @@ interface ColoredSelectOption extends SelectOption {
 }
 
 interface EventCardState {
+  eventCardIndex: number;
   selectOption?: ColoredSelectOption | null;
   arg1?: string | number;
   arg2?: string;
@@ -80,7 +81,12 @@ export class EventCardComponent extends React.Component<
 > {
   constructor(props: EventCardProps) {
     super(props);
-    this.state = { arg1: undefined, arg2: undefined, selectOption: null };
+    this.state = {
+      eventCardIndex: 0,
+      arg1: undefined,
+      arg2: undefined,
+      selectOption: null,
+    };
     this.onGovernmentGrant = this.onGovernmentGrant.bind(this);
     this.onAirlift = this.onAirlift.bind(this);
     this.onOneQuietNight = this.onOneQuietNight.bind(this);
@@ -256,21 +262,44 @@ export class EventCardComponent extends React.Component<
 
   render() {
     const { game, player_index } = this.props;
+    const { eventCardIndex } = this.state;
     const eventCards = getEventCardsInHand(game, player_index);
+
+    const options: SelectOption[] = eventCards.map((card, index) => {
+      return {
+        value: index.toString(),
+        label: card,
+      };
+    });
     console.log(eventCards);
     return (
       <div>
-        {eventCards.map((eventCard) => {
-          return (
-            <>
-              <div key={`eventcardholder-${eventCard}`}>
-                <span style={{ textDecoration: "underline" }}>{eventCard}</span>
-                {this.displayEventCard(eventCard)}
-              </div>
-              <hr></hr>
-            </>
-          );
-        })}
+        {eventCards.length > 1 && (
+          <Select<SelectOption>
+            onChange={(data) => {
+              const value = data?.value;
+              if (value) {
+                this.setState(
+                  {
+                    eventCardIndex: parseInt(value),
+                  },
+                  () => console.log(this.state)
+                );
+              }
+            }}
+            placeholder={"Select Event Card"}
+            options={options}
+          />
+        )}
+
+        <div key={`eventcardholder-${eventCards[eventCardIndex]}`}>
+          <span style={{ textDecoration: "underline" }}>
+            {eventCards[eventCardIndex]}
+          </span>
+          {this.displayEventCard(eventCards[eventCardIndex])}
+        </div>
+        <hr></hr>
+
         <button onClick={this.onCancel}>Cancel</button>
       </div>
     );

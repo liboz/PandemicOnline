@@ -87,7 +87,10 @@ const BottomBar: FC<BottomBarProps> = (props) => {
 
   const eventButtonDisabled =
     player_index === undefined ||
-    !(getEventCardsInHand(game, player_index).length > 0);
+    !(getEventCardsInHand(game, player_index).length > 0) ||
+    game?.game_state === Client.GameState.Lost ||
+    game?.game_state === Client.GameState.Won ||
+    game?.game_state === Client.GameState.NotStarted;
 
   // if there are players with special role and that is the current player
   const showSpecialActionsButton = game.players
