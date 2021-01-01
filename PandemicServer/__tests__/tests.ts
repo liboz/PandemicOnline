@@ -1274,6 +1274,47 @@ describe("Player", function () {
       expect(g.players[0].hand.has("Tokyo")).toBe(true);
     });
 
+    it("Dispatcher standard move take priority", function () {
+      const seeded = seedrandom("test!");
+      const g = new Game(
+        Cities,
+        2,
+        ["test", "test"],
+        [Client.Roles.Dispatcher, Client.Roles.Researcher],
+        5,
+        seeded
+      );
+      g.players[0].draw(g); // first card is epidemic, ignore
+      const originalHand = [...g.players[0].hand];
+      g.players[0].discard(g, [...g.players[0].hand]);
+      expect(g.players[1].location).toBe("Atlanta"); // moving player 1 with player 0
+      g.players[0].draw(g);
+      g.players[0].draw(g);
+      expect(g.players[0].hand.has("Milan")).toBe(true);
+
+      //Take priority over direct flight
+      expect(g.players[0].dispatcher_move(g, g.players[1], "Washington")).toBe(
+        true
+      );
+      expect(g.players[0].dispatcher_move(g, g.players[1], "New York")).toBe(
+        true
+      );
+      expect(g.players[0].dispatcher_move(g, g.players[1], "Madrid")).toBe(
+        true
+      );
+      expect(g.players[0].dispatcher_move(g, g.players[1], "Paris")).toBe(true);
+      expect(g.players[0].dispatcher_move(g, g.players[1], "Milan")).toBe(true);
+      expect(g.players[1].location).toBe("Milan");
+      expect(g.game_graph["Milan"].players.has(g.players[1])).toBe(true);
+
+      // dispatcher can move to milan without discarding
+      expect(g.players[0].location).toBe("Atlanta");
+      expect(g.players[0].move(g, "Milan")).toBe(true);
+      expect(g.players[0].hand.has("Milan")).toBe(true);
+      expect(g.player_deck.discard).toStrictEqual([...originalHand]);
+      expect(g.players[0].location).toBe("Milan");
+    });
+
     it("Dispatcher Medic Treats when moving after cured", function () {
       const seeded = seedrandom("test!");
       const g = new Game(

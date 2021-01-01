@@ -57,6 +57,18 @@ export class Player {
     clientWebSocket: ClientWebSocket = null
   ) {
     let game_graph = game.game_graph;
+    if (this.role === Client.Roles.Dispatcher) {
+      const result = this.moveToAnotherPlayerPiece(
+        game,
+        final_destination,
+        clientWebSocket,
+        this
+      );
+      if (result) {
+        return result;
+      }
+    }
+
     if (
       game_graph[this.location].neighbors.has(game_graph[final_destination]) ||
       (game_graph[this.location].hasResearchStation &&
@@ -65,13 +77,6 @@ export class Player {
       // drive/ferry + shuttle
       this.movePiece(game, game_graph, final_destination, clientWebSocket);
       return true;
-    } else if (this.role === Client.Roles.Dispatcher) {
-      return this.moveToAnotherPlayerPiece(
-        game,
-        final_destination,
-        clientWebSocket,
-        this
-      );
     } else if (player_hand.has(final_destination)) {
       // direct
       this.directFlight(game, final_destination, player_hand, clientWebSocket);
