@@ -5,6 +5,7 @@ import { Client } from "pandemiccommon/dist/out-tsc/";
 import {
   clearComponent,
   clearMove,
+  closeEventCard,
   closeSidebar,
   destroyEvent,
   join$,
@@ -192,7 +193,7 @@ class GameSocketComponent extends React.Component<
                 );
                 break;
             }
-            destroyEvent();
+            closeEventCard();
             this.setState({ game: data });
           }
         );

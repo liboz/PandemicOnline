@@ -65,3 +65,9 @@ export const closeSidebar$ = closeSidebarSource.asObservable();
 export const closeSidebar = () => {
   closeSidebarSource.next();
 };
+
+const closeEventCardSource = new Subject<void>();
+export const closeEventCard$ = closeEventCardSource.asObservable();
+export const closeEventCard = () => {
+  closeEventCardSource.next();
+};

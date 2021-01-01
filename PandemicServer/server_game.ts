@@ -619,6 +619,24 @@ export class ServerGame {
     };
   }
 
+  onDiscardContinue(clientWebSocket: ClientWebSocket) {
+    if (this.curr_game.turns_left === 0) {
+      this.curr_game.infect_stage();
+      this.curr_game.next_player();
+      this.curr_game.turns_left = 4;
+    }
+    if (
+      this.curr_game.game_state !== Client.GameState.Lost &&
+      this.curr_game.game_state !== Client.GameState.Won
+    ) {
+      this.curr_game.game_state = Client.GameState.Ready;
+    }
+    clientWebSocket.sendMessageToAllInRoom(
+      EventName.UpdateGameState,
+      this.curr_game.toJSON()
+    );
+  }
+
   onDiscard(clientWebSocket: ClientWebSocket) {
     return (cards: string[], callback: () => void) => {
       let log_string = `Player ${this.curr_game.player_index} discards ${cards}`;
@@ -636,21 +654,7 @@ export class ServerGame {
         callback();
         this.curr_game.players[p_index].discard(this.curr_game, cards);
         this.curr_game.log.push(log_string);
-        if (this.curr_game.turns_left === 0) {
-          this.curr_game.infect_stage();
-          this.curr_game.next_player();
-          this.curr_game.turns_left = 4;
-        }
-        if (
-          this.curr_game.game_state !== Client.GameState.Lost &&
-          this.curr_game.game_state !== Client.GameState.Won
-        ) {
-          this.curr_game.game_state = Client.GameState.Ready;
-        }
-        clientWebSocket.sendMessageToAllInRoom(
-          EventName.UpdateGameState,
-          this.curr_game.toJSON()
-        );
+        this.onDiscardContinue(clientWebSocket);
       } else {
         clientWebSocket.sendMessageToClient(EventName.DiscardInvalid, cards);
       }
@@ -687,6 +691,14 @@ export class ServerGame {
             arg2,
             this.curr_game.toJSON()
           );
+        }
+
+        const player = this.curr_game.players[card_owner_player_index];
+        if (
+          this.curr_game.game_state === Client.GameState.DiscardingCard &&
+          player.hand.size <= player.hand_size_limit
+        ) {
+          this.onDiscardContinue(clientWebSocket);
         }
       } else {
         clientWebSocket.sendMessageToClient(

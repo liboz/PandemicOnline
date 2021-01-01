@@ -6,6 +6,7 @@ import {
   clearMove$,
   clearShare$,
   clearTreat$,
+  closeEventCard$,
   closeSidebar$,
   destroyEvent,
   dispatcherMoveTarget,
@@ -52,6 +53,7 @@ export interface GameComponentState {
   sidebarDisplayItem: React.FunctionComponent<SidebarItemProps> | null;
   currentHeight: number;
   currentWidth: number;
+  showingEventCard: boolean;
 }
 
 export interface GameStateInterface
@@ -78,6 +80,7 @@ export function initialState(): GameComponentState {
     sidebarDisplayItem: null,
     currentHeight: window.innerHeight,
     currentWidth: window.innerWidth,
+    showingEventCard: false,
   };
 }
 
@@ -92,6 +95,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
     clearTreatSubscription?: Subscription;
     clearDiscoverSubscription?: Subscription;
     closeSidebarSubscription?: Subscription;
+    closeEventCardSubscription?: Subscription;
 
     rootProjection!: d3.GeoProjection;
     projection!: d3.GeoProjection;
@@ -152,6 +156,13 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.closeSidebarSubscription = closeSidebar$.subscribe(() => {
         this.hideSidebar();
       });
+      this.closeSidebarSubscription = closeSidebar$.subscribe(() => {
+        this.hideSidebar();
+      });
+      this.closeEventCardSubscription = closeEventCard$.subscribe(() => {
+        this.setState({ showingEventCard: false });
+        destroyEvent();
+      });
     }
 
     componentWillUnmount() {
@@ -162,6 +173,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
       this.clearTreatSubscription?.unsubscribe();
       this.clearDiscoverSubscription?.unsubscribe();
       this.closeSidebarSubscription?.unsubscribe();
+      this.closeEventCardSubscription?.unsubscribe();
     }
 
     resize() {
@@ -176,7 +188,10 @@ function withGameState(WrappedComponent: typeof React.Component) {
       });
     }
 
-    componentDidUpdate(prevProps: GameComponentProps) {
+    componentDidUpdate(
+      prevProps: GameComponentProps,
+      prevState: GameComponentState
+    ) {
       const { game } = this.props;
       if (game?.game_state === Client.GameState.Lost) {
         this.showWinLossComponent(true);
@@ -204,7 +219,12 @@ function withGameState(WrappedComponent: typeof React.Component) {
         if (
           prevProps.game.must_discard_index !== game?.must_discard_index ||
           prevProps.player_index !== game.player_index ||
-          prevProps.game.game_state !== game.game_state
+          prevProps.game.game_state !== game.game_state ||
+          (prevProps.game.must_discard_index !== undefined &&
+            game.must_discard_index !== undefined &&
+            prevProps.game.players[prevProps.game.must_discard_index].hand
+              .length !== game.players[game.must_discard_index].hand.length) ||
+          prevState.showingEventCard !== this.state.showingEventCard
         ) {
           this.maybeShowDiscardComponent();
         }
@@ -243,12 +263,15 @@ function withGameState(WrappedComponent: typeof React.Component) {
         game &&
         player_index !== undefined &&
         game.must_discard_index === player_index &&
-        game.game_state === Client.GameState.DiscardingCard
+        game.game_state === Client.GameState.DiscardingCard &&
+        game.players[game.must_discard_index].hand.length > 7
       ) {
+        destroyEvent();
         nextComponent(() => {
           const props = {
             game: game,
             socket: socket,
+            onEventCard: this.onEventCard,
           };
           return React.createElement(DiscardCardsComponent, props);
         });
@@ -918,6 +941,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
     onEventCard() {
       const { game, socket, player_index } = this.props;
       if (game && socket && player_index !== undefined) {
+        this.setState({ showingEventCard: true });
         nextComponent(() => {
           const props = {
             game,

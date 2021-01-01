@@ -1,6 +1,6 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
-import { destroyEvent } from "../Subscriptions";
+import { closeEventCard } from "../Subscriptions";
 //import DivHand from "../player/DivHand";
 import { formatPlayer, getEventCardsInHand, playerInfo } from "../utils";
 import Select from "react-select";
@@ -127,7 +127,7 @@ export class EventCardComponent extends React.Component<
   }
 
   onCancel() {
-    destroyEvent();
+    closeEventCard();
   }
 
   displayEventCard(eventCard: Client.EventCard) {
