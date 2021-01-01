@@ -2,8 +2,7 @@ import { Client } from "pandemiccommon/dist/out-tsc";
 import * as PIXI from "pixi.js";
 import { CustomPIXIComponent } from "react-pixi-fiber";
 import { barBaseHeight, height, width } from "../game/Game";
-import { playerInfo } from "../player/Player";
-import { colorNameToHex, ScalingGraphics } from "../utils";
+import { colorNameToHex, playerInfo, ScalingGraphics } from "../utils";
 
 function generateHand(
   player: Client.Player,

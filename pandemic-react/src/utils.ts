@@ -170,6 +170,13 @@ export function cubesChanged(oldCubes: Client.Cubes, newCubes: Client.Cubes) {
   );
 }
 
+export const playerInfo: Record<number, number> = {
+  0: 0x42d4f4,
+  1: 0x911eb4,
+  2: 0x800000,
+  3: 0xf58231,
+};
+
 export interface ScalingGraphics {
   widthRatio: number;
   heightRatio: number;

@@ -44,8 +44,11 @@ describe("Sidebar", () => {
 
     // check reversed
     assertNonString(infectionDeckLis[0].children[0]);
+    assertNonString(infectionDeckLis[0].children[0].children[0]);
     expect(
-      infectionDeckLis[0].children[0].props["style"]["backgroundColor"]
+      infectionDeckLis[0].children[0].children[0].props["style"][
+        "backgroundColor"
+      ]
     ).toBe(Client.Color.Yellow);
     expect(infectionDeckLis[0].children[1]).toBe(
       testGame.infection_faceup_deck[testGame.infection_faceup_deck.length - 1]
@@ -54,8 +57,11 @@ describe("Sidebar", () => {
     const infectionDeckLastItemColorIcon =
       infectionDeckLis[infectionDeckLis.length - 1].children[0];
     assertNonString(infectionDeckLastItemColorIcon);
+    assertNonString(infectionDeckLastItemColorIcon.children[0]);
     expect(
-      infectionDeckLastItemColorIcon.props["style"]["backgroundColor"]
+      infectionDeckLastItemColorIcon.children[0].props["style"][
+        "backgroundColor"
+      ]
     ).toBe(Client.Color.Blue);
     expect(infectionDeckLis[infectionDeckLis.length - 1].children[1]).toBe(
       testGame.infection_faceup_deck[0]
@@ -80,8 +86,11 @@ describe("Sidebar", () => {
 
     // check reversed
     assertNonString(playerDeckDiscardLis[0].children[0]);
+    assertNonString(playerDeckDiscardLis[0].children[0].children[0]);
     expect(
-      playerDeckDiscardLis[0].children[0].props["style"]["backgroundColor"]
+      playerDeckDiscardLis[0].children[0].children[0].props["style"][
+        "backgroundColor"
+      ]
     ).toBe(Client.Color.Red);
     expect(playerDeckDiscardLis[0].children[1]).toBe(
       testGame.player_deck_discard[testGame.player_deck_discard.length - 1]
@@ -90,10 +99,11 @@ describe("Sidebar", () => {
     const playerDeckLastItemColorIcon =
       playerDeckDiscardLis[playerDeckDiscardLis.length - 1].children[0];
     assertNonString(playerDeckLastItemColorIcon);
+    assertNonString(playerDeckLastItemColorIcon.children[0]);
 
-    expect(playerDeckLastItemColorIcon.props["style"]["backgroundColor"]).toBe(
-      Client.Color.Black
-    );
+    expect(
+      playerDeckLastItemColorIcon.children[0].props["style"]["backgroundColor"]
+    ).toBe(Client.Color.Black);
     expect(
       playerDeckDiscardLis[playerDeckDiscardLis.length - 1].children[1]
     ).toBe(testGame.player_deck_discard[0]);

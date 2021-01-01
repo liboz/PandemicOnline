@@ -1,15 +1,7 @@
 import * as PIXI from "pixi.js";
 import { CustomPIXIComponent } from "react-pixi-fiber";
 import { CityNodeData } from "../node/CityNode";
-import { ScalingGraphics } from "../utils";
-
-export const playerInfo: Record<number, number> = {
-  0: 0x42d4f4,
-  1: 0x911eb4,
-  2: 0x800000,
-  3: 0xf58231,
-};
-
+import { playerInfo, ScalingGraphics } from "../utils";
 interface PlayerProps extends ScalingGraphics {
   node: CityNodeData;
 }
