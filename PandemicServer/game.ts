@@ -28,6 +28,8 @@ export class Game {
   rng: seedrandom.prng;
   must_discard_index: number;
   one_quiet_night_active: boolean = false;
+  top_6_infection_cards?: string[];
+  forecasting_player_index?: number;
 
   constructor(
     cities: CityData[],
@@ -64,6 +66,7 @@ export class Game {
         this.initial_cards_for_players[i]
       );
     }
+    this.players[0].hand.add(Client.EventCard.Forecast);
 
     this.research_stations = new Set(["Atlanta"]);
     this.cured = {
@@ -303,6 +306,8 @@ class GameJSON implements Client.Game {
   difficulty: number;
   must_discard_index: number;
   one_quiet_night_active: boolean;
+  top_6_infection_cards?: string[];
+  forecasting_player_index: number;
   constructor(game: Game) {
     if (game === null) {
       return null;
@@ -368,6 +373,10 @@ class GameJSON implements Client.Game {
     }
     if (game.game_state === Client.GameState.DiscardingCard) {
       this.must_discard_index = game.must_discard_index;
+    }
+    if (game.game_state === Client.GameState.Forecasting) {
+      this.top_6_infection_cards = game.top_6_infection_cards;
+      this.forecasting_player_index = game.forecasting_player_index;
     }
   }
 }

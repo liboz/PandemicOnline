@@ -29,6 +29,8 @@ export namespace Client {
     difficulty: number;
     must_discard_index: number;
     one_quiet_night_active: boolean;
+    top_6_infection_cards?: string[];
+    forecasting_player_index: number;
   }
 
   export interface Cubes extends Record<Color, number> {
@@ -72,6 +74,7 @@ export namespace Client {
     DiscardingCard = 2,
     Won = 3,
     Lost = 4,
+    Forecasting = 5,
   }
 
   export interface Player {
@@ -111,6 +114,7 @@ export namespace Client {
     Epidemic = "epidemic",
     Restart = "restart",
     EventCard = "event card",
+    Forecasting = "forecasting",
 
     // Success Messages
     MoveSuccessful = "move successful",
@@ -123,6 +127,7 @@ export namespace Client {
     DiscoverSuccessful = "discover successful",
     Restarted = "restarted",
     EventCardSuccessful = "event card successful",
+    ForecastingSuccessful = "forecasting successful",
 
     // Invalid Message
     DiscardInvalid = "discard invalid",

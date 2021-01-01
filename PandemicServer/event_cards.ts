@@ -34,7 +34,9 @@ export function handleEventCard(
         handleAirlift(target_player, game, game_graph, arg2, clientWebSocket);
       }
       break;
-    case Client.EventCard.Forecast: // todo
+    case Client.EventCard.Forecast:
+      handleForecastInitial(card_owner_player_index, game);
+      break;
     case Client.EventCard.GovernmentGrant:
       if (typeof arg1 === "string") {
         // arg1 is location
@@ -53,6 +55,21 @@ export function handleEventCard(
   }
 
   game.players[card_owner_player_index].hand.delete(eventCard);
+}
+
+function handleForecastInitial(card_owner_player_index: number, game: Game) {
+  game.game_state = Client.GameState.Forecasting;
+  const top6InfectionCards = [];
+  for (let i = 1; i < 7; i++) {
+    const maybeCard = game.infection_deck.facedown_deck.peekAt(-1 * i);
+    if (maybeCard !== undefined) {
+      top6InfectionCards.push(maybeCard);
+    } else {
+      break;
+    }
+  }
+  game.top_6_infection_cards = top6InfectionCards;
+  game.forecasting_player_index = card_owner_player_index;
 }
 
 function handleAirlift(

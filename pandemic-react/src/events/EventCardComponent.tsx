@@ -119,6 +119,12 @@ export class EventCardComponent extends React.Component<
     socket.emit(Client.EventName.EventCard, eventCard, player_index);
   }
 
+  onForecast(eventCard: string) {
+    const { socket, player_index } = this.props;
+
+    socket.emit(Client.EventName.EventCard, eventCard, player_index);
+  }
+
   onResilientPopulation(eventCard: string) {
     const { socket, player_index } = this.props;
     const { arg1 } = this.state;
@@ -190,7 +196,15 @@ export class EventCardComponent extends React.Component<
           </div>
         );
       }
-      case Client.EventCard.Forecast: // todo
+      case Client.EventCard.Forecast:
+        return (
+          <div>
+            {" "}
+            <button onClick={() => this.onForecast(eventCard)}>
+              Play Forecast
+            </button>
+          </div>
+        );
       case Client.EventCard.GovernmentGrant: {
         let { options, colourStyles } = generateSelectStylesAndOptions(
           game,
@@ -273,7 +287,7 @@ export class EventCardComponent extends React.Component<
     });
     console.log(eventCards);
     return (
-      <div>
+      <div style={{ minWidth: "80%" }}>
         {eventCards.length > 1 && (
           <Select<SelectOption>
             onChange={(data) => {

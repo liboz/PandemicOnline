@@ -28,6 +28,7 @@ import { StartGameComponent } from "../start-game/StartGameComponent";
 import { SidebarItemProps } from "../sidebar/Sidebar";
 import { DispatcherMoveComponent } from "../move/DispatcherMoveComponent";
 import { EventCardComponent } from "../events/EventCardComponent";
+import { ForecastComponent } from "../events/ForecastComponent";
 
 export const width = 1920;
 export const height = 960;
@@ -188,10 +189,7 @@ function withGameState(WrappedComponent: typeof React.Component) {
       });
     }
 
-    componentDidUpdate(
-      prevProps: GameComponentProps,
-      prevState: GameComponentState
-    ) {
+    componentDidUpdate(prevProps: GameComponentProps) {
       const { game } = this.props;
       if (game?.game_state === Client.GameState.Lost) {
         this.showWinLossComponent(true);
@@ -205,6 +203,11 @@ function withGameState(WrappedComponent: typeof React.Component) {
           this.props.player_name !== prevProps.player_name)
       ) {
         this.showStartGameComponent();
+      } else if (
+        game?.game_state === Client.GameState.Forecasting &&
+        game?.forecasting_player_index === this.props.player_index
+      ) {
+        this.showForecastingComponent();
       }
 
       if (prevProps.game === undefined) {
@@ -228,6 +231,20 @@ function withGameState(WrappedComponent: typeof React.Component) {
         ) {
           this.maybeShowDiscardComponent();
         }
+      }
+    }
+
+    showForecastingComponent() {
+      const { game, socket } = this.props;
+      if (game && socket) {
+        clearComponent();
+        nextComponent(() => {
+          const props = {
+            game: game,
+            socket: socket,
+          };
+          return React.createElement(ForecastComponent, props);
+        });
       }
     }
 

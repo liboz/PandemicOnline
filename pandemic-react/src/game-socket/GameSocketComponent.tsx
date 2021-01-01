@@ -176,7 +176,11 @@ class GameSocketComponent extends React.Component<
                   } to ${arg2}`
                 );
                 break;
-              case Client.EventCard.Forecast: // todo
+              case Client.EventCard.Forecast:
+                toast.success(
+                  `Player ${card_owner_player_index} has played ${eventCard} to get a forecast of the infection deck`
+                );
+                break;
               case Client.EventCard.GovernmentGrant:
                 toast.success(
                   `Player ${card_owner_player_index} has played ${eventCard} to build a research station on ${arg1}`
@@ -197,6 +201,15 @@ class GameSocketComponent extends React.Component<
             this.setState({ game: data });
           }
         );
+
+        socket.on(Client.EventName.Forecasting, (data: Client.Game) => {
+          if (data.forecasting_player_index !== this.state.player_index) {
+            toast.info(
+              `Player ${data.forecasting_player_index} is forecasting the infection deck`
+            );
+          }
+          this.setState({ game: data });
+        });
 
         socket.on(Client.EventName.GameInitialized, (data: Client.Game) => {
           destroyEvent();

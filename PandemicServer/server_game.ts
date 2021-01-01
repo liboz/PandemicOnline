@@ -691,14 +691,18 @@ export class ServerGame {
             arg2,
             this.curr_game.toJSON()
           );
-        }
-
-        const player = this.curr_game.players[card_owner_player_index];
-        if (
-          this.curr_game.game_state === Client.GameState.DiscardingCard &&
-          player.hand.size <= player.hand_size_limit
-        ) {
-          this.onDiscardContinue(clientWebSocket);
+          const player = this.curr_game.players[card_owner_player_index];
+          if (
+            this.curr_game.game_state === Client.GameState.DiscardingCard &&
+            player.hand.size <= player.hand_size_limit
+          ) {
+            this.onDiscardContinue(clientWebSocket);
+          }
+        } else {
+          clientWebSocket.sendMessageToAllInRoom(
+            EventName.Forecasting,
+            this.curr_game.toJSON()
+          );
         }
       } else {
         clientWebSocket.sendMessageToClient(
