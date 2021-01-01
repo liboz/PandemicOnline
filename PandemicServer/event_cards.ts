@@ -9,18 +9,24 @@ export function canUseEventCard(
   card_owner_player_index: number,
   game: Game
 ) {
-  return game.players[card_owner_player_index].hand.has(eventCard);
+  return (
+    game.players[card_owner_player_index].hand.has(eventCard) &&
+    game.game_state !== Client.GameState.Lost &&
+    game.game_state !== Client.GameState.Won &&
+    game.game_state !== Client.GameState.NotStarted
+  );
 }
 
 export function handleEventCard(
-  event: Client.EventCard,
+  eventCard: Client.EventCard,
+  card_owner_player_index: number,
   game: Game,
   game_graph: Record<string, City>,
   clientWebSocket: ClientWebSocket,
-  arg1: string | number,
+  arg1?: string | number,
   arg2?: string
 ) {
-  switch (event) {
+  switch (eventCard) {
     case Client.EventCard.Airlift:
       if (typeof arg1 === "number") {
         // arg1 is playerIndex and arg2 is final destination
@@ -45,6 +51,8 @@ export function handleEventCard(
       }
       break;
   }
+
+  game.players[card_owner_player_index].hand.delete(eventCard);
 }
 
 function handleAirlift(

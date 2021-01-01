@@ -837,6 +837,42 @@ describe("ServerGame", () => {
     });
   });
 
+  describe("#onEventCard", () => {
+    it("works", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      const onEventCard = server_game.onEventCard(mockSocket);
+      const args = [Client.EventCard.GovernmentGrant, 0, "Tokyo"];
+      onEventCard.apply(onEventCard, args);
+      expect(mockSocket.sendMessageToClient.mock.calls).toHaveLength(0);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(1); // one for ending turn and one for next turn
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0][0]).toBe(
+        EventName.EventCardSuccessful
+      );
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls[0].slice(1)).toEqual([
+        ...args,
+        undefined,
+        server_game.curr_game.toJSON(),
+      ]);
+    });
+
+    it("dosnt work when game is over", () => {
+      const mockSocket = createGame(server_game, [
+        { role: Client.Roles.Medic, name: "p1" },
+        { role: Client.Roles.QuarantineSpecialist, name: "p2" },
+      ]);
+
+      server_game.curr_game.game_state = Client.GameState.Lost;
+      const onEventCard = server_game.onEventCard(mockSocket);
+      onEventCard(Client.EventCard.GovernmentGrant, 0, "Tokyo");
+      lastSendMessageToClientIsInvalidAction(mockSocket);
+      expect(mockSocket.sendMessageToAllInRoom.mock.calls).toHaveLength(0);
+    });
+  });
+
   describe("#onDiscard", () => {
     it("works", () => {
       const mockSocket = createGame(server_game, [

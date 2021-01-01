@@ -669,14 +669,13 @@ export class ServerGame {
       if (canUseEventCard(eventCard, card_owner_player_index, this.curr_game)) {
         handleEventCard(
           eventCard,
+          card_owner_player_index,
           this.curr_game,
           this.curr_game.game_graph,
           clientWebSocket,
           arg1,
           arg2
         );
-
-        this.curr_game.players[card_owner_player_index].hand.delete(eventCard);
 
         if (eventCard !== Client.EventCard.Forecast) {
           this.curr_game.log.push(log_string);

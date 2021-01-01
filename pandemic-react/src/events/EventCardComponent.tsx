@@ -1,7 +1,7 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React from "react";
 import { destroyEvent } from "../Subscriptions";
-import DivHand from "../player/DivHand";
+//import DivHand from "../player/DivHand";
 import { formatPlayer, getEventCardsInHand, playerInfo } from "../utils";
 import Select from "react-select";
 

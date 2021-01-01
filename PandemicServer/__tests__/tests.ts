@@ -4,6 +4,7 @@ import { InfectionDeck } from "../infection_deck";
 import { PlayerJSON } from "../player";
 import { PlayerDeck } from "../player_deck";
 import { Client } from "pandemiccommon/dist/out-tsc";
+import { canUseEventCard, handleEventCard } from "../event_cards";
 const seedrandom = require("seedrandom");
 
 describe("City", function () {
@@ -2190,6 +2191,177 @@ describe("Player", function () {
         "Johannesburg",
       ]);
       expect(p2.hand).toEqual(["Chicago", "Seoul", "Taipei", "Tokyo"]);
+    });
+  });
+
+  describe("#Event cards", function () {
+    it("can only use event cards at proper times", function () {
+      const seeded = seedrandom("test!");
+      const g = new Game(
+        Cities,
+        2,
+        ["test", "test"],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
+        5,
+        seeded
+      );
+      g.initialize_board();
+      expect(canUseEventCard(Client.EventCard.GovernmentGrant, 0, g)).toBe(
+        true
+      );
+      g.game_state = Client.GameState.DiscardingCard;
+      expect(canUseEventCard(Client.EventCard.GovernmentGrant, 0, g)).toBe(
+        true
+      );
+      g.game_state = Client.GameState.Won;
+      expect(canUseEventCard(Client.EventCard.GovernmentGrant, 0, g)).toBe(
+        false
+      );
+      g.game_state = Client.GameState.Lost;
+
+      expect(canUseEventCard(Client.EventCard.GovernmentGrant, 0, g)).toBe(
+        false
+      );
+      g.game_state = Client.GameState.NotStarted;
+      expect(canUseEventCard(Client.EventCard.GovernmentGrant, 0, g)).toBe(
+        false
+      );
+
+      // cannot use a card we don't have in hand
+      g.game_state = Client.GameState.Ready;
+      expect(canUseEventCard(Client.EventCard.Airlift, 0, g)).toBe(false);
+    });
+
+    it("GovernmentGrant works", function () {
+      const seeded = seedrandom("test!");
+      const g = new Game(
+        Cities,
+        2,
+        ["test", "test"],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
+        5,
+        seeded
+      );
+      g.initialize_board();
+      expect(canUseEventCard(Client.EventCard.GovernmentGrant, 0, g)).toBe(
+        true
+      );
+
+      expect(g.game_graph["Tokyo"].hasResearchStation).toEqual(false);
+      handleEventCard(
+        Client.EventCard.GovernmentGrant,
+        0,
+        g,
+        g.game_graph,
+        null,
+        "Tokyo"
+      );
+      expect(g.research_stations).toEqual(new Set(["Atlanta", "Tokyo"]));
+      expect(g.game_graph["Tokyo"].hasResearchStation).toEqual(true);
+
+      expect(g.players[0].hand.has(Client.EventCard.GovernmentGrant)).toBe(
+        false
+      );
+    });
+
+    it("Airlift works", function () {
+      const seeded = seedrandom("test!");
+      const g = new Game(
+        Cities,
+        2,
+        ["test", "test"],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
+        5,
+        seeded
+      );
+      g.initialize_board();
+      g.players[1].hand.add(Client.EventCard.Airlift);
+      expect(canUseEventCard(Client.EventCard.Airlift, 1, g)).toBe(true);
+
+      expect(g.players[0].location).toBe("Atlanta");
+      handleEventCard(
+        Client.EventCard.Airlift,
+        1,
+        g,
+        g.game_graph,
+        null,
+        0,
+        "Tokyo"
+      );
+      expect(g.players[0].location).toBe("Tokyo");
+
+      expect(g.players[1].hand.has(Client.EventCard.Airlift)).toBe(false);
+    });
+
+    it("Airlift works", function () {
+      const seeded = seedrandom("test!");
+      const g = new Game(
+        Cities,
+        2,
+        ["test", "test"],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
+        5,
+        seeded
+      );
+      g.initialize_board();
+      g.players[1].hand.add(Client.EventCard.OneQuietNight);
+      expect(canUseEventCard(Client.EventCard.OneQuietNight, 1, g)).toBe(true);
+
+      expect(g.one_quiet_night_active).toBe(false);
+      handleEventCard(Client.EventCard.OneQuietNight, 1, g, g.game_graph, null);
+      expect(g.one_quiet_night_active).toBe(true);
+      const originalFaceupDeck = [...g.infection_deck.faceup_deck];
+      const oldCubes = { ...g.cubes };
+
+      g.infect_stage();
+      expect(g.one_quiet_night_active).toBe(false);
+      expect(g.infection_deck.faceup_deck).toStrictEqual(originalFaceupDeck);
+      expect(
+        oldCubes === undefined ||
+          oldCubes.black !== g.cubes.black ||
+          oldCubes.blue !== g.cubes.blue ||
+          oldCubes.yellow !== g.cubes.yellow ||
+          oldCubes.red !== g.cubes.red
+      ).toBe(false);
+    });
+
+    it("Airlift works", function () {
+      const seeded = seedrandom("test!");
+      const g = new Game(
+        Cities,
+        2,
+        ["test", "test"],
+        [Client.Roles.ContingencyPlanner, Client.Roles.Researcher],
+        5,
+        seeded
+      );
+      g.initialize_board();
+      g.players[1].hand.add(Client.EventCard.ResilientPopulation);
+      expect(canUseEventCard(Client.EventCard.ResilientPopulation, 1, g)).toBe(
+        true
+      );
+
+      const originalFaceupDeck = [...g.infection_deck.faceup_deck];
+      expect(originalFaceupDeck.includes("Tokyo")).toBe(true);
+      handleEventCard(
+        Client.EventCard.ResilientPopulation,
+        1,
+        g,
+        g.game_graph,
+        null,
+        "Tokyo"
+      );
+      expect(g.infection_deck.faceup_deck.includes("Tokyo")).toBe(false);
+      expect(g.infection_deck.faceup_deck).toHaveLength(
+        originalFaceupDeck.length - 1
+      );
+      g.infection_deck.faceup_deck.forEach((card) =>
+        expect(originalFaceupDeck.includes(card)).toBe(true)
+      );
+
+      expect(g.players[1].hand.has(Client.EventCard.ResilientPopulation)).toBe(
+        false
+      );
     });
   });
 });
