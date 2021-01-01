@@ -66,7 +66,6 @@ export class Game {
         this.initial_cards_for_players[i]
       );
     }
-    this.players[0].hand.add(Client.EventCard.Forecast);
 
     this.research_stations = new Set(["Atlanta"]);
     this.cured = {
