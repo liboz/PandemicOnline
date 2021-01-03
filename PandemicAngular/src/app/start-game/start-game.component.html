@@ -1,9 +1,0 @@
-<button (click)="onStart()">Start Game</button>
-<div *ngFor="let difficulty of difficulties" class="difficulties">
-  <input
-    type="radio"
-    [(ngModel)]="selectedDifficulty"
-    [value]="difficulty[0]"
-  />
-  {{ difficulty[1] }}
-</div>
