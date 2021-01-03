@@ -10,8 +10,9 @@ const Faq: FC = () => {
           I noticed a bug and want to report it{" "}
           <ul>
             <li>
-              Fill an issue on{" "}
-              <a href="https://github.com/liboz/PandemicOnline">Github</a>
+              File an issue describing the bug on{" "}
+              <a href="https://github.com/liboz/PandemicOnline">Github</a>.
+              Please include the log of the relevant game
             </li>
           </ul>
         </li>
@@ -31,8 +32,13 @@ const Faq: FC = () => {
           implementation?
           <ul>
             Some of the notable differences are:
-            <li>Dispatcher does not need permission to move pawns</li>
-            <li>Event cards are not implemented</li>
+            <li>
+              Permission to move pawns is not needed for dispatcher/airlift
+            </li>
+            <li>
+              Event cards cannot be played during the draw card, epidemic,
+              infection, or outbreak phase
+            </li>
             <li>Contingency Planner role does not exist</li>
           </ul>
         </li>
