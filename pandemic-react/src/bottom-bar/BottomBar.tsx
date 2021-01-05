@@ -214,6 +214,8 @@ const BottomBar: FC<BottomBarProps> = (props) => {
       onTap={() => {
         if (!moveButtonDisabled) {
           onDispatcherMove();
+        } else {
+          onMove();
         }
       }}
       widthRatio={widthRatio}
