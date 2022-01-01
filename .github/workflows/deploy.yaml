@@ -41,3 +41,13 @@ jobs:
           PROJECT_PATH: ./pandemic-react
           PROJECT_ID: pandemiconline
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Build container image
+        run: docker build -t registry.digitalocean.com/personal-projects/pandemic_server:$(echo $GITHUB_SHA | head -c7) .
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1200
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push registry.digitalocean.com/personal-projects/pandemic_server:$(echo $GITHUB_SHA | head -c7)
