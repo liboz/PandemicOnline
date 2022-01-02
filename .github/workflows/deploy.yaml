@@ -56,4 +56,5 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           event-type: deploy
+          repository: ${{ secrets.KUBERNETES_REPO_NAME }}
           client-payload: '{"sha": "${ GITHUB_SHA }", "image_name": "pandemic_server"}'
