@@ -51,3 +51,9 @@ jobs:
         run: doctl registry login --expiry-seconds 1200
       - name: Push image to DigitalOcean Container Registry
         run: docker push registry.digitalocean.com/personal-projects/pandemic_server:$(echo $GITHUB_SHA | head -c7)
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.PAT }}
+          event-type: deploy
+          client-payload: '{"sha": "${{ GITHUB_SHA }}", "image_name": "pandemic_server"}'
