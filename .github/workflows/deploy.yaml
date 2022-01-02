@@ -56,4 +56,4 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           event-type: deploy
-          client-payload: '{"sha": "${{ GITHUB_SHA }}", "image_name": "pandemic_server"}'
+          client-payload: '{"sha": "${ GITHUB_SHA }", "image_name": "pandemic_server"}'
