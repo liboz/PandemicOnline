@@ -20,7 +20,7 @@ jobs:
           token: ${{ secrets.PAT }}
           event-type: deploy
           repository: ${{ secrets.KUBERNETES_REPO_NAME }}
-          client-payload: '{"sha": "${ GITHUB_SHA }", "image_name": "pandemic_server"}'
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "image_name": "pandemic_server"}'
       - name: Build Common
         working-directory: ./PandemicCommon
         run: |
