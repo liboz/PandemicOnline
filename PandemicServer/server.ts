@@ -36,8 +36,10 @@ let seeded: seedrandom.prng;
 console.log(`running in ${process.env.NODE_ENV ?? "local"}`);
 if (process.env.NODE_ENV === "production") {
   seeded = seedrandom();
+  io.origins(["https://pandemic.live"]);
 } else {
   seeded = seedrandom("test!");
+  io.origins(["http://localhost:3000"]);
 }
 io.on(EventName.Connection, function (socket) {
   const match_name = socket.handshake.query.match_name;
