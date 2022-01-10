@@ -1,6 +1,6 @@
 # PandemicOnline
 
-Online Pandemic Simulator with React frontend
+Online Pandemic Simulator with React frontend. Hosted at https://pandemic.live
 
 # Notes
 
