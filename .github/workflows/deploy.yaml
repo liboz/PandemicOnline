@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v2-beta
         with:
-          node-version: "14"
+          node-version: "18"
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v1
         with:
@@ -48,4 +48,3 @@ jobs:
           PROJECT_PATH: ./pandemic-react
           PROJECT_ID: pandemiconline
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-   
