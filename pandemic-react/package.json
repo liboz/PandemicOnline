@@ -22,6 +22,7 @@
     "web-vitals": "^0.2.4"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.18.9",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -37,7 +38,7 @@
     "@types/rx": "^4.1.2",
     "@types/socket.io-client": "^1.4.34",
     "@types/rfdc": "^1.1.0",
-    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^4.3.4",
     "jest-mock-extended": "^2.0.7",
     "jest-watch-typeahead": "^2.0.0",
