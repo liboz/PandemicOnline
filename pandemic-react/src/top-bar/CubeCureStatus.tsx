@@ -1,5 +1,5 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
-import { CustomPIXIComponent } from "react-pixi-fiber";
+import { CustomPIXIComponent } from "react-pixi-fiber/index.js";
 import { width } from "../game/Game";
 import { colorNameToHex, cubesChanged, ScalingGraphics } from "../utils";
 import * as PIXI from "pixi.js";
@@ -52,13 +52,13 @@ export const behavior = {
   },
   customApplyProps: function (
     instance: PIXI.Graphics,
-    oldProps: CubeCureStatusProps,
+    oldProps: CubeCureStatusProps | undefined,
     newProps: CubeCureStatusProps
   ) {
     const { game, containerY, widthRatio } = newProps;
     if (
-      cubesChanged(oldProps.game?.cubes, game?.cubes) ||
-      cubesChanged(oldProps.game?.cured, game?.cured)
+      cubesChanged(oldProps?.game?.cubes, game?.cubes) ||
+      cubesChanged(oldProps?.game?.cured, game?.cured)
     ) {
       const allowedY = calculateAllowedY(containerY);
       instance.removeChildren();

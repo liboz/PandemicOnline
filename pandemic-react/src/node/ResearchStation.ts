@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { CustomPIXIComponent } from "react-pixi-fiber";
+import { CustomPIXIComponent } from "react-pixi-fiber/index.js";
 import { ScalingGraphics } from "../utils";
 import { CityNodeData } from "./CityNode";
 
@@ -12,7 +12,7 @@ export const behavior = {
   customDisplayObject: (props: CityNodeProps) => new PIXI.Graphics(),
   customApplyProps: function (
     instance: PIXI.Graphics,
-    oldProps: CityNodeProps,
+    oldProps: CityNodeProps | undefined,
     newProps: CityNodeProps
   ) {
     const { node, heightRatio, widthRatio } = newProps;

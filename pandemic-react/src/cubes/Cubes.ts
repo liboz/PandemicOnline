@@ -1,6 +1,6 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import * as PIXI from "pixi.js";
-import { CustomPIXIComponent } from "react-pixi-fiber";
+import { CustomPIXIComponent } from "react-pixi-fiber/index.js";
 import { CityNodeData } from "../node/CityNode";
 import { colorNameToHex, cubesChanged, ScalingGraphics } from "../utils";
 
@@ -26,13 +26,13 @@ export const behavior = {
   customDisplayObject: (props: CubeProps) => new PIXI.Graphics(),
   customApplyProps: function (
     instance: PIXI.Graphics,
-    oldProps: CubeProps,
+    oldProps: CubeProps | undefined,
     newProps: CubeProps
   ) {
     const { node, widthRatio } = newProps;
     if (
-      cubesChanged(oldProps.node?.cubes, node.cubes) ||
-      oldProps.widthRatio !== widthRatio
+      cubesChanged(oldProps?.node?.cubes, node.cubes) ||
+      oldProps?.widthRatio !== widthRatio
     ) {
       instance.clear();
       const rotationStep = (2 * Math.PI * (Date.now() % 1440)) / 1440;

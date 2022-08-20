@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
 import React from "react";
-import { Container, withApp } from "react-pixi-fiber";
+import { Container, withApp } from "react-pixi-fiber/index.js";
 import { CityNodeData } from "../node/CityNode";
 import { ScalingGraphics } from "../utils";
 import Cubes from "./Cubes";

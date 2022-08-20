@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { CustomPIXIComponent } from "react-pixi-fiber";
+import { CustomPIXIComponent } from "react-pixi-fiber/index.js";
 import { CityNodeData } from "../node/CityNode";
 import { playerInfo, ScalingGraphics } from "../utils";
 interface PlayerProps extends ScalingGraphics {
@@ -11,14 +11,14 @@ export const behavior = {
   customDisplayObject: (props: PlayerProps) => new PIXI.Graphics(),
   customApplyProps: function (
     instance: PIXI.Graphics,
-    oldProps: PlayerProps,
+    oldProps: PlayerProps | undefined,
     newProps: PlayerProps
   ) {
     const { node, heightRatio, widthRatio } = newProps;
     if (
-      oldProps.node?.players !== node.players ||
-      oldProps.heightRatio !== heightRatio ||
-      oldProps.widthRatio !== widthRatio
+      oldProps?.node?.players !== node.players ||
+      oldProps?.heightRatio !== heightRatio ||
+      oldProps?.widthRatio !== widthRatio
     ) {
       instance.clear();
       const intervalSize =

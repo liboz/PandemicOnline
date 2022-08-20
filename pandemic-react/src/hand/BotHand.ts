@@ -1,6 +1,6 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import * as PIXI from "pixi.js";
-import { CustomPIXIComponent } from "react-pixi-fiber";
+import { CustomPIXIComponent } from "react-pixi-fiber/index.js";
 import { barBaseHeight, height, width } from "../game/Game";
 import { colorNameToHex, playerInfo, ScalingGraphics } from "../utils";
 
@@ -77,14 +77,14 @@ export const behavior = {
   customDisplayObject: (props: HandProps) => new PIXI.Graphics(),
   customApplyProps: function (
     instance: PIXI.Graphics,
-    oldProps: HandProps,
+    oldProps: HandProps | undefined,
     newProps: HandProps
   ) {
     const { game, containerY, widthRatio, heightRatio } = newProps;
     if (
-      oldProps.game?.players !== game?.players ||
-      oldProps.widthRatio !== widthRatio ||
-      oldProps.heightRatio !== heightRatio
+      oldProps?.game?.players !== game?.players ||
+      oldProps?.widthRatio !== widthRatio ||
+      oldProps?.heightRatio !== heightRatio
     ) {
       instance.clear();
       instance.removeChildren();

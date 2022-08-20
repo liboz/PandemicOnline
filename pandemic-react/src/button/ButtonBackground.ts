@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { CustomPIXIComponent } from "react-pixi-fiber";
+import { CustomPIXIComponent } from "react-pixi-fiber/index.js";
 import { ButtonProps } from "./button";
 
 type ButtonBackgroundProps = Required<
@@ -10,17 +10,17 @@ const behavior = {
   customDisplayObject: (props: ButtonBackgroundProps) => new PIXI.Graphics(),
   customApplyProps: function (
     instance: PIXI.Graphics,
-    oldProps: ButtonBackgroundProps,
+    oldProps: ButtonBackgroundProps | undefined,
     newProps: ButtonBackgroundProps
   ) {
     const { x, y, width, height, disabled, widthRatio, heightRatio } = newProps;
     if (
-      oldProps.x !== x ||
-      oldProps.y !== y ||
-      oldProps.width !== width ||
-      oldProps.height !== height ||
-      oldProps.widthRatio !== widthRatio ||
-      oldProps.heightRatio !== heightRatio
+      oldProps?.x !== x ||
+      oldProps?.y !== y ||
+      oldProps?.width !== width ||
+      oldProps?.height !== height ||
+      oldProps?.widthRatio !== widthRatio ||
+      oldProps?.heightRatio !== heightRatio
     ) {
       instance.clear();
       instance.beginFill(0x7a6f64);
@@ -34,7 +34,7 @@ const behavior = {
       );
       instance.endFill();
     }
-    if (oldProps.disabled !== disabled) {
+    if (oldProps?.disabled !== disabled) {
       instance.alpha = disabled ? 0.2 : 1.0;
     }
   },

@@ -1,7 +1,7 @@
 import React from "react";
 import { Client } from "pandemiccommon/dist/out-tsc/";
 import * as PIXI from "pixi.js";
-import { Container, Stage, Text } from "react-pixi-fiber";
+import { Container, Stage, Text } from "react-pixi-fiber/index.js";
 import CityNode, { CityNodeData } from "../node/CityNode";
 import GeoBackground from "./GeoBackground";
 import ResearchStation from "../node/ResearchStation";

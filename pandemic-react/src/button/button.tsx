@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Container, Text } from "react-pixi-fiber";
+import { Container, Text } from "react-pixi-fiber/index.js";
 import { ScalingGraphics } from "../utils";
 import ButtonBackground from "./ButtonBackground";
 

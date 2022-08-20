@@ -160,7 +160,10 @@ export function hasStarted(game: Client.Game) {
   return game?.game_state !== Client.GameState.NotStarted;
 }
 
-export function cubesChanged(oldCubes: Client.Cubes, newCubes: Client.Cubes) {
+export function cubesChanged(
+  oldCubes: Client.Cubes | undefined,
+  newCubes: Client.Cubes
+) {
   return (
     oldCubes === undefined ||
     oldCubes.black !== newCubes.black ||

@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import * as PIXI from "pixi.js";
-import { CustomPIXIComponent } from "react-pixi-fiber";
+import { CustomPIXIComponent } from "react-pixi-fiber/index.js";
 import geo from "../data/geo";
 import Link from "../link/link";
 import { ScalingGraphics } from "../utils";
@@ -17,7 +17,7 @@ export const behavior = {
   customDisplayObject: (props: GeoBackgroundProps) => new PIXI.Graphics(),
   customApplyProps: function (
     instance: PIXI.Graphics,
-    oldProps: GeoBackgroundProps,
+    oldProps: GeoBackgroundProps | undefined,
     newProps: GeoBackgroundProps
   ) {
     const { projection, links, widthRatio } = newProps;

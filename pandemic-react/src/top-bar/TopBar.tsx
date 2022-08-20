@@ -1,6 +1,6 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React, { FC, useRef } from "react";
-import { Container, Text } from "react-pixi-fiber";
+import { Container, Text } from "react-pixi-fiber/index.js";
 import Button, { baseButtonHeight } from "../button/button";
 import { height, width } from "../game/Game";
 import InfectionDeckFaceup from "../sidebar/InfectionDeckFaceup";

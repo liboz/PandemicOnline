@@ -1,6 +1,6 @@
 import { Client } from "pandemiccommon/dist/out-tsc";
 import React, { FC } from "react";
-import { Container, Text } from "react-pixi-fiber";
+import { Container, Text } from "react-pixi-fiber/index.js";
 import Button, {
   baseButtonHeight,
   baseButtonWidth,
