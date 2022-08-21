@@ -36,7 +36,13 @@ let seeded: seedrandom.prng;
 console.log(`running in ${process.env.NODE_ENV ?? "local"}`);
 if (process.env.NODE_ENV === "production") {
   seeded = seedrandom();
-  io.origins(["*"]);
+  io.origins((origin, callback) => {
+    if (origin !== "https://pandemic.live") {
+      console.log("origin not allowed", origin);
+      return callback("origin not allowed", false);
+    }
+    callback(null, true);
+  });
 } else {
   seeded = seedrandom("test!");
   io.origins(["http://localhost:3000"]);
