@@ -46,4 +46,5 @@ jobs:
           args: deploy --only hosting
         env:
           PROJECT_PATH: ./pandemic-react
+          PROJECT_ID: sincere-concept-299802
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
