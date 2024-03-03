@@ -46,5 +46,5 @@ jobs:
           args: deploy --only hosting
         env:
           PROJECT_PATH: ./pandemic-react
-          PROJECT_ID: pandemiconline
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          PROJECT_ID: default
+          FIREBASE_TOKEN: ${{ secrets.GCP_SA_KEY }}
