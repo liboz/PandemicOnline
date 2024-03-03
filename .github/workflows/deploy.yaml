@@ -47,4 +47,4 @@ jobs:
         env:
           PROJECT_PATH: ./pandemic-react
           PROJECT_ID: default
-          FIREBASE_TOKEN: ${{ secrets.GCP_SA_KEY }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
